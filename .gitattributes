@@ -1,0 +1,14 @@
+# 统一换行符，避免 Windows / macOS 队友之间出现「整个文件都改了」的假冲突
+* text=auto eol=lf
+
+# 二进制文件不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.exe binary
+
+# 文档与 Markdown 交给 Git 自动处理合并
+*.md text

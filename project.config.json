@@ -38,7 +38,13 @@
     "tabSize": 2
   },
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "folder", "value": ".git" },
+      { "type": "folder", "value": "docs" },
+      { "type": "file", "value": "README.md" },
+      { "type": "file", "value": ".gitignore" },
+      { "type": "file", "value": ".gitattributes" }
+    ],
     "include": []
   },
   "simulatorPluginLibVersion": {}
