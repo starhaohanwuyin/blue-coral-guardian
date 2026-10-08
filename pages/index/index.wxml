@@ -1,0 +1,160 @@
+<!-- 首页：海洋动画 + 数据模块 -->
+<view class="page-body">
+  <!-- 自定义导航头 -->
+  <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-header-row">
+      <view class="logo">🪸 蓝珊</view>
+      <view class="sub">守护南海珊瑚</view>
+    </view>
+  </view>
+
+  <!-- ===== 海洋Hero场景（CSS动画还原SVG场景） ===== -->
+  <view class="home-hero">
+    <!-- 光柱 -->
+    <view class="hero-ray ray-1"></view>
+    <view class="hero-ray ray-2"></view>
+    <!-- 游动鱼群 -->
+    <view class="hero-fish fish-1">🐠</view>
+    <view class="hero-fish fish-2 reverse">🐟</view>
+    <view class="hero-fish fish-3">🐠</view>
+    <!-- 海底珊瑚群 -->
+    <view class="hero-coral coral-1">🪸</view>
+    <view class="hero-coral coral-2">🪸</view>
+    <view class="hero-coral coral-3">🐚</view>
+    <view class="hero-coral coral-4">🪨</view>
+    <!-- 气泡 -->
+    <view class="hero-bubble bubble-1"></view>
+    <view class="hero-bubble bubble-2"></view>
+    <view class="hero-bubble bubble-3"></view>
+    <view class="hero-bubble bubble-4"></view>
+    <!-- 海床 -->
+    <view class="hero-seafloor"></view>
+
+    <!-- 认养入口卡 -->
+    <view class="adopt-card">
+      <view class="adopt-title">🌊 认养一株珊瑚</view>
+      <view class="adopt-desc">你认养的珊瑚正在南海深处成长，通过AI智能监测系统实时追踪它的生长状态。</view>
+      <view class="energy-bar">
+        <view class="energy-fill">
+          <view class="energy-fill-inner" style="width: {{energyPercent}}%;"></view>
+        </view>
+        <text class="energy-label">成长值 {{energy.cur}}/{{energy.max}}</text>
+      </view>
+      <view class="btn-adopt" hover-class="btn-hover" bindtap="goMyCoral">查看我的珊瑚 →</view>
+    </view>
+  </view>
+
+  <!-- ===== 平台数据 ===== -->
+  <view class="stats-strip">
+    <view class="stat-item" wx:for="{{stats}}" wx:key="label">
+      <view class="stat-num">{{item.num}}</view>
+      <view class="stat-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- ===== 碳汇贡献卡 ===== -->
+  <view class="carbon-home-card card">
+    <view class="carbon-home-icon">🌿</view>
+    <view class="carbon-home-info">
+      <view class="carbon-home-title">你的碳汇贡献：<text class="carbon-val">{{carbon.value}} {{carbon.unit}}</text></view>
+      <view class="carbon-home-desc">{{carbon.desc}}</view>
+    </view>
+  </view>
+
+  <!-- ===== 快捷功能 ===== -->
+  <view class="section-title">快捷功能</view>
+  <view class="quick-actions">
+    <view class="action-item" wx:for="{{actions}}" wx:key="name" hover-class="action-hover" bindtap="onAction" data-action="{{item.action}}">
+      <view class="action-icon" style="background: {{item.bg}};">{{item.icon}}</view>
+      <text class="action-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- ===== 我的珊瑚（横滑） ===== -->
+  <view class="section-title">我的珊瑚 <text class="more" bindtap="goMyAdopt">查看全部</text></view>
+  <scroll-view class="my-coral-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="coral-card" wx:for="{{corals}}" wx:key="id" hover-class="card-hover" bindtap="goCoralDetail" data-id="{{item.id}}">
+      <view class="coral-card-imgwrap">
+        <image class="coral-card-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="coral-badge">{{item.species}}</view>
+      </view>
+      <view class="coral-card-body">
+        <view class="coral-card-name">{{item.name}}</view>
+        <view class="coral-card-sub">认养于 {{item.date}} · 成长 {{item.growth}}%</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ===== 核心技术 ===== -->
+  <view class="section-title">核心技术</view>
+  <view class="tech-showcase">
+    <view class="tech-card card" wx:for="{{tech}}" wx:key="title">
+      <view class="tech-card-imgwrap">
+        <image class="tech-card-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="tech-label">{{item.label}}</view>
+      </view>
+      <view class="tech-card-body">
+        <view class="tech-card-title">{{item.title}}</view>
+        <view class="tech-card-desc">{{item.desc}}</view>
+        <view class="tech-tag-row">
+          <text class="tech-tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 核心团队 ===== -->
+  <view class="section-title">核心团队 <text class="more" bindtap="goAbout">查看全部</text></view>
+  <view class="team-section">
+    <view class="team-intro">{{teamIntro}}</view>
+    <scroll-view class="team-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="team-member" wx:for="{{team}}" wx:key="name">
+        <image class="team-avatar" src="{{item.avatar}}" mode="aspectFill" lazy-load />
+        <view class="team-name">{{item.name}}</view>
+        <view class="team-role">{{item.role}}</view>
+        <view class="team-desc">{{item.desc}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- ===== 团队视频 ===== -->
+  <view class="section-title">团队视频</view>
+  <view class="team-video-section card">
+    <view class="video-wrapper" hover-class="card-hover" bindtap="onVideoTap">
+      <image class="video-cover" src="{{videoCover}}" mode="aspectFill" lazy-load />
+      <view class="play-icon">
+        <view class="play-triangle"></view>
+      </view>
+      <view class="video-hint">南海珊瑚礁修复纪录</view>
+    </view>
+    <view class="video-caption">{{videoCaption}}</view>
+  </view>
+
+  <!-- ===== 推文&资讯 ===== -->
+  <view class="section-title">推文&资讯</view>
+  <view class="articles-section">
+    <view class="article-card card" wx:for="{{articles}}" wx:key="id" hover-class="card-hover" bindtap="goArticle" data-id="{{item.id}}">
+      <image class="article-cover" src="{{item.img}}" mode="aspectFill" lazy-load />
+      <view class="article-body">
+        <view class="article-title">{{item.title}}</view>
+        <view class="article-meta">
+          <text class="article-date">{{item.date}}</text>
+          <text class="tag">{{item.tag}}</text>
+        </view>
+      </view>
+      <view class="wechat-icon">🔗</view>
+    </view>
+  </view>
+
+  <!-- ===== 最新动态 ===== -->
+  <view class="section-title">最新动态</view>
+  <view class="news-list">
+    <view class="news-item card" wx:for="{{news}}" wx:key="id" hover-class="card-hover" bindtap="goNews" data-id="{{item.id}}">
+      <image class="news-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+      <view class="news-content">
+        <view class="news-title">{{item.title}}</view>
+        <view class="news-sub">{{item.date}} · {{item.tag}}</view>
+      </view>
+    </view>
+  </view>
+</view>

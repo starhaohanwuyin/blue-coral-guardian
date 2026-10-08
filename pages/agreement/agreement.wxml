@@ -1,0 +1,18 @@
+<!-- 协议页：用户协议 / 隐私政策 -->
+<view class="doc-page">
+  <view class="doc-header">
+    <view class="doc-title">{{doc.title}}</view>
+    <view class="doc-update">更新日期：{{doc.updateDate}}</view>
+  </view>
+
+  <view class="doc-body">
+    <block wx:for="{{doc.sections}}" wx:key="h" wx:for-item="sec">
+      <view class="doc-section">
+        <view class="doc-h">{{sec.h}}</view>
+        <view wx:for="{{sec.ps}}" wx:key="*this" wx:for-item="p" class="doc-p">{{p}}</view>
+      </view>
+    </block>
+  </view>
+
+  <view class="doc-footer">— 蓝珊科技 · 守护南海珊瑚 —</view>
+</view>

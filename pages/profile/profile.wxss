@@ -1,0 +1,268 @@
+/* ============ 我的页 ============ */
+
+/* 头部 */
+.profile-header {
+  position: relative;
+  padding-bottom: 48rpx;
+  background: linear-gradient(180deg, #0D47A1, #1565C0 60%, #1E88E5);
+  overflow: hidden;
+  text-align: center;
+}
+.profile-bubbles { position: absolute; inset: 0; }
+.profile-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  animation: bubbleUp 9s linear infinite;
+}
+.pb-1 { width: 80rpx; height: 80rpx; top: 20%; left: 10%; }
+.pb-2 { width: 48rpx; height: 48rpx; top: 50%; left: 75%; animation-delay: 1.5s; }
+.pb-3 { width: 32rpx; height: 32rpx; top: 30%; left: 55%; animation-delay: 3s; }
+.pb-4 { width: 64rpx; height: 64rpx; top: 65%; left: 25%; animation-delay: 4s; }
+
+.profile-top-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+  padding-bottom: 12rpx;
+  padding-left: 32rpx;
+  padding-right: 32rpx;
+}
+.profile-top-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  z-index: 2;
+  width: 140rpx;
+  height: 140rpx;
+  margin: 8rpx auto 0;
+}
+.profile-avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 4rpx solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+}
+.profile-avatar-edit {
+  position: absolute;
+  right: -4rpx;
+  bottom: -4rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+.profile-name {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-top: 20rpx;
+}
+.profile-id {
+  position: relative;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 22rpx;
+  margin-top: 8rpx;
+}
+.profile-level-badge {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  margin-top: 16rpx;
+  padding: 8rpx 24rpx;
+  background: rgba(255, 193, 7, 0.2);
+  border: 2rpx solid rgba(255, 193, 7, 0.5);
+  color: #FFE082;
+  border-radius: 28rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+/* 统计卡 */
+.profile-stats {
+  display: flex;
+  margin: -36rpx 32rpx 0;
+  position: relative;
+  z-index: 3;
+  padding: 32rpx 16rpx;
+}
+.profile-stat { flex: 1; text-align: center; }
+.profile-stat .num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+.profile-stat .lbl {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 6rpx;
+}
+
+/* 菜单 */
+.profile-menu-group-title {
+  padding: 32rpx 40rpx 16rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--text2);
+}
+.profile-menu { margin: 0 32rpx; padding: 0 8rpx; }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 26rpx 20rpx;
+  border-bottom: 2rpx solid var(--border);
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  line-height: inherit;
+  font-size: inherit;
+  border-radius: 0;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-hover { background: rgba(30, 136, 229, 0.04); }
+.contact-btn { border: none; }
+.contact-btn::after { border: none; }
+.menu-icon {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+.menu-item-text { flex: 1; min-width: 0; }
+.menu-label { font-size: 28rpx; font-weight: 600; color: var(--text); }
+.menu-desc { font-size: 22rpx; color: var(--text3); margin-top: 4rpx; }
+.menu-badge {
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.menu-badge.green { background: var(--green); }
+.menu-arrow {
+  font-size: 36rpx;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+
+/* 退出登录 */
+.logout-btn {
+  margin: 32rpx 32rpx 0;
+  padding: 24rpx;
+  text-align: center;
+  border-radius: 24rpx;
+  background: var(--card);
+  color: var(--coral);
+  font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+
+/* 珊瑚社区 */
+.comments-section { padding: 0 32rpx 40rpx; }
+.comment-input-area {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.comment-input {
+  flex: 1;
+  height: 76rpx;
+  padding: 0 28rpx;
+  background: var(--card);
+  border-radius: 38rpx;
+  font-size: 26rpx;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+  box-sizing: border-box;
+}
+.comment-send {
+  width: 130rpx;
+  height: 76rpx;
+  border-radius: 38rpx;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.comment-item {
+  display: flex;
+  gap: 20rpx;
+  background: var(--card);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.comment-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: rgba(30, 136, 229, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+.comment-body { flex: 1; min-width: 0; }
+.comment-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+.comment-meta .name { font-size: 26rpx; font-weight: 600; }
+.comment-meta .time { font-size: 20rpx; color: var(--text3); }
+.comment-body .text {
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-top: 8rpx;
+}
+.comment-delete {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text3);
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

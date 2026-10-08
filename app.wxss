@@ -1,0 +1,259 @@
+/* ============ 蓝珊小程序 全局样式 ============ */
+/* 设计变量与官网（蓝珊APP.html）保持一致 */
+page {
+  --primary: #1E88E5;
+  --primary-dark: #1565C0;
+  --primary-light: #42A5F5;
+  --accent: #00BCD4;
+  --coral: #FF7043;
+  --coral-light: #FF8A65;
+  --bg: #F5F9FF;
+  --card: #FFFFFF;
+  --text: #1A2138;
+  --text2: #5A6578;
+  --text3: #9AA5B4;
+  --border: #E8EDF5;
+  --green: #4CAF50;
+  --gold: #C8A84E;
+  --radius: 32rpx;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* ============ 通用布局 ============ */
+.page-body { padding-bottom: 140rpx; }
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40rpx 40rpx 24rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+.section-title .more {
+  font-size: 26rpx;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+/* ============ 通用按钮 ============ */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border-radius: 24rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  padding: 24rpx;
+  box-shadow: 0 8rpx 40rpx rgba(30, 136, 229, 0.3);
+}
+.btn-primary:active { transform: scale(0.97); }
+.btn-outline {
+  background: var(--card);
+  color: var(--primary);
+  border: 3rpx solid var(--primary);
+  border-radius: 24rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  padding: 24rpx;
+}
+.btn-outline:active { transform: scale(0.97); }
+.btn-disabled { opacity: 0.5; }
+
+/* ============ 标签 ============ */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  background: rgba(30, 136, 229, 0.08);
+  color: var(--primary);
+  border-radius: 12rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+}
+.tag-green { background: rgba(76, 175, 80, 0.08); color: var(--green); }
+.tag-coral { background: rgba(255, 112, 67, 0.08); color: var(--coral); }
+
+/* ============ 进度条 ============ */
+.progress-bar {
+  height: 12rpx;
+  background: var(--border);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.8s ease;
+}
+
+/* ============ 页面自定义导航头（Tab页使用） ============ */
+.custom-header {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1rpx solid rgba(232, 237, 245, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.custom-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 40rpx;
+}
+.custom-header-row .logo {
+  font-size: 40rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.custom-header-row .sub { font-size: 24rpx; color: var(--text3); }
+
+/* ============ 通用动画 ============ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(32rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.35s ease both; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 海洋场景动画（替代官网 SVG 动画，纯 CSS 实现） */
+@keyframes sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+@keyframes sway2 {
+  0%, 100% { transform: rotate(3deg); }
+  50% { transform: rotate(-3deg); }
+}
+@keyframes swim {
+  0% { transform: translateX(-80rpx); }
+  100% { transform: translateX(750rpx); }
+}
+@keyframes swimR {
+  0% { transform: translateX(750rpx) scaleX(-1); }
+  100% { transform: translateX(-80rpx) scaleX(-1); }
+}
+@keyframes bubbleUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-400rpx) scale(0.3); opacity: 0; }
+}
+@keyframes kelpSway {
+  0%, 100% { transform: rotate(-6deg) scaleY(1); }
+  50% { transform: rotate(6deg) scaleY(1.02); }
+}
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12rpx); }
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============ 海洋场景通用元素 ============ */
+.ocean-fish {
+  position: absolute;
+  font-size: 40rpx;
+  opacity: 0.8;
+  animation: swim 12s linear infinite;
+}
+.ocean-fish.reverse { animation-name: swimR; }
+.ocean-coral {
+  position: absolute;
+  bottom: 20rpx;
+  animation: sway 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.ocean-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  animation: bubbleUp linear infinite;
+}
+
+/* ============ 弹窗（页面内半屏弹窗） ============ */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+.sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 48rpx 48rpx 0 0;
+  z-index: 101;
+  overflow-y: auto;
+  animation: sheetUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-handle {
+  width: 72rpx;
+  height: 8rpx;
+  background: #DDD;
+  border-radius: 4rpx;
+  margin: 24rpx auto;
+}
+.sheet-header {
+  padding: 0 40rpx 32rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sheet-header .title { font-size: 36rpx; font-weight: 700; }
+.sheet-close {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #F0F0F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #666;
+}
+.sheet-body { padding: 0 40rpx 60rpx; }
+
+/* ============ 时间线（生长记录等） ============ */
+.timeline { padding-left: 32rpx; border-left: 4rpx solid var(--border); }
+.timeline-item { position: relative; padding: 0 0 40rpx 32rpx; }
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -14rpx;
+  top: 8rpx;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 4rpx solid #fff;
+  box-shadow: 0 0 0 4rpx var(--primary);
+}
+.timeline-item .time { font-size: 22rpx; color: var(--text3); }
+.timeline-item .desc { font-size: 26rpx; color: var(--text2); margin-top: 4rpx; }
+
+/* ============ 空状态 / 加载 ============ */
+.loading-dots { text-align: center; padding: 40rpx; color: var(--text3); font-size: 26rpx; }
+.empty-tip { text-align: center; padding: 60rpx; color: var(--text3); font-size: 26rpx; }

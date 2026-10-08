@@ -1,0 +1,30 @@
+<view class="growth-page">
+
+  <!-- 生长曲线柱状图 -->
+  <view class="growth-chart-card card">
+    <view class="growth-chart">
+      <view class="growth-bar-wrap" wx:for="{{data.chart}}" wx:key="label">
+        <view class="growth-bar-val">{{item.val}}</view>
+        <view class="growth-bar" style="height: {{item.height}}%"></view>
+        <view class="growth-bar-label">{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 指标 -->
+    <view class="growth-metrics">
+      <view class="growth-metric-card" wx:for="{{data.metrics}}" wx:key="lbl">
+        <view class="val {{item.green ? 'green' : ''}}">{{item.val}}</view>
+        <view class="lbl">{{item.lbl}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近生长记录 -->
+  <view class="growth-section-title">最近生长记录</view>
+  <view class="timeline">
+    <view class="timeline-item" wx:for="{{data.timeline}}" wx:key="time">
+      <view class="time">{{item.time}}</view>
+      <view class="desc">{{item.desc}}</view>
+    </view>
+  </view>
+</view>

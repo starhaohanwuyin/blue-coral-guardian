@@ -1,0 +1,97 @@
+/* ============ 积分商城页 ============ */
+.shop-points-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24rpx 32rpx;
+  padding: 32rpx;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #1565C0, #1E88E5);
+  color: #fff;
+  box-shadow: 0 16rpx 48rpx rgba(21, 101, 192, 0.3);
+}
+.shop-points-left { display: flex; align-items: center; gap: 20rpx; }
+.shop-points-icon { font-size: 52rpx; }
+.shop-points-num { font-size: 48rpx; font-weight: 700; line-height: 1.1; }
+.shop-points-label { font-size: 22rpx; color: rgba(255, 255, 255, 0.6); }
+.shop-points-tip { font-size: 22rpx; color: rgba(255, 255, 255, 0.7); }
+
+.shop-tabs {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 32rpx 24rpx;
+}
+.shop-tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx;
+  border-radius: 24rpx;
+  background: var(--card);
+  color: var(--text2);
+  font-size: 28rpx;
+  font-weight: 600;
+  border: 3rpx solid transparent;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.shop-tab.active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.06);
+}
+
+.shop-tip {
+  margin: 0 32rpx 24rpx;
+  padding: 24rpx 28rpx;
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 26rpx 28rpx;
+  margin: 0 32rpx 20rpx;
+}
+.shop-item-icon {
+  font-size: 52rpx;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.shop-item-info { flex: 1; min-width: 0; }
+.shop-item-name { font-size: 28rpx; font-weight: 600; }
+.shop-item-stock {
+  font-size: 22rpx;
+  color: var(--coral);
+  font-weight: 600;
+  margin-left: 8rpx;
+}
+.shop-item-desc {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+.shop-buy-btn {
+  padding: 14rpx 26rpx;
+  border-radius: 28rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+.shop-buy-btn.feed {
+  background: linear-gradient(135deg, #FF7043, #FF8A65);
+  box-shadow: 0 6rpx 24rpx rgba(255, 112, 67, 0.3);
+}
+.shop-buy-btn.culture {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 6rpx 24rpx rgba(30, 136, 229, 0.3);
+}

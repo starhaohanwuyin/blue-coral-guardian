@@ -1,0 +1,39 @@
+<view class="about-page">
+
+  <!-- 品牌头 -->
+  <view class="about-hero">
+    <view class="about-logo">🪸</view>
+    <view class="about-name">蓝珊科技</view>
+    <view class="about-slogan">守护南海珊瑚</view>
+  </view>
+
+  <!-- 公司简介 -->
+  <view class="about-card card">
+    <view class="about-card-title">公司简介</view>
+    <view class="about-intro">{{info.intro}}</view>
+    <view class="about-row" wx:for="{{info.rows}}" wx:key="label">
+      <text class="label">{{item.label}}</text>
+      <text class="value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <!-- 团队介绍 -->
+  <view class="about-card card">
+    <view class="about-card-title">核心团队</view>
+    <view class="about-team-intro">{{teamIntro}}</view>
+    <view class="about-member" wx:for="{{team}}" wx:key="name">
+      <view class="about-member-head">
+        <text class="about-member-name">{{item.name}}</text>
+        <text class="about-member-role">{{item.role}}</text>
+      </view>
+      <view class="about-member-desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <!-- 底部信息 -->
+  <view class="about-footer">
+    <view class="about-footer-row" bindtap="onCopyEmail">联系邮箱：{{email}}</view>
+    <view class="about-footer-row">蓝珊小程序 v{{version}}</view>
+    <view class="about-footer-row">广东蓝珊科技有限公司 © 2026</view>
+  </view>
+</view>

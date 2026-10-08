@@ -1,0 +1,104 @@
+<!-- AI识别页：上传/识别/结果/历史 -->
+<view class="page-body">
+  <!-- 自定义导航头 -->
+  <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-header-row">
+      <view class="logo">🤖 AI珊瑚助手</view>
+      <view class="sub">YOLOv9 + SAM3 多模态识别</view>
+    </view>
+  </view>
+
+  <!-- Hero -->
+  <view class="ai-hero">
+    <view class="ai-hero-icon">🔬</view>
+    <view class="ai-hero-title">智能识别与检测</view>
+    <view class="ai-hero-sub">基于YOLOv9+SAM3多模态AI模型</view>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="ai-tabs">
+    <view class="ai-tab {{mode === 0 ? 'active' : ''}}" bindtap="switchMode" data-mode="0">🪸 种类识别</view>
+    <view class="ai-tab {{mode === 1 ? 'active' : ''}}" bindtap="switchMode" data-mode="1">📊 生长检测</view>
+  </view>
+
+  <!-- 上传区（初始态） -->
+  <view wx:if="{{state === 'upload'}}" class="ai-upload-area" hover-class="upload-hover" bindtap="chooseImage">
+    <view class="upload-icon">📸</view>
+    <view class="upload-title">上传珊瑚图片</view>
+    <view class="upload-sub">支持 JPG/PNG 格式，AI将自动分析珊瑚信息</view>
+  </view>
+
+  <!-- 预览区（已选图） -->
+  <view wx:if="{{state === 'preview'}}" class="ai-preview-container card">
+    <image class="ai-preview-img" src="{{imgPath}}" mode="aspectFit" />
+    <view class="ai-preview-actions">
+      <view class="btn-upload-new" hover-class="btn-hover" bindtap="resetUpload">重新上传</view>
+      <view class="btn-start" hover-class="btn-hover" bindtap="startAnalysis">开始识别</view>
+    </view>
+  </view>
+
+  <!-- 识别中 -->
+  <view wx:if="{{state === 'loading'}}" class="ai-loading card">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">正在分析珊瑚图像...</view>
+    <view class="loading-sub">AI模型处理中，请稍候</view>
+    <view class="loading-progress">
+      <view class="loading-progress-bar" style="width: {{progress}}%;"></view>
+    </view>
+  </view>
+
+  <!-- 识别结果 -->
+  <view wx:if="{{state === 'result' && result}}" class="ai-result card">
+    <view class="result-header">
+      <view class="result-badge">{{result.icon}}</view>
+      <view class="result-info">
+        <view class="result-title">{{result.title}}</view>
+        <view class="result-sub">{{result.sub}} · 置信度 {{result.confidence}}%</view>
+        <view class="result-confidence">
+          <view class="confidence-bar">
+            <view class="confidence-fill" style="width: {{result.confidence}}%;"></view>
+          </view>
+          <text class="confidence-val">{{result.confidence}}%</text>
+        </view>
+      </view>
+    </view>
+    <view class="result-details">
+      <view class="result-detail-row" wx:for="{{result.details}}" wx:key="label">
+        <text class="detail-label">{{item.label}}</text>
+        <text class="detail-value">{{item.value}}</text>
+      </view>
+    </view>
+    <view class="result-tags">
+      <text
+        wx:for="{{result.tags}}"
+        wx:key="text"
+        class="result-tag {{item.type === 'green' ? 'green' : (item.type === 'coral' ? 'coral' : '')}}"
+      >{{item.text}}</text>
+    </view>
+    <view class="result-action-btn" hover-class="btn-hover" bindtap="resetUpload">🔄 重新上传识别</view>
+  </view>
+
+  <!-- 技术原理 -->
+  <view class="section-title">技术原理</view>
+  <view class="ai-tech-section">
+    <view class="ai-tech-card card" wx:for="{{techList}}" wx:key="title">
+      <view class="ai-tech-icon" style="background: {{item.bg}};">{{item.icon}}</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">{{item.title}}</view>
+        <view class="ai-tech-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 识别历史 -->
+  <view class="section-title">识别历史</view>
+  <view class="ai-history">
+    <view class="history-item card" wx:for="{{history}}" wx:key="id" hover-class="card-hover" bindtap="onHistoryTap">
+      <image class="history-thumb" src="{{item.img}}" mode="aspectFill" lazy-load />
+      <view class="history-info">
+        <view class="history-title">{{item.title}}</view>
+        <view class="history-sub">{{item.time}} · 置信度 {{item.confidence}}%</view>
+      </view>
+    </view>
+  </view>
+</view>

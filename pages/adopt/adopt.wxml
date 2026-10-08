@@ -1,0 +1,244 @@
+<!-- 认养页：虚拟养成 + 实体认养 -->
+<view class="page-body">
+  <!-- 自定义导航头 -->
+  <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-header-row">
+      <view class="logo">🪸 珊瑚认养</view>
+      <view class="sub">认养一株珊瑚，见证它在南海的成长</view>
+    </view>
+  </view>
+
+  <!-- 认养类型切换 -->
+  <view class="adopt-type-tabs">
+    <view class="adopt-type-tab {{type === 0 ? 'active' : ''}}" bindtap="switchType" data-type="0">🎮 虚拟认养</view>
+    <view class="adopt-type-tab {{type === 1 ? 'active' : ''}}" bindtap="switchType" data-type="1">🌊 实体认养</view>
+  </view>
+
+  <!-- ================= 虚拟认养 ================= -->
+  <block wx:if="{{type === 0}}">
+    <!-- 海底养成场景 -->
+    <view class="virtual-ocean">
+      <view class="va-ray va-ray-1"></view>
+      <view class="va-ray va-ray-2"></view>
+      <view class="va-fish va-fish-1">🐠</view>
+      <view class="va-fish va-fish-2 reverse">🐟</view>
+      <view class="va-fish va-fish-3">🐠</view>
+      <view class="va-kelp kelp-1"></view>
+      <view class="va-kelp kelp-2"></view>
+      <view class="va-kelp kelp-3"></view>
+      <view class="va-bubble vb-1"></view>
+      <view class="va-bubble vb-2"></view>
+      <view class="va-bubble vb-3"></view>
+      <view class="va-bubble vb-4"></view>
+      <view class="va-bubble vb-5"></view>
+      <view class="va-starfish">⭐</view>
+      <!-- 用户的主珊瑚 -->
+      <view class="va-coral-main {{feedingAnim ? 'bounce' : ''}}">🪸</view>
+      <view class="va-coral-glow"></view>
+      <view class="va-sand"></view>
+    </view>
+
+    <!-- 状态面板 -->
+    <view class="va-info-panel">
+      <view class="va-points-row">
+        <view class="va-points">
+          <view class="va-points-icon">⭐</view>
+          <view>
+            <view class="va-points-num">{{points}}</view>
+            <view class="va-points-label">我的积分</view>
+          </view>
+        </view>
+        <view class="va-coral-count">
+          <view class="va-coral-count-icon">🪸</view>
+          <view class="va-coral-count-label">虚拟珊瑚</view>
+        </view>
+      </view>
+      <view class="va-progress-wrap">
+        <view class="va-progress-header">
+          <text class="va-progress-title">珊瑚成长进度</text>
+          <text class="va-progress-pct">{{growth}}%</text>
+        </view>
+        <view class="va-progress-bar">
+          <view class="va-progress-fill" style="width: {{growth}}%;"></view>
+        </view>
+        <view class="va-progress-tip">成长到100%可获得一株实物珊瑚 🎉</view>
+      </view>
+      <view class="va-btn-row">
+        <view class="va-feed-btn" hover-class="btn-hover" bindtap="onFeed">🪸 喂养珊瑚</view>
+        <view class="va-shop-btn" hover-class="btn-hover" bindtap="goShop">🏪 积分商城</view>
+      </view>
+    </view>
+
+    <!-- 每日任务 -->
+    <view class="va-tasks">
+      <view class="va-task-title">📋 每日任务</view>
+      <view class="va-task-item" wx:for="{{tasks}}" wx:key="id">
+        <view class="va-task-icon" style="background: {{item.iconBg}};">{{item.icon}}</view>
+        <view class="va-task-info">
+          <view class="task-name">{{item.name}}</view>
+          <view class="task-desc">{{item.desc}}</view>
+        </view>
+        <text class="va-task-reward">+{{item.points}}积分</text>
+        <view wx:if="{{item.done}}" class="va-task-btn done">已完成</view>
+        <block wx:else>
+          <button wx:if="{{item.action === 'share'}}" class="va-task-btn claim share-btn" open-type="share">去完成</button>
+          <view wx:else class="va-task-btn claim" bindtap="onTaskTap" data-id="{{item.id}}" data-action="{{item.action}}">{{item.btnText}}</view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 我的虚拟珊瑚列表 -->
+    <view class="section-title">🐠 我的虚拟珊瑚 <text class="more shop-link" bindtap="goShop">🏪 积分商城</text></view>
+    <view class="virtual-coral-list">
+      <view class="virtual-coral-card" wx:for="{{corals}}" wx:key="name">
+        <view class="virtual-coral-card-header">
+          <view class="virtual-coral-emoji">🪸</view>
+          <view class="virtual-coral-name">{{item.name}}</view>
+          <view class="virtual-coral-status {{item.growth >= 100 ? 'mature' : 'growing'}}">{{item.growth >= 100 ? '已成熟' : '成长中'}}</view>
+        </view>
+        <view class="virtual-coral-progress">
+          <view class="virtual-coral-progress-bar">
+            <view class="virtual-coral-progress-fill" style="width: {{item.growth}}%;"></view>
+          </view>
+          <text class="virtual-coral-progress-pct">{{item.growth}}%</text>
+        </view>
+        <view class="virtual-coral-points">⭐ 累计积分：{{item.points}}</view>
+      </view>
+    </view>
+
+    <!-- 证书 / 认养新珊瑚 -->
+    <view class="va-bottom-btns">
+      <view class="va-cert-btn" hover-class="btn-hover" bindtap="goVirtualCert">📜 虚拟认养证书</view>
+      <view class="va-new-coral-btn" hover-class="btn-hover" bindtap="onAdoptNew">🪸 认养新虚拟珊瑚</view>
+    </view>
+  </block>
+
+  <!-- ================= 实体认养 ================= -->
+  <block wx:if="{{type === 1}}">
+    <!-- Hero -->
+    <view class="adopt-hero">
+      <view class="ah-fish ah-fish-1">🐠</view>
+      <view class="ah-fish ah-fish-2 reverse">🐟</view>
+      <view class="ah-bubble ab-1"></view>
+      <view class="ah-bubble ab-2"></view>
+      <view class="ah-coral ah-coral-1">🪸</view>
+      <view class="ah-coral ah-coral-2">🪸</view>
+      <view class="ah-sand"></view>
+      <view class="adopt-hero-overlay">
+        <view class="adopt-hero-title">🌊 守护珊瑚 守护海洋</view>
+        <view class="adopt-hero-sub">认养一株珊瑚，见证它在南海的成长</view>
+      </view>
+    </view>
+
+    <!-- 实体产品卡 -->
+    <view class="entity-adopt-cards">
+      <view class="entity-card card" wx:for="{{products}}" wx:key="id">
+        <view class="entity-card-header">
+          <view class="entity-card-icon">{{item.icon}}</view>
+          <view class="entity-card-headinfo">
+            <view class="entity-card-title">{{item.title}}</view>
+            <view class="entity-card-sub">{{item.subtitle}}</view>
+          </view>
+        </view>
+        <view class="entity-card-body">
+          <view class="entity-card-desc">{{item.desc}}</view>
+          <view class="entity-card-features">
+            <text class="entity-feature-tag" wx:for="{{item.features}}" wx:for-item="f" wx:key="*this">{{f}}</text>
+          </view>
+          <view class="entity-card-price">
+            <view class="entity-price">¥{{item.price}}<text class="entity-price-unit">{{item.priceUnit}}</text></view>
+            <view class="entity-buy-btn" hover-class="btn-hover" bindtap="onBuy" data-id="{{item.id}}">{{item.button}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 碳汇贡献 -->
+    <view class="carbon-section card">
+      <view class="carbon-ring-wrap">
+        <view class="carbon-ring" style="background: conic-gradient(var(--primary) 0deg {{carbonDeg}}deg, #E8EDF5 {{carbonDeg}}deg 360deg);">
+          <view class="carbon-ring-inner">
+            <text class="carbon-num">{{carbon.value}}</text>
+            <text class="carbon-unit">{{carbon.unit}}</text>
+          </view>
+        </view>
+        <view class="carbon-info">
+          <view class="carbon-info-title">累计碳汇贡献</view>
+          <view class="carbon-info-desc">你认养的珊瑚已累计碳汇 {{carbon.value}} g CO₂。珊瑚礁每年可固定约225吨碳酸钙，相当于封存约100吨CO₂。</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作面板 -->
+    <view class="section-title">操作面板</view>
+    <view class="adopt-action-row">
+      <view class="adopt-action-btn live" hover-class="btn-hover" bindtap="goCamera">📹 实时查看</view>
+      <view class="adopt-action-btn cert" hover-class="btn-hover" bindtap="goCert">📜 查看证书</view>
+    </view>
+
+    <!-- 我的珊瑚列表 -->
+    <view class="section-title">我的珊瑚 <text class="more" bindtap="goMyAdopt">查看全部</text></view>
+    <view class="adopt-list">
+      <view class="adopt-list-card card" wx:for="{{myCorals}}" wx:key="id" hover-class="card-hover" bindtap="goCoralDetail" data-id="{{item.id}}">
+        <image class="adopt-list-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="adopt-list-info">
+          <view class="adopt-list-name">{{item.name}}</view>
+          <view class="adopt-list-sub">{{item.species}} · 编号{{item.code}}</view>
+          <view class="progress-wrap">
+            <view class="progress-bar"><view class="progress-fill" style="width: {{item.growth}}%;"></view></view>
+            <text class="progress-pct">{{item.growth}}%</text>
+          </view>
+          <view class="carbon-val">🌿 碳汇贡献：{{item.carbon}} g CO₂</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 喂养弹窗 ===== -->
+  <block wx:if="{{feedModal}}">
+    <view class="mask" bindtap="closeFeed"></view>
+    <view class="sheet">
+      <view class="sheet-handle"></view>
+      <view class="sheet-header">
+        <view class="title">🪸 喂养珊瑚</view>
+        <view class="sheet-close" bindtap="closeFeed">✕</view>
+      </view>
+      <view class="sheet-body">
+        <view class="feed-points-tip">当前积分：<text class="feed-points-num">{{points}}</text> · 选择养料喂养</view>
+        <view class="feed-item" wx:for="{{feeds}}" wx:key="key">
+          <view class="feed-icon">{{item.icon}}</view>
+          <view class="feed-info">
+            <view class="feed-name">{{item.name}} <text class="feed-stock" wx:if="{{shop[item.key] > 0}}">×{{shop[item.key]}}</text></view>
+            <view class="feed-desc">{{item.desc}} · 成长+{{item.growth}}%</view>
+          </view>
+          <view wx:if="{{shop[item.key] > 0}}" class="feed-btn use" hover-class="btn-hover" bindtap="onUseFeed" data-key="{{item.key}}">使用</view>
+          <view wx:else class="feed-btn buy" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}积分</view>
+        </view>
+        <view class="feed-more" bindtap="goShop">进入积分商城兑换文创 →</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 公益活动弹窗 ===== -->
+  <block wx:if="{{welfareModal}}">
+    <view class="mask" bindtap="closeWelfare"></view>
+    <view class="sheet">
+      <view class="sheet-handle"></view>
+      <view class="sheet-header">
+        <view class="title">🏖️ 珊瑚公益活动</view>
+        <view class="sheet-close" bindtap="closeWelfare">✕</view>
+      </view>
+      <view class="sheet-body">
+        <view class="welfare-item" wx:for="{{welfareActivities}}" wx:key="name" hover-class="card-hover" bindtap="onWelfareJoin" data-index="{{index}}">
+          <view class="welfare-icon">{{item.icon}}</view>
+          <view class="welfare-info">
+            <view class="welfare-name">{{item.name}}</view>
+            <view class="welfare-desc">{{item.desc}}</view>
+          </view>
+          <view class="welfare-join">参加</view>
+        </view>
+        <view class="welfare-tip">参与线下公益活动可获得30积分奖励</view>
+      </view>
+    </view>
+  </block>
+</view>

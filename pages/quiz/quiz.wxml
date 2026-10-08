@@ -1,0 +1,58 @@
+<!-- 知识问答页 -->
+<view class="page-body">
+  <!-- 答题中 -->
+  <block wx:if="{{!finished}}">
+    <view class="quiz-header">
+      <view class="quiz-progress-text">第 {{index + 1}} / {{questions.length}} 题</view>
+      <view class="quiz-score">答对 {{score}} 题</view>
+    </view>
+    <view class="quiz-progress-bar">
+      <view class="quiz-progress-fill" style="width: {{(index + 1) / questions.length * 100}}%;"></view>
+    </view>
+
+    <view class="quiz-card card">
+      <view class="quiz-question">{{questions[index].q}}</view>
+      <view class="quiz-options">
+        <view
+          wx:for="{{questions[index].options}}"
+          wx:key="*this"
+          class="quiz-option {{selected === i ? (i === questions[index].answer ? 'correct' : 'wrong') : ''}} {{answered && i === questions[index].answer ? 'correct' : ''}}"
+          bindtap="onSelect"
+          data-index="{{i}}"
+        >
+          <text class="quiz-option-letter">{{['A', 'B', 'C', 'D'][i]}}</text>
+          <text class="quiz-option-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{answered}}" class="quiz-feedback {{isCorrect ? 'good' : 'bad'}}">
+        {{isCorrect ? '🎉 回答正确！' : '❌ 答错了，正确答案是 ' + correctLetter + '：' + questions[index].options[questions[index].answer]}}
+      </view>
+
+      <view
+        wx:if="{{answered}}"
+        class="quiz-next-btn"
+        hover-class="btn-hover"
+        bindtap="onNext"
+      >{{index + 1 === questions.length ? '查看结果' : '下一题 →'}}</view>
+    </view>
+  </block>
+
+  <!-- 结果页 -->
+  <block wx:if="{{finished}}">
+    <view class="quiz-result card">
+      <view class="quiz-result-icon">{{score === questions.length ? '🏆' : (score >= 3 ? '🎉' : '🐠')}}</view>
+      <view class="quiz-result-title">
+        {{score === questions.length ? '珊瑚专家！' : (score >= 3 ? '表现不错！' : '继续学习吧！')}}
+      </view>
+      <view class="quiz-result-score">{{score}} / {{questions.length}}</view>
+      <view class="quiz-result-desc">
+        {{score === questions.length ? '你对珊瑚的了解已经达到专家级别，太厉害了！' : (score >= 3 ? '你对珊瑚已经有了不错的了解，继续加油！' : '多看看科普文章，下次一定能拿满分！')}}
+      </view>
+      <view class="quiz-result-actions">
+        <view class="quiz-again-btn" hover-class="btn-hover" bindtap="onRestart">🔄 再答一次</view>
+        <view class="quiz-learn-btn" hover-class="btn-hover" bindtap="goKnowledge">📚 去学科普</view>
+      </view>
+    </view>
+  </block>
+</view>

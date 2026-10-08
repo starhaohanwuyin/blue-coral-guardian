@@ -1,0 +1,312 @@
+/* ============ AI识别页 ============ */
+
+/* Hero */
+.ai-hero {
+  margin: 24rpx 32rpx;
+  padding: 48rpx 40rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, #0D47A1, #1E88E5 60%, #00BCD4);
+  text-align: center;
+  color: #fff;
+}
+.ai-hero-icon {
+  font-size: 72rpx;
+  animation: floatSoft 3.5s ease-in-out infinite;
+}
+.ai-hero-title {
+  font-size: 38rpx;
+  font-weight: 700;
+  margin-top: 16rpx;
+}
+.ai-hero-sub {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 10rpx;
+}
+
+/* 模式切换 */
+.ai-tabs {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 32rpx 24rpx;
+}
+.ai-tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx;
+  border-radius: 24rpx;
+  background: var(--card);
+  color: var(--text2);
+  font-size: 28rpx;
+  font-weight: 600;
+  border: 3rpx solid transparent;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.ai-tab.active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.06);
+}
+
+/* 上传区 */
+.ai-upload-area {
+  margin: 0 32rpx 24rpx;
+  padding: 80rpx 40rpx;
+  background: var(--card);
+  border: 4rpx dashed rgba(30, 136, 229, 0.35);
+  border-radius: 40rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.upload-hover { transform: scale(0.98); background: rgba(30, 136, 229, 0.03); }
+.upload-icon {
+  font-size: 88rpx;
+  animation: floatSoft 3s ease-in-out infinite;
+}
+.upload-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-top: 20rpx;
+}
+.upload-sub {
+  font-size: 24rpx;
+  color: var(--text3);
+  margin-top: 10rpx;
+}
+
+/* 预览区 */
+.ai-preview-container {
+  margin: 0 32rpx 24rpx;
+  padding: 24rpx;
+  text-align: center;
+}
+.ai-preview-img {
+  width: 100%;
+  height: 480rpx;
+  border-radius: 24rpx;
+  background: #0D47A1;
+}
+.ai-preview-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+.btn-upload-new {
+  flex: 1;
+  padding: 20rpx;
+  border-radius: 24rpx;
+  border: 3rpx solid var(--border);
+  color: var(--text2);
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+  box-sizing: border-box;
+}
+.btn-start {
+  flex: 1;
+  padding: 20rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8rpx 32rpx rgba(30, 136, 229, 0.3);
+}
+
+/* 识别中 */
+.ai-loading {
+  margin: 0 32rpx 24rpx;
+  padding: 64rpx 40rpx;
+  text-align: center;
+}
+.loading-spinner {
+  width: 88rpx;
+  height: 88rpx;
+  margin: 0 auto;
+  border: 8rpx solid rgba(30, 136, 229, 0.15);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+.loading-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-top: 28rpx;
+}
+.loading-sub {
+  font-size: 24rpx;
+  color: var(--text3);
+  margin-top: 8rpx;
+}
+.loading-progress {
+  height: 12rpx;
+  background: var(--border);
+  border-radius: 6rpx;
+  overflow: hidden;
+  margin-top: 32rpx;
+}
+.loading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 6rpx;
+  transition: width 0.3s linear;
+}
+
+/* 识别结果 */
+.ai-result {
+  margin: 0 32rpx 24rpx;
+  padding: 32rpx;
+}
+.result-header {
+  display: flex;
+  gap: 24rpx;
+  align-items: center;
+  padding-bottom: 28rpx;
+  border-bottom: 2rpx solid var(--border);
+}
+.result-badge {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.12), rgba(0, 188, 212, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  flex-shrink: 0;
+}
+.result-info { flex: 1; min-width: 0; }
+.result-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.result-sub {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 6rpx;
+}
+.result-confidence {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 12rpx;
+}
+.confidence-bar {
+  flex: 1;
+  height: 12rpx;
+  background: var(--border);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 6rpx;
+}
+.confidence-val {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+.result-details { padding: 24rpx 0; }
+.result-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14rpx 0;
+  border-bottom: 2rpx dashed var(--border);
+}
+.result-detail-row:last-child { border-bottom: none; }
+.detail-label {
+  font-size: 24rpx;
+  color: var(--text3);
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+.detail-value {
+  font-size: 24rpx;
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+}
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  padding-bottom: 28rpx;
+}
+.result-tag {
+  padding: 8rpx 22rpx;
+  background: rgba(30, 136, 229, 0.08);
+  color: var(--primary);
+  border-radius: 24rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+.result-tag.green { background: rgba(76, 175, 80, 0.1); color: var(--green); }
+.result-tag.coral { background: rgba(255, 112, 67, 0.1); color: var(--coral); }
+.result-action-btn {
+  padding: 22rpx;
+  border-radius: 24rpx;
+  border: 3rpx solid var(--primary);
+  color: var(--primary);
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 技术原理 */
+.ai-tech-section { padding: 0 32rpx; }
+.ai-tech-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+}
+.ai-tech-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex-shrink: 0;
+}
+.ai-tech-info { flex: 1; min-width: 0; }
+.ai-tech-title { font-size: 28rpx; font-weight: 600; }
+.ai-tech-desc {
+  font-size: 22rpx;
+  color: var(--text2);
+  margin-top: 6rpx;
+  line-height: 1.6;
+}
+
+/* 识别历史 */
+.ai-history { padding: 0 32rpx 40rpx; }
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+.history-thumb {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+  background: var(--border);
+}
+.history-info { flex: 1; min-width: 0; }
+.history-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.history-sub {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 8rpx;
+}

@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/adopt/adopt",
+    "pages/knowledge/knowledge",
+    "pages/ai/ai",
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/knowledge-detail/knowledge-detail",
+    "pages/all-species/all-species",
+    "pages/coral-detail/coral-detail",
+    "pages/camera/camera",
+    "pages/article/article",
+    "pages/shop/shop",
+    "pages/quiz/quiz",
+    "pages/donate/donate",
+    "pages/cert/cert",
+    "pages/camp/camp",
+    "pages/aquarium/aquarium",
+    "pages/badges/badges",
+    "pages/growth/growth",
+    "pages/my-adopt/my-adopt",
+    "pages/about/about",
+    "pages/agreement/agreement"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F5F9FF",
+    "navigationBarTitleText": "蓝珊",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F9FF",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#9AA5B4",
+    "selectedColor": "#1E88E5",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/adopt/adopt",
+        "text": "认养"
+      },
+      {
+        "pagePath": "pages/knowledge/knowledge",
+        "text": "科普"
+      },
+      {
+        "pagePath": "pages/ai/ai",
+        "text": "AI识别"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

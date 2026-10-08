@@ -1,0 +1,93 @@
+<!-- 我的页：用户信息 + 菜单 + 社区评论 -->
+<view class="page-body">
+  <!-- Profile 头部 -->
+  <view class="profile-header">
+    <view class="profile-bubbles">
+      <view class="profile-bubble pb-1"></view>
+      <view class="profile-bubble pb-2"></view>
+      <view class="profile-bubble pb-3"></view>
+      <view class="profile-bubble pb-4"></view>
+    </view>
+    <view class="profile-top-bar" style="padding-top: {{statusBarHeight}}px;">
+      <view class="profile-top-btn" bindtap="onSetting">⚙</view>
+      <view class="profile-top-btn" bindtap="onMessage">🔔</view>
+    </view>
+    <view class="profile-avatar-wrap" bindtap="onUserTap">
+      <view class="profile-avatar">{{user ? '🌟' : '👤'}}</view>
+      <view class="profile-avatar-edit">📷</view>
+    </view>
+    <view class="profile-name" bindtap="onUserTap">{{user ? user.nickname : '点击登录'}}</view>
+    <view class="profile-id">{{user ? 'ID: ' + user.id : '登录后同步认养与积分数据'}}</view>
+    <view class="profile-level-badge" wx:if="{{user}}">🏅 {{user.level}}</view>
+  </view>
+
+  <!-- 统计卡 -->
+  <view class="profile-stats card">
+    <view class="profile-stat">
+      <view class="num">{{user ? user.stats.corals : 0}}</view>
+      <view class="lbl">认养珊瑚</view>
+    </view>
+    <view class="profile-stat">
+      <view class="num">{{user ? user.stats.growth : 0}}</view>
+      <view class="lbl">成长值</view>
+    </view>
+    <view class="profile-stat">
+      <view class="num">{{user ? user.stats.badges : 0}}</view>
+      <view class="lbl">勋章</view>
+    </view>
+    <view class="profile-stat">
+      <view class="num">{{user ? user.stats.learnHours : 0}}</view>
+      <view class="lbl">科普学时</view>
+    </view>
+  </view>
+
+  <!-- 菜单组 -->
+  <block wx:for="{{menuGroups}}" wx:key="title" wx:for-item="group">
+    <view class="profile-menu-group-title">{{group.title}}</view>
+    <view class="profile-menu card">
+      <block wx:for="{{group.items}}" wx:key="label" wx:for-item="item">
+        <!-- 联系客服：button open-type -->
+        <button wx:if="{{item.contact}}" class="menu-item contact-btn" open-type="contact">
+          <view class="menu-icon" style="background: {{item.bg}};">{{item.icon}}</view>
+          <view class="menu-item-text">
+            <view class="menu-label">{{item.label}}</view>
+            <view class="menu-desc">{{item.desc}}</view>
+          </view>
+          <text class="menu-arrow">›</text>
+        </button>
+        <view wx:else class="menu-item" hover-class="menu-hover" bindtap="onMenuTap" data-url="{{item.url}}">
+          <view class="menu-icon" style="background: {{item.bg}};">{{item.icon}}</view>
+          <view class="menu-item-text">
+            <view class="menu-label">{{item.label}}</view>
+            <view class="menu-desc">{{item.desc}}</view>
+          </view>
+          <text wx:if="{{item.badge}}" class="menu-badge {{item.badgeCls || ''}}">{{item.badge}}</text>
+          <text class="menu-arrow">›</text>
+        </view>
+      </block>
+    </view>
+  </block>
+
+  <!-- 退出登录 -->
+  <view wx:if="{{user}}" class="logout-btn" hover-class="btn-hover" bindtap="onLogout">退出登录</view>
+
+  <!-- 珊瑚社区 -->
+  <view class="section-title">珊瑚社区</view>
+  <view class="comments-section">
+    <view class="comment-input-area">
+      <input class="comment-input" placeholder="分享你对珊瑚的感悟..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="addComment" />
+      <view class="comment-send" hover-class="btn-hover" bindtap="addComment">发送</view>
+    </view>
+    <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+      <view class="comment-avatar">{{item.avatar}}</view>
+      <view class="comment-body">
+        <view class="comment-meta">
+          <text class="name">{{item.name}}</text>
+          <text class="time">{{item.time}}</text>
+        </view>
+        <view class="text">{{item.text}}</view>
+      </view>
+      <view wx:if="{{item.mine}}" class="comment-delete" bindtap="onDeleteComment" data-id="{{item.id}}">✕</view>
+    </view>
+  </view>
+</view>

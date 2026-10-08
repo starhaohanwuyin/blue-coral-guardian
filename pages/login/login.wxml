@@ -1,0 +1,73 @@
+<!-- 登录页：账号密码（与官网同一账号）+ 微信一键登录绑定 -->
+<view class="login-page">
+  <!-- 品牌区 -->
+  <view class="login-hero">
+    <view class="login-bubble lb-1"></view>
+    <view class="login-bubble lb-2"></view>
+    <view class="login-bubble lb-3"></view>
+    <view class="login-fish lf-1">🐠</view>
+    <view class="login-fish lf-2 reverse">🐟</view>
+    <view class="login-logo">🪸</view>
+    <view class="login-brand">蓝珊</view>
+    <view class="login-slogan">守护南海珊瑚 · 数据与官网实时同步</view>
+  </view>
+
+  <!-- 表单卡 -->
+  <view class="login-card card">
+    <!-- Tab 切换 -->
+    <view class="login-tabs">
+      <view class="login-tab {{mode === 'account' ? 'active' : ''}}" bindtap="switchMode" data-mode="account">账号登录</view>
+      <view class="login-tab {{mode === 'wechat' ? 'active' : ''}}" bindtap="switchMode" data-mode="wechat">微信登录</view>
+    </view>
+
+    <!-- 账号密码登录 -->
+    <block wx:if="{{mode === 'account' && !bindMode}}">
+      <view class="form-item">
+        <view class="form-icon">👤</view>
+        <input class="form-input" placeholder="官网账号 / 用户名" value="{{username}}" bindinput="onInput" data-field="username" />
+      </view>
+      <view class="form-item">
+        <view class="form-icon">🔒</view>
+        <input class="form-input" placeholder="密码" password value="{{password}}" bindinput="onInput" data-field="password" />
+      </view>
+      <view class="login-btn" hover-class="btn-hover" bindtap="onAccountLogin">登录蓝珊</view>
+      <view class="login-tip">使用与蓝珊官网相同的账号密码，认养、积分、珊瑚数据自动同步</view>
+    </block>
+
+    <!-- 微信一键登录 -->
+    <block wx:if="{{mode === 'wechat' && !bindMode}}">
+      <view class="wx-login-area">
+        <view class="wx-icon-wrap">💬</view>
+        <view class="wx-desc">使用微信快捷登录蓝珊账号</view>
+        <view class="login-btn wx-btn" hover-class="btn-hover" bindtap="onWxLogin">微信一键登录</view>
+        <view class="login-tip">若您的微信已绑定官网账号，将直接登录并同步数据</view>
+      </view>
+    </block>
+
+    <!-- 绑定官网账号（微信未绑定时显示） -->
+    <block wx:if="{{bindMode}}">
+      <view class="bind-title">绑定官网账号</view>
+      <view class="bind-desc">当前微信尚未绑定蓝珊账号，输入官网账号密码完成绑定，即可在小程序与官网间同步认养与积分数据</view>
+      <view class="form-item">
+        <view class="form-icon">👤</view>
+        <input class="form-input" placeholder="官网账号 / 用户名" value="{{username}}" bindinput="onInput" data-field="username" />
+      </view>
+      <view class="form-item">
+        <view class="form-icon">🔒</view>
+        <input class="form-input" placeholder="密码" password value="{{password}}" bindinput="onInput" data-field="password" />
+      </view>
+      <view class="login-btn" hover-class="btn-hover" bindtap="onBindSubmit">绑定并登录</view>
+      <view class="bind-cancel" bindtap="cancelBind">返回其他登录方式</view>
+      <view class="login-tip">还没有账号？请先在蓝珊官网注册后再绑定</view>
+    </block>
+  </view>
+
+  <!-- 协议 -->
+  <view class="login-agreement">
+    <view class="agree-check {{agreed ? 'checked' : ''}}" bindtap="toggleAgree">{{agreed ? '✓' : ''}}</view>
+    <text class="agree-text">我已阅读并同意</text>
+    <text class="agree-link" bindtap="viewAgreement" data-type="agreement">《用户协议》</text>
+    <text class="agree-text">与</text>
+    <text class="agree-link" bindtap="viewAgreement" data-type="privacy">《隐私政策》</text>
+  </view>
+</view>

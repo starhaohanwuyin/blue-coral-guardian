@@ -1,0 +1,29 @@
+<view class="badge-page">
+
+  <!-- 勋章墙 -->
+  <view class="badge-grid">
+    <view class="badge-card {{item.achieved ? '' : 'locked'}}" wx:for="{{badges}}" wx:key="name">
+      <view class="badge-icon {{item.achieved ? 'achieved' : 'locked'}}">{{item.icon}}</view>
+      <view class="badge-name">{{item.name}}</view>
+      <view class="badge-desc">{{item.desc}}</view>
+      <block wx:if="{{!item.achieved}}">
+        <view class="badge-progress-bar">
+          <view class="badge-progress-fill" style="width: {{item.progress}}%"></view>
+        </view>
+        <view class="badge-progress-text">{{item.progressText}}</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 勋章等级体系 -->
+  <view class="badge-level-card">
+    <view class="badge-level-title">🏆 勋章等级体系</view>
+    <view class="badge-level-row" wx:for="{{levels}}" wx:key="name">
+      <view class="badge-level-star {{item.color}}">{{item.stars}}</view>
+      <view>
+        <view class="badge-level-name">{{item.name}}</view>
+        <view class="badge-level-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+</view>

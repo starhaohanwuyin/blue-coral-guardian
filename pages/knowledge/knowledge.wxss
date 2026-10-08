@@ -1,0 +1,149 @@
+/* ============ 科普页 ============ */
+
+/* Hero */
+.knowledge-hero {
+  position: relative;
+  margin: 24rpx 32rpx;
+  padding: 56rpx 40rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, #0D47A1, #1565C0 60%, #0288D1);
+  overflow: hidden;
+  text-align: center;
+}
+.kh-title {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 700;
+}
+.kh-sub {
+  position: relative;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24rpx;
+  margin-top: 12rpx;
+}
+.kh-fish {
+  position: absolute;
+  font-size: 36rpx;
+  opacity: 0.5;
+  animation: swim 13s linear infinite;
+}
+.kh-fish.reverse { animation: swimR 15s linear infinite; }
+.kh-fish-1 { top: 30rpx; left: 0; }
+.kh-fish-2 { bottom: 30rpx; }
+.kh-bubble {
+  position: absolute;
+  right: 15%;
+  bottom: 30rpx;
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  animation: bubbleUp 7s linear infinite;
+}
+
+/* 种类横滑 */
+.coral-species-scroll {
+  white-space: nowrap;
+  padding-left: 32rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.coral-species-card {
+  display: inline-block;
+  width: 320rpx;
+  margin-right: 20rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+  vertical-align: top;
+}
+.coral-species-imgwrap { height: 220rpx; }
+.coral-species-img { width: 100%; height: 100%; }
+.coral-species-body { padding: 20rpx 24rpx 24rpx; }
+.coral-species-name { font-size: 30rpx; font-weight: 700; }
+.coral-species-latin {
+  font-size: 20rpx;
+  color: var(--primary);
+  font-style: italic;
+  margin-top: 4rpx;
+}
+.coral-species-desc {
+  font-size: 22rpx;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-top: 10rpx;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.coral-species-dist {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 12rpx;
+  white-space: normal;
+}
+
+/* 分类筛选 */
+.knowledge-categories {
+  display: flex;
+  white-space: nowrap;
+  padding: 8rpx 32rpx 24rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cat-chip {
+  display: inline-block;
+  padding: 12rpx 30rpx;
+  margin-right: 16rpx;
+  border-radius: 30rpx;
+  background: var(--card);
+  color: var(--text2);
+  font-size: 24rpx;
+  font-weight: 500;
+  border: 2rpx solid var(--border);
+}
+.cat-chip.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+/* 科普网格：双列 */
+.knowledge-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  padding: 0 32rpx 40rpx;
+}
+.knowledge-item {
+  width: calc((100% - 20rpx) / 2);
+  overflow: hidden;
+}
+.knowledge-item-imgwrap {
+  height: 200rpx;
+  overflow: hidden;
+}
+.knowledge-item-img { width: 100%; height: 100%; }
+.knowledge-item-body { padding: 20rpx 24rpx 28rpx; }
+.knowledge-item-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.knowledge-item-summary {
+  font-size: 22rpx;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-top: 10rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}

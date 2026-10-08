@@ -1,0 +1,473 @@
+/* ============ 首页 ============ */
+
+/* 海洋Hero场景 */
+.home-hero {
+  position: relative;
+  height: 640rpx;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0D47A1 0%, #1565C0 40%, #1E88E5 100%);
+}
+
+/* 光柱 */
+.hero-ray {
+  position: absolute;
+  top: -40rpx;
+  width: 120rpx;
+  height: 420rpx;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+  transform: rotate(18deg);
+  border-radius: 50%;
+}
+.ray-1 { left: 120rpx; }
+.ray-2 { left: 420rpx; width: 80rpx; height: 360rpx; opacity: 0.7; }
+
+/* 鱼群 */
+.hero-fish {
+  position: absolute;
+  font-size: 44rpx;
+  opacity: 0.85;
+  animation: swim 12s linear infinite;
+}
+.hero-fish.reverse { animation: swimR 15s linear infinite; animation-delay: 3s; }
+.fish-1 { top: 160rpx; }
+.fish-2 { top: 90rpx; font-size: 36rpx; animation-delay: 5s; }
+.fish-3 { top: 240rpx; font-size: 30rpx; animation-delay: 2s; animation-duration: 10s; }
+
+/* 海底珊瑚群 */
+.hero-coral {
+  position: absolute;
+  bottom: 30rpx;
+  transform-origin: bottom center;
+  animation: sway 5s ease-in-out infinite;
+}
+.coral-1 { left: 40rpx; font-size: 64rpx; animation-duration: 4s; }
+.coral-2 { left: 200rpx; font-size: 48rpx; animation-name: sway2; animation-duration: 5s; }
+.coral-3 { left: 520rpx; font-size: 40rpx; animation-duration: 6s; }
+.coral-4 { right: 40rpx; font-size: 52rpx; animation-name: sway2; animation-duration: 3.5s; }
+
+/* 气泡 */
+.hero-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  animation: bubbleUp linear infinite;
+}
+.bubble-1 { left: 180rpx; bottom: 120rpx; width: 12rpx; height: 12rpx; animation-duration: 6s; }
+.bubble-2 { left: 480rpx; bottom: 100rpx; width: 8rpx; height: 8rpx; animation-duration: 8s; animation-delay: 2s; }
+.bubble-3 { left: 620rpx; bottom: 140rpx; width: 10rpx; height: 10rpx; animation-duration: 7s; animation-delay: 4s; }
+.bubble-4 { left: 300rpx; bottom: 90rpx; width: 6rpx; height: 6rpx; animation-duration: 9s; animation-delay: 1s; }
+
+/* 海床 */
+.hero-seafloor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 110rpx;
+  background: radial-gradient(ellipse at 30% 100%, rgba(13, 71, 161, 0.65) 0%, rgba(13, 71, 161, 0) 70%),
+    radial-gradient(ellipse at 75% 100%, rgba(13, 71, 161, 0.55) 0%, rgba(13, 71, 161, 0) 70%);
+}
+
+/* 认养入口卡 */
+.adopt-card {
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: 40rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 16rpx 80rpx rgba(0, 0, 0, 0.12);
+}
+.adopt-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+.adopt-desc {
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 24rpx;
+}
+.energy-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.energy-fill {
+  flex: 1;
+  height: 16rpx;
+  background: #E8EDF5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.energy-fill-inner {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  transition: width 1s ease;
+}
+.energy-label {
+  font-size: 24rpx;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.btn-adopt {
+  width: 100%;
+  padding: 22rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8rpx 40rpx rgba(30, 136, 229, 0.3);
+  box-sizing: border-box;
+}
+.btn-hover { transform: scale(0.97); opacity: 0.9; }
+
+/* 平台数据 */
+.stats-strip {
+  display: flex;
+  justify-content: space-around;
+  padding: 36rpx 32rpx;
+  background: var(--card);
+  margin: 24rpx 24rpx 0;
+  border-radius: var(--radius);
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+.stat-label {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 4rpx;
+}
+
+/* 碳汇贡献卡 */
+.carbon-home-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin: 24rpx;
+  padding: 28rpx 32rpx;
+}
+.carbon-home-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: rgba(76, 175, 80, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex-shrink: 0;
+}
+.carbon-home-info { flex: 1; min-width: 0; }
+.carbon-home-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.carbon-val { color: var(--green); }
+.carbon-home-desc {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+
+/* 快捷功能 */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 24rpx;
+  gap: 20rpx;
+}
+.action-item {
+  width: calc((100% - 60rpx) / 4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28rpx 12rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+  box-sizing: border-box;
+}
+.action-hover { transform: scale(0.95); }
+.action-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14rpx;
+  font-size: 40rpx;
+}
+.action-name {
+  font-size: 24rpx;
+  color: var(--text2);
+}
+
+/* 我的珊瑚横滑 */
+.my-coral-scroll {
+  white-space: nowrap;
+  padding: 0 24rpx 24rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.coral-card {
+  display: inline-block;
+  width: 340rpx;
+  margin-right: 20rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+  vertical-align: top;
+}
+.card-hover { transform: scale(0.97); }
+.coral-card-imgwrap { position: relative; height: 220rpx; }
+.coral-card-img { width: 100%; height: 100%; }
+.coral-badge {
+  position: absolute;
+  left: 16rpx;
+  bottom: 16rpx;
+  padding: 6rpx 16rpx;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 12rpx;
+}
+.coral-card-body { padding: 20rpx 24rpx 24rpx; }
+.coral-card-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.coral-card-sub {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 6rpx;
+}
+
+/* 核心技术 */
+.tech-showcase { padding: 0 24rpx; }
+.tech-card {
+  margin-bottom: 24rpx;
+  overflow: hidden;
+}
+.tech-card-imgwrap { position: relative; height: 300rpx; }
+.tech-card-img { width: 100%; height: 100%; }
+.tech-label {
+  position: absolute;
+  left: 24rpx;
+  bottom: 24rpx;
+  padding: 10rpx 24rpx;
+  background: rgba(21, 101, 192, 0.85);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: 16rpx;
+}
+.tech-card-body { padding: 24rpx 28rpx 32rpx; }
+.tech-card-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.tech-card-desc {
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-top: 12rpx;
+}
+.tech-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+.tech-tag {
+  padding: 6rpx 18rpx;
+  background: rgba(30, 136, 229, 0.08);
+  color: var(--primary);
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+/* 核心团队 */
+.team-section { padding: 0 24rpx; }
+.team-intro {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24rpx 28rpx;
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.7;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.team-scroll {
+  white-space: nowrap;
+  margin-top: 20rpx;
+  width: 100%;
+}
+.team-member {
+  display: inline-block;
+  width: 240rpx;
+  margin-right: 20rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28rpx 20rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+  vertical-align: top;
+}
+.team-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: var(--border);
+}
+.team-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-top: 16rpx;
+}
+.team-role {
+  font-size: 22rpx;
+  color: var(--primary);
+  margin-top: 4rpx;
+}
+.team-desc {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 10rpx;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+/* 团队视频 */
+.team-video-section {
+  margin: 0 24rpx;
+  overflow: hidden;
+}
+.video-wrapper { position: relative; height: 360rpx; }
+.video-cover { width: 100%; height: 100%; }
+.play-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play-triangle {
+  width: 0;
+  height: 0;
+  margin-left: 12rpx;
+  border-top: 22rpx solid transparent;
+  border-bottom: 22rpx solid transparent;
+  border-left: 36rpx solid #fff;
+}
+.video-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40rpx 24rpx 20rpx;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.55));
+  color: #fff;
+  font-size: 24rpx;
+}
+.video-caption {
+  padding: 20rpx 28rpx;
+  font-size: 24rpx;
+  color: var(--text3);
+  text-align: center;
+}
+
+/* 推文&资讯 */
+.articles-section { padding: 0 24rpx; }
+.article-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+.article-cover {
+  width: 180rpx;
+  height: 130rpx;
+  border-radius: 20rpx;
+  flex-shrink: 0;
+  background: var(--border);
+}
+.article-body { flex: 1; min-width: 0; }
+.article-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 12rpx;
+}
+.article-date {
+  font-size: 20rpx;
+  color: var(--text3);
+}
+.wechat-icon { font-size: 32rpx; flex-shrink: 0; }
+
+/* 最新动态 */
+.news-list {
+  padding: 0 24rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.news-item {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx;
+}
+.news-img {
+  width: 160rpx;
+  height: 120rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+  background: var(--border);
+}
+.news-content { flex: 1; min-width: 0; }
+.news-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.news-sub {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 10rpx;
+}

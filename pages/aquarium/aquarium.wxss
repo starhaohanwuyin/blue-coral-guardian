@@ -1,0 +1,187 @@
+/* ================= 水族箱页 ================= */
+.aqua-page {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+/* 动画场景 */
+.aqua-scene {
+  height: 400rpx;
+  background: linear-gradient(180deg, #0D47A1, #1565C0, #1E88E5);
+  border-radius: 32rpx;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32rpx;
+}
+.aqua-floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80rpx;
+  background: linear-gradient(0deg, rgba(13, 71, 161, 0.6), transparent);
+}
+.aq-emoji {
+  position: absolute;
+  font-size: 56rpx;
+}
+.aqua-coral1 {
+  bottom: 20rpx;
+  left: 15%;
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.aqua-coral2 {
+  bottom: 16rpx;
+  left: 50%;
+  animation: sway2 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.aqua-coral3 {
+  bottom: 24rpx;
+  right: 15%;
+  animation: sway 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.aqua-fish1 {
+  top: 25%;
+  animation: swim 10s linear infinite;
+}
+.aqua-fish2 {
+  top: 55%;
+  animation: swimR 12s linear infinite;
+  animation-delay: 2s;
+}
+.aqua-fish3 {
+  top: 40%;
+  animation: swim 8s linear infinite;
+  animation-delay: 4s;
+  font-size: 44rpx;
+}
+.aq-bubble {
+  position: absolute;
+  bottom: 60rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  animation: bubbleUp 5s linear infinite;
+}
+.aq-bubble.b1 { left: 20%; }
+.aq-bubble.b2 { left: 35%; animation-delay: 1.5s; width: 12rpx; height: 12rpx; }
+.aq-bubble.b3 { left: 62%; animation-delay: 3s; width: 10rpx; height: 10rpx; }
+.aq-bubble.b4 { left: 80%; animation-delay: 0.8s; width: 14rpx; height: 14rpx; }
+
+/* 水质数据 */
+.aqua-data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  margin-bottom: 32rpx;
+}
+.aqua-data-item {
+  background: rgba(30, 136, 229, 0.06);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  text-align: center;
+}
+.aqua-data-item .val {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+.aqua-data-item .lbl {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 4rpx;
+}
+
+/* AI 诊断卡 */
+.aqua-ai-card {
+  background: rgba(30, 136, 229, 0.04);
+  border-radius: 28rpx;
+  padding: 28rpx;
+  margin-bottom: 32rpx;
+}
+.aqua-ai-head {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.aqua-ai-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(0, 188, 212, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+.aqua-ai-title {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.aqua-ai-sub {
+  font-size: 22rpx;
+  color: var(--text3);
+}
+.aqua-ai-row {
+  display: flex;
+  gap: 16rpx;
+}
+.aqua-ai-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  text-align: center;
+}
+.aqua-ai-status {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.aqua-ai-status.good { color: var(--green); }
+.aqua-ai-status.warn { color: #FFC107; }
+.aqua-ai-name {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 4rpx;
+}
+.aqua-ai-btn {
+  width: 100%;
+  margin-top: 20rpx;
+  padding: 20rpx 0;
+  border: none;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.aqua-ai-btn::after { border: none; }
+
+/* 操作按钮行 */
+.aqua-btn-row {
+  display: flex;
+  gap: 20rpx;
+}
+.aqua-btn {
+  flex: 1;
+  padding: 24rpx 0;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.aqua-btn::after { border: none; }
+.aqua-btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  box-shadow: 0 8rpx 32rpx rgba(30, 136, 229, 0.25);
+}
+.aqua-btn.secondary {
+  background: var(--card);
+  color: var(--primary);
+  border: 3rpx solid var(--primary);
+}
+.btn-hover { transform: scale(0.97); opacity: 0.9; }
