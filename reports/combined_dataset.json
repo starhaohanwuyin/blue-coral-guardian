@@ -11,7 +11,7 @@
     "test/healthy": 510,
     "test/dead": 44
   },
-  "junctions": 24,
+  "junctions": 0,
   "classes": [
     "bleached",
     "healthy",
