@@ -51,6 +51,7 @@ def run(cmd, logfile):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--folds", type=int, default=3)
+    ap.add_argument("--redo", action="store_true", help="重跑已完成的折")
     ap.add_argument("--frac", type=float, default=0.7)
     ap.add_argument("--epochs", type=int, default=14)
     ap.add_argument("--img-size", type=int, default=320)
@@ -64,6 +65,15 @@ def main():
     results = []
     for k in range(1, args.folds + 1):
         tag = f"_cv{k}"
+        import json as _json
+        _mp = ROOT / "reports" / ("species_ip" + tag) / "metrics.json"
+        if _mp.exists() and not args.redo:
+            _j = _json.loads(_mp.read_text(encoding="utf-8"))
+            log(f"第 {k} 折已有结果，跳过：Top-1 = {_j['test_top1']:.4%}")
+            results.append({"fold": k, "seed": k, "frac": args.frac,
+                            "top1": _j["test_top1"], "macroF1": _j["test_macro_f1"],
+                            "weights": str(ROOT / "weights" / ("species_ip" + tag))})
+            continue
         log(f"\n--- 第 {k}/{args.folds} 折（seed={k}，训练集 {args.frac:.0%}）---")
         rc = run([PY, "-u", "train.py", "--task", "species_ip", "--data-dir", str(IMG_ROOT),
                   "--img-size", str(args.img_size), "--batch-size", str(args.batch),
