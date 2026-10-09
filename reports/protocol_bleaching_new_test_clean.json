@@ -1,0 +1,171 @@
+{
+  "task": "bleaching_new",
+  "split": "test",
+  "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_new\\best.pt",
+  "temperature": 0.6050282120704651,
+  "n_samples": 168,
+  "n_classes": 2,
+  "top1": 0.994048,
+  "top1Ci95": [
+    0.982143,
+    1.0
+  ],
+  "macroF1": 0.993986,
+  "macroF1Ci95": [
+    0.981066,
+    1.0
+  ],
+  "ece": 0.010729,
+  "reliabilityBins": [
+    {
+      "bin": "0.67-0.73",
+      "n": 1,
+      "avgConf": 0.7179,
+      "acc": 1.0,
+      "gap": -0.2821
+    },
+    {
+      "bin": "0.87-0.93",
+      "n": 2,
+      "avgConf": 0.8963,
+      "acc": 0.5,
+      "gap": 0.3963
+    },
+    {
+      "bin": "0.93-1.00",
+      "n": 165,
+      "avgConf": 0.9956,
+      "acc": 1.0,
+      "gap": -0.0044
+    }
+  ],
+  "coverageCurve": {
+    "byCoverage": [
+      {
+        "coverage": 0.5,
+        "threshold": 0.9983,
+        "accuracy": 1.0,
+        "ci": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.7024,
+        "threshold": 0.9973,
+        "accuracy": 1.0,
+        "ci": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.7976,
+        "threshold": 0.9962,
+        "accuracy": 1.0,
+        "ci": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.8988,
+        "threshold": 0.9927,
+        "accuracy": 1.0,
+        "ci": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.9524,
+        "threshold": 0.9654,
+        "accuracy": 1.0,
+        "ci": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "coverage": 1.0,
+        "threshold": 0.7179,
+        "accuracy": 0.994048,
+        "ci": [
+          0.994048,
+          0.982143,
+          1.0
+        ]
+      }
+    ],
+    "byTarget": [
+      {
+        "target": 0.99,
+        "coverage": 1.0,
+        "threshold": 0.7179,
+        "accuracy": 0.994048
+      },
+      {
+        "target": 0.995,
+        "coverage": 0.9881,
+        "threshold": 0.9168,
+        "accuracy": 1.0
+      },
+      {
+        "target": 0.999,
+        "coverage": 0.9881,
+        "threshold": 0.9168,
+        "accuracy": 1.0
+      }
+    ]
+  },
+  "perClass": {
+    "Bleached": {
+      "n": 93,
+      "precision": 1.0,
+      "recall": 0.9892,
+      "f1": 0.9946,
+      "acc": 0.9892,
+      "accCi": [
+        0.9677,
+        1.0
+      ]
+    },
+    "Healthy": {
+      "n": 75,
+      "precision": 0.9868,
+      "recall": 1.0,
+      "f1": 0.9934,
+      "acc": 1.0,
+      "accCi": [
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "confusionTop": [
+    {
+      "count": 1,
+      "true": "Bleached",
+      "pred": "Healthy"
+    }
+  ],
+  "confusionMatrix": [
+    [
+      92,
+      1
+    ],
+    [
+      0,
+      75
+    ]
+  ],
+  "classOrder": [
+    "Bleached",
+    "Healthy"
+  ]
+}

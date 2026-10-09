@@ -1,0 +1,24 @@
+{
+  "model": "bleaching_all",
+  "split": "test",
+  "n": 257,
+  "nBleached": 135,
+  "nHealthy": 122,
+  "bleachedRecall": 0.97037,
+  "bleachedPrecision": 0.992424,
+  "healthyRecall": 0.991803,
+  "binaryAccuracy": 0.980545,
+  "bestThreshold": {
+    "th": 0.3,
+    "recall": 0.9925925925925926,
+    "precision": 0.9925925925925926,
+    "acc2": 0.9922178988326849
+  },
+  "confusion": {
+    "Bleached→bleached": 131,
+    "Bleached→healthy": 4,
+    "Healthy→healthy": 121,
+    "Healthy→bleached": 1
+  },
+  "note": "该数据集与本项目原训练数据哈希零重叠，属独立测试集"
+}

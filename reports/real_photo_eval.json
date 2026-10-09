@@ -1,0 +1,500 @@
+{
+  "dir": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\semporna_photos",
+  "n": 24,
+  "qualityCounts": {
+    "good": 24
+  },
+  "byQuality": {
+    "good": {
+      "n": 24,
+      "contrastMean": 0.19509583333333333,
+      "aliveMean": 0.367118157280816,
+      "coralTotalMean": 0.4022476620144314,
+      "aliveStdev": 0.1919464173394694
+    }
+  },
+  "nWithExifDepth": 0,
+  "rows": [
+    {
+      "file": "102767934_52446.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2279,
+      "rgRatio": 0.6549,
+      "saturation": 0.186,
+      "alive": 0.450982666015625,
+      "bleached": 0.0,
+      "dead": 0.06124267578125,
+      "algae": 0.294232177734375,
+      "substrate": 0.15086669921875,
+      "coralTotal": 0.512225341796875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "107921441_22034.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1581,
+      "rgRatio": 0.8066,
+      "saturation": 0.1556,
+      "alive": 0.5076344807942708,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.0008341471354166666,
+      "substrate": 0.49053955078125,
+      "coralTotal": 0.5076344807942708,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "109110868_77843.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1827,
+      "rgRatio": 0.6521,
+      "saturation": 0.2258,
+      "alive": 0.3297017415364583,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.10980224609375,
+      "substrate": 0.5337117513020834,
+      "coralTotal": 0.3297017415364583,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "109606821_87290.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2447,
+      "rgRatio": 0.4916,
+      "saturation": 0.2717,
+      "alive": 0.2976735432942708,
+      "bleached": 0.13033040364583334,
+      "dead": 0.0,
+      "algae": 0.018096923828125,
+      "substrate": 0.38213094075520837,
+      "coralTotal": 0.42800394694010413,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "110190622_65425.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2021,
+      "rgRatio": 0.6859,
+      "saturation": 0.1974,
+      "alive": 0.4332936604817708,
+      "bleached": 0.0,
+      "dead": 0.0002543131510416667,
+      "algae": 0.0015920003255208333,
+      "substrate": 0.5502573649088542,
+      "coralTotal": 0.4335479736328125,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "111214883_28293.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1149,
+      "rgRatio": 0.6757,
+      "saturation": 0.112,
+      "alive": 0.11241658528645834,
+      "bleached": 0.00011698404947916667,
+      "dead": 0.0,
+      "algae": 0.3396860758463542,
+      "substrate": 0.212188720703125,
+      "coralTotal": 0.11253356933593751,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "111641765_57092.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1241,
+      "rgRatio": 1.4623,
+      "saturation": 0.2743,
+      "alive": 0.25942484537760413,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.18702189127604166,
+      "substrate": 0.2948150634765625,
+      "coralTotal": 0.25942484537760413,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "120617494_25579.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1988,
+      "rgRatio": 0.8494,
+      "saturation": 0.1296,
+      "alive": 0.7076416015625,
+      "bleached": 0.0128021240234375,
+      "dead": 0.14141845703125,
+      "algae": 0.0005035400390625,
+      "substrate": 0.13763427734375,
+      "coralTotal": 0.8618621826171875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "122657865_50042.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.237,
+      "rgRatio": 0.2852,
+      "saturation": 0.3341,
+      "alive": 0.48651123046875,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.043192545572916664,
+      "substrate": 0.47029622395833337,
+      "coralTotal": 0.48651123046875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "124067142_14807.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1567,
+      "rgRatio": 0.2642,
+      "saturation": 0.4464,
+      "alive": 0.2905731201171875,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.004628499348958333,
+      "substrate": 0.627349853515625,
+      "coralTotal": 0.2905731201171875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "124067145_21499.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2542,
+      "rgRatio": 0.7261,
+      "saturation": 0.2306,
+      "alive": 0.228973388671875,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.0,
+      "substrate": 0.6581624348958333,
+      "coralTotal": 0.228973388671875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "126037050_3535.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.238,
+      "rgRatio": 0.7011,
+      "saturation": 0.2292,
+      "alive": 0.3293914794921875,
+      "bleached": 0.0,
+      "dead": 0.018702189127604164,
+      "algae": 0.0,
+      "substrate": 0.650726318359375,
+      "coralTotal": 0.3480936686197917,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "129979243_80133.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1649,
+      "rgRatio": 1.0139,
+      "saturation": 0.0523,
+      "alive": 0.22517903645833334,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.12038675944010417,
+      "substrate": 0.6215057373046875,
+      "coralTotal": 0.22517903645833334,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "130079903_60845.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2143,
+      "rgRatio": 0.7964,
+      "saturation": 0.1172,
+      "alive": 0.3635813395182292,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.060938517252604164,
+      "substrate": 0.5754801432291667,
+      "coralTotal": 0.3635813395182292,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "130102640_43987.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1825,
+      "rgRatio": 0.719,
+      "saturation": 0.2219,
+      "alive": 0.03685506184895833,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.4314778645833333,
+      "substrate": 0.3416697184244792,
+      "coralTotal": 0.03685506184895833,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "130723077_1946.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1925,
+      "rgRatio": 0.5489,
+      "saturation": 0.2792,
+      "alive": 0.7486165364583334,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.006368001302083333,
+      "substrate": 0.24501546223958334,
+      "coralTotal": 0.7486165364583334,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "130732801_14456.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1924,
+      "rgRatio": 0.7259,
+      "saturation": 0.1916,
+      "alive": 0.087860107421875,
+      "bleached": 0.0095672607421875,
+      "dead": 0.3334554036458333,
+      "algae": 0.001800537109375,
+      "substrate": 0.027069091796874997,
+      "coralTotal": 0.4308827718098958,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "134932124_47634.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2632,
+      "rgRatio": 0.9,
+      "saturation": 0.1352,
+      "alive": 0.5166727701822916,
+      "bleached": 0.0,
+      "dead": 0.0004170735677083333,
+      "algae": 0.0360870361328125,
+      "substrate": 0.4172210693359375,
+      "coralTotal": 0.51708984375,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "135761075_7480.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1456,
+      "rgRatio": 0.6744,
+      "saturation": 0.196,
+      "alive": 0.7677357991536458,
+      "bleached": 0.0,
+      "dead": 1.52587890625e-05,
+      "algae": 0.0,
+      "substrate": 0.23224894205729169,
+      "coralTotal": 0.7677510579427083,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "140242579_24374.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1602,
+      "rgRatio": 0.2347,
+      "saturation": 0.4496,
+      "alive": 0.4757080078125,
+      "bleached": 0.005208333333333333,
+      "dead": 0.0011850992838541667,
+      "algae": 0.07091267903645833,
+      "substrate": 0.28697713216145837,
+      "coralTotal": 0.4821014404296875,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "142538763_66154.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2013,
+      "rgRatio": 0.9148,
+      "saturation": 0.1492,
+      "alive": 0.3450978597005208,
+      "bleached": 0.0,
+      "dead": 0.11775716145833333,
+      "algae": 0.0,
+      "substrate": 0.5195159912109375,
+      "coralTotal": 0.46285502115885413,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "142538765_1775.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.1795,
+      "rgRatio": 0.4138,
+      "saturation": 0.3011,
+      "alive": 0.4271443684895833,
+      "bleached": 0.0009053548177083334,
+      "dead": 0.009730021158854166,
+      "algae": 0.007909138997395834,
+      "substrate": 0.539825439453125,
+      "coralTotal": 0.4377797444661458,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "142539299_60398.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2119,
+      "rgRatio": 0.4664,
+      "saturation": 0.2835,
+      "alive": 0.20408121744791669,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.16169230143229166,
+      "substrate": 0.6342264811197917,
+      "coralTotal": 0.20408121744791669,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    },
+    {
+      "file": "142539538_33847.jpg",
+      "quality": "good",
+      "usable": true,
+      "contrast": 0.2348,
+      "rgRatio": 0.3822,
+      "saturation": 0.359,
+      "alive": 0.1780853271484375,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.088104248046875,
+      "substrate": 0.7338104248046874,
+      "coralTotal": 0.1780853271484375,
+      "exif": {
+        "datetime": null,
+        "make": null,
+        "model": null,
+        "depthM": null
+      }
+    }
+  ],
+  "note": "真实照片评估，用于验证合成降质结论；样本量小时仅作趋势判读"
+}

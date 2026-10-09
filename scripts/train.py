@@ -212,7 +212,7 @@ def selective_report(probs: np.ndarray, y: np.ndarray, target=0.999):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--task", required=True,
-                    choices=["bleaching", "bleaching_ip", "species", "species_ip"])
+                    choices=["bleaching", "bleaching_ip", "bleaching_new", "bleaching_all", "species", "species_ip"])
     ap.add_argument("--backbone", default="convnext_tiny",
                     choices=["convnext_tiny", "efficientnet_b0", "resnet50", "resnet18"])
     ap.add_argument("--img-size", type=int, default=224)

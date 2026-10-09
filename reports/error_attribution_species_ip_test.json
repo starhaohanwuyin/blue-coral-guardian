@@ -1,0 +1,314 @@
+{
+  "task": "species_ip",
+  "split": "test",
+  "n": 1116,
+  "nError": 152,
+  "errorRate": 0.13620071684587814,
+  "perClassError": {
+    "Acropora": {
+      "n": 128,
+      "err": 14,
+      "rate": 0.109375
+    },
+    "Ctenactis": {
+      "n": 11,
+      "err": 3,
+      "rate": 0.2727272727272727
+    },
+    "Cycloseris": {
+      "n": 10,
+      "err": 8,
+      "rate": 0.8
+    },
+    "Cynarina": {
+      "n": 9,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Diploastrea": {
+      "n": 13,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Duncanopsammia": {
+      "n": 41,
+      "err": 13,
+      "rate": 0.3170731707317073
+    },
+    "Echinopora": {
+      "n": 39,
+      "err": 8,
+      "rate": 0.20512820512820512
+    },
+    "Euphyllia": {
+      "n": 22,
+      "err": 2,
+      "rate": 0.09090909090909091
+    },
+    "Favites": {
+      "n": 55,
+      "err": 8,
+      "rate": 0.14545454545454545
+    },
+    "Fimbriaphyllia": {
+      "n": 62,
+      "err": 7,
+      "rate": 0.11290322580645161
+    },
+    "Fungia": {
+      "n": 7,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Galaxea": {
+      "n": 42,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Gardineroseris": {
+      "n": 14,
+      "err": 3,
+      "rate": 0.21428571428571427
+    },
+    "Goniastrea": {
+      "n": 19,
+      "err": 4,
+      "rate": 0.21052631578947367
+    },
+    "Halomitra": {
+      "n": 13,
+      "err": 1,
+      "rate": 0.07692307692307693
+    },
+    "Heliofungia": {
+      "n": 55,
+      "err": 2,
+      "rate": 0.03636363636363636
+    },
+    "Herpolitha": {
+      "n": 19,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Hydnophora": {
+      "n": 101,
+      "err": 26,
+      "rate": 0.25742574257425743
+    },
+    "Isopora": {
+      "n": 34,
+      "err": 1,
+      "rate": 0.029411764705882353
+    },
+    "Lobophyllia": {
+      "n": 20,
+      "err": 2,
+      "rate": 0.1
+    },
+    "Merulina": {
+      "n": 27,
+      "err": 1,
+      "rate": 0.037037037037037035
+    },
+    "Mycedium": {
+      "n": 17,
+      "err": 2,
+      "rate": 0.11764705882352941
+    },
+    "Oulophyllia": {
+      "n": 17,
+      "err": 1,
+      "rate": 0.058823529411764705
+    },
+    "Pachyseris": {
+      "n": 17,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Pavona": {
+      "n": 34,
+      "err": 15,
+      "rate": 0.4411764705882353
+    },
+    "Pectinia": {
+      "n": 26,
+      "err": 0,
+      "rate": 0.0
+    },
+    "Physogyra": {
+      "n": 17,
+      "err": 3,
+      "rate": 0.17647058823529413
+    },
+    "Plerogyra": {
+      "n": 55,
+      "err": 3,
+      "rate": 0.05454545454545454
+    },
+    "Pocillopora": {
+      "n": 78,
+      "err": 4,
+      "rate": 0.05128205128205128
+    },
+    "Polyphyllia": {
+      "n": 15,
+      "err": 8,
+      "rate": 0.5333333333333333
+    },
+    "Porites": {
+      "n": 59,
+      "err": 6,
+      "rate": 0.1016949152542373
+    },
+    "Trachyphyllia": {
+      "n": 8,
+      "err": 1,
+      "rate": 0.125
+    },
+    "Tubastraea": {
+      "n": 22,
+      "err": 2,
+      "rate": 0.09090909090909091
+    },
+    "Turbinaria": {
+      "n": 10,
+      "err": 4,
+      "rate": 0.4
+    }
+  },
+  "topConfusions": [
+    {
+      "true": "Duncanopsammia",
+      "pred": "Galaxea",
+      "count": 4
+    },
+    {
+      "true": "Pavona",
+      "pred": "Cycloseris",
+      "count": 4
+    },
+    {
+      "true": "Porites",
+      "pred": "Isopora",
+      "count": 4
+    },
+    {
+      "true": "Acropora",
+      "pred": "Isopora",
+      "count": 3
+    },
+    {
+      "true": "Acropora",
+      "pred": "Porites",
+      "count": 3
+    },
+    {
+      "true": "Fimbriaphyllia",
+      "pred": "Lobophyllia",
+      "count": 3
+    },
+    {
+      "true": "Fimbriaphyllia",
+      "pred": "Plerogyra",
+      "count": 3
+    },
+    {
+      "true": "Hydnophora",
+      "pred": "Goniastrea",
+      "count": 3
+    },
+    {
+      "true": "Hydnophora",
+      "pred": "Lobophyllia",
+      "count": 3
+    },
+    {
+      "true": "Hydnophora",
+      "pred": "Galaxea",
+      "count": 3
+    },
+    {
+      "true": "Hydnophora",
+      "pred": "Physogyra",
+      "count": 3
+    },
+    {
+      "true": "Pavona",
+      "pred": "Goniastrea",
+      "count": 3
+    },
+    {
+      "true": "Polyphyllia",
+      "pred": "Heliofungia",
+      "count": 3
+    },
+    {
+      "true": "Polyphyllia",
+      "pred": "Physogyra",
+      "count": 3
+    },
+    {
+      "true": "Acropora",
+      "pred": "Favites",
+      "count": 2
+    },
+    {
+      "true": "Ctenactis",
+      "pred": "Fungia",
+      "count": 2
+    },
+    {
+      "true": "Cycloseris",
+      "pred": "Pavona",
+      "count": 2
+    },
+    {
+      "true": "Cycloseris",
+      "pred": "Mycedium",
+      "count": 2
+    },
+    {
+      "true": "Cycloseris",
+      "pred": "Fungia",
+      "count": 2
+    },
+    {
+      "true": "Duncanopsammia",
+      "pred": "Favites",
+      "count": 2
+    }
+  ],
+  "highConfidenceErrors": 23,
+  "rejectionCurve": [
+    {
+      "threshold": 0.0,
+      "automation": 1.0,
+      "autoAccuracy": 0.8637992831541219
+    },
+    {
+      "threshold": 0.5,
+      "automation": 0.9310035842293907,
+      "autoAccuracy": 0.9066410009624639
+    },
+    {
+      "threshold": 0.7,
+      "automation": 0.8351254480286738,
+      "autoAccuracy": 0.9474248927038627
+    },
+    {
+      "threshold": 0.8,
+      "automation": 0.7831541218637993,
+      "autoAccuracy": 0.9610983981693364
+    },
+    {
+      "threshold": 0.9,
+      "automation": 0.7025089605734767,
+      "autoAccuracy": 0.9706632653061225
+    },
+    {
+      "threshold": 0.95,
+      "automation": 0.6182795698924731,
+      "autoAccuracy": 0.9826086956521739
+    }
+  ]
+}

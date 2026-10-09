@@ -37,6 +37,11 @@ ROOT = Path(__file__).resolve().parent.parent
 SEG_DIR = ROOT / "weights" / "segformer_coralscapes"
 SEG_DIR_INV = ROOT / "weights" / "segformer_coralscapes_degradinv"
 SPECIES_CKPT = ROOT / "weights" / "species_ip" / "best.pt"
+# 白化状态分类模型（全图级）。
+# ⚠️ 实测：分割模型（Model A）的白化像素占比在第三方数据上 AUC 仅 0.46（无效），
+#    因此「白化程度」必须由分类模型给出，不能用 cover.bleachedPct。
+#    优先级：bleaching_all（旧域+新域合并，三域最优）> bleaching_ip > bleaching
+BLEACH_DIRS = ["bleaching_all", "bleaching_ip", "bleaching"]
 
 try:
     from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -71,7 +76,9 @@ DISCLAIMER = ("本结果由AI模型给出，仅供保育决策参考，不作为
 
 SEG = None
 SPECIES = None
+BLEACH = None                   # 白化状态分类模型
 SEG_LOADED_DIR = None          # 实际加载的分割权重目录（供 /health 如实报告）
+BLEACH_LOADED = None
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 app = FastAPI(title="蓝珊 · 珊瑚礁智能评估服务", version="2.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -118,6 +125,76 @@ def load_models(prefer_degradinv=False):
             print(f"[跳过] 属分类模型加载失败: {e}")
     else:
         print("[跳过] 属分类模型未训练（仅输出覆盖率）")
+
+    # ---- 白化状态分类模型 ----
+    global BLEACH, BLEACH_LOADED
+    for name in BLEACH_DIRS:
+        w = ROOT / "weights" / name / "best.pt"
+        if not w.exists():
+            continue
+        try:
+            import torchvision.transforms as T
+            from torchvision import models
+            import torch.nn as nn
+            ck = torch.load(w, map_location=DEVICE, weights_only=False)
+            classes = ck["classes"]
+            size = ck.get("img_size", 224)
+            bb = ck["backbone"]
+            if bb == "convnext_tiny":
+                m = models.convnext_tiny(weights=None)
+                m.classifier[2] = nn.Linear(m.classifier[2].in_features, len(classes))
+            elif bb == "efficientnet_b0":
+                m = models.efficientnet_b0(weights=None)
+                m.classifier[1] = nn.Linear(m.classifier[1].in_features, len(classes))
+            else:
+                m = models.resnet50(weights=None)
+                m.fc = nn.Linear(m.fc.in_features, len(classes))
+            m.load_state_dict(ck["model"]); m.to(DEVICE).eval()
+            mp = ROOT / "reports" / name / "metrics.json"
+            Tt = (float(json.loads(mp.read_text(encoding="utf-8")).get("temperature", 1.0))
+                  if mp.exists() else 1.0)
+            BLEACH = {"model": m, "classes": classes, "size": size, "temp": Tt, "name": name,
+                      "tf": T.Compose([T.Resize(int(size * 1.14)), T.CenterCrop(size),
+                                       T.ToTensor(),
+                                       T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
+            BLEACH_LOADED = name
+            print(f"[加载] 白化分类模型: {name}  类别={classes}  T={Tt:.4f}")
+            break
+        except Exception as e:
+            print(f"[跳过] 白化模型 {name} 加载失败: {e}")
+    if BLEACH is None:
+        print("[跳过] 白化分类模型未就绪（白化评估将不可用）")
+
+
+CN_BC = {"bleached": "白化", "healthy": "健康", "dead": "死亡",
+         "Bleached": "白化", "Healthy": "健康", "Dead": "死亡"}
+
+
+def classify_bleaching(img: Image.Image, min_conf=0.55):
+    """全图白化状态分类。
+
+    ⚠️ 为什么不用分割模型的 bleachedPct：实测该指标在第三方白化数据集上
+       AUC 仅 0.46（低于随机），跨域无效。白化状态必须由分类模型给出。
+    """
+    if BLEACH is None:
+        return None
+    try:
+        with torch.no_grad():
+            x = BLEACH["tf"](img.convert("RGB")).unsqueeze(0).to(DEVICE)
+            p = torch.softmax(BLEACH["model"](x).float() / BLEACH["temp"], 1)[0].cpu().numpy()
+    except Exception:
+        return None
+    order = np.argsort(-p)
+    top = [{"label": BLEACH["classes"][i], "labelCn": CN_BC.get(BLEACH["classes"][i], BLEACH["classes"][i]),
+            "confidence": round(float(p[i]), 6)} for i in order]
+    return {
+        "model": BLEACH["name"],
+        "label": top[0]["label"], "labelCn": top[0]["labelCn"],
+        "confidence": top[0]["confidence"],
+        "reliable": top[0]["confidence"] >= min_conf,
+        "probabilities": {BLEACH["classes"][i]: round(float(p[i]), 6) for i in range(len(BLEACH["classes"]))},
+        "top": top[:3],
+    }
 
 
 def classify_coral_region(img: Image.Image, pred: np.ndarray, topk=3, min_conf=0.40):
@@ -229,6 +306,9 @@ async def analyze(file: UploadFile = File(...), enhance_first: bool = False):
     src = enhance(img, clahe=True) if enhance_first else img
     pred, cls_frac, grp = SEG.segment(src)
 
+    # ② 白化状态：由**分类模型**给出（分割模型的白化像素占比经实测跨域无效）
+    bleach = classify_bleaching(img)
+
     cover = {GROUP_CN.get(g, g): round(v, 6) for g, v in sorted(grp.items(), key=lambda kv: -kv[1])}
     coral_total = grp.get("alive", 0) + grp.get("bleached", 0) + grp.get("dead", 0)
     live = grp.get("alive", 0.0)
@@ -250,6 +330,7 @@ async def analyze(file: UploadFile = File(...), enhance_first: bool = False):
         "topClasses": [{"name": k, "pct": round(v, 6)}
                        for k, v in sorted(cls_frac.items(), key=lambda kv: -kv[1])[:8]],
         "coralRegion": classify_coral_region(img, pred),
+        "bleaching": bleach,
         "captureQuality": {
             "level": qv["level"],            # good / warn / poor
             "usable": qv["usable"],

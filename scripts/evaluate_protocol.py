@@ -40,15 +40,39 @@ RNG = np.random.default_rng(2026)
 
 
 # ---------------------------------------------------------------- 指标
-def bootstrap_ci(correct: np.ndarray, n_boot=N_BOOT, alpha=0.05):
-    """对 0/1 正确性向量做 bootstrap，返回 (mean, lo, hi)。"""
+def bootstrap_ci(correct: np.ndarray, n_boot=N_BOOT, alpha=0.05, clusters=None):
+    """对 0/1 正确性向量做 bootstrap，返回 (mean, lo, hi)。
+
+    ⚠️ 若提供 clusters（如 observation id），改用 **cluster bootstrap**：
+       按「簇」重采样而非按「样本」重采样。
+       原因：同一观察的多张照片高度相关（同潜点、同时刻），
+       按样本重采样会**低估方差 → 置信区间过窄 → 虚高精度**。
+    """
     n = len(correct)
     if n == 0:
         return 0.0, 0.0, 0.0
-    idx = RNG.integers(0, n, size=(n_boot, n))
-    accs = correct[idx].mean(axis=1)
-    return (float(correct.mean()),
-            float(np.percentile(accs, 100 * alpha / 2)),
+    mean = float(correct.mean())
+    if clusters is None:
+        idx = RNG.integers(0, n, size=(n_boot, n))
+        accs = correct[idx].mean(axis=1)
+        return (mean, float(np.percentile(accs, 100 * alpha / 2)),
+                float(np.percentile(accs, 100 * (1 - alpha / 2))))
+
+    # --- cluster bootstrap ---
+    groups = {}
+    for i, c in enumerate(np.asarray(clusters)):
+        groups.setdefault(c, []).append(i)
+    keys = list(groups.keys())
+    vals = [correct[groups[k]] for k in keys]
+    n_cl = len(keys)
+    if n_cl < 2:
+        return mean, mean, mean
+    accs = np.empty(n_boot)
+    for b in range(n_boot):
+        pick = RNG.integers(0, n_cl, size=n_cl)
+        cat = np.concatenate([vals[p] for p in pick])
+        accs[b] = cat.mean()
+    return (mean, float(np.percentile(accs, 100 * alpha / 2)),
             float(np.percentile(accs, 100 * (1 - alpha / 2))))
 
 
@@ -131,6 +155,8 @@ def main():
     ap.add_argument("--out-tag", default=None)
     ap.add_argument("--exclude-phash", action="store_true",
                     help="剔除与训练集近似重复（pHash）的样本后评估——防止数据泄漏虚高指标")
+    ap.add_argument("--phash-file", default=None,
+                    help="pHash 审计结果文件（默认 reports/phash_audit.json）")
     args = ap.parse_args()
 
     data_dir = Path(args.data_dir) if args.data_dir else (ROOT / "data" / "processed" / args.task)
@@ -165,17 +191,22 @@ def main():
     # ---- 可选：剔除与其它 split 近似重复的样本（防数据泄漏）----
     excluded = []
     if args.exclude_phash:
-        ap_ = ROOT / "reports" / "phash_audit.json"
+        ap_ = Path(args.phash_file) if args.phash_file else (ROOT / "reports" / "phash_audit.json")
+        if not ap_.is_absolute():
+            ap_ = ROOT / ap_
         if not ap_.exists():
-            raise SystemExit("缺少 reports/phash_audit.json，请先运行 phash_audit.py")
+            raise SystemExit(f"缺少 {ap_}，请先运行 phash_audit.py")
         pairs = json.loads(ap_.read_text(encoding="utf-8")).get("pairs", [])
         bad = set()
+        # 该 split 的目录名（用于匹配审计结果里的 "train/xxx.jpg" 前缀）
+        split_key = split_dir.name
         for pr in pairs:
             a, b = pr["a"], pr["b"]
-            if a.startswith(args.split + "/"):
+            if a.startswith(split_key + "/"):
                 bad.add(a.split("/", 1)[1])
-            if b.startswith(args.split + "/"):
+            if b.startswith(split_key + "/"):
                 bad.add(b.split("/", 1)[1])
+        # 只在「与该 split 之外的其它 split 重复」时才剔除
         if bad:
             keep = [i for i, (p, _) in enumerate(ds.samples) if Path(p).name not in bad]
             excluded = [Path(p).name for p, _ in ds.samples if Path(p).name in bad]
@@ -202,10 +233,26 @@ def main():
             y_all.append(remap[y.numpy()])
     probs = np.concatenate(probs_all)
     y_true = np.concatenate(y_all)
+
+    # ---- 观察 ID（用于 cluster bootstrap）----
+    # 文件名格式 <obsId>_<hash>.<ext>；无该格式则退回「按文件聚类」
+    files_all = [Path(p).name for p, _ in (ds.dataset.samples if isinstance(ds, torch.utils.data.Subset)
+                                            else ds.samples)]
+    if isinstance(ds, torch.utils.data.Subset):
+        files_all = [files_all[i] for i in ds.indices]
+    obs_ids = []
+    for fname in files_all:
+        stem = Path(fname).stem
+        obs_ids.append(stem.split("_")[0] if "_" in stem else stem)
+    obs_ids = np.array(obs_ids)
+    n_clusters = len(set(obs_ids.tolist()))
     pred = probs.argmax(1)
 
     # ---- 1/2 Top-1 与宏F1（含 CI）----
-    acc, lo, hi = bootstrap_ci((pred == y_true).astype(np.float64))
+    # 同时给出「按样本」与「按观察聚类」两种 CI，后者更保守也更诚实
+    correct_vec = (pred == y_true).astype(np.float64)
+    acc, lo, hi = bootstrap_ci(correct_vec)
+    _, clo, chi = bootstrap_ci(correct_vec, clusters=obs_ids)
     mf1, mlo, mhi = macro_f1_ci(y_true, pred, len(classes))
 
     # ---- 3 每类 ----
@@ -238,7 +285,14 @@ def main():
 
     # ---- 输出 ----
     print("=" * 66)
-    print(f"Top-1 准确率 : {acc:.4%}   [95% CI {lo:.4%} – {hi:.4%}]")
+    print(f"Top-1 准确率 : {acc:.4%}")
+    print(f"  · 按样本 bootstrap : [95% CI {lo:.4%} – {hi:.4%}]  (宽 {(hi-lo)*100:.2f}pt)")
+    print(f"  · 按观察 cluster   : [95% CI {clo:.4%} – {chi:.4%}]  (宽 {(chi-clo)*100:.2f}pt)"
+          f"   ← 更保守，建议以此为准")
+    print(f"    观察簇数: {n_clusters} 个（平均 {len(y_true)/max(n_clusters,1):.2f} 张/观察）")
+    if (chi - clo) > (hi - lo) * 1.15:
+        print(f"    ⚠️ 聚类 CI 比朴素 CI 宽 {(chi-clo)/max(hi-lo,1e-9):.2f}×，"
+              f"说明同观察的多张照片确实相关 → 朴素 CI 偏乐观")
     print(f"宏平均 F1    : {mf1:.4f}   [95% CI {mlo:.4f} – {mhi:.4f}]")
     print(f"ECE 校准误差 : {ece:.4f}   (越小越好，<0.05 为良好)")
     print("-" * 66)
@@ -267,13 +321,17 @@ def main():
     out.write_text(json.dumps({
         "task": args.task, "split": args.split, "weights": str(wpath), "temperature": T,
         "n_samples": int(len(y_true)), "n_classes": n_cls,
-        "top1": round(acc, 6), "top1Ci95": [round(lo, 6), round(hi, 6)],
+        "nObservationClusters": int(n_clusters),
+        "top1": round(acc, 6),
+        "top1Ci95": [round(lo, 6), round(hi, 6)],
+        "top1Ci95Cluster": [round(clo, 6), round(chi, 6)],
         "macroF1": round(mf1, 6), "macroF1Ci95": [round(mlo, 6), round(mhi, 6)],
         "ece": round(ece, 6), "reliabilityBins": bins,
         "coverageCurve": cov, "perClass": per_class,
         "confusionTop": [{"count": n_, "true": a, "pred": b} for n_, a, b in pairs[:20]],
         "confusionMatrix": conf.tolist(),
         "classOrder": classes,
+        "clusterBootstrapNote": "top1Ci95 按样本重采样；top1Ci95Cluster 按观察 id 聚类重采样，更保守",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n完整报告: {out}")
 

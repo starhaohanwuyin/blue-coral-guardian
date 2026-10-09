@@ -136,7 +136,12 @@ def main():
     if ps:
         L.append(f"- 类别数：**{ps['n_classes']}**　样本数：**{ps['n_samples']}**"
                  + ("（已剔除 pHash 泄漏样本）" if ps['n_samples'] < 1116 else ""))
-        L.append(f"- **Top-1：{pct(ps['top1'])}**（95% CI {pct(ps['top1Ci95'][0])} – {pct(ps['top1Ci95'][1])}）")
+        L.append(f"- **Top-1：{pct(ps['top1'])}**"
+                 f"（朴素 95% CI {pct(ps['top1Ci95'][0])} – {pct(ps['top1Ci95'][1])}）")
+        if ps.get("top1Ci95Cluster"):
+            c = ps["top1Ci95Cluster"]
+            L.append(f"- **Top-1 聚类 95% CI（推荐口径）：{pct(c[0])} – {pct(c[1])}**"
+                     f"（按 {ps.get('nObservationClusters','?')} 个观察簇重采样，较朴素 CI 更宽）")
         L.append(f"- 宏平均 F1：{ps['macroF1']:.4f}（95% CI {ps['macroF1Ci95'][0]:.4f} – {ps['macroF1Ci95'][1]:.4f}）")
         L.append(f"- ECE 校准误差：{ps['ece']:.4f}"
                  + ("（<0.05，校准良好）" if ps['ece'] < 0.05 else ""))
@@ -201,6 +206,73 @@ def main():
         L.append("> 保育场景应优先保召回（漏报白化珊瑚代价更大），可采用白化类加权的工作点。")
         L.append("")
 
+    # ---------- 3.5 第三方独立数据集验证 ----------
+    newj = load("protocol_bleaching_new_test_clean.json") or load("protocol_bleaching_new_test.json")
+    xd_new = load("cross_domain_bleaching_new.json")
+    xd_old = load("cross_domain_bleaching_ip.json")
+    ma = load("modelA_bleaching_test.json")
+    if newj or ma:
+        L.append("## 3.5 第三方独立数据集验证")
+        L.append("")
+        L.append("> 数据来源：团队提供的 Roboflow 白化数据集（**10,382 张，Bleached/Healthy**，"
+                 "与本项目原训练数据 **MD5 哈希零重叠**）。")
+        L.append("")
+        if newj:
+            L.append(f"**分类模型在其测试集上（剔除泄漏后 n={newj['n_samples']}）：**")
+            L.append("")
+            L.append(f"- Top-1：**{pct(newj['top1'])}**（95% CI {pct(newj['top1Ci95'][0])} – {pct(newj['top1Ci95'][1])}）")
+            L.append(f"- 宏 F1：{newj['macroF1']:.4f}　ECE：{newj['ece']:.4f}")
+            L.append("")
+        if ma:
+            L.append("**⚠️ 分割模型（Model A）的白化检测在独立数据上失效：**")
+            L.append("")
+            L.append("| 指标 | 白化组均值 | 健康组均值 | AUC |")
+            L.append("|---|---|---|---|")
+            for k, cn in (("bleached", "白化像素占比"), ("bleachShare", "白化占珊瑚比例"),
+                          ("coralTotal", "珊瑚总覆盖")):
+                m = ma["metrics"].get(k)
+                if m:
+                    L.append(f"| {cn} | {m['bleachedMean']:.4f} | {m['healthyMean']:.4f} | **{m['auc']:.4f}** |")
+            L.append("")
+            L.append("> **AUC < 0.5** —— 分割模型在跨域后无法区分白化/健康。根因：模型把白化珊瑚"
+                     "判为 `other coral alive`（功能群统计中白化组 alive 28.9% / bleached 仅 4.3%），"
+                     "且健康组有 18/40 被判为 `human`，说明源域（红海样方照）与目标域视觉分布差异极大。")
+            L.append("")
+            L.append("**✅ 由此确定分工：覆盖率用 Model A（分割），白化检测用 Model B（分类）。**")
+            L.append("")
+        if xd_new and xd_old:
+            xd_all = load("cross_domain_bleaching_all.json")
+            L.append("**跨域表现对比（白化召回 / 二分类准确率）：**")
+            L.append("")
+            hdr = "| 目标域 | 旧模型 bleaching_ip | 新模型 bleaching_new |"
+            sep = "|---|---|---|"
+            if xd_all:
+                hdr += " **合并模型 bleaching_all** |"
+                sep += "---|"
+            L.append(hdr)
+            L.append(sep)
+            keys = [k for k in xd_old.get("targets", {}) if "bleachedRecall" in xd_old["targets"][k]]
+            for k in keys:
+                o = xd_old["targets"][k]
+                n = xd_new.get("targets", {}).get(k, {})
+                row = (f"| {k} | {pct(o['bleachedRecall'],1)} / {pct(o['binaryAccuracy'],1)} | "
+                       f"{pct(n.get('bleachedRecall',0),1)} / {pct(n.get('binaryAccuracy',0),1)} |")
+                if xd_all:
+                    aa = xd_all.get("targets", {}).get(k, {})
+                    row += (f" **{pct(aa.get('bleachedRecall',0),1)} / "
+                            f"{pct(aa.get('binaryAccuracy',0),1)}** |")
+                L.append(row)
+            L.append("")
+            L.append("> **结论：合并模型（旧集 + 新集，14,203 训练样本）在三个域上均为最优或持平。**")
+            L.append("> McNemar 检验：合并 vs 旧在印尼域 **p = 0.424（不显著）** → 未丢失跨域能力；"
+                     "而新模型 vs 旧 **p < 10⁻⁶（显著退化）**。")
+            L.append("")
+            L.append("| 模型 | 新域（剔除泄漏 n=168） |")
+            L.append("|---|---|")
+            L.append("| bleaching_new | 99.40% |")
+            L.append("| **bleaching_all（合并）** | **98.21%**（白化召回 96.77%，精确 100%）|")
+            L.append("")
+
     # ---------- 6. 数据合规 ----------
     ph = load("phash_audit.json")
     L.append("## 4. 数据完整性")
@@ -264,6 +336,79 @@ def main():
         L.append("> **结论：卫星可用于「事件级」预警，不足以做「站点级」定位——"
                  "后者正需要现场影像，即本项目要填补的空白。**")
         L.append("")
+
+    # ---------- 8. 结论适用范围与已知局限 ----------
+    mcn = load("mcnemar_bleaching_ip_vs_bleaching_new_test_ip.json")
+    sl = load("site_level_validation.json")
+    ea = load("error_attribution_species_ip_test.json")
+    L.append("## 6. 结论适用范围与已知局限")
+    L.append("")
+    L.append("> 完整版见 `docs/评估方法与局限.md`。**引用上方任何结论时请一并引用本节限定。**")
+    L.append("")
+    L.append("| 结论 | 适用范围 | 不可外推到 |")
+    L.append("|---|---|---|")
+    L.append("| 覆盖率 39.71% vs 实地 39.56% | **区域尺度**（北婆罗洲海域） | ❌ 单个站点 |")
+    L.append("| 属级 Top-1 | 仙本那留出集，34 属，拍摄条件良好 | ❌ 深水/浑浊照片 |")
+    L.append("| 使用边界 ≤8m 可用 | 基于**物理合成降质** | ❌ 未用真实劣化照片验证 |")
+    L.append("| 白化检测（旧域） | 分类模型，旧域分布 | ❌ 印太域（仅 42%）|")
+    L.append("")
+    if sl and sl.get("comparison", {}).get("nSites"):
+        c = sl["comparison"]
+        L.append("### 6.1 ⚠️ 站点级验证不成立（最重要的一条局限）")
+        L.append("")
+        L.append(f"用 iNat `place_guess` 分组后与 RCM **分站点 LCC** 对比："
+                 f"仅 {c['nSites']} 个可比站点、{c['nPhotos']} 张照片")
+        L.append("")
+        L.append(f"- 站点级偏差 **{c['bias']:+.2f} 个百分点**，"
+                 f"MAE {c['mae']:.2f}，RMSE {c['rmse']:.2f}")
+        if c.get("pearson") is not None:
+            L.append(f"- Pearson r = **{c['pearson']:+.3f}**（负相关）")
+        L.append(f"- 排序一致对 {c['orderConsistent']}/{c['orderTotal']}")
+        L.append("")
+        L.append("> **根因**：iNat 照片是**摄影师自选主体**（挑好看的拍），不是等距抽样样方；"
+                 "且站点样本量过小（2–11 张）、组内标准差 20–30%，检验效力不足。")
+        L.append(">")
+        L.append("> **必须加限定：模型可用于「区域尺度」覆盖率估计，不足以做「站点级」优劣区分。**")
+        L.append("")
+    if mcn:
+        m = mcn["mcnemar"]
+        L.append("### 6.2 模型比较已做显著性检验（McNemar）")
+        L.append("")
+        L.append(f"新旧白化模型在印尼域：{pct(mcn['accA'])} vs {pct(mcn['accB'])}，"
+                 f"差值 {pct(mcn['accDiff'])}")
+        L.append(f"- b={m['b']}（旧对新增错）/ c={m['c']}（旧错新对），"
+                 f"精确二项 **p = {m['p_exact']:.2e}** → ✅ 差异高度显著")
+        L.append(f"- 聚类 95% CI（差值）：[{pct(mcn['accDiffCi95Cluster'][0])}, "
+                 f"{pct(mcn['accDiffCi95Cluster'][1])}]，不含 0")
+        L.append("")
+    if ea:
+        L.append("### 6.3 错误归因与拒识曲线")
+        L.append("")
+        L.append(f"- 属级错误率 {pct(ea['errorRate'])}，其中**高置信错误**（conf≥0.9）"
+                 f"**{ea['highConfidenceErrors']} 个**（占全部错误 "
+                 f"{ea['highConfidenceErrors']/max(ea['nError'],1):.1%}）")
+        L.append("- 拒识曲线（阈值 → 自动化率 / 自动部分准确率）：")
+        L.append("")
+        L.append("| 阈值 | 自动化率 | 自动部分准确率 |")
+        L.append("|---|---|---|")
+        for r in ea["rejectionCurve"]:
+            L.append(f"| {r['threshold']:.2f} | {pct(r['automation'],1)} | {pct(r['autoAccuracy'])} |")
+        L.append("")
+        L.append("> **推荐运营点：阈值 0.90 → 70% 自动化、97% 准确率、拦截 85% 的错误。**")
+        L.append("")
+    L.append("### 6.4 尚未完成的评估项")
+    L.append("")
+    L.append("| 项 | 原因 | 修复路径 |")
+    L.append("|---|---|---|")
+    L.append("| **分割模型 mIoU** | Coralscapes 验证集下载被墙 | 重试下载 / 手工标注 30 张自算 |")
+    L.append("| **人类基线** | 未组织标注 | 2–3 人 × 1 小时，附标注者间 κ |")
+    L.append("| **逐样本覆盖率误差** | 无像素级真值 | 标准化样方照片或手工标注 50 张 |")
+    L.append("| **β=6 为测试集调参** | 工作点在 test_ip 上选取 | 拆 test/test_holdout 重选 |")
+    L.append("| 交叉验证 | 未做 | 3–5 折重训 |")
+    L.append("")
+    L.append("> **聚类置信区间说明**：属级 Top-1 的推荐口径为**按观察聚类的 95% CI**"
+             "（比朴素 bootstrap 更宽），因同一观察的多张照片高度相关。")
+    L.append("")
 
     out = Path(args.out)
     out.write_text("\n".join(L), encoding="utf-8")

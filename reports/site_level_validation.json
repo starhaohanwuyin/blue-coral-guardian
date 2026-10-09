@@ -1,0 +1,88 @@
+{
+  "method": "按 iNaturalist place_guess 分组，与 RCM 2024 分站点 LCC 对比",
+  "fieldSource": "Reef Check Malaysia 2024 (DOI 10.5281/zenodo.15290515)",
+  "allSites": {
+    "Kapalai": {
+      "n": 2,
+      "aliveMean": 0.331689453125,
+      "aliveStd": 0.077337646484375,
+      "coralTotalMean": 0.33379821777343754,
+      "fieldLCC": 20.5
+    },
+    "Mabul": {
+      "n": 11,
+      "aliveMean": 0.44378861596574004,
+      "aliveStd": 0.3047211443823652,
+      "coralTotalMean": 0.4518966476638596,
+      "fieldLCC": 22.29
+    },
+    "Mataking": {
+      "n": 2,
+      "aliveMean": 0.27194468180338544,
+      "aliveStd": 0.030204772949218764,
+      "coralTotalMean": 0.29132843017578125,
+      "fieldLCC": 26.88
+    },
+    "Pandanan": {
+      "n": 2,
+      "aliveMean": 0.6641845703125,
+      "aliveStd": 0.16975911458333337,
+      "coralTotalMean": 0.6646016438802083,
+      "fieldLCC": null
+    },
+    "Pom Pom": {
+      "n": 24,
+      "aliveMean": 0.27908960978190106,
+      "aliveStd": 0.22582420693389146,
+      "coralTotalMean": 0.3021174536810981,
+      "fieldLCC": null
+    },
+    "Sipadan": {
+      "n": 9,
+      "aliveMean": 0.4765973742963489,
+      "aliveStd": 0.17587298160310225,
+      "coralTotalMean": 0.5065652866556187,
+      "fieldLCC": null
+    },
+    "Timba Timba": {
+      "n": 4,
+      "aliveMean": 0.6052296956380209,
+      "aliveStd": 0.1398626261330742,
+      "coralTotalMean": 0.655975341796875,
+      "fieldLCC": null
+    }
+  },
+  "comparison": {
+    "nSites": 3,
+    "nPhotos": 15,
+    "modelMean": 34.91409169647085,
+    "fieldMean": 23.223333333333333,
+    "bias": 11.690758363137515,
+    "mae": 11.690758363137517,
+    "rmse": 14.702821409513698,
+    "pearson": -0.5626953136381796,
+    "orderConsistent": 1,
+    "orderTotal": 3,
+    "sites": [
+      {
+        "site": "Mataking",
+        "n": 2,
+        "model": 27.194468180338543,
+        "field": 26.88
+      },
+      {
+        "site": "Mabul",
+        "n": 11,
+        "model": 44.378861596574005,
+        "field": 22.29
+      },
+      {
+        "site": "Kapalai",
+        "n": 2,
+        "model": 33.1689453125,
+        "field": 20.5
+      }
+    ]
+  },
+  "caveat": "站点样本量小（3–19 张），仅作方向性验证"
+}

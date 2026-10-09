@@ -1,0 +1,26 @@
+{
+  "model": "bleaching_ip",
+  "split": "test",
+  "n": 257,
+  "nBleached": 135,
+  "nHealthy": 122,
+  "bleachedRecall": 0.755556,
+  "bleachedPrecision": 0.871795,
+  "healthyRecall": 0.877049,
+  "binaryAccuracy": 0.81323,
+  "bestThreshold": {
+    "th": 0.3,
+    "recall": 0.8,
+    "precision": 0.8120300751879699,
+    "acc2": 0.7976653696498055
+  },
+  "confusion": {
+    "Bleached→bleached": 102,
+    "Bleached→healthy": 30,
+    "Bleached→dead": 3,
+    "Healthy→healthy": 106,
+    "Healthy→bleached": 15,
+    "Healthy→dead": 1
+  },
+  "note": "该数据集与本项目原训练数据哈希零重叠，属独立测试集"
+}
