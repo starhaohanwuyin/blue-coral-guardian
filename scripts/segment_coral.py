@@ -141,7 +141,7 @@ def report(grp, cls_frac, topn=10):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", required=True)
-    ap.add_argument("--size", type=int, default=512)
+    ap.add_argument("--size", type=int, default=1024)
     ap.add_argument("--save-overlay", default=None)
     ap.add_argument("--json", default=None, help="把结果写入 JSON")
     args = ap.parse_args()

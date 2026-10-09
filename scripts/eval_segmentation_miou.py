@@ -61,7 +61,7 @@ def to_pil(obj):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--size", type=int, default=512, help="推理输入长边（与产品一致为 512）")
+    ap.add_argument("--size", type=int, default=1024, help="推理输入长边（与产品一致为 1024）")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()

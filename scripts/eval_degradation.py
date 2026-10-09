@@ -37,7 +37,7 @@ IMG_EXT = {".jpg", ".jpeg", ".png"}
 
 def eval_model_a(limit=None, model_dir=None, out_tag="base", use_enhance=False):
     from segment_coral import CoralSegmenter
-    seg = CoralSegmenter(model_dir=model_dir or (ROOT / "weights" / "segformer_coralscapes"), size=512)
+    seg = CoralSegmenter(model_dir=model_dir or (ROOT / "weights" / "segformer_coralscapes"), size=1024)
     print(f"Model A[{out_tag}]  设备={seg.device}  权重={Path(model_dir).name if model_dir else 'segformer_coralscapes'}")
     print(f"  测试前色彩还原: {use_enhance}\n")
 

@@ -82,7 +82,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", required=True, help="真实照片目录（递归查找）")
     ap.add_argument("--limit", type=int, default=0, help="最多处理多少张（0=全部）")
-    ap.add_argument("--size", type=int, default=512)
+    ap.add_argument("--size", type=int, default=1024)
     ap.add_argument("--save-overlays", action="store_true", help="保存分割叠加图便于人工检查")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()

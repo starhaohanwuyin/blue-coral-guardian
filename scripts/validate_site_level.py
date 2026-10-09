@@ -79,7 +79,7 @@ def site_of(place: str):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-n", type=int, default=2, help="站点最少照片数")
-    ap.add_argument("--size", type=int, default=512)
+    ap.add_argument("--size", type=int, default=1024)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 

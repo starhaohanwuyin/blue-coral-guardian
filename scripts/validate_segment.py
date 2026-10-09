@@ -45,7 +45,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", required=True)
     ap.add_argument("--limit", type=int, default=200)
-    ap.add_argument("--size", type=int, default=512)
+    ap.add_argument("--size", type=int, default=1024)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
