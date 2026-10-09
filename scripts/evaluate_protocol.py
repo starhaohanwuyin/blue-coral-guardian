@@ -114,12 +114,19 @@ def expected_calibration_error(probs, y_true, n_bins=15):
     return float(ece), details
 
 
-def coverage_curve(probs, y_true, targets=(0.99, 0.995, 0.999), coverages=(0.5, 0.7, 0.8, 0.9, 0.95, 1.0)):
+def coverage_curve(probs, y_true, targets=(0.99, 0.995, 0.999),
+                   coverages=(0.5, 0.7, 0.8, 0.9, 0.95, 1.0), clusters=None):
+    """覆盖率–准确率曲线。
+
+    ⚠️ clusters 传入时，各点的 CI 用 **cluster bootstrap**，与主指标口径一致；
+       否则会出现在同一份报告里「主指标用聚类、曲线用朴素」的不一致（曲线 CI 偏窄）。
+    """
     conf = probs.max(axis=1)
     pred = probs.argmax(axis=1)
     correct = (pred == y_true)
     order = np.argsort(-conf)
     cs, cs_correct = conf[order], correct[order]
+    cs_clusters = None if clusters is None else np.asarray(clusters)[order]
     n = len(y_true)
 
     by_cov = []
@@ -128,7 +135,9 @@ def coverage_curve(probs, y_true, targets=(0.99, 0.995, 0.999), coverages=(0.5, 
         by_cov.append({"coverage": round(k / n, 4),
                        "threshold": round(float(cs[k - 1]), 4),
                        "accuracy": round(float(cs_correct[:k].mean()), 6),
-                       "ci": [round(v, 6) for v in bootstrap_ci(cs_correct[:k].astype(np.float64))]})
+                       "ci": [round(v, 6) for v in bootstrap_ci(
+                           cs_correct[:k].astype(np.float64),
+                           clusters=(None if cs_clusters is None else cs_clusters[:k]))]})
 
     by_target = []
     cum = np.cumsum(cs_correct) / np.arange(1, n + 1)
@@ -276,7 +285,7 @@ def main():
     ece, bins = expected_calibration_error(probs, y_true)
 
     # ---- 5 覆盖率曲线 ----
-    cov = coverage_curve(probs, y_true)
+    cov = coverage_curve(probs, y_true, clusters=obs_ids)
 
     # ---- 6 混淆 ----
     off = conf.copy(); np.fill_diagonal(off, 0)

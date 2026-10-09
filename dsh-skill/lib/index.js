@@ -7,7 +7,7 @@
  *   Tool : identify_coral            对一张水下照片做双任务识别
  *   Tool : coral_service_status      查询推理服务与模型状态（只读）
  *
- * 工具能力来自本地/远端推理服务（coral_ml/scripts/serve.py），
+ * 工具能力来自本地/远端推理服务（coral_ml/scripts/serve_fusion.py），
  * 本插件只做"编排 + 调用 + 结果整形"，不含任何模型计算。
  *
  * 服务地址：环境变量 CORAL_API_BASE，默认 http://127.0.0.1:8000
@@ -93,11 +93,11 @@ async function callPredict(imagePath, signal) {
 
   let res
   try {
-    res = await fetch(`${API_BASE()}/predict`, { method: 'POST', body: form, signal })
+    res = await fetch(`${API_BASE()}/analyze`, { method: 'POST', body: form, signal })
   } catch (e) {
     throw new Error(
       `无法连接珊瑚识别服务 ${API_BASE()}：${e.message}。` +
-      `请先启动：cd coral_ml/scripts && python serve.py`,
+      `请先启动：cd coral_ml/scripts && python serve_fusion.py`,
     )
   }
   if (!res.ok) {
@@ -109,20 +109,34 @@ async function callPredict(imagePath, signal) {
 
 /** 推测结果的中文摘要（给模型和用户看的自然语言）。 */
 function summarize(r) {
-  const sp = r.species || {}
+  // 适配 serve_fusion.py /analyze 的返回结构：
+  //   cover{覆盖率} + coralRegion{属识别} + bleaching{白化状态}
+  const cr = r.coralRegion || {}
+  const top = (cr.top && cr.top[0]) || {}
   const bl = r.bleaching || {}
+  const c = r.cover || {}
+  const q = r.captureQuality || {}
   const pct = (v) => `${(Number(v || 0) * 100).toFixed(1)}%`
-  const lines = [
-    `【珊瑚种类】${sp.nameCn || sp.name}（${sp.name}）  置信度 ${pct(sp.confidence)}`,
-    `【白化程度】${bl.labelCn || bl.label}  置信度 ${pct(bl.confidence)}`,
-  ]
-  if (bl.probabilities) {
-    lines.push('　　概率分布：' + Object.entries(bl.probabilities)
-      .map(([k, v]) => `${k} ${pct(v)}`).join(' / '))
+  const lines = []
+  if (q.usable === false) {
+    lines.push('⚠ 拍摄条件超出模型适用边界，以下结果可能严重失真：')
+    lines.push(`　　${q.message || '建议在 10 米以内或加补光灯重拍'}`)
   }
-  if (sp.needReview || bl.needReview) {
-    lines.push('⚠ 存在低置信度项，已标记为需人工复核（安全使用边界内）。')
+  if (cr.reliable === false) {
+    lines.push(`【珊瑚属】置信度不足（${cr.note || '低于门槛'}），本次不给出属级结论`)
+  } else {
+    lines.push(`【珊瑚属】${top.genus || '未知'}  置信度 ${pct(top.confidence)}`)
+    const rest = (cr.top || []).slice(1, 3)
+    if (rest.length) lines.push('　　其他可能：' + rest.map((t) => `${t.genus} ${pct(t.confidence)}`).join(' / '))
   }
+  if (bl.label || bl.labelCn) {
+    const rel = bl.reliable === false ? '（置信度不足，建议人工复核）' : ''
+    lines.push(`【白化状态】${bl.labelCn || bl.label}  置信度 ${pct(bl.confidence)}${rel}`)
+  } else {
+    lines.push('【白化状态】白化分类模型未加载')
+  }
+  lines.push(`【覆盖】活珊瑚 ${pct(c.alivePct)}　珊瑚总覆盖 ${pct(c.coralTotalPct)}`)
+  if (q.level === 'warn') lines.push(`💡 ${q.message || '拍摄条件一般，建议开补光灯'}`)
   lines.push(`（耗时 ${r.inferenceMs ?? '?'} ms；结果仅供保育决策参考）`)
   return lines.join('\n')
 }
@@ -131,10 +145,10 @@ export function apply(ctx) {
   /* ---------------- Skill 注册 ---------------- */
   ctx.skills.register({
     name: 'coral-identification',
-    description: '识别水下珊瑚影像的珊瑚种类，并评估珊瑚白化程度（健康 / 白化 / 死亡）。',
+    description: '识别水下珊瑚影像的珊瑚属，并评估珊瑚白化状态（健康 / 白化 / 死亡）与覆盖率。',
     whenToUse:
       '当用户上传或指向一张水下珊瑚照片，并询问"这是什么珊瑚""珊瑚白化了吗""健康状态如何"时使用。'
-      + '该 Skill 依赖本地珊瑚识别推理服务（默认 http://127.0.0.1:8000）。',
+      + '该 Skill 依赖本地评估服务 coral_ml/scripts/serve_fusion.py（默认 http://127.0.0.1:8000）。',
     source: 'runtime',
     invocation: { modelInvocable: true, userInvocable: true },
     content: [
@@ -157,7 +171,7 @@ export function apply(ctx) {
       '- 低置信度样本必须显式提示"建议人工复核"。',
       '',
       '## 服务未启动时',
-      '提示用户执行：`cd coral_ml/scripts && python serve.py`，',
+      '提示用户执行：`cd coral_ml/scripts && python serve_fusion.py`，',
       '或用 `coral_service_status` 查看服务与模型状态。',
     ].join('\n'),
   })
@@ -165,12 +179,14 @@ export function apply(ctx) {
   /* ---------------- 工具 1：识别 ---------------- */
   ctx.tools.register(defineTool({
     name: 'identify_coral',
-    description:
-      '对一张本地水下珊瑚照片同时做两件事：(1) 识别珊瑚种类（30 类种级）；'
-      + '(2) 评估白化程度（健康/白化/死亡）。返回每项的置信度与是否需人工复核。'
-      + '当用户上传珊瑚照片并询问种类或白化状况时调用。'
-      + '需要本地图片绝对路径；服务地址由 CORAL_API_BASE 指定（默认 http://127.0.0.1:8000）。',
-    parameters: {
+      description:
+        '对一张本地水下珊瑚照片同时给出三件事：(1) 珊瑚**属**识别（34 属，'
+        + '在分割出的珊瑚主体区域上判定，含置信度）；(2) 白化状态（健康/白化/死亡）；'
+        + '(3) 活珊瑚与珊瑚总覆盖百分比。'
+        + '当用户上传珊瑚照片并询问「这是什么珊瑚」「白化了吗」「健康状态如何」时调用。'
+        + '需要本地图片绝对路径；服务地址由 CORAL_API_BASE 指定（默认 http://127.0.0.1:8000），'
+        + '需先启动 coral_ml/scripts/serve_fusion.py。',
+      parameters: {
       image_path: {
         type: 'string',
         required: true,
@@ -182,12 +198,15 @@ export function apply(ctx) {
         type: 'object',
         additionalProperties: false,
         properties: {
-          speciesName: { type: 'string', required: true, description: '识别出的珊瑚种类（拉丁学名）。' },
-          speciesNameCn: { type: 'string', required: true, description: '珊瑚种类中文名。' },
-          speciesConfidence: { type: 'number', required: true, description: '种类识别置信度 0–1。' },
-          bleachingLabel: { type: 'string', required: true, description: '白化程度：healthy | bleached | dead。' },
-          bleachingLabelCn: { type: 'string', required: true, description: '白化程度中文：健康 | 白化 | 死亡。' },
-          bleachingConfidence: { type: 'number', required: true, description: '白化评估置信度 0–1。' },
+          genusName: { type: 'string', required: true, description: '识别出的珊瑚属（拉丁属名）；置信度不足时为空串。' },
+          genusConfidence: { type: 'number', required: true, description: '属识别置信度 0–1。' },
+          genusReliable: { type: 'boolean', required: true, description: '属识别是否达到置信度门槛。' },
+          bleachingLabel: { type: 'string', required: true, description: '白化状态：healthy | bleached | dead。' },
+          bleachingLabelCn: { type: 'string', required: true, description: '白化状态中文：健康 | 白化 | 死亡。' },
+          bleachingConfidence: { type: 'number', required: true, description: '白化状态置信度 0–1。' },
+          bleachingReliable: { type: 'boolean', required: true, description: '白化判定是否达到置信度门槛。' },
+          alivePct: { type: 'number', required: true, description: '活珊瑚覆盖百分比 0–1。' },
+          coralTotalPct: { type: 'number', required: true, description: '珊瑚总覆盖百分比 0–1。' },
           needReview: { type: 'boolean', required: true, description: '是否建议人工复核（任一项置信度不足）。' },
           disclaimer: { type: 'string', required: true, description: '使用边界声明。' },
           summary: { type: 'string', required: true, description: '人类可读的中文结论摘要。' },
@@ -198,16 +217,24 @@ export function apply(ctx) {
     execute: async (args, exec) => {
       exec.signal.throwIfAborted()
       const r = await callPredict(args.image_path, exec.signal)
-      const sp = r.species || {}
+      // /analyze 返回：cover(覆盖率) + coralRegion(属识别) + bleaching(白化状态)
+      const cr = r.coralRegion || {}
+      const top = (cr.top && cr.top[0]) || {}
       const bl = r.bleaching || {}
+      const c = r.cover || {}
+      const genusReliable = cr.reliable !== false
+      const genus = genusReliable ? (top.genus ?? '') : ''
       return {
-        speciesName: sp.name ?? '',
-        speciesNameCn: sp.nameCn ?? sp.name ?? '',
-        speciesConfidence: Number(sp.confidence ?? 0),
+        genusName: genus,
+        genusConfidence: genusReliable ? Number(top.confidence ?? 0) : 0,
+        genusReliable,
         bleachingLabel: bl.label ?? '',
         bleachingLabelCn: bl.labelCn ?? bl.label ?? '',
         bleachingConfidence: Number(bl.confidence ?? 0),
-        needReview: Boolean(sp.needReview || bl.needReview),
+        bleachingReliable: bl.reliable !== false,
+        alivePct: Number(c.alivePct ?? 0),
+        coralTotalPct: Number(c.coralTotalPct ?? 0),
+        needReview: !genusReliable || bl.reliable === false || !genus,
         disclaimer: r.disclaimer ?? '结果仅供保育决策参考。',
         summary: summarize(r),
       }
@@ -242,8 +269,12 @@ export function apply(ctx) {
         const res = await fetch(`${base}/health`, { signal: exec.signal })
         if (!res.ok) return { online: false, apiBase: base, detail: `HTTP ${res.status}` }
         const j = await res.json()
-        const lines = Object.entries(j.loaded || {}).map(([k, v]) =>
-          `· ${k}: ${v.classes} 类, 测试集Top-1 ${v.testTop1 != null ? (v.testTop1 * 100).toFixed(2) + '%' : '未知'}, 拒识阈值 ${v.threshold}`)
+        // serve_fusion.py /health: {segmentation, species, segModel, segCalibrated, categories}
+        const lines = []
+        lines.push(`· 分割模型: ${j.segModel || '—'}  ${j.segmentation === 'loaded' ? '已加载' : '缺失'}`)
+        lines.push(`· 权重校准: ${j.segCalibrated === true ? '✅ 已校准' : '⚠️ 未校准（覆盖率会偏高）'}`)
+        lines.push(`· 底栖类别: ${j.categories ?? '—'} 类`)
+        lines.push(`· 属分类  : ${j.species === 'loaded' ? '已加载' : '未加载'}`)
         return {
           online: true,
           apiBase: base,
@@ -254,7 +285,7 @@ export function apply(ctx) {
       } catch (e) {
         return {
           online: false, apiBase: base,
-          detail: `无法连接：${e.message}。请先启动 serve.py`,
+          detail: `无法连接：${e.message}。请先启动 serve_fusion.py`,
         }
       }
     },
