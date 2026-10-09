@@ -44,6 +44,12 @@ function summarizeCoverage(r) {
     `  藻类覆盖 ${pct(c.algaePct)}`,
     `  沙砾底质 ${pct(c.substratePct)}`,
     `  珊瑚总覆盖 ${pct(c.coralTotalPct)}（占珊瑚的白化比例 ${pct(c.bleachingShareOfCoral)}）`)
+  // 白化状态：来自分类模型（分割模型的 bleachedPct 经实测跨域无效，AUC 仅 0.46）
+  const bl = r.bleaching
+  if (bl) {
+    const rel = bl.reliable === false ? '  ⚠️置信度不足，建议人工复核' : ''
+    lines.push(`【白化状态·分类模型】${bl.labelCn || bl.label}  ${pct(bl.confidence)}${rel}`)
+  }
   const tp = (r.topClasses || []).slice(0, 4)
   if (tp.length) {
     lines.push('【主要底栖类别】')
@@ -287,6 +293,7 @@ export function apply(ctx) {
           bleachingShare: { type: 'number', required: true, description: '白化占珊瑚的比例' },
           topClasses: { type: 'string', required: true, description: '主要底栖类别明细（文本）' },
           dominantGenus: { type: 'string', description: '主要珊瑚属及置信度（若属分类模型已加载且置信度达标）' },
+          bleachingState: { type: 'string', required: true, description: '白化状态结论（来自分类模型，含置信度）' },
           captureQuality: { type: 'string', required: true, description: '拍摄条件判定：good/warn/poor 及说明' },
           usable: { type: 'boolean', required: true, description: '照片是否在模型适用边界内（false 时覆盖率不可信）' },
           disclaimer: { type: 'string', required: true, description: '使用边界声明' },
@@ -339,6 +346,10 @@ export function apply(ctx) {
         bleachingShare: Number(c.bleachingShareOfCoral ?? 0),
         topClasses: tp,
         dominantGenus: dg,
+        bleachingState: r.bleaching
+          ? `${r.bleaching.labelCn || r.bleaching.label} ${pct(r.bleaching.confidence)}`
+            + (r.bleaching.reliable === false ? '（置信度不足，建议人工复核）' : '')
+          : '未加载白化分类模型',
         captureQuality: `[${q.level || 'unknown'}] ${q.message || ''}`,
         usable: q.usable !== false,
         disclaimer: r.disclaimer ?? '结果仅供保育决策参考。',

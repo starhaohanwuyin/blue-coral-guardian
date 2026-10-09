@@ -90,7 +90,8 @@ class UnderwaterJitter:
         return Image.fromarray(arr.astype(np.uint8))
 
 
-def build_loaders(data_dir: Path, img_size: int, batch_size: int, workers: int):
+def build_loaders(data_dir: Path, img_size: int, batch_size: int, workers: int,
+                  subset_frac: float = 1.0, subset_seed: int = 0):
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
 
@@ -115,9 +116,36 @@ def build_loaders(data_dir: Path, img_size: int, batch_size: int, workers: int):
     ds = {s: datasets.ImageFolder(data_dir / s, transform=train_tf if s == "train" else eval_tf)
           for s in ("train", "val", "test")}
 
+    # ---- 交叉验证支持：按类别分层抽取 subset_frac 比例的**训练**样本 ----
+    # ⚠️ 只对训练集抽样，val/test 保持不变（测试集是地理隔离的仙本那留出集，不能轮换）
+    if subset_frac < 1.0:
+        rng = np.random.default_rng(subset_seed)
+        tr = ds["train"]
+        by_cls = {}
+        for i, (_, y) in enumerate(tr.samples):
+            by_cls.setdefault(y, []).append(i)
+        keep = []
+        for y, idxs in by_cls.items():
+            idxs = np.array(idxs)
+            n = max(1, int(round(len(idxs) * subset_frac)))
+            pick = rng.choice(idxs, size=n, replace=False)
+            keep.extend(pick.tolist())
+        keep = sorted(keep)
+        ds["train"] = torch.utils.data.Subset(tr, keep)
+        print(f"[CV] 训练集分层抽样 {subset_frac:.0%}（seed={subset_seed}）: "
+              f"{len(tr)} → {len(ds['train'])} 张")
+
     # 类别不平衡 → 加权采样
-    targets = [y for _, y in ds["train"].samples]
-    counts = np.bincount(targets, minlength=len(ds["train"].classes))
+    def _targets(d):
+        if isinstance(d, torch.utils.data.Subset):
+            base = d.dataset.samples
+            return [base[i][1] for i in d.indices]
+        return [y for _, y in d.samples]
+
+    targets = _targets(ds["train"])
+    n_cls_all = len(ds["train"].dataset.classes if isinstance(ds["train"], torch.utils.data.Subset)
+                    else ds["train"].classes)
+    counts = np.bincount(targets, minlength=n_cls_all)
     w = 1.0 / np.maximum(counts, 1)
     sample_w = [float(w[t]) for t in targets]
     sampler = WeightedRandomSampler(sample_w, num_samples=len(sample_w), replacement=True)
@@ -225,6 +253,11 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--patience", type=int, default=8)
     ap.add_argument("--target-acc", type=float, default=0.999)
+    ap.add_argument("--subset-frac", type=float, default=1.0,
+                    help="交叉验证用：分层抽样训练集比例（1.0=全部）")
+    ap.add_argument("--subset-seed", type=int, default=0,
+                    help="交叉验证用：抽样随机种子")
+    ap.add_argument("--out-suffix", default="", help="权重目录后缀，用于保留多组实验")
     ap.add_argument("--resume", action="store_true",
                     help="从 weights/<task>/last.pt 续训（进程被中断后用这个接着跑）")
     ap.add_argument("--data-dir", default=None,
@@ -236,8 +269,8 @@ def main():
     data_dir = Path(args.data_dir) if args.data_dir else (root / "data" / "processed" / args.task)
     if not data_dir.is_absolute():
         data_dir = (root / data_dir).resolve()
-    wdir = root / "weights" / args.task
-    rdir = root / "reports" / args.task
+    wdir = root / "weights" / (args.task + args.out_suffix)
+    rdir = root / "reports" / (args.task + args.out_suffix)   # 与 wdir 一致，避免 CV 各折互相覆盖
     wdir.mkdir(parents=True, exist_ok=True)
     rdir.mkdir(parents=True, exist_ok=True)
     if not data_dir.exists():
@@ -248,8 +281,11 @@ def main():
     print(f"设备: {device}" + (f" ({torch.cuda.get_device_name(0)})" if device.type == "cuda" else ""))
     print(f"任务: {args.task} | backbone: {args.backbone} | 输入: {args.img_size}")
 
-    ds, loaders, counts = build_loaders(data_dir, args.img_size, args.batch_size, args.workers)
-    classes = ds["train"].classes
+    ds, loaders, counts = build_loaders(data_dir, args.img_size, args.batch_size, args.workers,
+                                           subset_frac=args.subset_frac,
+                                           subset_seed=args.subset_seed)
+    classes = (ds["train"].dataset.classes if isinstance(ds["train"], torch.utils.data.Subset)
+           else ds["train"].classes)
     print(f"类别数: {len(classes)}")
     print(f"train/val/test = {len(ds['train'])}/{len(ds['val'])}/{len(ds['test'])}")
     print("各类训练样本数:", dict(zip(classes, counts.tolist())))
