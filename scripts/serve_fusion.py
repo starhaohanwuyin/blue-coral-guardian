@@ -340,6 +340,11 @@ async def analyze(file: UploadFile = File(...), enhance_first: bool = False):
             "contrast": qm["contrast"],
             "rgRatio": qm["rgRatio"],
             "message": qv["message"],
+            # 阈值由服务端下发，避免前端硬编码过期
+            "thresholds": {
+                "goodContrast": QUALITY_TH["good"]["contrast"],
+                "warnContrast": QUALITY_TH["warn"]["contrast"],
+            },
         },
         "enhanced": bool(enhance_first),
         "disclaimer": DISCLAIMER,

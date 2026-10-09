@@ -85,6 +85,37 @@ STAGES = [
     ("phash", "近重复审计",
      "reports/phash_audit.json", ["genus_images"],
      [PY, "-u", "phash_audit.py", "--root", str(ROOT / "data" / "inat_dataset" / "images")]),
+
+    # ---- 以下为后续补充的阶段（早期版本遗漏，导致状态体检不完整）----
+    ("coralscapes", "Coralscapes 分割数据集（官方验证集，用于 mIoU）",
+     "data/raw/coralscapes/data/validation-00000-of-00001.parquet", [],
+     [PY, "-u", "dl_coralscapes.py", "--shards", "validation-00000-of-00001.parquet"]),
+
+    ("seg_miou", "分割质量 mIoU 评估",
+     "reports/segmentation_miou_1024.json", ["coralscapes", "seg_base"],
+     [PY, "-u", "eval_segmentation_miou.py", "--size", "1024"]),
+
+    ("bleaching_new", "Roboflow 白化模型（第三方数据集）",
+     "reports/bleaching_new/metrics.json", [],
+     [PY, "-u", "train.py", "--task", "bleaching_new",
+      "--data-dir", str(ROOT / "data" / "processed" / "bleaching_new"),
+      "--img-size", "224", "--batch-size", "32", "--epochs", "18",
+      "--freeze-epochs", "2", "--patience", "6", "--workers", "4"]),
+
+    ("bleaching_all_dataset", "合并白化数据集（旧集 + RoBoflow 集）",
+     "reports/combined_dataset.json", ["bleaching_new"],
+     [PY, "-u", "build_combined_bleaching.py"]),
+
+    ("bleaching_all", "合并白化模型（三域最优）",
+     "reports/bleaching_all/metrics.json", ["bleaching_new", "bleaching_all_dataset"],
+     [PY, "-u", "train.py", "--task", "bleaching_all",
+      "--data-dir", str(ROOT / "data" / "processed" / "bleaching_all"),
+      "--img-size", "224", "--batch-size", "32", "--epochs", "18",
+      "--freeze-epochs", "2", "--patience", "6", "--workers", "4"]),
+
+    ("cv_genus", "属级模型交叉验证（固定地理隔离测试集）",
+     "reports/cv_genus_results.json", ["species_ip"],
+     [PY, "-u", "run_cv_genus.py", "--folds", "3", "--frac", "0.7", "--epochs", "14"]),
 ]
 
 CRITICAL = {"inat_semporna", "inat_triangle", "genus_dataset", "genus_images", "species_ip"}

@@ -114,8 +114,9 @@ def main():
     results["B_prior_corrected"] = report(f"B. 先验校正 τ={args.tau}", adj.argmax(1))
 
     # C. 白化类阈值扫描
-    if "bleached" in classes:
-        bi = classes.index("bleached")
+    _bi = next((i for i, c in enumerate(classes) if c.lower() == "bleached"), None)
+    if _bi is not None:
+        bi = _bi
         print("-" * 62)
         print("C. 白化类阈值扫描（降低白化判定门槛 → 提升召回，牺牲精确）")
         print(f"   {'β':>6}{'白化召回':>10}{'白化精确':>10}{'总体准确':>10}")

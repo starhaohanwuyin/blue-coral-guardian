@@ -63,9 +63,11 @@ def main():
     print(f"模型: {args.task}  权重={ck['backbone']}  类别={classes}  T={T:.4f}")
     print(f"数据: {NEW_ROOT.name}/{args.split}\n")
 
-    bi = classes.index("bleached") if "bleached" in classes else None
-    if bi is None:
-        raise SystemExit("模型无 bleached 类")
+    # 类别名大小写不固定（bleaching 系列为小写，bleaching_new 为首字母大写）
+    ci = next((i for i, c in enumerate(classes) if c.lower() == "bleached"), None)
+    if ci is None:
+        raise SystemExit(f"模型无白化类，实际类别: {classes}")
+    bi = ci
 
     rows = []
     for cls in ("Bleached", "Healthy"):
@@ -98,14 +100,14 @@ def main():
     print("-" * 76)
 
     # 白化召回：真白化中被判为 bleached 的比例
-    ble_rec = sum(1 for r in rows if r["cls"] == "Bleached" and r["pred"] == "bleached") / max(n_ble, 1)
-    ble_pred_n = sum(1 for r in rows if r["pred"] == "bleached")
-    ble_prec = (sum(1 for r in rows if r["cls"] == "Bleached" and r["pred"] == "bleached")
+    ble_rec = sum(1 for r in rows if r["cls"] == "Bleached" and r["pred"].lower() == "bleached") / max(n_ble, 1)
+    ble_pred_n = sum(1 for r in rows if r["pred"].lower() == "bleached")
+    ble_prec = (sum(1 for r in rows if r["cls"] == "Bleached" and r["pred"].lower() == "bleached")
                 / max(ble_pred_n, 1))
     # 健康召回：真健康中未被判为 bleached 的比例（判为 healthy 或 dead 都算"非白化"）
-    hea_rec = sum(1 for r in rows if r["cls"] == "Healthy" and r["pred"] != "bleached") / max(n_hea, 1)
+    hea_rec = sum(1 for r in rows if r["cls"] == "Healthy" and r["pred"].lower() != "bleached") / max(n_hea, 1)
     # 二分类准确率
-    acc2 = (sum(1 for r in rows if (r["cls"] == "Bleached") == (r["pred"] == "bleached"))) / len(rows)
+    acc2 = (sum(1 for r in rows if (r["cls"] == "Bleached") == (r["pred"].lower() == "bleached"))) / len(rows)
 
     print(f"{'白化类召回 (Recall)':<26}{ble_rec:>12.2%}   ← 核心指标")
     print(f"{'白化类精确 (Precision)':<26}{ble_prec:>12.2%}")
