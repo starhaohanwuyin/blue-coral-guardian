@@ -22,7 +22,7 @@ const homeData = {
   stats: [
     { num: '12,847', label: '累计认养(株)' },
     { num: '50.12%', label: '修复区覆盖率' },
-    { num: '20+', label: '可识别品种' }
+    { num: '34', label: '可识别珊瑚属' }
   ],
   energy: { cur: 650, max: 1000 },
   carbon: {

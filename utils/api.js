@@ -357,19 +357,105 @@ api.getAllSpecies = function () {
   return req.get(URL.allSpecies)
 }
 
-/* ================= AI 识别 ================= */
+/* ================= AI 礁区评估（覆盖率 + 珊瑚属） ================= */
 
 /**
- * 上传图片并识别
- * @param filePath 本地临时文件路径
- * @param mode 0=种类识别 1=生长检测
+ * 真实评估服务调用（Python FastAPI: coral_ml/scripts/serve_fusion.py）
+ * POST /analyze 一次返回：
+ *   cover       活珊瑚/白化/死亡/藻类/沙砾 百分比 + 珊瑚总覆盖
+ *   topClasses  主要底栖类别明细
+ *   coralRegion 从分割掩膜裁剪珊瑚主体后做的属分类（未训练时为空）
  */
-api.recognize = function (filePath, mode) {
-  if (config.USE_MOCK) {
-    const result = mode === 0 ? mock.aiResultSpecies : mock.aiResultGrowth
-    return mock.delay(result, 2200)
+function realAnalyze(filePath) {
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      url: config.CORAL_API + '/analyze',
+      filePath,
+      name: 'file',
+      timeout: config.AI_TIMEOUT || 30000,
+      header: {},
+      success(res) {
+        if (res.statusCode !== 200) {
+          let detail = ''
+          try { detail = JSON.parse(res.data).detail || '' } catch (e) {}
+          reject(new Error(detail || ('识别服务异常(' + res.statusCode + ')')))
+          return
+        }
+        try {
+          const body = JSON.parse(res.data)
+          if (body && body.success) resolve(body)
+          else reject(new Error((body && body.detail) || '识别失败'))
+        } catch (e) {
+          reject(new Error('识别结果解析失败'))
+        }
+      },
+      fail() {
+        reject(new Error('无法连接评估服务，请确认已启动 serve_fusion.py'))
+      }
+    })
+  })
+}
+
+/* 无服务时的演示数据（结构真实接口一致） */
+function mockCoralResult() {
+  return {
+    success: true,
+    cover: {
+      alivePct: 0.3966, bleachedPct: 0.0312, deadPct: 0.0205,
+      algaePct: 0.1000, substratePct: 0.3983, seagrassPct: 0.0,
+      coralTotalPct: 0.4483, bleachingShareOfCoral: 0.0696
+    },
+    topClasses: [
+      { name: 'massive/meandering alive', pct: 0.2143 },
+      { name: 'unknown hard substrate', pct: 0.1822 },
+      { name: 'sand', pct: 0.1611 },
+      { name: 'algae covered substrate', pct: 0.1000 },
+      { name: 'branching alive', pct: 0.0921 }
+    ],
+    coralRegion: {
+      regionBox: [120, 88, 420, 376],
+      coralPixelRatio: 0.4483,
+      reliable: true,
+      top: [
+        { genus: 'Acropora', confidence: 0.7821 },
+        { genus: 'Pocillopora', confidence: 0.1102 },
+        { genus: 'Porites', confidence: 0.0431 }
+      ]
+    },
+    captureQuality: {
+      level: 'good',
+      usable: true,
+      contrast: 0.2279,
+      rgRatio: 0.655,
+      message: '拍摄条件良好，评估结果可信'
+    },
+    disclaimer: '本结果由AI模型给出，仅供保育决策参考；建议拍摄深度 ≤10m。本项目仅用于学术研究与竞赛，非商业用途。',
+    inferenceMs: 812
   }
-  return req.upload(URL.aiRecognize, filePath, 'file', { mode: mode })
+}
+
+/**
+ * 上传水下影像并做礁区评估
+ * @param filePath 本地临时文件路径
+ * @returns {Promise<{cover, topClasses, coralRegion, captureQuality, disclaimer}>}
+ *
+ * 降级策略：USE_REAL_AI 为 true 但服务连不上时，
+ * 若 FALLBACK_TO_MOCK 为 true，则返回演示数据并标记 `isDemo`，
+ * 便于无服务环境下演示（页面会显示「演示数据」标记，不会冒充真实结果）。
+ */
+api.recognize = function (filePath) {
+  if (config.USE_REAL_AI) {
+    return realAnalyze(filePath).catch((e) => {
+      if (!config.FALLBACK_TO_MOCK) throw e
+      return mock.delay(mockCoralResult(), 700).then((r) => {
+        r.isDemo = true
+        r.demoReason = (e && e.message) || '评估服务不可用'
+        return r
+      })
+    })
+  }
+  if (config.USE_MOCK) return mock.delay(mockCoralResult(), 1600)
+  return req.upload(URL.aiRecognize, filePath, 'file', {})
 }
 
 api.getAiHistory = function () {

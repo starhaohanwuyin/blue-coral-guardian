@@ -16,6 +16,29 @@ module.exports = {
   // false = 调用真实后端
   USE_MOCK: true,
 
+  /* ============ 礁区评估推理服务（AI 模块专用） ============
+   * 由 Python FastAPI 提供：coral_ml/scripts/serve_fusion.py
+   * 启动：cd coral_ml/scripts && python serve_fusion.py
+   * 一次请求返回「礁区覆盖率 + 主要珊瑚属 + 底栖类别明细」。
+   * 开发期指向本机即可（开发者工具 urlCheck 已关闭）；
+   * 真机/发布需换成 HTTPS 已备案域名。
+   */
+  CORAL_API: 'http://127.0.0.1:8000',
+
+  // true  = 调用真实评估服务（需要 serve_fusion.py 在运行）
+  // false = 直接使用本地演示数据
+  USE_REAL_AI: true,
+
+  /* 真实服务不可用时是否自动降级到演示数据
+   * true  = 连不上服务时显示演示结果（带「演示数据」标记），页面不会卡在报错
+   * false = 连不上就直接报错，并提示如何启动服务
+   * 建议：开发者本地用 true（方便演示），正式联调用 false（暴露问题）
+   */
+  FALLBACK_TO_MOCK: true,
+
+  // 识别超时（毫秒）。首次推理含模型预热，给宽松一些
+  AI_TIMEOUT: 30000,
+
   // 本地存储键（token 与官网登录接口共用同一套账号体系）
   TOKEN_KEY: 'ls_token',
   USER_KEY: 'ls_user',

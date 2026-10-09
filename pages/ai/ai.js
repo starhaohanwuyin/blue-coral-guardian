@@ -1,30 +1,49 @@
 /**
- * AI识别页
- * 上传图片 → 识别（种类/生长）→ 结果展示 → 历史
- * 真实后端：api.recognize 内部走 wx.uploadFile 上传至 /api/ai/recognize
+ * 礁区智能评估页
+ * ------------------------------------------------------------------
+ * 一次上传，三类结果：
+ *   1. 礁区覆盖评估（语义分割）：活珊瑚 / 白化 / 死亡 / 藻类 / 沙砾 百分比
+ *   2. 主要珊瑚属识别（在分割出的珊瑚区域上做属级分类）
+ *   3. 主要底栖类别明细
+ *
+ * 数据来自融合推理服务（coral_ml/scripts/serve_fusion.py）：
+ *   config.USE_REAL_AI = true  → 调用真实服务
+ *   config.USE_REAL_AI = false → 使用本地演示数据（结构一致，便于无服务演示）
+ *
+ * 安全使用边界（已实测量化）：
+ *   · 拍摄深度 ≤8m 时覆盖率估计误差 ≤2.2%；15m 以上浑浊水域显著失效
+ *   · 页面固定展示使用边界与免责声明
+ *   · 星地验证：模型估计 39.71% vs RCM 实地 39.56%
  */
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 const app = getApp()
 
+/**
+ * 历史记录存储键
+ * ⚠️ 带版本号：结果结构从「种类+白化」改为「覆盖率+珊瑚属」后，
+ *    旧记录缺少 alivePct/coralTotal 等字段，会渲染成空白。
+ *    提升版本号可让旧记录自动失效，避免脏数据。
+ */
+const HKEY = 'coral_history_v2'
+const HMAX = 20
+
 Page({
   data: {
     statusBarHeight: 20,
-    mode: 0, // 0种类识别 1生长检测
-    state: 'upload', // upload | preview | loading | result
+    state: 'upload',       // upload | preview | loading | result | error
     imgPath: '',
-    progress: 0,
+    savedImgPath: '',
     result: null,
-    history: [],
-    techList: [
-      { icon: '🎯', bg: 'rgba(30,136,229,0.1)', title: 'YOLOv9 目标检测', desc: '实时检测画面中的珊瑚区域，精准定位每一株珊瑚的边界框' },
-      { icon: '🧩', bg: 'rgba(0,188,212,0.1)', title: 'SAM3 图像分割', desc: '像素级分割珊瑚轮廓，精确量化活珊瑚覆盖面积与白化比例' },
-      { icon: '🧠', bg: 'rgba(255,112,67,0.1)', title: '大模型分析', desc: '依托南海珊瑚种质资源库训练，关联唯一编号生成生长曲线' }
-    ]
+    view: {},              // 预计算好的展示字段（WXML 不便做运算）
+    errorMsg: '',
+    history: []
   },
 
   onLoad() {
-    this.setData({ statusBarHeight: (app.globalData && app.globalData.statusBarHeight) || 20 })
+    this.setData({
+      statusBarHeight: (app.globalData && app.globalData.statusBarHeight) || 20
+    })
     this.loadHistory()
   },
 
@@ -32,25 +51,13 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 3 })
     }
-    // 消费首页「健康检测」入口：切换到生长检测标签
+    // 兼容其它页面的跨 Tab 跳转参数（本页不再区分模式）
     if (app.globalData && app.globalData.pendingAiTab !== undefined) {
-      this.setData({ mode: Number(app.globalData.pendingAiTab) })
       delete app.globalData.pendingAiTab
     }
   },
 
-  loadHistory() {
-    api.getAiHistory().then((list) => this.setData({ history: list || [] })).catch(() => {})
-  },
-
-  switchMode(e) {
-    const mode = Number(e.currentTarget.dataset.mode)
-    if (mode === this.data.mode) return
-    // 切换模式时重置流程
-    this.setData({ mode, state: 'upload', imgPath: '', result: null, progress: 0 })
-  },
-
-  /* 选择图片（wx.chooseMedia 替代网页 file input） */
+  /* ==================== 选图 ==================== */
   chooseImage() {
     wx.chooseMedia({
       count: 1,
@@ -58,51 +65,215 @@ Page({
       sourceType: ['album', 'camera'],
       sizeType: ['compressed'],
       success: (res) => {
-        this.setData({ state: 'preview', imgPath: res.tempFiles[0].tempFilePath })
+        const f = res.tempFiles && res.tempFiles[0]
+        if (!f) return
+        this.setData({ state: 'preview', imgPath: f.tempFilePath, result: null, errorMsg: '' })
+      },
+      fail: (err) => {
+        // 用户主动取消不提示
+        if (err && (err.errMsg || '').indexOf('cancel') === -1) {
+          util.toast('选择图片失败，请检查相册/相机权限')
+        }
       }
     })
   },
 
   resetUpload() {
-    this.setData({ state: 'upload', imgPath: '', result: null, progress: 0 })
+    this.setData({ state: 'upload', imgPath: '', savedImgPath: '', result: null, errorMsg: '' })
   },
 
-  /* 开始识别 */
-  startAnalysis() {
-    this.setData({ state: 'loading', progress: 0 })
-    // 进度条模拟动画
-    this._timer = setInterval(() => {
-      const p = Math.min(this.data.progress + Math.random() * 18, 92)
-      this.setData({ progress: Math.round(p) })
-    }, 320)
+  /* 把接口结果转成视图字段（百分比等） */
+  buildView(res) {
+    const c = res.cover || {}
+    const cr = res.coralRegion || {}
+    const toPct = (v) => Math.round((Number(v) || 0) * 1000) / 10
 
-    api.recognize(this.data.imgPath, this.data.mode).then((result) => {
-      clearInterval(this._timer)
-      this.setData({ state: 'result', result, progress: 100 })
-      this.loadHistory()
+    // 功能群占比条（按保育关注度排序）
+    const GROUPS = [
+      { key: 'alivePct', name: '活珊瑚', cls: 'alive' },
+      { key: 'bleachedPct', name: '白化珊瑚', cls: 'bleached' },
+      { key: 'deadPct', name: '死亡珊瑚', cls: 'dead' },
+      { key: 'algaePct', name: '藻类覆盖', cls: 'algae' },
+      { key: 'substratePct', name: '沙砾底质', cls: 'substrate' }
+    ]
+    const groupBars = GROUPS.map((g) => ({
+      key: g.key,
+      name: g.name,
+      cls: g.cls,
+      pct: toPct(c[g.key]),
+      raw: Number(c[g.key]) || 0
+    }))
+
+    // 珊瑚属识别（来自分割掩膜裁剪区域）
+    const genusTop = (cr.top || []).map((t) => ({
+      genus: t.genus,
+      pct: toPct(t.confidence)
+    }))
+
+    const bleachingShare = toPct(c.bleachingShareOfCoral)
+    const coralTotal = toPct(c.coralTotalPct)
+
+    // 拍摄条件自检：超出适用边界时，覆盖率数字不可信，页面必须显著提示
+    const q = res.captureQuality || {}
+    const quality = {
+      level: q.level || 'unknown',
+      usable: q.usable !== false,
+      contrast: q.contrast != null ? Math.round(q.contrast * 10000) / 10000 : null,
+      message: q.message || ''
+    }
+
+    return {
+      groupBars,
+      coralTotal,
+      bleachingShare,
+      genusTop,
+      hasGenus: genusTop.length > 0,
+      genusUnreliable: !!(cr && cr.reliable === false),
+      genusNote: (cr && cr.note) || '',
+      quality,
+      qualityWarn: quality.level === 'warn',
+      qualityPoor: quality.level === 'poor',
+      // 服务不可用时的降级标记（不冒充真实结果）
+      isDemo: !!res.isDemo,
+      demoReason: res.demoReason || '',
+      topClasses: (res.topClasses || []).slice(0, 5).map((t) => ({
+        name: t.name, pct: toPct(t.pct)
+      })),
+      // 白化占比 > 10% 时给出提示（阈值可按项目口径调整）
+      bleachAlert: Number(c.bleachingShareOfCoral || 0) > 0.10,
+      inferenceMs: res.inferenceMs || 0
+    }
+  },
+
+  /* ==================== 识别 ==================== */
+  startAnalysis() {
+    if (!this.data.imgPath) return
+    this.setData({ state: 'loading', errorMsg: '' })
+
+    api.recognize(this.data.imgPath).then((res) => {
+      this.setData({
+        state: 'result',
+        result: res,
+        view: this.buildView(res)
+      })
+      this.persistAndRecord(res)
     }).catch((e) => {
-      clearInterval(this._timer)
-      this.setData({ state: 'preview' })
-      util.toast((e && e.message) || '识别失败，请重试')
+      this.setData({
+        state: 'error',
+        errorMsg: (e && e.message) || '评估失败，请重试'
+      })
     })
   },
 
-  onHide() {
-    if (this._timer) clearInterval(this._timer)
+  onRetry() {
+    if (this.data.imgPath) this.startAnalysis()
+    else this.resetUpload()
   },
 
-  onUnload() {
-    if (this._timer) clearInterval(this._timer)
-  },
-
-  onHistoryTap() {
-    util.toast('历史记录详情开发中')
-  },
-
-  onShareAppMessage() {
-    return {
-      title: '蓝珊AI · 拍照识别珊瑚种类',
-      path: '/pages/ai/ai'
+  /* ==================== 历史记录（本地持久化） ==================== */
+  persistAndRecord(res) {
+    const c = res.cover || {}
+    const cr = res.coralRegion || {}
+    const topGenus = (cr.top && cr.top[0] && cr.top[0].genus) || ''
+    // 图片转存到本地用户目录，避免临时文件失效
+    const finish = (savedPath) => {
+      const list = this.data.history.slice()
+      list.unshift({
+        id: Date.now(),
+        time: this.formatTime(new Date()),
+        img: savedPath || this.data.imgPath,
+        alivePct: Number(c.alivePct) || 0,
+        bleachedPct: Number(c.bleachedPct) || 0,
+        deadPct: Number(c.deadPct) || 0,
+        coralTotalPct: Number(c.coralTotalPct) || 0,
+        bleachingShare: Number(c.bleachingShareOfCoral) || 0,
+        topGenus: topGenus,
+        result: res
+      })
+      const trimmed = list.slice(0, HMAX)
+      wx.setStorageSync(HKEY, trimmed)
+      this.setData({ history: trimmed, savedImgPath: savedPath || '' })
     }
+
+    try {
+      wx.getFileSystemManager().saveFile({
+        tempFilePath: this.data.imgPath,
+        success: (r) => finish(r.savedFilePath),
+        fail: () => finish('')
+      })
+    } catch (e) {
+      finish('')
+    }
+  },
+
+  loadHistory() {
+    const list = wx.getStorageSync(HKEY)
+    this.setData({ history: Array.isArray(list) ? list : [] })
+  },
+
+  onHistoryTap(e) {
+    const id = e.currentTarget.dataset.id
+    const item = this.data.history.filter((h) => h.id === id)[0]
+    if (!item || !item.result) {
+      util.toast('该记录缺少完整数据')
+      return
+    }
+    this.setData({
+      state: 'result',
+      result: item.result,
+      view: this.buildView(item.result),
+      imgPath: item.img || ''
+    })
+    wx.pageScrollTo({ scrollTop: 0, duration: 200 })
+  },
+
+  clearHistory() {
+    if (!this.data.history.length) return
+    wx.showModal({
+      title: '清空识别历史',
+      content: '将删除本机保存的 ' + this.data.history.length + ' 条识别记录，确定吗？',
+      confirmColor: '#FF7043',
+      success: (r) => {
+        if (!r.confirm) return
+        wx.removeStorageSync(HKEY)
+        this.setData({ history: [] })
+        util.toast('已清空')
+      }
+    })
+  },
+
+  /* 服务状态自检：评估失败时帮用户定位问题 */
+  checkService() {
+    util.toast('正在检查评估服务...')
+    wx.request({
+      url: require('../../utils/config.js').CORAL_API + '/health',
+      timeout: 8000,
+      success: (r) => {
+        if (r.statusCode === 200 && r.data && r.data.status === 'ok') {
+          const d = r.data
+          const seg = d.segmentation === 'loaded' ? '分割已加载' : '分割缺失'
+          const sp = d.species === 'loaded' ? '属分类已加载' : '属分类未训练'
+          util.toast('服务正常 · ' + seg + ' · ' + sp, 'success')
+        } else {
+          util.toast('服务返回异常，请检查 serve_fusion.py')
+        }
+      },
+      fail: () => util.toast('服务未启动：请运行 python serve_fusion.py')
+    })
+  },
+
+  formatTime(d) {
+    const p = (n) => (n < 10 ? '0' + n : '' + n)
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) +
+      ' ' + p(d.getHours()) + ':' + p(d.getMinutes())
+  },
+
+  /* ==================== 分享 ==================== */
+  onShareAppMessage() {
+    const v = this.data.view || {}
+    const title = v.coralTotal != null
+      ? '这片礁区珊瑚覆盖 ' + v.coralTotal + '%，一起来守护珊瑚礁'
+      : '蓝珊AI · 拍照评估礁区覆盖率与珊瑚属'
+    return { title, path: '/pages/ai/ai' }
   }
 })

@@ -310,3 +310,260 @@
   color: var(--text3);
   margin-top: 8rpx;
 }
+
+/* ============ 失败态 ============ */
+.ai-error {
+  margin: 0 32rpx 24rpx;
+  padding: 56rpx 40rpx;
+  text-align: center;
+}
+.err-icon { font-size: 80rpx; }
+.err-title { font-size: 32rpx; font-weight: 700; margin-top: 16rpx; }
+.err-msg {
+  font-size: 24rpx;
+  color: var(--coral);
+  margin-top: 12rpx;
+  line-height: 1.6;
+}
+.err-actions { display: flex; gap: 20rpx; margin-top: 32rpx; }
+.err-hint {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 24rpx;
+  line-height: 1.7;
+  word-break: break-all;
+}
+
+/* ============ 结果：原图 ============ */
+.res-photo {
+  margin: 0 32rpx 24rpx;
+  padding: 16rpx;
+}
+.res-photo-img {
+  width: 100%;
+  height: 420rpx;
+  border-radius: 24rpx;
+  background: #0D47A1;
+}
+
+/* ============ 结果卡 ============ */
+.res-card {
+  margin: 0 32rpx 24rpx;
+  padding: 32rpx;
+}
+.res-head {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid var(--border);
+}
+.res-head-icon { font-size: 36rpx; }
+.res-head-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  flex: 1;
+}
+.res-head-badge {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.08);
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+.res-main {
+  font-size: 42rpx;
+  font-weight: 800;
+  margin-top: 24rpx;
+  letter-spacing: 1rpx;
+}
+.res-latin {
+  font-size: 24rpx;
+  color: var(--text3);
+  font-style: italic;
+  margin-top: 8rpx;
+}
+.conf-bar {
+  height: 14rpx;
+  background: var(--border);
+  border-radius: 7rpx;
+  overflow: hidden;
+  margin-top: 24rpx;
+}
+.conf-fill {
+  height: 100%;
+  border-radius: 7rpx;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.5s ease;
+}
+
+/* Top3 */
+.top3 { margin-top: 28rpx; padding-top: 20rpx; border-top: 2rpx dashed var(--border); }
+.top3-title {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-bottom: 12rpx;
+}
+.top3-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0;
+}
+.t3-name { font-size: 24rpx; color: var(--text2); }
+.t3-conf { font-size: 24rpx; color: var(--text3); }
+
+/* ============ 白化程度 ============ */
+.bleach-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 28rpx;
+  padding: 16rpx 36rpx;
+  border-radius: 28rpx;
+  background: rgba(30, 136, 229, 0.08);
+}
+.bleach-icon { font-size: 40rpx; }
+.bleach-text { font-size: 36rpx; font-weight: 800; }
+.bleach-badge.ok { background: rgba(76, 175, 80, 0.12); }
+.bleach-badge.ok .bleach-text { color: var(--green); }
+.bleach-badge.warn { background: rgba(255, 152, 0, 0.14); }
+.bleach-badge.warn .bleach-text { color: #EF6C00; }
+.bleach-badge.dead { background: rgba(120, 144, 156, 0.16); }
+.bleach-badge.dead .bleach-text { color: #546E7A; }
+.bleach-tip {
+  font-size: 23rpx;
+  color: var(--text2);
+  margin-top: 18rpx;
+  line-height: 1.6;
+}
+
+/* 三档概率 */
+.prob-list { margin-top: 28rpx; }
+.prob-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+.prob-name {
+  width: 88rpx;
+  font-size: 23rpx;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.prob-bar {
+  flex: 1;
+  height: 16rpx;
+  background: var(--border);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.prob-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: var(--primary);
+  transition: width 0.5s ease;
+}
+.prob-fill.healthy { background: linear-gradient(90deg, #4CAF50, #8BC34A); }
+.prob-fill.bleached { background: linear-gradient(90deg, #FF9800, #FFC107); }
+.prob-fill.dead { background: linear-gradient(90deg, #78909C, #B0BEC5); }
+/* 礁区覆盖评估的功能群配色 */
+.prob-fill.alive { background: linear-gradient(90deg, #2E7D32, #66BB6A); }
+.prob-fill.algae { background: linear-gradient(90deg, #558B2F, #9CCC65); }
+.prob-fill.substrate { background: linear-gradient(90deg, #A1887F, #D7CCC8); }
+
+/* 覆盖汇总行 */
+.cover-summary {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx dashed var(--border);
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.6;
+}
+/* 历史标签配色补充 */
+.htag.alive { background: rgba(76, 175, 80, 0.12); color: var(--green); }
+
+/* 拍摄条件自检警示条 */
+.quality-alert {
+  margin: 0 0 24rpx;
+  padding: 24rpx 28rpx;
+  border-radius: 20rpx;
+  border-left: 8rpx solid;
+}
+.quality-alert.poor {
+  background: rgba(244, 67, 54, 0.08);
+  border-left-color: #F44336;
+}
+.quality-alert.warn {
+  background: rgba(255, 152, 0, 0.10);
+  border-left-color: #FF9800;
+}
+.qa-title { font-size: 28rpx; font-weight: 600; color: var(--text); margin-bottom: 8rpx; }
+.qa-desc { font-size: 24rpx; color: var(--text2); line-height: 1.6; }
+.qa-meta { font-size: 22rpx; color: var(--text3); margin-top: 8rpx; }
+.prob-val {
+  width: 92rpx;
+  text-align: right;
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+
+/* ============ 复核提示与使用边界 ============ */
+.review-tip {
+  margin: 0 32rpx 20rpx;
+  padding: 24rpx 28rpx;
+  background: rgba(255, 152, 0, 0.12);
+  border-left: 8rpx solid #FF9800;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  color: #B45309;
+  line-height: 1.6;
+}
+.disclaimer {
+  margin: 0 32rpx 8rpx;
+  padding: 0 8rpx;
+  font-size: 21rpx;
+  color: var(--text3);
+  line-height: 1.7;
+}
+.disclaimer-sub {
+  margin: 0 32rpx 28rpx;
+  padding: 0 8rpx;
+  font-size: 20rpx;
+  color: var(--text3);
+}
+.result-action-btn { margin: 0 32rpx 32rpx; }
+
+/* ============ 历史增强 ============ */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 32rpx;
+}
+.section-action {
+  font-size: 24rpx;
+  color: var(--text3);
+  padding: 8rpx 12rpx;
+}
+.history-tags {
+  display: flex;
+  gap: 10rpx;
+  margin-top: 10rpx;
+}
+.htag {
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 18rpx;
+  background: rgba(30, 136, 229, 0.08);
+  color: var(--primary);
+}
+.htag.healthy { background: rgba(76, 175, 80, 0.12); color: var(--green); }
+.htag.bleached { background: rgba(255, 152, 0, 0.14); color: #EF6C00; }
+.htag.dead { background: rgba(120, 144, 156, 0.16); color: #546E7A; }
+.htag.review { background: rgba(244, 67, 54, 0.1); color: #D32F2F; }

@@ -30,3 +30,7 @@ desktop.ini
 .idea/
 *.swp
 *~
+
+# 微信开发者工具/编辑器的临时目录
+*.tmpdir/
+*.tmp/
