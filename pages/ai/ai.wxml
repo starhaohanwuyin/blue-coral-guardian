@@ -207,7 +207,8 @@
       <view class="ai-tech-info">
         <view class="ai-tech-title">礁区语义分割 · 40 类底栖</view>
         <view class="ai-tech-desc">基于 Coralscapes 数据集（2075 图 / 39 类像素级标注）训练的分割模型，
-         逐像素区分活珊瑚/白化/死亡/藻类/沙砾，输出覆盖率百分比</view>
+         逐像素区分活珊瑚/白化/死亡/藻类/沙砾，输出覆盖率百分比。
+         在官方验证集上 mIoU 0.548（活珊瑚 IoU 0.711、白化珊瑚 0.786）</view>
       </view>
     </view>
     <view class="ai-tech-card card">
@@ -215,7 +216,17 @@
       <view class="ai-tech-info">
         <view class="ai-tech-title">珊瑚属识别 · 34 属</view>
         <view class="ai-tech-desc">在分割出的珊瑚主体区域上做属级分类（背景已剔除），
-         训练数据来自印太珊瑚大三角（16,246 条观察），在仙本那留出集上评估</view>
+         训练数据来自印太珊瑚大三角（16,246 条观察）。
+         仙本那留出集（地理隔离）Top-1 <text style="font-weight:600;">86.12%</text>，宏F1 0.82，ECE 0.029</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(255,112,67,0.1);">🩺</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">白化状态识别 · 分类模型</view>
+        <view class="ai-tech-desc">区分健康 / 白化 / 死亡，在第三方独立数据集（10,382 张，哈希零重叠）
+         上二分类准确率 98.21%。注：白化状态由分类模型判定，
+         与上方「白化珊瑚%」的像素口径不同，前者更可靠</view>
       </view>
     </view>
     <view class="ai-tech-card card">
@@ -231,7 +242,17 @@
       <view class="ai-tech-info">
         <view class="ai-tech-title">外部一致性验证</view>
         <view class="ai-tech-desc">模型在仙本那 180 张照片上的活珊瑚覆盖估计为 39.71%，
-         与 Reef Check Malaysia 2024 实地调查的区域平均（39.56%）相差 0.15 个百分点</view>
+         与 Reef Check Malaysia 2024 实地调查的区域平均（39.56%）相差 0.15 个百分点。
+         已做聚类自助置信区间、McNemar 显著性检验与错误归因分析</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(255,193,7,0.12);">📏</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">已知局限（主动声明）</view>
+        <view class="ai-tech-desc">覆盖率估计适用于<text style="font-weight:600;">区域尺度</text>，
+         不足以做单站点优劣区分（站点级验证存在 +11.7 点偏差）；
+         结果仅供保育决策参考，不替代标准化样方调查</view>
       </view>
     </view>
   </view>
