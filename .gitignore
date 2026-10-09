@@ -1,0 +1,53 @@
+# ==========================================================
+# coral_ml · Git 忽略规则
+# 目的：只提交「代码 + 文档 + 结果报告」，
+#       排除体积巨大的数据集与模型权重（可重新生成）
+# ==========================================================
+
+# ---- 数据集（13.6 GB，不进仓库）----
+data/
+# 例外：保留归属表（体积极小且合规必需）
+!data/inat_dataset/ATTRIBUTION.csv
+
+# ---- 模型权重（1.1 GB，可重新训练）----
+weights/
+
+# ---- 训练中间产物 ----
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+
+# ---- 日志（体积大且按需生成）----
+reports/*.log
+*.log
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# ---- 临时文件 ----
+*.tmp
+*.tmpdir/
+*.partial.json
+
+# ---- 注意 ----
+# data/ 与 weights/ 被排除，但以下内容**必须保留**：
+#   scripts/     全部训练与评估脚本
+#   docs/        方案、核验、答辩要点等文档
+#   reports/*.json  结果 JSON（体积极小，是报告的可追溯来源）
+#   reports/最终结果汇总.md
+#   dsh-skill/   DSH Agent 插件
+#   NOTICE.md    许可证与合规声明

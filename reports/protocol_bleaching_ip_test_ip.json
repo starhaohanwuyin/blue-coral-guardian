@@ -1,0 +1,230 @@
+{
+  "task": "bleaching_ip",
+  "split": "test_ip",
+  "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_ip\\best.pt",
+  "temperature": 0.871719479560852,
+  "n_samples": 176,
+  "n_classes": 3,
+  "top1": 0.852273,
+  "top1Ci95": [
+    0.801136,
+    0.903409
+  ],
+  "macroF1": 0.686404,
+  "macroF1Ci95": [
+    0.585626,
+    0.781734
+  ],
+  "ece": 0.094318,
+  "reliabilityBins": [
+    {
+      "bin": "0.47-0.53",
+      "n": 4,
+      "avgConf": 0.51,
+      "acc": 0.5,
+      "gap": 0.01
+    },
+    {
+      "bin": "0.53-0.60",
+      "n": 8,
+      "avgConf": 0.5647,
+      "acc": 0.875,
+      "gap": -0.3103
+    },
+    {
+      "bin": "0.60-0.67",
+      "n": 3,
+      "avgConf": 0.6363,
+      "acc": 0.6667,
+      "gap": -0.0303
+    },
+    {
+      "bin": "0.67-0.73",
+      "n": 3,
+      "avgConf": 0.6918,
+      "acc": 1.0,
+      "gap": -0.3082
+    },
+    {
+      "bin": "0.73-0.80",
+      "n": 10,
+      "avgConf": 0.7807,
+      "acc": 0.5,
+      "gap": 0.2807
+    },
+    {
+      "bin": "0.80-0.87",
+      "n": 10,
+      "avgConf": 0.8351,
+      "acc": 0.6,
+      "gap": 0.2351
+    },
+    {
+      "bin": "0.87-0.93",
+      "n": 30,
+      "avgConf": 0.9069,
+      "acc": 0.8333,
+      "gap": 0.0735
+    },
+    {
+      "bin": "0.93-1.00",
+      "n": 108,
+      "avgConf": 0.9787,
+      "acc": 0.9259,
+      "gap": 0.0528
+    }
+  ],
+  "coverageCurve": {
+    "byCoverage": [
+      {
+        "coverage": 0.5,
+        "threshold": 0.9634,
+        "accuracy": 0.977273,
+        "ci": [
+          0.977273,
+          0.943182,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.6989,
+        "threshold": 0.9129,
+        "accuracy": 0.910569,
+        "ci": [
+          0.910569,
+          0.861789,
+          0.95935
+        ]
+      },
+      {
+        "coverage": 0.8011,
+        "threshold": 0.8446,
+        "accuracy": 0.900709,
+        "ci": [
+          0.900709,
+          0.851064,
+          0.950355
+        ]
+      },
+      {
+        "coverage": 0.8977,
+        "threshold": 0.7598,
+        "accuracy": 0.860759,
+        "ci": [
+          0.860759,
+          0.803797,
+          0.911392
+        ]
+      },
+      {
+        "coverage": 0.9489,
+        "threshold": 0.5753,
+        "accuracy": 0.862275,
+        "ci": [
+          0.862275,
+          0.808383,
+          0.916168
+        ]
+      },
+      {
+        "coverage": 1.0,
+        "threshold": 0.5047,
+        "accuracy": 0.852273,
+        "ci": [
+          0.852273,
+          0.795455,
+          0.903409
+        ]
+      }
+    ],
+    "byTarget": [
+      {
+        "target": 0.99,
+        "coverage": 0.2614,
+        "threshold": 0.9862,
+        "accuracy": 1.0
+      },
+      {
+        "target": 0.995,
+        "coverage": 0.2614,
+        "threshold": 0.9862,
+        "accuracy": 1.0
+      },
+      {
+        "target": 0.999,
+        "coverage": 0.2614,
+        "threshold": 0.9862,
+        "accuracy": 1.0
+      }
+    ]
+  },
+  "perClass": {
+    "bleached": {
+      "n": 26,
+      "precision": 0.5,
+      "recall": 0.4231,
+      "f1": 0.4583,
+      "acc": 0.4231,
+      "accCi": [
+        0.2308,
+        0.6154
+      ]
+    },
+    "dead": {
+      "n": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "acc": 0,
+      "accCi": [
+        0,
+        0
+      ]
+    },
+    "healthy": {
+      "n": 150,
+      "precision": 0.9026,
+      "recall": 0.9267,
+      "f1": 0.9145,
+      "acc": 0.9267,
+      "accCi": [
+        0.8867,
+        0.9667
+      ]
+    }
+  },
+  "confusionTop": [
+    {
+      "count": 15,
+      "true": "bleached",
+      "pred": "healthy"
+    },
+    {
+      "count": 11,
+      "true": "healthy",
+      "pred": "bleached"
+    }
+  ],
+  "confusionMatrix": [
+    [
+      11,
+      0,
+      15
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      11,
+      0,
+      139
+    ]
+  ],
+  "classOrder": [
+    "bleached",
+    "dead",
+    "healthy"
+  ]
+}

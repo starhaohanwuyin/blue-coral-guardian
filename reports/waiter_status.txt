@@ -1,0 +1,2 @@
+﻿RESTARTED
+{"status":"ok","device":"cuda","models":["species","bleaching"],"loaded":{"species":{"task":"species","classes":30,"imgSize":288,"temperature":0.869131326675415,"valAcc":0.8517178893089294,"testTop1":0.851718,"threshold":0.99},"bleaching":{"task":"bleaching","classes":3,"imgSize":224,"temperature":0.8526936769485474,"valAcc":0.9417475461959839,"testTop1":0.912621,"threshold":0.995}}}

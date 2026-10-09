@@ -1,0 +1,31 @@
+{
+  "task": "bleaching_ip",
+  "split": "test_ip",
+  "n": 176,
+  "classes": [
+    "bleached",
+    "dead",
+    "healthy"
+  ],
+  "prior": [
+    0.38763830599008015,
+    0.04044257916825639,
+    0.5719191148416635
+  ],
+  "results": {
+    "A_argmax": {
+      "bleached": 0.4230769230769231,
+      "healthy": 0.9266666666666666
+    },
+    "B_prior_corrected": {
+      "bleached": 0.3076923076923077,
+      "healthy": 0.8733333333333333
+    },
+    "C_bleached_boost": {
+      "best_beta": 6.0,
+      "recall": 0.6538461538461539,
+      "precision": 0.3617021276595745,
+      "accuracy": 0.7784090909090909
+    }
+  }
+}

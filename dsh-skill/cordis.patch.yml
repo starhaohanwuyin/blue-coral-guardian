@@ -1,0 +1,10 @@
+# dsh-coral-skill bundle patch
+#
+# 安装方式（本地路径）：
+#   dsh plugin --profile desktop add "file:D:\大学作业\广东海洋大学的珊瑚评测小程序\coral_ml\dsh-skill"
+#
+# 安装后本 patch 会被 profile 合并，等价于插入下面这一行插件条目；
+# 卸载（dsh plugin --profile desktop remove dsh-coral-skill）后自动移除。
+- insert:
+    - id: coral-skill
+      name: 'dsh-coral-skill'
