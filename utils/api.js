@@ -429,6 +429,17 @@ function mockCoralResult() {
       rgRatio: 0.655,
       message: '拍摄条件良好，评估结果可信'
     },
+    bleaching: {
+      model: 'bleaching_all',
+      label: 'bleached', labelCn: '白化',
+      confidence: 0.9612, reliable: true,
+      probabilities: { bleached: 0.9612, dead: 0.0210, healthy: 0.0178 },
+      top: [
+        { label: 'bleached', labelCn: '白化', confidence: 0.9612 },
+        { label: 'dead', labelCn: '死亡', confidence: 0.0210 },
+        { label: 'healthy', labelCn: '健康', confidence: 0.0178 }
+      ]
+    },
     disclaimer: '本结果由AI模型给出，仅供保育决策参考；建议拍摄深度 ≤10m。本项目仅用于学术研究与竞赛，非商业用途。',
     inferenceMs: 812
   }

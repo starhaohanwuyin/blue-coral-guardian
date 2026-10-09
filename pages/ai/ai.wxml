@@ -105,6 +105,33 @@
       </view>
     </view>
 
+    <!-- 白化状态（分类模型） -->
+    <view class="res-card card" wx:if="{{view.hasBleach}}">
+      <view class="res-head">
+        <text class="res-head-icon">🩺</text>
+        <text class="res-head-title">白化状态评估</text>
+        <text class="res-head-badge">{{view.bleachView.pct}}%</text>
+      </view>
+      <view class="res-main">{{view.bleachView.labelCn}}</view>
+      <view class="conf-bar"><view class="conf-fill" style="width: {{view.bleachView.pct}}%;"></view></view>
+      <view class="prob-list" style="margin-top: 18rpx;">
+        <view class="prob-row" wx:for="{{view.bleachView.probs}}" wx:key="key">
+          <text class="prob-name">{{item.name}}</text>
+          <view class="prob-bar">
+            <view class="prob-fill {{item.key}}" style="width: {{item.pct}}%;"></view>
+          </view>
+          <text class="prob-val">{{item.pct}}%</text>
+        </view>
+      </view>
+      <view wx:if="{{!view.bleachView.reliable}}" class="review-tip" style="margin-top: 16rpx;">
+        ⚠️ 置信度不足，建议人工复核后再用于保育决策
+      </view>
+      <view class="bleach-tip">
+        说明：白化状态由**分类模型**（{{view.bleachView.model}}）判定；
+        上方「白化珊瑚%」是像素覆盖率，两者口径不同，前者更可靠
+      </view>
+    </view>
+
     <!-- 珊瑚属识别 -->
     <view class="res-card card" wx:if="{{view.hasGenus}}">
       <view class="res-head">

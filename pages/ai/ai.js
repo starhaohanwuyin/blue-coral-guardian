@@ -122,10 +122,27 @@ Page({
       message: q.message || ''
     }
 
+    // 白化状态：来自**分类模型**（不是分割模型的 bleachedPct —— 后者经实测跨域无效）
+    const bl = res.bleaching || null
+    const bleachView = bl ? {
+      label: bl.label || '',
+      labelCn: bl.labelCn || '',
+      pct: Math.round((Number(bl.confidence) || 0) * 1000) / 10,
+      reliable: bl.reliable !== false,
+      model: bl.model || '',
+      probs: Object.keys(bl.probabilities || {}).map((k) => ({
+        key: k,
+        name: ({ bleached: '白化', healthy: '健康', dead: '死亡' })[k.toLowerCase()] || k,
+        pct: Math.round((Number(bl.probabilities[k]) || 0) * 1000) / 10
+      })).sort((a, b) => b.pct - a.pct)
+    } : null
+
     return {
       groupBars,
       coralTotal,
       bleachingShare,
+      bleachView,
+      hasBleach: !!bleachView,
       genusTop,
       hasGenus: genusTop.length > 0,
       genusUnreliable: !!(cr && cr.reliable === false),
