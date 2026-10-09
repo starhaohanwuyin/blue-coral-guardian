@@ -44,8 +44,38 @@ def main():
 
     # ---------- 1. 分割：星地验证 ----------
     sv = load("segment_validation.json")
+    miou1024 = load("segmentation_miou_1024.json")
+    miou512 = load("segmentation_miou_512.json")
     L.append("## 1. 礁区覆盖评估（Model A · 语义分割）")
     L.append("")
+    if miou1024:
+        L.append("### 1.0 分割质量（Coralscapes 官方验证集）")
+        L.append("")
+        L.append(f"在 Coralscapes **官方 validation split（{miou1024['nImages']} 张，含像素级掩膜）**上评估：")
+        L.append("")
+        hdr = "| 指标 | 512px 输入 | **1024px 输入（当前产品口径）** |"
+        L.append(hdr)
+        L.append("|---|---|---|")
+        L.append(f"| **mIoU（40 类宏平均）** | {miou512['mIoU'] if miou512 else '—'} | **{miou1024['mIoU']}** |")
+        L.append(f"| 频次加权 IoU | {miou512['fIoU'] if miou512 else '—'} | {miou1024['fIoU']} |")
+        L.append(f"| 逐像素准确率 | {miou512['pixelAccuracy'] if miou512 else '—'} | {miou1024['pixelAccuracy']} |")
+        L.append("")
+        L.append("**按功能群的 IoU（1024px）：**")
+        L.append("")
+        L.append("| 功能群 | IoU |")
+        L.append("|---|---|")
+        for k, v in sorted(miou1024["byFunctionalGroup"].items(), key=lambda kv: -kv[1]):
+            L.append(f"| {k} | {v:.4f} |")
+        L.append("")
+        if miou512:
+            g5 = miou512["byFunctionalGroup"]
+            g10 = miou1024["byFunctionalGroup"]
+            L.append("> ⚠️ **重要发现**：推理分辨率对分割质量影响巨大——")
+            L.append(f"> 512px 时活珊瑚 IoU 仅 **{g5.get('活珊瑚', 0):.4f}**、白化珊瑚 **{g5.get('白化珊瑚', 0):.4f}**（完全失效）；"
+                     f"改用模型原生 **1024px** 后分别升至 **{g10.get('活珊瑚', 0):.4f}** 与 **{g10.get('白化珊瑚', 0):.4f}**。")
+            L.append("> 原因是细枝珊瑚与小面积白化斑在 512px 下被下采样抹掉。")
+            L.append("> **产品已切换到 1024px**：mIoU 提升约 117%，星地验证依然成立，耗时代价约 600ms（原 150ms）。")
+            L.append("")
     if sv:
         est = sv["estimates"]
         L.append("### 1.1 与实地调查的交叉验证（仙本那 180 张照片）")

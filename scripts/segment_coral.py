@@ -62,7 +62,8 @@ GROUP_COLOR = {
 
 
 class CoralSegmenter:
-    def __init__(self, model_dir=MODEL_DIR, device=None, size=512):
+    def __init__(self, model_dir=MODEL_DIR, device=None, size=1024):
+        # 默认 1024 = 模型原生训练分辨率。实测 mIoU：512px=0.25 → 1024px=0.55。
         from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
         self.size = size
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")

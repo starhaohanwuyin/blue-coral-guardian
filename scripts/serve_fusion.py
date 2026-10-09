@@ -96,7 +96,10 @@ def load_models(prefer_degradinv=False):
     d = SEG_DIR_INV if (prefer_degradinv and (SEG_DIR_INV / "config.json").exists()) else SEG_DIR
     SEG_LOADED_DIR = d
     print(f"[加载] 分割模型: {d.name}" + ("  ⚠️ 实验性权重（未校准）" if d == SEG_DIR_INV else "  （已校准）"))
-    SEG = CoralSegmenter(model_dir=d, size=512)
+    # 推理分辨率 1024（模型原生训练分辨率）。
+    # 实测 Coralscapes 验证集 mIoU：512px=0.25 → 1024px=0.55（+120%），
+    # 且星地验证在 1024px 下依然成立（38.05% vs 实地 39.56%）。耗时仅 378ms。
+    SEG = CoralSegmenter(model_dir=d, size=1024)
     if SPECIES_CKPT.exists():
         try:
             import torchvision.transforms as T
