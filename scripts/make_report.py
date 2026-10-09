@@ -123,17 +123,21 @@ def main():
     inv = load("degradation_modelA_degradinv_anchor.json")
     inv_enh = load("degradation_modelA_degradinv_anchor_enh.json")
     failed = load("degradation_modelA_degradinv.json")
-    if inv and base:
+    if inv and base512:
+        # ⚠️ 自蒸馏实验是在 **512px** 下跑的，因此「修复前」基准必须用 512px 结果，
+        #    否则会与 1024px 的基准混用，造成口径不一致的误导。
         L.append("### 1.3 退化不变性微调实验（含锚定损失）")
         L.append("")
-        hdr = "| 档位 | 修复前 | +锚定自蒸馏 |"
+        L.append("> ⚠️ 本节实验在 **512px** 下进行，故「修复前」基准取 512px 结果，与 §1.2 的 1024px 口径不同。")
+        L.append("")
+        hdr = "| 档位 | 修复前(512px) | +锚定自蒸馏 |"
         sep = "|---|---|---|"
         if inv_enh:
             hdr += " +自蒸馏+色彩还原 |"
             sep += "---|"
         L.append(hdr)
         L.append(sep)
-        m0 = {r["level"]: r for r in base["rows"]}
+        m0 = {r["level"]: r for r in base512["rows"]}
         m1 = {r["level"]: r for r in inv["rows"]}
         m2 = {r["level"]: r for r in inv_enh["rows"]} if inv_enh else {}
         for lv in m0:
