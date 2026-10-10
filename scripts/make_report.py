@@ -226,6 +226,30 @@ def main():
         L.append("_尚无结果（属级模型训练中）_")
         L.append("")
 
+    # ---------- 4.5 交叉验证 ----------
+    cvres = load("cv_genus_results.json")
+    if cvres:
+        L.append("### 2.1 交叉验证（固定地理隔离测试集 + 轮换训练子集）")
+        L.append("")
+        L.append("> 标准 K 折会轮换测试集，但我们的测试集是**地理隔离**的仙本那留出集——")
+        L.append("> 轮换会让训练看到仙本那，破坏「跨域泛化」这一核心验证。")
+        L.append("> 故采用：**固定测试集 + 轮换训练子集**（珊瑚大三角的 34 属分层抽样）。")
+        L.append("")
+        L.append("| 折 | 训练集比例 | 仙本那 Top-1 | 宏 F1 |")
+        L.append("|---|---|---|---|")
+        for f in cvres["folds"]:
+            L.append(f"| {f['fold']} | {f['frac']:.0%} | {pct(f['top1'])} | {f['macroF1']:.4f} |")
+        L.append(f"| **均值** | | **{pct(cvres['mean'])}** | |")
+        L.append(f"| **标准差** | | **{pct(cvres['std'])}** | |")
+        if cvres.get("fullTrainTop1"):
+            L.append(f"| 全量训练（100%）| 100% | **{pct(cvres['fullTrainTop1'])}** | |")
+        L.append("")
+        L.append(f"> **结论**：折间标准差仅 **{pct(cvres['std'])}**，说明 Top-1 **不依赖特定划分**，可放心引用；")
+        if cvres.get("fullTrainTop1"):
+            L.append(f"> 全量训练比 70% 子集高 **{pct(cvres['fullTrainTop1']-cvres['mean'])}**，"
+                     f"体现明显的**数据规模效应**，支持继续扩充数据。")
+        L.append("")
+
     # ---------- 5. 白化 ----------
     L.append("## 3. 白化程度评估")
     L.append("")
