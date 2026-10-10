@@ -113,6 +113,14 @@ STAGES = [
       "--img-size", "224", "--batch-size", "32", "--epochs", "18",
       "--freeze-epochs", "2", "--patience", "6", "--workers", "4"]),
 
+    ("noaa", "NOAA 环境数据缓存（海表热压力）",
+     "data/noaa/_raw_CRW_DHW_2024.csv", [],
+     [PY, "-u", "cache_noaa.py"]),
+
+    ("climate_index", "气候快速索引（供环境数据插件查询）",
+     "data/noaa/climate_index.json", ["noaa"],
+     [PY, "-u", "climate_context.py", "--build"]),
+
     ("cv_genus", "属级模型交叉验证（固定地理隔离测试集）",
      "reports/cv_genus_results.json", ["species_ip"],
      [PY, "-u", "run_cv_genus.py", "--folds", "3", "--frac", "0.7", "--epochs", "14"]),

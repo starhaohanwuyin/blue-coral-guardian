@@ -44,7 +44,7 @@ SPECIES_CKPT = ROOT / "weights" / "species_ip" / "best.pt"
 BLEACH_DIRS = ["bleaching_all", "bleaching_ip", "bleaching"]
 
 try:
-    from fastapi import FastAPI, File, UploadFile, HTTPException
+    from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Request
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse, FileResponse
     import uvicorn
@@ -57,6 +57,8 @@ from segment_coral import CoralSegmenter, functional_group, GROUP_CN  # noqa: E4
 from uw_enhance import enhance  # noqa: E402
 from check_capture_quality import metrics as quality_metrics, verdict as quality_verdict, \
     DEFAULT_THRESHOLDS  # noqa: E402
+from climate_context import context_for as climate_context  # noqa: E402
+from restoration_priority import assess as assess_restoration  # noqa: E402
 
 # 拍摄条件阈值（若已标定则读取标定结果）
 QUALITY_TH = DEFAULT_THRESHOLDS
@@ -290,7 +292,19 @@ def sample_list(limit: int = 20):
 
 
 @app.post("/analyze")
-async def analyze(file: UploadFile = File(...), enhance_first: bool = False):
+async def analyze(request: Request, file: UploadFile = File(...),
+                  enhance_first: bool = False,
+                  lat: float = Form(None), lon: float = Form(None),
+                  year: int = Form(None)):
+    # 兼容两种传参方式：
+    #   · 表单字段（小程序 wx.uploadFile 的 formData 走这条）
+    #   · 查询参数（curl / Skill 拼接 URL 走这条）
+    if lat is None or lon is None:
+        qp = request.query_params
+        lat = lat if lat is not None else (float(qp["lat"]) if "lat" in qp else None)
+        lon = lon if lon is not None else (float(qp["lon"]) if "lon" in qp else None)
+        if year is None and "year" in qp:
+            year = int(qp["year"])
     if SEG is None:
         raise HTTPException(503, "分割模型未加载")
     data = await file.read()
@@ -350,6 +364,33 @@ async def analyze(file: UploadFile = File(...), enhance_first: bool = False):
         "disclaimer": DISCLAIMER,
         "inferenceMs": round((time.time() - t0) * 1000, 1),
     }
+
+    # ③ 综合研判（可选）：给出坐标时，融合图像 + NOAA 环境数据，输出修复优先级
+    if lat is not None and lon is not None:
+        try:
+            result["climate"] = climate_context(lat, lon, year)
+            result["restoration"] = assess_restoration(
+                cover={
+                    "alivePct": live,
+                    "bleachedPct": grp.get("bleached", 0.0),
+                    "deadPct": grp.get("dead", 0.0),
+                    "algaePct": grp.get("algae", 0.0),
+                    "substratePct": grp.get("substrate", 0.0),
+                    "coralTotalPct": coral_total,
+                },
+                climate=result["climate"],
+                coral_region=result["coralRegion"],
+                capture_quality=result["captureQuality"],
+                cell=result["climate"],
+            )
+        except Exception as e:      # 研判失败不影响主结果
+            result["restoration"] = None
+            result["climateError"] = f"{type(e).__name__}: {e}"
+    else:
+        result["climate"] = None
+        result["restoration"] = None
+        result["restorationHint"] = "传入 lat/lon 即可获得气候背景与修复优先级研判"
+
     return JSONResponse(result)
 
 
@@ -370,6 +411,52 @@ async def analyze_base64(payload: dict):
         async def read(self):
             return buf.getvalue()
     return await analyze(_F(), payload.get("enhance_first", False))
+
+
+# ---------------------------------------------------------------- 环境数据
+@app.get("/climate")
+def climate(lat: float, lon: float, year: int = None):
+    """环境数据插件：查询某坐标的海表热压力（NOAA CRW DHW / 白化预警等级）。"""
+    return JSONResponse(climate_context(lat, lon, year))
+
+
+@app.get("/climate/cells")
+def climate_cells(limit: int = 200):
+    """列出可用格点（供前端做点位选择）。"""
+    import climate_context as cc
+    rows = cc.cell_table()[:max(1, min(limit, 2000))]
+    return JSONResponse({
+        "count": len(rows),
+        "cells": [{"year": y, "lat": la, "lon": lo, "dhwMax": m,
+                   "baaLabel": b, "daysDhwGe8": g} for y, la, lo, m, b, g in rows],
+    })
+
+
+# ---------------------------------------------------------------- 综合研判
+@app.post("/priority")
+def priority(payload: dict):
+    """
+    综合研判插件：融合图像结果 + 环境数据，输出修复优先级与保育报告。
+
+    body:
+      {
+        "cover": {alivePct, bleachedPct, deadPct, algaePct, coralTotalPct},
+        "lat": 4.4, "lon": 118.8, "year": 2024,          # 可选，给了就查气候
+        "coralRegion": {...}, "captureQuality": {...}     # 可选
+      }
+    """
+    cover = payload.get("cover") or {}
+    lat, lon, year = payload.get("lat"), payload.get("lon"), payload.get("year")
+    climate = None
+    if lat is not None and lon is not None:
+        climate = climate_context(lat, lon, year)
+    r = assess_restoration(
+        cover=cover, climate=climate,
+        coral_region=payload.get("coralRegion") or {},
+        capture_quality=payload.get("captureQuality") or {},
+        cell=climate,
+    )
+    return JSONResponse(r)
 
 
 if __name__ == "__main__":

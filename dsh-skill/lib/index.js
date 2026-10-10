@@ -76,7 +76,11 @@ const MIME = {
   '.webp': 'image/webp', '.bmp': 'image/bmp',
 }
 
-async function callPredict(imagePath, signal) {
+/**
+ * 调用 serve_fusion.py 的 /analyze。
+ * lat/lon/year 可选：给了服务端会顺带返回气候背景与修复优先级研判。
+ */
+async function callAnalyze(imagePath, signal, lat, lon, year) {
   const ext = extname(imagePath).toLowerCase()
   if (!MIME[ext]) throw new Error(`不支持的图片格式 "${ext}"（支持 jpg/jpeg/png/webp/bmp）`)
 
@@ -91,9 +95,15 @@ async function callPredict(imagePath, signal) {
   const form = new FormData()
   form.append('file', new Blob([buf], { type: MIME[ext] }), basename(imagePath))
 
+  const qs = new URLSearchParams()
+  if (lat != null) qs.set('lat', String(lat))
+  if (lon != null) qs.set('lon', String(lon))
+  if (year != null) qs.set('year', String(year))
+  const suffix = qs.toString() ? `?${qs}` : ''
+
   let res
   try {
-    res = await fetch(`${API_BASE()}/analyze`, { method: 'POST', body: form, signal })
+    res = await fetch(`${API_BASE()}/analyze${suffix}`, { method: 'POST', body: form, signal })
   } catch (e) {
     throw new Error(
       `无法连接珊瑚识别服务 ${API_BASE()}：${e.message}。` +
@@ -106,6 +116,9 @@ async function callPredict(imagePath, signal) {
   }
   return await res.json()
 }
+
+// 向后兼容旧名
+const callPredict = callAnalyze
 
 /** 推测结果的中文摘要（给模型和用户看的自然语言）。 */
 function summarize(r) {
@@ -142,6 +155,151 @@ function summarize(r) {
 }
 
 export function apply(ctx) {
+  /* ---------------- 工具 4：环境数据插件（只读） ---------------- */
+  ctx.tools.register(defineTool({
+    name: 'get_climate_context',
+    description:
+      '环境数据插件：查询某个经纬度的海表热压力与白化风险（数据源 NOAA Coral Reef Watch）。'
+      + '返回 DHW 峰值、白化预警等级（BAA 0–4）、热浪天数、与其它年份的对比。'
+      + '当用户询问「这片海域水温怎么样」「有没有白化风险」「今年热不热」时调用。'
+      + '坐标需在数据覆盖范围内（4.0–5.0N, 118.0–119.5E，即仙本那及周边）。',
+    parameters: {
+      lat: { type: 'number', required: true, description: '纬度，如 4.4' },
+      lon: { type: 'number', required: true, description: '经度，如 118.8' },
+      year: { type: 'number', required: false, description: '年份（2023/2024/2025），缺省取最新' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          ok: { type: 'boolean', required: true, description: '查询是否成功' },
+          year: { type: 'number', required: true, description: '评估年份' },
+          dhwMax: { type: 'number', required: true, description: '年度 DHW 峰值（°C·周）' },
+          baaLabel: { type: 'string', required: true, description: '白化预警等级中文名' },
+          baa: { type: 'number', required: true, description: 'BAA 等级 0–4' },
+          daysDhwGe8: { type: 'number', required: true, description: 'DHW≥8 的天数（严重热应激）' },
+          anomalyNote: { type: 'string', required: true, description: '与其它年份的对比说明' },
+          verdict: { type: 'string', required: true, description: '热压力解读' },
+          summary: { type: 'string', required: true, description: '中文摘要' },
+        },
+      },
+      render: textRender((v) => v.summary),
+    },
+    execute: async (args, exec) => {
+      exec.signal.throwIfAborted()
+      const base = API_BASE()
+      let j
+      try {
+        const qs = new URLSearchParams({ lat: String(args.lat), lon: String(args.lon) })
+        if (args.year) qs.set('year', String(args.year))
+        const res = await fetch(`${base}/climate?${qs}`, { signal: exec.signal })
+        if (!res.ok) throw new Error(`服务返回 ${res.status}`)
+        j = await res.json()
+      } catch (e) {
+        throw new Error(`无法连接环境数据服务 ${base}：${e.message}。请先启动 serve_fusion.py`)
+      }
+      if (!j.ok) {
+        return { ok: false, year: 0, dhwMax: 0, baaLabel: '无数据', baa: 0,
+                 daysDhwGe8: 0, anomalyNote: '', verdict: j.error || '无数据',
+                 summary: `查询失败：${j.error || '该坐标无数据'}` }
+      }
+      const pct = (v) => `${(Number(v || 0) * 100).toFixed(1)}%`
+      const lines = [
+        `【海表热压力 · ${j.year} 年】`,
+        `  格点：${j.gridCell.lat}°N ${j.gridCell.lon}°E（NOAA 5km）`,
+        `  DHW 峰值：${j.dhwMax}　白化预警：${j.baaLabel}（${j.baa}/4）`,
+        `  热浪天数：DHW≥4 共 ${j.daysDhwGe4} 天，DHW≥8 共 ${j.daysDhwGe8} 天`,
+        `  年度对比：${j.anomalyNote}`,
+        `  解读：${j.verdict}`,
+      ]
+      return {
+        ok: true, year: j.year, dhwMax: j.dhwMax, baa: j.baa, baaLabel: j.baaLabel,
+        daysDhwGe8: j.daysDhwGe8, anomalyNote: j.anomalyNote, verdict: j.verdict,
+        summary: lines.join('\n'),
+      }
+    },
+  }))
+
+  /* ---------------- 工具 5：综合研判 + 保育报告 ---------------- */
+  ctx.tools.register(defineTool({
+    name: 'assess_restoration_priority',
+    description:
+      '综合研判插件：融合图像研判与 NOAA 环境数据，输出礁区修复优先级、'
+      + '珊瑚苗投放适宜度，并自动生成中文保育报告。'
+      + '当用户询问「哪里该优先修复」「苗投哪里好」「给我一份保育报告」时调用。'
+      + '需要先用 assess_coral_cover 得到覆盖率，再把结果传进来（或用 image_path 一并分析）。',
+    parameters: {
+      image_path: { type: 'string', required: false,
+        description: '本地珊瑚照片绝对路径；给了就自动先做图像研判' },
+      alive_pct: { type: 'number', required: false, description: '活珊瑚覆盖率 0–1' },
+      bleached_pct: { type: 'number', required: false, description: '白化珊瑚覆盖率 0–1' },
+      dead_pct: { type: 'number', required: false, description: '死亡珊瑚覆盖率 0–1' },
+      algae_pct: { type: 'number', required: false, description: '藻类覆盖率 0–1' },
+      lat: { type: 'number', required: true, description: '纬度（用于查环境数据）' },
+      lon: { type: 'number', required: true, description: '经度（用于查环境数据）' },
+      year: { type: 'number', required: false, description: '年份，缺省最新' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          priority: { type: 'number', required: true, description: '修复优先级 0–100' },
+          gradeLabel: { type: 'string', required: true, description: '优先级分级中文' },
+          seedlingSuitability: { type: 'number', required: true, description: '苗投放适宜度 0–100' },
+          recoveryScore: { type: 'number', required: true, description: '恢复潜力 0–100' },
+          urgencyScore: { type: 'number', required: true, description: '紧迫度 0–100' },
+          topAction: { type: 'string', required: true, description: '首要行动建议' },
+          report: { type: 'string', required: true, description: '完整中文保育报告' },
+          disclaimer: { type: 'string', required: true, description: '定位声明' },
+        },
+      },
+      render: textRender((v) => v.report),
+    },
+    execute: async (args, exec) => {
+      exec.signal.throwIfAborted()
+      const base = API_BASE()
+
+      // 若给了图片，先做一次图像研判拿到覆盖率
+      let cover = null
+      if (args.image_path) {
+        const a = await callAnalyze(args.image_path, exec.signal, args.lat, args.lon, args.year)
+        cover = a.cover
+      } else if (args.alive_pct != null) {
+        const al = Number(args.alive_pct || 0), bl = Number(args.bleached_pct || 0),
+              dd = Number(args.dead_pct || 0)
+        cover = { alivePct: al, bleachedPct: bl, deadPct: dd,
+                  algaePct: Number(args.algae_pct || 0),
+                  coralTotalPct: al + bl + dd }
+      }
+      if (!cover) throw new Error('需要提供 image_path 或 alive_pct 等覆盖率数值')
+
+      const body = JSON.stringify({ cover, lat: args.lat, lon: args.lon, year: args.year })
+      let j
+      try {
+        const res = await fetch(`${base}/priority`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body, signal: exec.signal,
+        })
+        if (!res.ok) throw new Error(`服务返回 ${res.status}`)
+        j = await res.json()
+      } catch (e) {
+        throw new Error(`无法连接研判服务 ${base}：${e.message}。请先启动 serve_fusion.py`)
+      }
+      return {
+        priority: Number(j.priority ?? 0),
+        gradeLabel: String(j.gradeLabel ?? ''),
+        seedlingSuitability: Number(j.seedlingSuitability ?? 0),
+        recoveryScore: Number(j.recovery?.score ?? 0),
+        urgencyScore: Number(j.urgency?.score ?? 0),
+        topAction: String((j.actions || [])[0] ?? ''),
+        report: String(j.report ?? ''),
+        disclaimer: String(j.disclaimer ?? ''),
+      }
+    },
+  }))
+
   /* ---------------- Skill 注册 ---------------- */
   ctx.skills.register({
     name: 'coral-identification',
