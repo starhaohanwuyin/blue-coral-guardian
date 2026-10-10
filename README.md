@@ -109,6 +109,10 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
 > **P3 是纯新增**：`coralCount` 是新增键，`/count` 是新增端点；原有键的名称、类型与
 > 取值口径**完全未变**（可用 `python scripts/verify_serve_additive.py` 复跑比对证明）。
 > 不需要计数时，`POST /analyze?count=false` 可跳过，响应里 `coralCount` 为 `null`。
+>
+> 带 `lat/lon` 时还会新增两个键：`deployment`（往年热压力档案）与
+> `restoration.deploymentAdvice`（**投放建议**：`verdict` 一句结论 + 三条依据 + `summaryText` 可直接展示）。
+> **既有 `report` 正文一字未改**，新增信息只在上述新字段里。
 
 ---
 

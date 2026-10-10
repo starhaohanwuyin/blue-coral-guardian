@@ -147,12 +147,6 @@ def _report_text(p, cover, climate, genus, quality, cell):
             if climate.get("anomalyNote"):
                 L.append(f"    年度对比：{climate['anomalyNote']}")
             L.append(f"    气候解读：{climate.get('verdict')}")
-        if p.get("deploymentWindow"):
-            w = p["deploymentWindow"]
-            L.append(f"    历史热压力档案（2023–2025）：{w['label']}"
-                     f"（达警戒年份：{w.get('alertYears') or '无'}；严重档：{w.get('severeYears') or '无'}）")
-            L.append(f"    建议避开月份：{w.get('avoidMonths') or '无'}　"
-                     f"无风险信号月份：{'全年' if len(w.get('safeMonths') or []) == 12 else (w.get('safeMonths') or '无')}")
         L.append("")
 
     L.append("二、图像研判结果")
@@ -180,8 +174,6 @@ def _report_text(p, cover, climate, genus, quality, cell):
     L.append("四、行动建议")
     for a in p["actions"]:
         L.append(f"    · {a}")
-    if p.get("deploymentWindow"):
-        L.append(f"    · 【投放时间窗】{p['deploymentWindow']['text']}")
     L.append("")
 
     if not quality.get("usable", True):
@@ -206,6 +198,81 @@ def _report_text(p, cover, climate, genus, quality, cell):
     L.append("    「优先修复哪个点位」属价值判断，不存在客观标准答案，")
     L.append("    故本报告不提供准确率指标，仅供人工决策参考，不替代专业评估。")
     return "\n".join(L)
+
+
+def deployment_summary(cover, coral_region, quality, priority, seedling, window,
+                       has_coords=True):
+    """把「图像侧现状 + 热压力历史 + 苗投放适宜度」合成**一句可直接引用的投放建议**。
+
+    ⚠️ 只用项目确实有的数据：图像侧（覆盖率/白化/死亡/属）与热压力历史（NOAA）。
+    **不预测投放效果** —— 项目没有投放后的存活率数据，故只给"该不该投、避开哪几个月"的建议。
+    """
+    alive = float(cover.get("alivePct") or 0)
+    bleach = float(cover.get("bleachedPct") or 0)
+    dead = float(cover.get("deadPct") or 0)
+    algae = float(cover.get("algaePct") or 0)
+    total = float(cover.get("coralTotalPct") or 0)
+    top = coral_region.get("top") or []
+    genus = top[0].get("genus") if top else None
+    genus_txt = f"，优势属 {genus}（{top[0].get('confidence', 0):.0%}）" if genus else ""
+
+    reasons = [
+        f"①图像现状：活珊瑚 {alive:.1%}、白化 {bleach:.1%}、死亡 {dead:.1%}、"
+        f"藻类 {algae:.1%}、珊瑚总覆盖 {total:.1%}{genus_txt}",
+    ]
+    if window:
+        reasons.append(f"②热压力历史（2023–2025）：{window['label']}；"
+                       f"达到警戒的年份 {window.get('alertYears') or '无'}"
+                       f"（严重档 {window.get('severeYears') or '无'}）；"
+                       f"建议避开 {window.get('avoidMonths') or '无'} 月")
+    else:
+        reasons.append("②热压力历史：无数据（坐标不在 NOAA 网格覆盖范围内）")
+    reasons.append(f"③苗投放适宜度：{seedling:.0f}/100（综合恢复潜力与紧迫度）")
+
+    avoid = (window or {}).get("avoidMonths") or []
+    safe = (window or {}).get("safeMonths") or []
+    avoid_txt = "、".join(f"{m} 月" for m in avoid)          # 不带"避开"前缀，避免拼接重复
+    months_txt = f"避开 {avoid_txt}" if avoid_txt else ""
+
+    # 结论：先看数据是否可用 → 再看热压力历史 → 再看图像现状
+    if not quality.get("usable", True):
+        verdict = "**建议重拍后再评估**：本次照片拍摄条件不足，覆盖率结论不可靠，暂不建议据此投放。"
+    elif (window or {}).get("riskLevel") == "high":
+        verdict = ("**不建议在此投放**：近 3 年年年达到白化警戒（DHW≥4）"
+                   + (f"，如必须投放应{months_txt}" if months_txt else "") + "。")
+    elif total < 0.10 and dead + algae > 0.4:
+        verdict = ("**不建议直接投放**：现状珊瑚覆盖过低（"
+                   f"{total:.1%}）且死亡+藻类占比高（{dead + algae:.1%}），建议先做环境改良。")
+    elif (window or {}).get("riskLevel") == "medium":
+        verdict = ("**可以投放，但必须避开高风险月份**（" + (months_txt or "见风险月份") + "）："
+                   f"热压力维度为「{window['label']}」。")
+    elif window:
+        verdict = ("**建议投放**：近 3 年热压力未达警戒，"
+                   + (f"且 {('、'.join(f'{m} 月' for m in safe))} 无风险信号；" if safe else "")
+                   + f"现状活珊瑚 {alive:.1%}、珊瑚总覆盖 {total:.1%}。")
+    else:
+        # 没有热压力依据时：图像维度仍可判，但**不能**给出完整投放结论
+        tail = ("该坐标不在 NOAA 网格内，**缺少季节窗口与历史热压力依据**，不作为最终投放结论。"
+                if has_coords else
+                "**未提供经纬度**，无法给出季节窗口与历史热压力依据，不作为最终投放结论。")
+        verdict = (f"**图像维度可投放**：现状活珊瑚 {alive:.1%}、珊瑚总覆盖 {total:.1%}；⚠️ 但{tail}")
+
+    return {
+        "verdict": verdict,
+        "reasons": reasons,
+        "avoidMonths": avoid,
+        "recommendedMonths": safe,
+        "seedlingSuitability": round(float(seedling), 1),
+        "priority": round(float(priority), 1),
+        # 可直接展示/照念的整段文本（放在**新字段**里，避免改动已有的 report 字段）
+        "summaryText": "\n".join(
+            ["【投放建议】", f"    {verdict}"]
+            + [f"    {r}" for r in reasons]
+            + ["    ⚠️ 依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**"
+               "（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。"]),
+        "note": ("依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**"
+                 "（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。"),
+    }
 
 
 def assess(cover, climate=None, coral_region=None, capture_quality=None,
@@ -370,6 +437,11 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
             "source": "reports/deployment_windows.json（NOAA CRW 2023–2025 日数据聚合）",
         }
 
+    # 投放建议汇总：一句话结论 + 三条依据（供前端/汇报直接引用）
+    deployment_advice = deployment_summary(cover, coral_region, capture_quality,
+                                          priority, seedling, deployment_window,
+                                          has_coords=(lat is not None and lon is not None))
+
     result = {
         "ok": True,
         # 新增（附加字段）：本次研判是否真的用到了气候数据
@@ -402,6 +474,8 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
         "actions": actions,
         # 新增（附加字段）：历史热压力档案 → 投放时间窗建议（网格外或档案缺失时为 None）
         "deploymentWindow": deployment_window,
+        # 新增（附加字段）：合成后的「投放建议」（一句结论 + 三条依据 + 月份）
+        "deploymentAdvice": deployment_advice,
     }
     result["report"] = _report_text(result, cover, climate, genus_txt,
                                     capture_quality, cell)

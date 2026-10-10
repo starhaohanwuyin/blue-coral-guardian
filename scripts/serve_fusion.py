@@ -429,6 +429,10 @@ async def analyze(request: Request, file: UploadFile = File(...),
                 coral_region=result["coralRegion"],
                 capture_quality=result["captureQuality"],
                 cell=result["climate"],
+                # 把已算好的档案传进去（并把坐标也带上），否则研判拿不到历史热压力，
+                # 投放建议会退化成"未提供经纬度"（本会话实测踩过）
+                profile=result["deployment"],
+                lat=lat, lon=lon, year=year,
             )
         except Exception as e:      # 研判失败不影响主结果
             result["restoration"] = None
@@ -541,6 +545,9 @@ def priority(payload: dict):
         coral_region=payload.get("coralRegion") or {},
         capture_quality=payload.get("captureQuality") or {},
         cell=climate,
+        # ⚠️ 必须把坐标传下去：否则研判拿不到「往年热压力档案」，
+        #    投放建议会退化成"未提供经纬度"（/analyze 与 /priority 都踩过）
+        lat=lat, lon=lon, year=year,
     )
     return JSONResponse(r)
 

@@ -64,6 +64,15 @@ def fetch_sample(api, aset="semporna", index=0, timeout=60):
     return p
 
 
+def post_json(api, endpoint, payload, timeout=120):
+    """POST 一个 JSON body（用于 /priority 这类接口）。"""
+    req = Request(f"{api}{endpoint}", data=json.dumps(payload).encode(),
+                  method="POST", headers={"Content-Type": "application/json",
+                                          "User-Agent": "e2e-check/1.0"})
+    with urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", default="http://127.0.0.1:8000")
@@ -194,6 +203,19 @@ def main():
             out = get(f"{api}/climate/profile?lat=22.5&lon=114.0")
             check("覆盖闸门：网格外拒绝给建议", out.get("ok") is False,
                   f"深圳 ok={out.get('ok')}（应为 false，不得返回最近格点结论）")
+            # 合成后的「投放建议」：图像现状 + 热压力历史 + 苗投放适宜度
+            pri = post_json(api, "/priority", {
+                "cover": {"alivePct": 0.40, "bleachedPct": 0.05, "deadPct": 0.03,
+                          "algaePct": 0.06, "substratePct": 0.46, "coralTotalPct": 0.48},
+                "lat": 4.425, "lon": 118.775, "year": 2024})
+            adv = pri.get("deploymentAdvice") or {}
+            # ⚠️ 不能只看"有没有文本"：曾经文本在、内容却是"未提供经纬度"
+            #    （坐标没传进研判），所以这里必须断言**确实用上了热压力历史**
+            used_history = bool(pri.get("deploymentWindow")) and \
+                "未提供经纬度" not in str(adv.get("verdict", ""))
+            check("研判给出「投放建议」结论（含三条依据）",
+                  bool(adv.get("verdict")) and len(adv.get("reasons") or []) >= 3 and used_history,
+                  f"{str(adv.get('verdict'))[:52]}…")
     except Exception as e:
         check("投放窗口档案", False, f"{type(e).__name__}: {e}")
 
