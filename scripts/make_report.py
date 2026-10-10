@@ -289,6 +289,34 @@ def main():
         L.append("> 保育场景应优先保召回（漏报白化珊瑚代价更大），可采用白化类加权的工作点。")
         L.append("")
 
+    # ---------- 3.4 跨域基线对照（防误读）----------
+    cd = load("cross_domain_bleaching_all.json")
+    if cd and cd.get("targets"):
+        L.append("### 跨域表现与「多数类基线」对照（⚠️ 必读）")
+        L.append("")
+        L.append("总体准确率在不平衡数据上会**严重虚高**，必须与多数类基线对照才可读：")
+        L.append("")
+        L.append("| 目标域 | n | 白化召回 | 多数类基线 | 总体准确率 | 判定 |")
+        L.append("|---|---|---|---|---|---|")
+        for t, v in cd["targets"].items():
+            nb, nh = v.get("nBleached"), v.get("nHealthy")
+            if not nb or not nh:
+                continue
+            base = max(nb, nh) / (nb + nh)
+            acc = v.get("binaryAccuracy")   # 二分类准确率
+            if acc is None:
+                continue
+            ok = acc > base
+            L.append(f"| {t} | {v['n']} | {v.get('bleachedRecall', 0):.2%} | "
+                     f"{base:.2%} | {acc:.2%} | "
+                     + ("✅ 高于基线" if ok else f"❌ **低于基线 {acc-base:+.2%}**") + " |")
+        L.append("")
+        L.append("> **印太域（test_ip）**：健康样本占 85.23%，模型也预测 84.66% 为健康，"
+                 "即退化为「多数类预测器」，**总体准确率低于无脑猜健康**。")
+        L.append("> 该域应以**平衡准确率 0.6615** 与 **Cohen's kappa 0.3231** 为准，"
+                 "两者均显示判别能力弱。")
+        L.append("")
+
     # ---------- 3.5 第三方独立数据集验证 ----------
     newj = load("protocol_bleaching_new_test_clean.json") or load("protocol_bleaching_new_test.json")
     xd_new = load("cross_domain_bleaching_new.json")

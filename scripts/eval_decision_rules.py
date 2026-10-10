@@ -42,6 +42,9 @@ def main():
     ap.add_argument("--task", default="bleaching_ip")
     ap.add_argument("--split", default="test_ip")
     ap.add_argument("--tau", type=float, default=1.0, help="先验校正强度")
+    ap.add_argument("--target-prior", default="",
+                    help="目标域类别先验，格式 bleached:0.15,healthy:0.85,dead:0 "
+                         "（不给则用测试集自身分布估计，并标注为乐观口径）")
     args = ap.parse_args()
 
     data_dir = ROOT / "data" / "processed" / args.task
@@ -108,9 +111,33 @@ def main():
     # A. 基线 argmax
     results["A_argmax"] = report("A. argmax（基线）", probs.argmax(1))
 
-    # B. 先验校正
+    # B. 先验校正（logit adjustment）
+    # ⚠️ 修正：原先只除以 **训练先验**。当两个类的训练先验相等时
+    #    （本例 bleached 与 healthy 都是 0.375），除以同一个数等于没除，
+    #    因而「先验校正完全无效」。正确形式须同时引入**目标域先验**：
+    #        p'(y|x) ∝ p(y|x) / p_train(y)^τ × p_target(y)^τ
+    tp = None
+    if args.target_prior:
+        tp = np.ones(len(classes), dtype=np.float64) * 1e-9
+        for kv in args.target_prior.split(","):
+            if ":" not in kv:
+                continue
+            k, v = kv.split(":", 1)
+            k = k.strip().lower()
+            ci = next((i for i, c in enumerate(classes) if c.lower() == k), None)
+            if ci is not None:
+                tp[ci] = float(v)
+        tp = tp / tp.sum()
+        tp_note = "（用户指定）"
+    else:
+        tp = np.array([(y == i).sum() for i in range(len(classes))], dtype=np.float64)
+        tp = np.maximum(tp, 1e-9) / max(len(y), 1)
+        tp_note = "（由测试集估计 —— ⚠️ 乐观口径，实际部署需用目标域样本估计）"
+
     adj = probs / np.power(np.maximum(prior, 1e-6), args.tau)[None, :]
+    adj = adj * np.power(np.maximum(tp, 1e-6), args.tau)[None, :]
     adj = adj / adj.sum(1, keepdims=True)
+    print(f"  目标域先验 {dict(zip(classes, np.round(tp,3)))} {tp_note}")
     results["B_prior_corrected"] = report(f"B. 先验校正 τ={args.tau}", adj.argmax(1))
 
     # C. 白化类阈值扫描
