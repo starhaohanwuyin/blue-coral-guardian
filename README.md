@@ -68,7 +68,7 @@ curl http://127.0.0.1:8000/health
 ```bash
 python scripts/e2e_check.py
 ```
-期望输出 `通过 22/22`（缺计数模型或投放档案时，相应检查会跳过：19/19 → 15/15）。
+期望输出 `通过 23/23`（缺计数模型或投放档案时，相应检查会跳过：19/19 → 15/15）。
 
 ### 4. 单张照片评估
 
@@ -123,7 +123,7 @@ coral_ml/
 ├── scripts/            训练与评估脚本
 ├── docs/               方案、核验、答辩要点、评估方法与局限
 ├── reports/            结果 JSON（报告的权威数据源）
-├── dsh-skill/          DSH Agent 插件（1 个 Skill + 5 个工具）
+├── dsh-skill/          DSH Agent 插件（1 个 Skill + 6 个工具）
 ├── NOTICE.md           许可证与合规声明
 ├── data/               数据集（已 gitignore，约 16.9 GB）
 └── weights/            模型权重（已 gitignore，约 2.8 GB）

@@ -265,7 +265,6 @@ def main():
     for split, shards, idir, ldir in (("train", train_shards, img_train, lbl_train),
                                       ("val", val_shards, img_val, lbl_val)):
         ni = nb = ne = 0
-        names = set()
         for sh in shards:
             print(f"[{split}] {sh.name}")
             a, b, c, nm, nrl, nni = extract_shard(sh, split, coral_ids, args.min_area,
@@ -274,7 +273,6 @@ def main():
             ni += a
             nb += b
             ne += c
-            names |= nm
             relabeled += nrl
             newimgs += nni
         sizes[split] = {"images": ni, "boxes": nb, "emptyImages": ne, "classes": {str(k): v for k, v in coral_ids.items()}}

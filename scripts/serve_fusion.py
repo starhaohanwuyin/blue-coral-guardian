@@ -30,7 +30,6 @@ from pathlib import Path
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -435,6 +434,9 @@ async def analyze(request: Request, file: UploadFile = File(...),
                 lat=lat, lon=lon, year=year,
             )
         except Exception as e:      # 研判失败不影响主结果
+            # 保证响应形状一致：任一环节失败也要有这几个键（否则前端可能 KeyError）
+            result.setdefault("climate", None)
+            result.setdefault("deployment", None)
             result["restoration"] = None
             result["climateError"] = f"{type(e).__name__}: {e}"
     else:

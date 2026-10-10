@@ -94,7 +94,6 @@ def build() -> dict:
             label, level = f"{len(alert_years)}/{len(ys)} 年达白化警戒", "medium"
         else:
             label, level = "近 3 年均未达白化警戒", "low"
-        safe = [m for m in range(1, 13) if m not in set(risky)]
         # 建议避开 = DHW 已达警戒的月份 ∪ 出现过热异常（HotSpot≥1）的月份
         # （DHW 是 12 周累积量、会滞后，用 HotSpot 把"提前预警窗口"也覆盖进来，取并集更保守）
         avoid = sorted(set(risky) | set(heat))

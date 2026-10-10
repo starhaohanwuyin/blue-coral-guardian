@@ -1,7 +1,7 @@
 {
   "name": "dsh-coral-skill",
   "version": "1.0.0",
-  "description": "蓝珊 · 珊瑚识别 Skill 插件（30 类珊瑚种类识别 + 白化程度三分类），供 DSH Agent 自主调度",
+  "description": "蓝珊 · 珊瑚识别 Skill 插件（34 属识别 + 白化三分类 + 覆盖率 + 个体计数 + 投放建议），供 DSH Agent 自主调度",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

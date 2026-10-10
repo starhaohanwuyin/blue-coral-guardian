@@ -19,7 +19,6 @@
     python resume_all.py --run --only species_ip
 """
 import argparse
-import json
 import subprocess
 import sys
 import time
