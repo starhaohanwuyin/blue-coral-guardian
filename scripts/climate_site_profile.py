@@ -112,25 +112,37 @@ def build(years_pin=None) -> dict:
         #   对每个月统计：有多少年的该月出现过 DHW≥4 / HotSpot≥1
         alert_month_freq = {m: sum(1 for y in ys if m in ys[y]["alertMonths"]) / n for m in range(1, 13)}
         heat_month_freq = {m: sum(1 for y in ys if m in ys[y]["heatMonths"]) / n for m in range(1, 13)}
-        # 风险月：**出现即计入**（保守，与短样本一致）；
-        # 热异常月：样本够长（≥10 年）时要求"半数以上年份出现"，避免长序列把 12 个月全判成风险月
-        risky = [m for m in range(1, 13) if alert_month_freq[m] > 0]
-        heat_thr = 0.5 if n >= 10 else 0.0
-        heat = [m for m in range(1, 13) if heat_month_freq[m] > heat_thr]
+        # ---- 风险月：按"相对本格点峰值频率"取季节窗口（长序列必须这样做）----
+        # 41 年样本里"某月曾出现过 DHW≥4"几乎覆盖全年（实测高危格点会得到 10 个月），
+        # 结论不可用。改为：取频率 ≥ 峰值 50% 的月份 → 得到紧凑的季节窗口
+        # （3 年样本下各月频率相同，结果与"出现过即计入"一致，行为向后兼容）
+        def _rel_months(freq_map, floor=0.5):
+            if not freq_map:
+                return []
+            mx = max(freq_map.values())
+            if mx <= 0:
+                return []
+            return sorted(m for m, v in freq_map.items() if v >= mx * floor)
+
+        risky = _rel_months(alert_month_freq)
+        heat = _rel_months(heat_month_freq)
         # 建议避开 = DHW 已达警戒的月份 ∪ 出现过热异常（HotSpot≥1）的月份
         # （DHW 是 12 周累积量、会滞后，用 HotSpot 把"提前预警窗口"也覆盖进来，取并集更保守）
         avoid = sorted(set(risky) | set(heat))
 
-        # 风险分级（按"达警戒年份占比"，与样本年数无关）
-        if alert_freq >= 0.5:
+        # 风险分级（按"达警戒年份占比" + "严重档事件次数"，与样本年数无关）
+        # ⚠️ 41 年实测：没有任何格点警戒频率 >20%，若仍用"≥50%"则 high 恒为空；
+        #    真正能区分风险的是**严重白化事件（DHW≥8）次数**（150 格出现过 1–3 次）。
+        if len(severe_years) >= 3 or alert_freq >= 0.15:
             level = "high"
-        elif alert_freq > 0:
+        elif alert_years or severe_years:
             level = "medium"
         else:
             level = "low"
         label = (f"{len(years)} 年中 {len(alert_years)} 年达白化警戒"
-                 f"（{alert_freq:.0%}）" if alert_years else
-                 f"{len(years)} 年均未达白化警戒")
+                 f"（{alert_freq:.0%}）"
+                 + (f"，其中 {len(severe_years)} 年达严重档（DHW≥8）" if severe_years else "")
+                 ) if alert_years else f"{len(years)} 年均未达白化警戒"
         pv = list(peaks.values())
         mean_p = sum(pv) / len(pv)
         std_p = (sum((x - mean_p) ** 2 for x in pv) / len(pv)) ** 0.5
@@ -239,13 +251,16 @@ def advice_for(cell: dict) -> dict:
     avoid_en, heat_en, safe_en = _months_en(avoid), _months_en(heat), _months_en(safe)
 
     if lv == "high":
+        sev = len(cell.get("severeYears") or [])
+        sev_txt = f"，其中 **{sev} 年**达严重档（DHW≥8）" if sev else ""
         text = (f"⚠️ 近 {n_years} 年中有 **{len(alert_years)} 年**达到白化警戒"
-                f"（{freq_pct}）：**不建议**在此期间投放；"
+                f"（{freq_pct}）{sev_txt}：**不建议**在此期间投放；"
                 f"如必须投放，应避开 {avoid_txt}。")
-        label_en = f"Alert level (DHW>=4) reached in {len(alert_years)}/{n_years} years"
+        label_en = f"Alert level (DHW>=4) in {len(alert_years)}/{n_years} years" + \
+                   (f", {sev} severe (DHW>=8)" if sev else "")
         text_en = (f"Alert-level heat stress reached in {len(alert_years)} of {n_years} years "
-                   f"({freq_pct}): deployment is NOT recommended; "
-                   f"if unavoidable, avoid {avoid_en}.")
+                   f"({freq_pct})" + (f", {sev} of them severe (DHW>=8)" if sev else "")
+                   + f": deployment is NOT recommended; if unavoidable, avoid {avoid_en}.")
     elif lv == "medium":
         text = (f"近 {n_years} 年中有 {len(alert_years)} 年达到白化警戒（DHW≥4 出现于 "
                 f"{'、'.join(f'{m} 月' for m in risky) if risky else '无'}）："

@@ -550,22 +550,25 @@ def main():
     if dw:
         L.append("## 5.6 投放窗口与热压力档案（往年白化预警记录 → 建议避开月份）")
         L.append("")
-        L.append(f"数据：{dw['source']}；年份 **{dw['years']}**；格点 **{dw['gridCells']}** 个")
+        _ys = dw.get("years") or []
+        _span = f"{_ys[0]}–{_ys[-1]}（{len(_ys)} 年）" if _ys else "—"
+        L.append(f"数据：{dw['source']}；样本 **{_span}**；格点 **{dw['gridCells']}** 个")
         L.append("")
-        L.append("> 分级口径：**≥半数年份**出现 DHW≥4 → 不建议投放；部分年份 → 避开风险月；"
-                 "从未出现 → 热压力维度友好。风险月 = DHW≥4 ∪ HotSpot≥1（并集，取保守）。")
+        L.append("> 分级口径：**≥3 次严重档事件（DHW≥8）或警戒频率 ≥15%** → 不建议投放；"
+                 "出现过警戒 → 避开风险月；**41 年从未达警戒** → 热压力维度友好。"
+                 "风险月按「相对本格点峰值频率 ≥50%」取季节窗口（长序列下「曾出现过即计入」会覆盖全年，不可用）。")
         L.append("")
         lc = dw.get("levelCounts", {})
         L.append("| 判定 | 格点数 | 含义 |")
         L.append("|---|---|---|")
-        L.append(f"| ≥半数年份达白化警戒 | **{lc.get('high', 0)}** | 半数以上年份出现 DHW≥4：不建议投放 |")
-        L.append(f"| 部分年份达警戒 | {lc.get('medium', 0)} | 建议避开风险月份投放 |")
-        L.append(f"| 从未达警戒 | {lc.get('low', 0)} | 热压力维度较友好 |")
+        L.append(f"| ≥3 次严重档事件 / 警戒频率≥15% | **{lc.get('high', 0)}** | 历史上反复发生白化：不建议投放 |")
+        L.append(f"| 出现过警戒（未达高危） | {lc.get('medium', 0)} | 建议避开风险月份投放 |")
+        L.append(f"| 41 年从未达警戒 | {lc.get('low', 0)} | 热压力维度较友好 |")
         L.append("")
         if dw.get("topRiskyCells"):
-            L.append("**风险最高的格点（按 3 年最高 DHW）：**")
+            L.append("**风险最高的格点（按样本期内最高 DHW）：**")
             L.append("")
-            L.append("| 格点 | 3 年最高 DHW | 判定 | 风险月份 |")
+            L.append("| 格点 | 历史最高 DHW | 判定 | 风险月份 |")
             L.append("|---|---|---|---|")
             for c in dw["topRiskyCells"][:5]:
                 L.append(f"| {c['cell']} | **{c['maxPeak']}** | {c['label']} | {c['riskyMonths']} |")
