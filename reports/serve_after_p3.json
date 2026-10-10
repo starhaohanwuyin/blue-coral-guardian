@@ -164,7 +164,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 452.6,
+      "elapsedMs": 78.2,
       "imageSize": [
         1024,
         684
@@ -223,7 +223,7 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 2494.2,
+    "inferenceMs": 740.3,
     "restoration": null,
     "restorationHint": "传入 lat/lon 即可获得气候背景与修复优先级研判",
     "success": true,
@@ -470,7 +470,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 75.9,
+      "elapsedMs": 79.6,
       "imageSize": [
         1024,
         684
@@ -535,7 +535,8 @@
           10,
           11
         ],
-        "label": "1/3 年达白化警戒",
+        "label": "3 年中 1 年达白化警戒（33%）",
+        "labelEn": "Alert level reached in 1/3 years",
         "level": "medium",
         "riskyMonths": [
           5,
@@ -550,9 +551,16 @@
           9,
           12
         ],
-        "text": "近 3 年有 1 年达到白化警戒（DHW≥4 出现于 5 月、6 月、7 月）：建议避开 4 月、5 月、6 月、7 月、10 月、11 月 投放（含热异常月份 4 月、5 月、6 月、10 月、11 月，取并集更保守）。"
+        "text": "近 3 年中有 1 年达到白化警戒（DHW≥4 出现于 5 月、6 月、7 月）：建议避开 4 月、5 月、6 月、7 月、10 月、11 月 投放（含热异常月份 4 月、5 月、6 月、10 月、11 月，取并集更保守）。",
+        "textEn": "Alert level reached in 1 of 3 years: avoid Apr, May, Jun, Jul, Oct, Nov for deployment (union of DHW>=4 and HotSpot>=1 months, conservative)."
       },
-      "adviceNote": "口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；样本仅 2023–2025 三年；空间为 5km 格点，非礁点；本档案不是投放效果评估。",
+      "adviceNote": "口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；样本 2023–2025（3 年）；空间为 5km 格点，非礁点；本档案不是投放效果评估。",
+      "alertMonthFreq": {
+        "5": 0.333,
+        "6": 0.333,
+        "7": 0.333
+      },
+      "alertYearFreq": 0.333,
       "alertYears": [
         "2024"
       ],
@@ -565,16 +573,22 @@
         11
       ],
       "caveats": [
-        "仅 2023–2025 三年：2024 为极端年，'多年稳定'不等于'以后不会遇上'",
+        "仅 2023–2025（3 年） 的样本；样本较短，'多年稳定'不等于'以后不会遇上'",
         "5km 格点 ≠ 礁点：只能给'哪片海'，不能给'哪个礁'",
         "仅热压力维度；不是投放效果评估（项目无投放后存活率数据）",
-        "DHW 为 12 周累积量，月份会滞后；heatMonths 用 HotSpot≥1 定位热事件窗口",
-        "⚠️ **空间自检告警**：西缘格点（≤118.2°E）3 年最高 DHW 均值 **12.79**，是中部（118.6–118.9°E，5.44）的 **2.4 倍**，呈平滑东西梯度（东侧 119.2°E 以东均值 3.94）。这更像**近岸浅水/陆缘像元效应**，而不是礁块之间的真实差异 —— 引用时**必须实地核实**，不要仅凭格点数值就排除一个真实礁点。"
+        "DHW 为 12 周累积量，月份会滞后；heatMonths 用 HotSpot≥1 定位热事件窗口"
       ],
       "gridCell": {
         "distanceDeg": 0.035,
         "lat": 4.425,
         "lon": 118.775
+      },
+      "heatMonthFreq": {
+        "10": 1.0,
+        "11": 0.333,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 0.333
       },
       "heatMonths": [
         4,
@@ -583,14 +597,17 @@
         10,
         11
       ],
-      "label": "1/3 年达白化警戒",
+      "label": "3 年中 1 年达白化警戒（33%）",
+      "nYears": 3,
       "ok": true,
       "peakByYear": {
         "2023": 1.68,
         "2024": 5.42,
         "2025": 2.69
       },
+      "peakMean": 3.26,
       "peakRange": 3.74,
+      "peakStd": 1.58,
       "riskLevel": "medium",
       "riskyMonths": [
         5,
@@ -605,6 +622,7 @@
         9,
         12
       ],
+      "severeYearFreq": 0.0,
       "severeYears": [],
       "years": [
         "2023",
@@ -622,10 +640,13 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 541.7,
+    "inferenceMs": 525.9,
     "restoration": {
       "actions": [
         "**暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评"
+      ],
+      "actionsEn": [
+        "**Deployment not advisable now**: the site is under \"Alert Level 1\" (DHW peak 5.42; DHW>=8 for 0 days). Re-assess after the heatwave (DHW back below 4)."
       ],
       "bleachRatioOfCoral": 0.0086,
       "climate": {
@@ -659,8 +680,13 @@
         "priority": 53.6,
         "reasons": [
           "①图像现状：活珊瑚 48.7%、白化 0.5%、死亡 10.3%、藻类 6.8%、珊瑚总覆盖 59.5%，优势属 Merulina（84%）",
-          "②热压力历史（2023–2025）：1/3 年达白化警戒；达到警戒的年份 ['2024']（严重档 无）；建议避开 [4, 5, 6, 7, 10, 11] 月",
+          "②热压力历史（2023–2025）：3 年中 1 年达白化警戒（33%）；达到警戒的年份 ['2024']（严重档 无）；建议避开 [4, 5, 6, 7, 10, 11] 月",
           "③苗投放适宜度：49/100（综合恢复潜力与紧迫度）"
+        ],
+        "reasonsEn": [
+          "(1) Image state: live 48.7%, bleached 0.5%, dead 10.3%, algae 6.8%, total coral cover 59.5%, dominant genus Merulina (84%)",
+          "(2) Heat-stress history: Alert level reached in 1/3 years; alert years ['2024'] (severe none); avoid [4, 5, 6, 7, 10, 11]",
+          "(3) Seedling suitability: 49/100 (recovery potential combined with urgency)"
         ],
         "recommendedMonths": [
           1,
@@ -671,8 +697,10 @@
           12
         ],
         "seedlingSuitability": 49.1,
-        "summaryText": "【投放建议】\n    **可以投放，但必须避开高风险月份**（避开 4 月、5 月、6 月、7 月、10 月、11 月）：热压力维度为「1/3 年达白化警戒」。\n    ①图像现状：活珊瑚 48.7%、白化 0.5%、死亡 10.3%、藻类 6.8%、珊瑚总覆盖 59.5%，优势属 Merulina（84%）\n    ②热压力历史（2023–2025）：1/3 年达白化警戒；达到警戒的年份 ['2024']（严重档 无）；建议避开 [4, 5, 6, 7, 10, 11] 月\n    ③苗投放适宜度：49/100（综合恢复潜力与紧迫度）\n    ⚠️ 依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。",
-        "verdict": "**可以投放，但必须避开高风险月份**（避开 4 月、5 月、6 月、7 月、10 月、11 月）：热压力维度为「1/3 年达白化警戒」。"
+        "summaryText": "【投放建议】\n    **可以投放，但必须避开高风险月份**（避开 4 月、5 月、6 月、7 月、10 月、11 月）：热压力维度为「3 年中 1 年达白化警戒（33%）」。\n    ①图像现状：活珊瑚 48.7%、白化 0.5%、死亡 10.3%、藻类 6.8%、珊瑚总覆盖 59.5%，优势属 Merulina（84%）\n    ②热压力历史（2023–2025）：3 年中 1 年达白化警戒（33%）；达到警戒的年份 ['2024']（严重档 无）；建议避开 [4, 5, 6, 7, 10, 11] 月\n    ③苗投放适宜度：49/100（综合恢复潜力与紧迫度）\n    ⚠️ 依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。",
+        "summaryTextEn": "[Deployment Advice]\n    **Deployment possible, but avoid the high-risk months** (Apr, May, Jun, Jul, Oct, Nov): heat-stress status is \"Alert level reached in 1/3 years\".\n    (1) Image state: live 48.7%, bleached 0.5%, dead 10.3%, algae 6.8%, total coral cover 59.5%, dominant genus Merulina (84%)\n    (2) Heat-stress history: Alert level reached in 1/3 years; alert years ['2024'] (severe none); avoid [4, 5, 6, 7, 10, 11]\n    (3) Seedling suitability: 49/100 (recovery potential combined with urgency)\n    WARNING: based on image metrics + historical heat-stress records; NOT a deployment-outcome prediction (the project holds no post-deployment survival data). Heat-stress sample covers 2023-2025 on a 5 km grid.",
+        "verdict": "**可以投放，但必须避开高风险月份**（避开 4 月、5 月、6 月、7 月、10 月、11 月）：热压力维度为「3 年中 1 年达白化警戒（33%）」。",
+        "verdictEn": "**Deployment possible, but avoid the high-risk months** (Apr, May, Jun, Jul, Oct, Nov): heat-stress status is \"Alert level reached in 1/3 years\"."
       },
       "deploymentWindow": {
         "alertYears": [
@@ -693,8 +721,9 @@
           10,
           11
         ],
-        "label": "1/3 年达白化警戒",
-        "note": "口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；样本仅 2023–2025 三年；空间为 5km 格点，非礁点；本档案不是投放效果评估。",
+        "label": "3 年中 1 年达白化警戒（33%）",
+        "labelEn": "Alert level reached in 1/3 years",
+        "note": "口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；样本 2023–2025（3 年）；空间为 5km 格点，非礁点；本档案不是投放效果评估。",
         "riskLevel": "medium",
         "riskyMonths": [
           5,
@@ -711,7 +740,8 @@
         ],
         "severeYears": [],
         "source": "reports/deployment_windows.json（NOAA CRW 2023–2025 日数据聚合）",
-        "text": "近 3 年有 1 年达到白化警戒（DHW≥4 出现于 5 月、6 月、7 月）：建议避开 4 月、5 月、6 月、7 月、10 月、11 月 投放（含热异常月份 4 月、5 月、6 月、10 月、11 月，取并集更保守）。"
+        "text": "近 3 年中有 1 年达到白化警戒（DHW≥4 出现于 5 月、6 月、7 月）：建议避开 4 月、5 月、6 月、7 月、10 月、11 月 投放（含热异常月份 4 月、5 月、6 月、10 月、11 月，取并集更保守）。",
+        "textEn": "Alert level reached in 1 of 3 years: avoid Apr, May, Jun, Jul, Oct, Nov for deployment (union of DHW>=4 and HotSpot>=1 months, conservative)."
       },
       "disclaimer": "本结果为基于规则的决策支持参考，非经验证的预测模型，不提供准确率指标，不替代专业珊瑚礁评估。",
       "genusDiversity": {
@@ -733,6 +763,7 @@
       },
       "qualityPenalty": null,
       "reasoning": "恢复潜力 65 分，主要由 coralStock100、lowAlgae77 贡献；热应激维度受 NOAA 等级「白化警报一级」约束。紧迫度 40 分，thermal75、mortality52 是主要来源。 短板：lowThermal 仅 25 分。",
+      "reasoningEn": "Recovery potential 65/100, mainly from coralStock 100, lowAlgae 77; the thermal dimension is constrained by NOAA level \"Alert Level 1\". Urgency 40/100, mainly from thermal 75, mortality 52. Weakest component: lowThermal at only 25.",
       "recovery": {
         "components": {
           "coralStock": 100.0,
@@ -751,6 +782,7 @@
         }
       },
       "report": "【礁区保育研判报告】\n\n一、点位与气候背景\n    经纬度：4.425°N 118.775°E（最近 NOAA 5km 格点）\n    评估年份：2024\n    海表热压力：DHW 峰值 5.42，白化预警等级「白化警报一级」（3/4）\n    热浪天数：DHW≥4 共 58 天，DHW≥8 共 0 天\n    年度对比：比其它年份平均高 +3.23（+148%）\n    气候解读：中度热应激：已具备明显白化条件\n\n二、图像研判结果\n    活珊瑚覆盖率：48.65%\n    白化珊瑚占比：0.51%（占珊瑚总量 0.9%）\n    死亡珊瑚占比：10.31%\n    藻类覆盖    ：6.85%\n    珊瑚总覆盖  ：59.47%\n    主要珊瑚属  ：Merulina(84%)、Pectinia(5%)、Mycedium(3%)\n\n三、研判结论\n    恢复潜力：64.5/100  （中）\n    修复紧迫度：40.3/100  （低）\n    修复优先级：53.6/100 → 【三级 · 可观察】\n    苗投放适宜度：49.1/100\n\n    主要依据：恢复潜力 65 分，主要由 coralStock100、lowAlgae77 贡献；热应激维度受 NOAA 等级「白化警报一级」约束。紧迫度 40 分，thermal75、mortality52 是主要来源。 短板：lowThermal 仅 25 分。\n\n四、行动建议\n    · **暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评\n\n五、修复模拟（10 年恢复轨迹 · 示意性）\n    起始覆盖 48.65%，年增长率 r=0.112，容纳量 K=60%\n    · 无热浪（理想）：48.6% → 60.0%（+11.3%）\n    · 2024 型事件复现：48.6% → 23.4%（-25.2%）\n    · 五年一遇：48.6% → 57.4%（+8.7%）\n    ⚠️ 示意性推演，未做本地参数标定，不得作为预测使用。\n\n六、定位声明\n    本报告由规则型决策支持启发式自动生成，评分维度与权重来自\n    NOAA CRW 公开标准与珊瑚礁修复文献的通行做法。\n    「优先修复哪个点位」属价值判断，不存在客观标准答案，\n    故本报告不提供准确率指标，仅供人工决策参考，不替代专业评估。",
+      "reportEn": "[Coral Reef Conservation Assessment Report]\n\nI. Site and Climate Background\n    Coordinates: 4.425°N 118.775°E (nearest NOAA 5 km grid cell)\n    Assessment year: 2024\n    Sea-surface heat stress: DHW peak 5.42, bleaching alert \"Alert Level 1\" (3/4)\n    Heatwave days: DHW>=4 for 58 days, DHW>=8 for 0 days\n    Interpretation: Moderate heat stress: conditions for significant bleaching\n\nII. Image-Based Assessment\n    Live coral cover      : 48.65%\n    Bleached coral        : 0.51% (0.9% of total coral)\n    Dead coral            : 10.31%\n    Algae cover           : 6.85%\n    Total coral cover     : 59.47%\n    Dominant genus        : Merulina(84%)、Pectinia(5%)、Mycedium(3%)\n\nIII. Assessment Conclusion\n    Recovery potential : 64.5/100 (medium)\n    Urgency            : 40.3/100 (low)\n    Restoration priority: 53.6/100 -> [Level 3 · Observe]\n    Seedling suitability: 49.1/100\n\n    Main drivers: Recovery potential 65/100, mainly from coralStock 100, lowAlgae 77; the thermal dimension is constrained by NOAA level \"Alert Level 1\". Urgency 40/100, mainly from thermal 75, mortality 52. Weakest component: lowThermal at only 25.\n\nIV. Recommended Actions\n    - **Deployment not advisable now**: the site is under \"Alert Level 1\" (DHW peak 5.42; DHW>=8 for 0 days). Re-assess after the heatwave (DHW back below 4).\n\nV. Historical Heat-Stress Window\n    Judgement: Alert level reached in 1/3 years (alert years: ['2024']; severe years: none)\n    Months to avoid: Apr, May, Jun, Jul, Oct, Nov\n    Season with no risk signal: Jan, Feb, Mar, Aug, Sep, Dec\n    Advice: Alert level reached in 1 of 3 years: avoid Apr, May, Jun, Jul, Oct, Nov for deployment (union of DHW>=4 and HotSpot>=1 months, conservative).\n    NOTE: heat-stress dimension only; 2023-2025 sample, 5 km grid; NOT a deployment-outcome assessment.\n\nVI. Restoration Simulation (10-year trajectory, illustrative)\n    Start cover 48.65%, growth rate r=0.112, carrying capacity K=60%\n    - No heatwave (ideal): 48.6% -> 60.0% (+11.3%)\n    - 2024-type event repeated: 48.6% -> 23.4% (-25.2%)\n    - Once-in-five-years event: 48.6% -> 57.4% (+8.7%)\n    WARNING: illustrative projection, not calibrated to this site; NOT a forecast.\n\nVII. Scope Statement\n    This report is generated by a rule-based decision-support heuristic; its\n    dimensions and weights follow NOAA CRW public standards and common practice\n    in coral-reef restoration literature. \"Which site to restore first\" is a\n    value judgement with no objective ground truth, so no accuracy metric is\n    reported. For academic and competition use only, not for commercial use.",
       "seedlingSuitability": 49.1,
       "simulation": {
         "growthRateUsed": 0.1122,

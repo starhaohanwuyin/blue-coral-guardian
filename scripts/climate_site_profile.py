@@ -8,16 +8,20 @@
 **不联网、不用 GPU**，纯聚合。
 
 ⚠️ 三条必须随结论一起讲清的口径（脚本也会写进输出）：
-  1. **只有 3 年（2023–2025）**：2024 是极端年，"多年稳定"很大程度等于"只遇上一次事件"，
-     不等于以后不会遇上；气候态一般需要 ≥10 年。
+  1. **样本年数有限**：当前缓存为 2023–2025（3 年）；长序列（1985 起）需先跑
+   `cache_noaa.py --vars CRW_DHW,CRW_HOTSPOT --stride 5 --suffix _lt --chunk-days 90`，
+   **下载慢（镜像限速，约 7.5 分钟/年）且可断点续传**。样本短时"多年稳定"很大程度等于
+   "只遇上一次事件"，因此档案里会显式写出覆盖年份与年数，不要笼统说"多年"。
+     气候态一般需要 ≥10 年。
   2. **5km 格点 ≠ 礁点**：能说"哪片海"，不能说"哪个礁"。
   3. **只覆盖热压力这一个维度**：底质、水深、水流、藻类、草食动物、人力管护都不在模型里；
      本档案**不是投放效果评估**（项目没有投放后的存活率数据）。
 
 用法：
-    python climate_site_profile.py --build                     # 预计算（约 2–3 分钟）
+    python climate_site_profile.py --build                     # 预计算（3 年数据约 2–3 分钟）
+    python climate_site_profile.py --build --years 2023,2024,2025   # 固定年份，产物可复现
     python climate_site_profile.py --lat 4.4 --lon 118.8       # 查一个点位
-    python climate_site_profile.py --list-risky                # 列出年年达警戒的格点
+    python climate_site_profile.py --list-risky                # 列出风险格点
 """
 import argparse
 import json
@@ -42,16 +46,30 @@ DHW_SEVERE = 8.0     # DHW ≥ 8：常伴大面积死亡
 HOTSPOT_TRIGGER = 1.0  # HotSpot ≥ 1：热异常开始（用于定位"热事件月份"，比 DHW 更及时）
 
 ADVICE_NOTE = ("口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；"
-               "样本仅 2023–2025 三年；空间为 5km 格点，非礁点；本档案不是投放效果评估。")
+               "空间为 5km 格点，非礁点；本档案不是投放效果评估。")
 
 
 # ------------------------------------------------------------------ 构建档案
-def build() -> dict:
-    years = sorted(_series_files("DHW").keys())
+def build(years_pin=None) -> dict:
+    """构建档案。years_pin 可**固定年份集合**（如 ['2023','2024','2025']），
+    用于在长序列下载未完成时也能得到**可复现**的产物；缺省用缓存里全部年份。"""
+    all_years = sorted(_series_files("DHW", include_lt=True).keys())
+    years = [y for y in all_years if years_pin is None or y in years_pin]
     if not years:
-        raise SystemExit(f"未找到 NOAA 数据：{NOAA_DIR}/_raw_CRW_DHW_*.csv")
+        raise SystemExit(f"未找到 NOAA 数据：{NOAA_DIR}/_raw_CRW_DHW_*.csv"
+                         + (f"（年份筛选 {years_pin} 无匹配）" if years_pin else ""))
+    if years_pin:
+        miss = sorted(set(years_pin) - set(years))
+        if miss:
+            print(f"  ⚠️ 以下年份无缓存、已忽略：{miss}")
+    lt_years = [y for y in years if "_lt_" in _series_files("DHW", include_lt=True)[y].name]
+    if lt_years:
+        print(f"  注：{len(lt_years)} 个年份为**抽稀缓存**（每 5 天一个采样点），"
+              f"逐日年份 {sorted(set(years) - set(lt_years))}")
 
-    dhw_files, baa_files, hs_files = _series_files("DHW"), _series_files("BAA"), _series_files("HOTSPOT")
+    dhw_files, baa_files, hs_files = (_series_files("DHW", include_lt=True),
+                                      _series_files("BAA", include_lt=True),
+                                      _series_files("HOTSPOT", include_lt=True))
     cells = defaultdict(lambda: {"years": {}})
 
     for y in years:
@@ -80,31 +98,57 @@ def build() -> dict:
             }
 
     out_cells = {}
+    n_years_all = len(years)
     for key, rec in cells.items():
         ys = rec["years"]
+        n = len(ys) or 1
         peaks = {y: ys[y]["dhwPeak"] for y in ys}
         alert_years = sorted(y for y, p in peaks.items() if p >= DHW_ALERT)
         severe_years = sorted(y for y, p in peaks.items() if p >= DHW_SEVERE)
-        risky = sorted({m for y in ys for m in ys[y]["alertMonths"]})
-        heat = sorted({m for y in ys for m in ys[y]["heatMonths"]})
-        pv = list(peaks.values())
-        if len(alert_years) == len(ys) and alert_years:
-            label, level = "年年达白化警戒", "high"
-        elif alert_years:
-            label, level = f"{len(alert_years)}/{len(ys)} 年达白化警戒", "medium"
-        else:
-            label, level = "近 3 年均未达白化警戒", "low"
+        alert_freq = len(alert_years) / n
+        severe_freq = len(severe_years) / n
+
+        # ---- 月份按"出现频率"统计（年份多寡都能用；3 年与 41 年同一套口径）----
+        #   对每个月统计：有多少年的该月出现过 DHW≥4 / HotSpot≥1
+        alert_month_freq = {m: sum(1 for y in ys if m in ys[y]["alertMonths"]) / n for m in range(1, 13)}
+        heat_month_freq = {m: sum(1 for y in ys if m in ys[y]["heatMonths"]) / n for m in range(1, 13)}
+        # 风险月：**出现即计入**（保守，与短样本一致）；
+        # 热异常月：样本够长（≥10 年）时要求"半数以上年份出现"，避免长序列把 12 个月全判成风险月
+        risky = [m for m in range(1, 13) if alert_month_freq[m] > 0]
+        heat_thr = 0.5 if n >= 10 else 0.0
+        heat = [m for m in range(1, 13) if heat_month_freq[m] > heat_thr]
         # 建议避开 = DHW 已达警戒的月份 ∪ 出现过热异常（HotSpot≥1）的月份
         # （DHW 是 12 周累积量、会滞后，用 HotSpot 把"提前预警窗口"也覆盖进来，取并集更保守）
         avoid = sorted(set(risky) | set(heat))
+
+        # 风险分级（按"达警戒年份占比"，与样本年数无关）
+        if alert_freq >= 0.5:
+            level = "high"
+        elif alert_freq > 0:
+            level = "medium"
+        else:
+            level = "low"
+        label = (f"{len(years)} 年中 {len(alert_years)} 年达白化警戒"
+                 f"（{alert_freq:.0%}）" if alert_years else
+                 f"{len(years)} 年均未达白化警戒")
+        pv = list(peaks.values())
+        mean_p = sum(pv) / len(pv)
+        std_p = (sum((x - mean_p) ** 2 for x in pv) / len(pv)) ** 0.5
         out_cells[key] = {
             "years": ys,
+            "nYears": len(ys),
             "peakByYear": peaks,
             "alertYears": alert_years,
             "severeYears": severe_years,
+            "alertYearFreq": round(alert_freq, 3),
+            "severeYearFreq": round(severe_freq, 3),
+            "peakMean": round(mean_p, 2),
+            "peakStd": round(std_p, 2),
             "peakRange": round(max(pv) - min(pv), 2),
-            "riskyMonths": risky,          # DHW≥4 出现过的月份
-            "heatMonths": heat,            # HotSpot≥1 出现过的月份（更及时）
+            "alertMonthFreq": {str(m): round(v, 3) for m, v in alert_month_freq.items() if v},
+            "heatMonthFreq": {str(m): round(v, 3) for m, v in heat_month_freq.items() if v},
+            "riskyMonths": risky,          # DHW≥4 出现频率达标的月份
+            "heatMonths": heat,            # HotSpot≥1 半数以上年份出现的月份（更及时）
             "avoidMonths": avoid,          # 建议避开（两者并集）
             "safeMonths": [m for m in range(1, 13) if m not in set(avoid)],  # 无任何风险信号
             "riskLevel": level,
@@ -132,18 +176,25 @@ def build() -> dict:
             f"而不是礁块之间的真实差异 —— 引用时**必须实地核实**，"
             f"不要仅凭格点数值就排除一个真实礁点。")
 
+    n_yr = len(years)
+    span = f"{years[0]}–{years[-1]}（{n_yr} 年）" if years else "无"
     caveats = [
-        "仅 2023–2025 三年：2024 为极端年，'多年稳定'不等于'以后不会遇上'",
+        (f"仅 {span} 的样本" + ("；样本较短，'多年稳定'不等于'以后不会遇上'"
+                             if n_yr < 10 else "；已可做频率统计，但历史记录不等于未来情景")),
         "5km 格点 ≠ 礁点：只能给'哪片海'，不能给'哪个礁'",
         "仅热压力维度；不是投放效果评估（项目无投放后存活率数据）",
         "DHW 为 12 周累积量，月份会滞后；heatMonths 用 HotSpot≥1 定位热事件窗口",
     ]
-    if spatial_warn:
-        caveats.append(spatial_warn)
+    if lt_years:
+        caveats.append(f"其中 {len(lt_years)} 个年份为**每 5 天抽稀**缓存（长序列下载中），"
+                       f"峰值可能略低于逐日值；警戒月份判定不受影响")
 
     data = {
-        "source": "NOAA CRW v3.1 5km via PacIOOS mirror（本地缓存日数据聚合）",
+        "source": "NOAA CRW v3.1 5km via PacIOOS/CoastWatch mirror（本地缓存聚合）",
         "years": years,
+        "yearSpan": span,
+        "nYears": n_yr,
+        "sampledYears": sorted(lt_years),
         "gridCells": len(out_cells),
         "coverageBBox": {"latMin": min(lats), "latMax": max(lats),
                          "lonMin": min(lons), "lonMax": max(lons)},
@@ -153,14 +204,22 @@ def build() -> dict:
                          "east_ge119.2": round(east, 2)},
         "spatialWarning": spatial_warn,
         "caveats": caveats,
-        "adviceNote": ADVICE_NOTE,
+        "adviceNote": (f"口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；"
+                       f"样本 {span}；空间为 5km 格点，非礁点；本档案不是投放效果评估。"),
         "cells": out_cells,
     }
     return data
 
 
+def _months_en(months) -> str:
+    """把月份数字转成英文缩写，如 [4,5,6] -> 'Apr, May, Jun'。"""
+    names = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return ", ".join(names[m] for m in months if 1 <= m <= 12) or "none"
+
+
 def advice_for(cell: dict) -> dict:
-    """把档案转成一句可执行的规则化建议（只说热压力，不涉及投放效果）。"""
+    """把档案转成一句可执行的规则化建议（只说热压力，不涉及投放效果）。中英双版。"""
     risky = cell.get("riskyMonths") or []
     heat = cell.get("heatMonths") or []
     avoid = cell.get("avoidMonths") or sorted(set(risky) | set(heat))
@@ -171,22 +230,48 @@ def advice_for(cell: dict) -> dict:
                 else ("、".join(f"{m} 月" for m in safe) if safe else "无"))
     alert_years = cell.get("alertYears") or []
     lv = cell.get("riskLevel")
+    n_years = len(cell.get("peakByYear") or {}) or 1
+    # 兼容旧档案（无 alertYearFreq 字段时按 alertYears/年数 现算）
+    freq = cell.get("alertYearFreq")
+    if freq is None:
+        freq = len(cell.get("alertYears") or []) / n_years
+    freq_pct = f"{freq:.0%}"
+    avoid_en, heat_en, safe_en = _months_en(avoid), _months_en(heat), _months_en(safe)
+
     if lv == "high":
-        text = (f"⚠️ 近 3 年**年年**达到白化警戒（DHW≥4）：**不建议**在此期间投放；"
+        text = (f"⚠️ 近 {n_years} 年中有 **{len(alert_years)} 年**达到白化警戒"
+                f"（{freq_pct}）：**不建议**在此期间投放；"
                 f"如必须投放，应避开 {avoid_txt}。")
+        label_en = f"Alert level (DHW>=4) reached in {len(alert_years)}/{n_years} years"
+        text_en = (f"Alert-level heat stress reached in {len(alert_years)} of {n_years} years "
+                   f"({freq_pct}): deployment is NOT recommended; "
+                   f"if unavoidable, avoid {avoid_en}.")
     elif lv == "medium":
-        text = (f"近 3 年有 {len(alert_years)} 年达到白化警戒（DHW≥4 出现于 "
+        text = (f"近 {n_years} 年中有 {len(alert_years)} 年达到白化警戒（DHW≥4 出现于 "
                 f"{'、'.join(f'{m} 月' for m in risky) if risky else '无'}）："
                 f"建议避开 {avoid_txt} 投放（含热异常月份 {heat_txt}，取并集更保守）。")
+        label_en = f"Alert level reached in {len(alert_years)}/{n_years} years"
+        text_en = (f"Alert level reached in {len(alert_years)} of {n_years} years: avoid "
+                   f"{avoid_en} for deployment (union of DHW>=4 and HotSpot>=1 months, conservative).")
     elif heat:
-        text = (f"近 3 年**均未**达到白化警戒（DHW≥4），热压力维度总体友好；"
+        text = (f"近 {n_years} 年**均未**达到白化警戒（DHW≥4），热压力维度总体友好；"
                 f"但 {heat_txt} 出现过热异常（HotSpot≥1），建议避开这些月份投放，"
                 f"其余月份（{safe_txt}）无风险信号。")
+        label_en = f"No alert level in any of the {n_years} years"
+        text_en = (f"No alert-level DHW in the {n_years} years available; heat-stress dimension is "
+                   f"broadly favourable, but heat anomalies (HotSpot>=1) occurred in {heat_en} — "
+                   f"avoid those months. No risk signal in {safe_en}.")
     else:
-        text = ("近 3 年**均未**达到白化警戒、也未出现热异常："
+        text = (f"近 {n_years} 年**均未**达到白化警戒、也未出现热异常："
                 "**热压力维度上属于较友好区域**。（底质/水流/管护等仍需现场判断）")
-    return {"level": lv, "label": cell.get("label"), "riskyMonths": risky,
-            "heatMonths": heat, "avoidMonths": avoid, "safeMonths": safe, "text": text}
+        label_en = f"No alert level or heat anomaly in any of the {n_years} years"
+        text_en = (f"No alert-level DHW and no heat anomaly in the {n_years} years available: "
+                   f"broadly favourable in the heat-stress dimension only "
+                   f"(substrate/currents/management still require field checking).")
+
+    return {"level": lv, "label": cell.get("label"), "labelEn": label_en,
+            "riskyMonths": risky, "heatMonths": heat, "avoidMonths": avoid,
+            "safeMonths": safe, "text": text, "textEn": text_en}
 
 
 # ------------------------------------------------------------------ 查询接口
@@ -216,10 +301,17 @@ def profile_for(lat: float, lon: float):
         "ok": True,
         "gridCell": {"lat": la, "lon": lo, "distanceDeg": round(dist, 3)},
         "years": pf["years"],
+        "nYears": cell.get("nYears"),
         "peakByYear": cell["peakByYear"],
+        "peakMean": cell.get("peakMean"),
+        "peakStd": cell.get("peakStd"),
         "alertYears": cell["alertYears"],
+        "alertYearFreq": cell.get("alertYearFreq"),
         "severeYears": cell["severeYears"],
+        "severeYearFreq": cell.get("severeYearFreq"),
         "peakRange": cell["peakRange"],
+        "alertMonthFreq": cell.get("alertMonthFreq"),
+        "heatMonthFreq": cell.get("heatMonthFreq"),
         "riskyMonths": cell["riskyMonths"],
         "heatMonths": cell["heatMonths"],
         "avoidMonths": cell["avoidMonths"],
@@ -250,11 +342,16 @@ def main():
     ap.add_argument("--lat", type=float)
     ap.add_argument("--lon", type=float)
     ap.add_argument("--list-risky", action="store_true", help="列出年年达警戒的格点")
+    ap.add_argument("--years", default="",
+                    help="固定年份集合（逗号分隔，如 2023,2024,2025）；缺省用缓存里全部年份。"
+                         "长序列下载未完成时用它保证产物可复现")
     args = ap.parse_args()
 
+    years_pin = [y.strip() for y in args.years.split(",") if y.strip()] or None
+
     if args.build:
-        print("聚合 NOAA 日数据（DHW/BAA/HotSpot × 3 年）…")
-        data = build()
+        print("聚合 NOAA 数据（DHW/BAA/HotSpot）…")
+        data = build(years_pin=years_pin)
         PROFILES.parent.mkdir(parents=True, exist_ok=True)
         PROFILES.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         print(f"档案：{PROFILES}（{(PROFILES.stat().st_size/1024):.0f} KB，{data['gridCells']} 个格点）")

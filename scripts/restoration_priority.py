@@ -200,6 +200,131 @@ def _report_text(p, cover, climate, genus, quality, cell):
     return "\n".join(L)
 
 
+# ------------------------------------------------------------------ 英文报告
+# 标准 NOAA CRW 英文等级名（用于英文报告，避免直译中文等级造成歧义）
+BAA_LABEL_EN = {0: "No Stress", 1: "Bleaching Watch", 2: "Bleaching Warning",
+                3: "Alert Level 1", 4: "Alert Level 2"}
+GRADE_EN = {"urgent": "Level 1 · Priority deployment",
+            "high": "Level 2 · Recommended",
+            "medium": "Level 3 · Observe",
+            "low": "Level 4 · Defer"}
+SCENARIO_EN = {"无热浪（理想）": "No heatwave (ideal)",
+               "2024 型事件复现": "2024-type event repeated",
+               "五年一遇": "Once-in-five-years event"}
+QUALITY_LEVEL_EN = {"good": "good", "warn": "marginal", "poor": "outside the model's validity range"}
+MONTH_ABBR = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def _dhw_verdict_en(dhw):
+    """与中文 DHW_THRESHOLDS 同口径的英文解读。"""
+    if dhw is None:
+        return "no data"
+    if dhw >= 8.0:
+        return "Severe heat stress: widespread bleaching, mortality likely"
+    if dhw >= 4.0:
+        return "Moderate heat stress: conditions for significant bleaching"
+    if dhw >= 1.0:
+        return "Mild heat stress: keep monitoring"
+    return "No significant heat stress"
+
+
+def _report_text_en(p, cover, climate, genus, quality, cell):
+    """自动生成**英文**保育报告（与中文版逐节对齐，数值完全一致）。
+
+    实现说明：中文路径**一行未改**，英文报告是独立的第二个生成器，
+    因此既有 `report` 字段保持逐字节不变（可由 verify_serve_additive.py 机械验证）。
+    """
+    L = []
+    L.append("[Coral Reef Conservation Assessment Report]")
+    L.append("")
+    if cell:
+        L.append("I. Site and Climate Background")
+        L.append(f"    Coordinates: {cell.get('gridCell', {}).get('lat')}°N "
+                 f"{cell.get('gridCell', {}).get('lon')}°E (nearest NOAA 5 km grid cell)")
+        L.append(f"    Assessment year: {climate.get('year')}")
+        if climate.get("dhwMax") is None:
+            L.append("    Sea-surface heat stress: **NO DATA** — this coordinate is outside "
+                     "the covered NOAA grid, so the thermal dimension was NOT used.")
+        else:
+            L.append(f"    Sea-surface heat stress: DHW peak {climate.get('dhwMax')}, "
+                     f"bleaching alert \"{BAA_LABEL_EN.get(climate.get('baa'), climate.get('baaLabel'))}\" "
+                     f"({climate.get('baa')}/4)")
+            L.append(f"    Heatwave days: DHW>=4 for {climate.get('daysDhwGe4')} days, "
+                     f"DHW>=8 for {climate.get('daysDhwGe8')} days")
+            L.append(f"    Interpretation: {_dhw_verdict_en(climate.get('dhwMax'))}")
+        L.append("")
+
+    L.append("II. Image-Based Assessment")
+    L.append(f"    Live coral cover      : {cover.get('alivePct', 0):.2%}")
+    L.append(f"    Bleached coral        : {cover.get('bleachedPct', 0):.2%} "
+             f"({p['bleachRatioOfCoral']:.1%} of total coral)")
+    L.append(f"    Dead coral            : {cover.get('deadPct', 0):.2%}")
+    L.append(f"    Algae cover           : {cover.get('algaePct', 0):.2%}")
+    L.append(f"    Total coral cover     : {cover.get('coralTotalPct', 0):.2%}")
+    if genus:
+        L.append(f"    Dominant genus        : {genus}")
+    L.append("")
+
+    L.append("III. Assessment Conclusion")
+    L.append(f"    Recovery potential : {p['recovery']['score']:.1f}/100 "
+             f"({'high' if p['recovery']['score'] >= 65 else 'medium' if p['recovery']['score'] >= 45 else 'low'})")
+    L.append(f"    Urgency            : {p['urgency']['score']:.1f}/100 "
+             f"({'high' if p['urgency']['score'] >= 65 else 'medium' if p['urgency']['score'] >= 45 else 'low'})")
+    L.append(f"    Restoration priority: {p['priority']:.1f}/100 -> [{GRADE_EN.get(p['grade'], p['gradeLabel'])}]")
+    L.append(f"    Seedling suitability: {p['seedlingSuitability']:.1f}/100")
+    L.append("")
+    if p.get("reasoningEn"):
+        L.append(f"    Main drivers: {p['reasoningEn']}")
+        L.append("")
+
+    L.append("IV. Recommended Actions")
+    for a in (p.get("actionsEn") or p["actions"]):
+        L.append(f"    - {a}")
+    L.append("")
+
+    if not quality.get("usable", True):
+        lv = QUALITY_LEVEL_EN.get(quality.get("level"), quality.get("level"))
+        L.append(f"WARNING: capture quality is {lv} (contrast "
+                 f"{quality.get('contrast', float('nan')):.4f}); scores were capped, "
+                 f"please re-shoot before deciding.")
+        L.append("")
+
+    if p.get("deploymentWindow"):
+        w = p["deploymentWindow"]
+        L.append("V. Historical Heat-Stress Window")
+        L.append(f"    Judgement: {w.get('labelEn') or w.get('label')} "
+                 f"(alert years: {w.get('alertYears') or 'none'}; severe years: {w.get('severeYears') or 'none'})")
+        L.append(f"    Months to avoid: "
+                 f"{', '.join(MONTH_ABBR[m] for m in (w.get('avoidMonths') or [])) or 'none'}")
+        L.append(f"    Season with no risk signal: "
+                 f"{', '.join(MONTH_ABBR[m] for m in (w.get('safeMonths') or [])) or 'none'}")
+        if w.get("textEn"):
+            L.append(f"    Advice: {w['textEn']}")
+        L.append(f"    NOTE: heat-stress dimension only; 2023-2025 sample, 5 km grid; "
+                 f"NOT a deployment-outcome assessment.")
+        L.append("")
+
+    if p.get("simulation"):
+        sim = p["simulation"]
+        L.append("VI. Restoration Simulation (10-year trajectory, illustrative)")
+        L.append(f"    Start cover {sim['startAlive']:.2%}, growth rate r={sim['growthRateUsed']:.3f}, "
+                 f"carrying capacity K={sim['params']['K']:.0%}")
+        for nm, sc in sim["scenarios"].items():
+            L.append(f"    - {SCENARIO_EN.get(nm, nm)}: {sim['startAlive']:.1%} -> "
+                     f"{sc['finalAlive']:.1%} ({sc['deltaVsStart']:+.1%})")
+        L.append("    WARNING: illustrative projection, not calibrated to this site; NOT a forecast.")
+        L.append("")
+
+    L.append("VII. Scope Statement")
+    L.append("    This report is generated by a rule-based decision-support heuristic; its")
+    L.append("    dimensions and weights follow NOAA CRW public standards and common practice")
+    L.append("    in coral-reef restoration literature. \"Which site to restore first\" is a")
+    L.append("    value judgement with no objective ground truth, so no accuracy metric is")
+    L.append("    reported. For academic and competition use only, not for commercial use.")
+    return "\n".join(L)
+
+
 def deployment_summary(cover, coral_region, quality, priority, seedling, window,
                        has_coords=True):
     """把「图像侧现状 + 热压力历史 + 苗投放适宜度」合成**一句可直接引用的投放建议**。
@@ -235,31 +360,69 @@ def deployment_summary(cover, coral_region, quality, priority, seedling, window,
     months_txt = f"避开 {avoid_txt}" if avoid_txt else ""
 
     # 结论：先看数据是否可用 → 再看热压力历史 → 再看图像现状
+    # （verdict_en 与 verdict 分支一一对应，中英同源同判据）
+    months_en = ", ".join(MONTH_ABBR[m] for m in avoid) if avoid else ""
     if not quality.get("usable", True):
         verdict = "**建议重拍后再评估**：本次照片拍摄条件不足，覆盖率结论不可靠，暂不建议据此投放。"
+        verdict_en = ("**Re-shoot before assessing**: image quality is insufficient, so the cover "
+                      "estimate is unreliable and no deployment decision should be based on it.")
     elif (window or {}).get("riskLevel") == "high":
         verdict = ("**不建议在此投放**：近 3 年年年达到白化警戒（DHW≥4）"
                    + (f"，如必须投放应{months_txt}" if months_txt else "") + "。")
+        verdict_en = ("**Deployment NOT recommended here**: alert-level heat stress (DHW>=4) in every "
+                      "year of the record" + (f"; if unavoidable, avoid {months_en}" if months_en else "") + ".")
     elif total < 0.10 and dead + algae > 0.4:
         verdict = ("**不建议直接投放**：现状珊瑚覆盖过低（"
                    f"{total:.1%}）且死亡+藻类占比高（{dead + algae:.1%}），建议先做环境改良。")
+        verdict_en = (f"**No direct deployment**: coral cover is too low ({total:.1%}) and dead+algae "
+                      f"fractions are high ({dead + algae:.1%}); improve the site first.")
     elif (window or {}).get("riskLevel") == "medium":
         verdict = ("**可以投放，但必须避开高风险月份**（" + (months_txt or "见风险月份") + "）："
                    f"热压力维度为「{window['label']}」。")
+        verdict_en = ("**Deployment possible, but avoid the high-risk months** ("
+                      + (months_en or "see risk months") + f"): heat-stress status is "
+                      f"\"{window.get('labelEn') or window['label']}\".")
     elif window:
         verdict = ("**建议投放**：近 3 年热压力未达警戒，"
                    + (f"且 {('、'.join(f'{m} 月' for m in safe))} 无风险信号；" if safe else "")
                    + f"现状活珊瑚 {alive:.1%}、珊瑚总覆盖 {total:.1%}。")
+        verdict_en = ("**Deployment recommended**: no alert-level heat stress in the record"
+                      + (f", and no risk signal in {', '.join(MONTH_ABBR[m] for m in safe)};" if safe else ";")
+                      + f" current live coral {alive:.1%}, total coral cover {total:.1%}.")
     else:
         # 没有热压力依据时：图像维度仍可判，但**不能**给出完整投放结论
         tail = ("该坐标不在 NOAA 网格内，**缺少季节窗口与历史热压力依据**，不作为最终投放结论。"
                 if has_coords else
                 "**未提供经纬度**，无法给出季节窗口与历史热压力依据，不作为最终投放结论。")
+        tail_en = ("this coordinate is outside the NOAA grid, so the seasonal window and historical "
+                   "heat-stress evidence are MISSING; not a final deployment conclusion."
+                   if has_coords else
+                   "no coordinates were provided, so the seasonal window and historical heat-stress "
+                   "evidence are MISSING; not a final deployment conclusion.")
         verdict = (f"**图像维度可投放**：现状活珊瑚 {alive:.1%}、珊瑚总覆盖 {total:.1%}；⚠️ 但{tail}")
+        verdict_en = (f"**Deployable on the image dimension only**: live coral {alive:.1%}, total coral "
+                      f"cover {total:.1%}; WARNING: {tail_en}")
+
+    reasons_en = [
+        f"(1) Image state: live {alive:.1%}, bleached {bleach:.1%}, dead {dead:.1%}, "
+        f"algae {algae:.1%}, total coral cover {total:.1%}"
+        + (f", dominant genus {genus} ({top[0].get('confidence', 0):.0%})" if genus else ""),
+    ]
+    if window:
+        reasons_en.append(f"(2) Heat-stress history: {window.get('labelEn') or window['label']}; "
+                          f"alert years {window.get('alertYears') or 'none'} "
+                          f"(severe {window.get('severeYears') or 'none'}); "
+                          f"avoid {window.get('avoidMonths') or 'none'}")
+    else:
+        reasons_en.append("(2) Heat-stress history: no data (coordinate outside the NOAA grid)")
+    reasons_en.append(f"(3) Seedling suitability: {seedling:.0f}/100 "
+                      f"(recovery potential combined with urgency)")
 
     return {
         "verdict": verdict,
+        "verdictEn": verdict_en,
         "reasons": reasons,
+        "reasonsEn": reasons_en,
         "avoidMonths": avoid,
         "recommendedMonths": safe,
         "seedlingSuitability": round(float(seedling), 1),
@@ -270,6 +433,12 @@ def deployment_summary(cover, coral_region, quality, priority, seedling, window,
             + [f"    {r}" for r in reasons]
             + ["    ⚠️ 依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**"
                "（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。"]),
+        "summaryTextEn": "\n".join(
+            ["[Deployment Advice]", f"    {verdict_en}"]
+            + [f"    {r}" for r in reasons_en]
+            + ["    WARNING: based on image metrics + historical heat-stress records; NOT a "
+               "deployment-outcome prediction (the project holds no post-deployment survival data). "
+               "Heat-stress sample covers 2023-2025 on a 5 km grid."]),
         "note": ("依据 = 图像侧实测指标 + 往年热压力记录；**不是投放效果预测**"
                  "（项目无投放后存活率数据）。热压力样本仅 2023–2025、5km 格点。"),
     }
@@ -409,6 +578,71 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
     if genus_count == 0:
         actions.append("本次未获得属级多样性信息，该维度权重已均摊至其他维度")
 
+    # ---- 英文版行动建议 / 依据：与上面**完全相同的判定条件**，只换文案 ----
+    # 说明：中文路径一行未改，英文为独立第二条路径；末尾断言两条路径条数一致，防止日后漂移
+    actions_en = []
+    baa_en = BAA_LABEL_EN.get(baa, str(climate.get("baaLabel")))
+    if not thermal_ok and not site_ok:
+        actions_en.append(
+            f"**Dual constraint - defer**: the site is under \"{baa_en}\" "
+            f"(DHW peak {climate.get('dhwMax')}) and recovery potential is only {rec:.0f}/100; "
+            f"improve the environment and wait for the heatwave window to pass.")
+    elif not thermal_ok:
+        if baa >= 3:
+            actions_en.append(
+                f"**Deployment not advisable now**: the site is under \"{baa_en}\" "
+                f"(DHW peak {climate.get('dhwMax')}; DHW>=8 for {climate.get('daysDhwGe8')} days). "
+                f"Re-assess after the heatwave (DHW back below 4).")
+        else:
+            actions_en.append(
+                f"**Hold in nursery**: heat stress is \"{baa_en}\"; the site is otherwise "
+                f"acceptable - deploy after this season's heatwave ends with no secondary bleaching.")
+    elif not site_ok:
+        actions_en.append(
+            f"**Environmental improvement first**: the thermal window is suitable, but recovery "
+            f"potential is only {rec:.0f}/100 "
+            + ("(high algae cover competes for settlement space)"
+               if float(cover.get("algaePct") or 0) > 0.20 else "(insufficient live-coral stock)")
+            + "; remove algae or add substrate before deploying, as direct deployment has limited survival.")
+    if thermal_ok and site_ok:
+        if priority >= 75:
+            actions_en.append("Both recovery potential and urgency are high - **the top-priority "
+                              "deployment site** in this assessment.")
+        elif priority >= 60:
+            actions_en.append("Overall conditions are good - **recommended deployment site**; deploy "
+                              "at normal scale and track survival.")
+        elif priority >= 45:
+            actions_en.append("Moderate conditions - list as a **conservation reserve**; trial at "
+                              "small scale or keep annual monitoring.")
+        else:
+            actions_en.append("Conditions are ordinary and pressure is low - **defer deployment**, "
+                              "keep monitoring.")
+    if bleach_ratio > 0.25:
+        actions_en.append(f"Bleached coral is {bleach_ratio:.0%} of total coral - prioritise "
+                          f"bleaching monitoring and associated-species surveys.")
+    if float(cover.get("algaePct") or 0) > 0.20 and site_ok:
+        actions_en.append(f"Algae cover is {float(cover.get('algaePct')):.0%} - clear a small area "
+                          f"of algae before deployment.")
+    if not coral_region.get("reliable", True):
+        actions_en.append("Genus-level confidence is too low, so the diversity dimension scored 0 - "
+                          "retake close-ups of coral colonies.")
+    if genus_count == 0:
+        actions_en.append("No genus-level diversity information was obtained; that weight was "
+                          "redistributed across the other dimensions.")
+
+    if len(actions) != len(actions_en):
+        raise RuntimeError(f"中英文行动建议数量不一致（防漂移断言）: zh={len(actions)} en={len(actions_en)}")
+
+    reasoning_en = (
+        f"Recovery potential {rec:.0f}/100, mainly from "
+        + ", ".join(f"{k} {v:.0f}" for k, v in sorted(rec_parts.items(), key=lambda kv: -kv[1])[:2])
+        + f"; the thermal dimension is constrained by NOAA level \"{baa_en}\". "
+        + f"Urgency {urg:.0f}/100, mainly from "
+        + ", ".join(f"{k} {v:.0f}" for k, v in sorted(urg_parts.items(), key=lambda kv: -kv[1])[:2])
+        + "."
+        + (f" Weakest component: {weak[0][0]} at only {weak[0][1]:.0f}." if weak else "")
+    )
+
     # ---- 修复模拟：投放后的恢复轨迹（示意性）----
     sim = run_simulation(
         alive0=float(cover.get("alivePct") or 0),
@@ -433,6 +667,8 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
             "avoidMonths": profile.get("avoidMonths"),
             "safeMonths": profile.get("safeMonths"),
             "text": adv.get("text"),
+            "textEn": adv.get("textEn"),
+            "labelEn": adv.get("labelEn"),
             "note": profile.get("adviceNote"),
             "source": "reports/deployment_windows.json（NOAA CRW 2023–2025 日数据聚合）",
         }
@@ -472,6 +708,9 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
         "qualityPenalty": quality_penalty,
         "reasoning": reasoning,
         "actions": actions,
+        # 新增（附加字段）：英文版行动建议与依据（中文 actions/reasoning 完全未改）
+        "actionsEn": actions_en,
+        "reasoningEn": reasoning_en,
         # 新增（附加字段）：历史热压力档案 → 投放时间窗建议（网格外或档案缺失时为 None）
         "deploymentWindow": deployment_window,
         # 新增（附加字段）：合成后的「投放建议」（一句结论 + 三条依据 + 月份）
@@ -479,6 +718,9 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
     }
     result["report"] = _report_text(result, cover, climate, genus_txt,
                                     capture_quality, cell)
+    # 新增（附加字段）：英文保育报告（与中文版逐节对齐、数值一致；中文 report 未改）
+    result["reportEn"] = _report_text_en(result, cover, climate, genus_txt,
+                                         capture_quality, cell)
     return result
 
 

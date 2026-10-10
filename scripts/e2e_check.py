@@ -12,6 +12,7 @@
   6. 超边界照片是否被正确拒绝
   7. 珊瑚个体计数（P3 附加能力）是否可用且未影响既有字段
   8. 投放窗口档案（往年白化预警记录 → 建议避开月份）与**空间覆盖闸门**
+  9. 中英文保育报告是否同时自动生成
 
 用法：
     python e2e_check.py
@@ -216,6 +217,12 @@ def main():
             check("研判给出「投放建议」结论（含三条依据）",
                   bool(adv.get("verdict")) and len(adv.get("reasons") or []) >= 3 and used_history,
                   f"{str(adv.get('verdict'))[:52]}…")
+            # 英文报告：与中文 report 同结构、数值一致（中英文双报告是本项目交付要求）
+            rep_en = pri.get("reportEn") or ""
+            check("自动生成中文报告", len(pri.get("report") or "") > 300,
+                  f"中文 {len(pri.get('report') or '')} 字符")
+            check("自动生成英文报告", "Coral Reef Conservation Assessment Report" in rep_en
+                  and len(rep_en) > 300, f"英文 {len(rep_en)} 字符")
     except Exception as e:
         check("投放窗口档案", False, f"{type(e).__name__}: {e}")
 

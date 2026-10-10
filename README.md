@@ -22,7 +22,7 @@
 | **修复模拟**（10 年恢复轨迹）| 逻辑斯蒂增长 + 热浪致死 | 示意性推演，非预测 |
 | **水下图像增强** | 传统 CV + **CNN（U-Net）** | 三方对比见 `reports/enhance_compare.json` |
 | **珊瑚个体数量 + 位置**（P3 附加能力）| YOLOv9c 单类检测 | mAP@0.5 **0.4217**（官方 val 166 张）|
-| **投放时间窗建议**（往年白化预警记录）| NOAA CRW DHW/BAA/HotSpot 三年聚合 + 规则 | 544 格点：32 个年年达警戒 / 258 个三年均未达警戒；**仅热压力维度**，非效果评估 |
+| **投放时间窗建议**（往年白化预警记录）| NOAA CRW DHW/BAA/HotSpot 三年聚合 + 规则 | 544 格点：89 个 ≥半数年份达警戒 / 258 个从未达警戒；**仅热压力维度**，非效果评估 |
 
 **核心外部验证**：模型在仙本那 180 张照片上的活珊瑚覆盖估计 **39.71%**，
 与 Reef Check Malaysia 2024 实地调查的区域平均 **39.56%** 相差 **0.15 个百分点**。
@@ -68,7 +68,7 @@ curl http://127.0.0.1:8000/health
 ```bash
 python scripts/e2e_check.py
 ```
-期望输出 `通过 23/23`（缺计数模型或投放档案时，相应检查会跳过：19/19 → 15/15）。
+期望输出 `通过 25/25`（缺计数模型或投放档案时，相应检查会跳过：21/21 → 17/17）。
 
 ### 4. 单张照片评估
 
@@ -110,9 +110,10 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
 > 取值口径**完全未变**（可用 `python scripts/verify_serve_additive.py` 复跑比对证明）。
 > 不需要计数时，`POST /analyze?count=false` 可跳过，响应里 `coralCount` 为 `null`。
 >
-> 带 `lat/lon` 时还会新增两个键：`deployment`（往年热压力档案）与
-> `restoration.deploymentAdvice`（**投放建议**：`verdict` 一句结论 + 三条依据 + `summaryText` 可直接展示）。
-> **既有 `report` 正文一字未改**，新增信息只在上述新字段里。
+> 带 `lat/lon` 时还会新增三个键：`deployment`（往年热压力档案）、
+> `restoration.deploymentAdvice`（**投放建议**：`verdict` 一句结论 + 三条依据 + `summaryText` 可直接展示）
+> 与 `restoration.reportEn`（**英文保育报告**，与中文 `report` 逐节对齐、数值一致）。
+> **既有 `report` 正文一字未改**，新增信息只在上述新字段里（中英文都是自动生成）。
 
 ---
 

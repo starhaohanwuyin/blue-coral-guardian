@@ -48,11 +48,48 @@ UA = "CoralReefResearch/1.0 (academic; contact: coral-research@example.org)"
 BAA_LEVELS = {0: "No Stress", 1: "Watch", 2: "Warning", 3: "Alert Level 1", 4: "Alert Level 2"}
 
 
-def build_url(bbox, start, end, var, endpoint=None):
+def build_url(bbox, start, end, var, endpoint=None, stride=1):
     """⚠️ 实测：多变量合并查询会失败（404），必须**逐变量**请求。"""
     s, w, n, e = [f"{x}" for x in bbox]
-    return (f"{endpoint or ERDDAP}?{var}[({start}):1:({end})]"
+    return (f"{endpoint or ERDDAP}?{var}[({start}):{stride}:({end})]"
             f"[({n}):1:({s})][({w}):1:({e})]")
+
+
+def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
+    """抓取某变量某年的数据；chunk_days>0 时分段请求再拼接。
+
+    ⚠️ 分块不是为了省流量而是为了**提速 + 可续传**：实测同一镜像上
+    半年请求 9.7s、整年请求 120s（服务端对大请求明显更慢），且 NOAA 镜像
+    **间歇性断连**（一次失败要等 5/10s 退避）。因此：
+      1) 把一年拆成若干段，**每段单独落盘**（`.chunk_{var}{suffix}_{y}_{i}.csv`），
+         中断后重跑可跳过已完成的段；
+      2) 段大小按实测取 90 天（约 450 KB / 请求，~10 秒）。
+    """
+    if chunk_days <= 0:
+        return fetch(build_url(bbox, a, b, var, stride=stride))
+    from datetime import date, timedelta
+    d0, d1 = date.fromisoformat(a), date.fromisoformat(b)
+    spans, cur = [], d0
+    while cur <= d1:
+        nxt = min(cur + timedelta(days=chunk_days - 1), d1)
+        spans.append((cur.isoformat(), nxt.isoformat()))
+        cur = nxt + timedelta(days=1)
+    head, rows, done = None, [], 0
+    for i, (ca, cb) in enumerate(spans):
+        cf = CACHE / f".chunk_{var}{suffix}_{ca}_{cb}.csv"
+        if cf.exists() and cf.stat().st_size > 200:
+            txt = cf.read_text(encoding="utf-8", errors="replace")
+            done += 1
+        else:
+            txt = fetch(build_url(bbox, ca, cb, var, stride=stride))
+            cf.write_text(txt, encoding="utf-8")
+            time.sleep(0.5)
+        lines = txt.splitlines()
+        if head is None:
+            head = lines[:2]                     # 仅首段保留表头两行
+        rows.extend(lines[2:])
+    print(f"        ({var} {done}/{len(spans)} 段来自缓存)")
+    return "\n".join((head or []) + rows) + "\n"
 
 
 def fetch(url, timeout=300, retries=3, verbose=True):
@@ -121,7 +158,27 @@ def main():
     ap.add_argument("--start", default="2023-01-01")
     ap.add_argument("--end", default="2026-10-01")
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--vars", default=",".join(VARS),
+                    help="逗号分隔的变量子集；长时序只需 DHW 与 HOTSPOT（体积减 60%）")
+    ap.add_argument("--stride", type=int, default=1,
+                    help="时间抽稀步长（天）：1=逐日；5=每 5 天（长时序用，体积减 80%）")
+    ap.add_argument("--suffix", default="",
+                    help="文件名后缀，用于与既有缓存区分（如 _lt），避免覆盖逐日缓存")
+    ap.add_argument("--chunk-days", type=int, default=0,
+                    help=">0 时把每年的请求拆成 N 天一段（小块请求实测更快）")
+    ap.add_argument("--endpoint", default="",
+                    help="优先使用的镜像 URL（默认 PacIOOS；实测 CoastWatch-PFEG 快约 5 倍）")
     args = ap.parse_args()
+
+    global ERDDAP, ERDDAP_ENDPOINTS
+    if args.endpoint:
+        ERDDAP = args.endpoint
+        ERDDAP_ENDPOINTS = [args.endpoint] + [e for e in ERDDAP_ENDPOINTS if e != args.endpoint]
+
+    sel_vars = [v.strip() for v in args.vars.split(",") if v.strip() in VARS]
+    if not sel_vars:
+        print(f"错误：--vars 必须从 {VARS} 中选择")
+        return 2
 
     CACHE.mkdir(parents=True, exist_ok=True)
 
@@ -142,13 +199,13 @@ def main():
     bbox = [float(x) for x in args.bbox.split(",")]
     print(f"区域 bbox(S,W,N,E) = {bbox}")
     print(f"时间范围: {args.start} → {args.end}")
-    print(f"变量: {VARS}")
+    print(f"变量: {sel_vars}   抽稀步长: {args.stride} 天   分块: {args.chunk_days or '不拆'}   后缀: {args.suffix or '(无)'}")
     print(f"ERDDAP: {ERDDAP}\n")
 
     ok_years, failed = [], []
     manifest = []
     for y, a, b in years(args.start, args.end):
-        out = CACHE / f"CRW_semporna_{y}.csv"
+        out = CACHE / f"CRW_semporna{args.suffix}_{y}.csv"
         if out.exists() and out.stat().st_size > 200:
             n = sum(1 for _ in out.open(encoding="utf-8", errors="replace")) - 1
             print(f"  [跳过] {y}  已缓存 {n} 行")
@@ -159,14 +216,15 @@ def main():
         # ⚠️ 逐变量抓取：多变量合并查询实测会 404
         print(f"  [拉取] {y}  ({a} → {b})  逐变量", flush=True)
         yfiles, err = [], None
-        for var in VARS:
-            vp = CACHE / f"_raw_{var}_{y}.csv"
+        for var in sel_vars:
+            vp = CACHE / f"_raw_{var}{args.suffix}_{y}.csv"
             if vp.exists() and vp.stat().st_size > 200:
                 yfiles.append((var, vp))
                 print(f"      {var:<18} 已缓存", flush=True)
                 continue
             try:
-                txt = fetch(build_url(bbox, a, b, var))
+                txt = fetch_year(var, a, b, bbox, stride=args.stride,
+                                 chunk_days=args.chunk_days, suffix=args.suffix)
                 vp.write_text(txt, encoding="utf-8")
                 n = txt.count("\n") - 2
                 yfiles.append((var, vp))
@@ -176,7 +234,8 @@ def main():
                 err = e
             time.sleep(0.8)
 
-        if len(yfiles) >= 3:
+        # ⚠️ 门槛必须按**本次选中的变量数**判，不能写死 3（否则子集下载永远失败）
+        if len(yfiles) >= len(sel_vars):
             merged = merge_year(yfiles)
             if merged:
                 out.write_text(merged, encoding="utf-8")

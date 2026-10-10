@@ -51,9 +51,26 @@ def _year_files():
     return sorted(NOAA_DIR.glob("_raw_CRW_DHW_*.csv"))
 
 
-def _series_files(var: str):
-    """按变量取逐年文件，如 var='BAA' -> _raw_CRW_BAA_2023.csv"""
-    return {f.stem.split("_")[-1]: f for f in sorted(NOAA_DIR.glob(f"_raw_CRW_{var}_*.csv"))}
+def _series_files(var: str, include_lt: bool = False):
+    """按变量取逐年文件，如 var='BAA' -> _raw_CRW_BAA_2023.csv
+
+    ⚠️ 长时序抽稀文件（`_raw_CRW_DHW_lt_1986.csv`，每 5 天一个采样点）默认**排除**：
+    插件口径必须保持逐日，否则「DHW≥4 天数」这类口径会因采样变稀而不可比。
+    档案分析（climate_site_profile）需要 1985 年起的长期记录，故显式传 include_lt=True；
+    此时**同一年份优先用逐日文件**（近三年），抽稀文件只补更早的年份。
+    """
+    out = {}
+    for f in sorted(NOAA_DIR.glob(f"_raw_CRW_{var}_*.csv")):
+        is_lt = "_lt_" in f.name
+        if is_lt and not include_lt:
+            continue
+        y = f.stem.split("_")[-1]
+        if not y.isdigit():
+            continue
+        if y in out and is_lt:          # 已有逐日文件 → 抽稀文件不得覆盖
+            continue
+        out[y] = f
+    return out
 
 
 def _read_cell_series(path, cell_filter=None):

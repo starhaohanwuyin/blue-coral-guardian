@@ -552,12 +552,15 @@ def main():
         L.append("")
         L.append(f"数据：{dw['source']}；年份 **{dw['years']}**；格点 **{dw['gridCells']}** 个")
         L.append("")
+        L.append("> 分级口径：**≥半数年份**出现 DHW≥4 → 不建议投放；部分年份 → 避开风险月；"
+                 "从未出现 → 热压力维度友好。风险月 = DHW≥4 ∪ HotSpot≥1（并集，取保守）。")
+        L.append("")
         lc = dw.get("levelCounts", {})
         L.append("| 判定 | 格点数 | 含义 |")
         L.append("|---|---|---|")
-        L.append(f"| 年年达白化警戒 | **{lc.get('high', 0)}** | 3 年都出现 DHW≥4：不建议投放 |")
+        L.append(f"| ≥半数年份达白化警戒 | **{lc.get('high', 0)}** | 半数以上年份出现 DHW≥4：不建议投放 |")
         L.append(f"| 部分年份达警戒 | {lc.get('medium', 0)} | 建议避开风险月份投放 |")
-        L.append(f"| 3 年均未达警戒 | {lc.get('low', 0)} | 热压力维度较友好 |")
+        L.append(f"| 从未达警戒 | {lc.get('low', 0)} | 热压力维度较友好 |")
         L.append("")
         if dw.get("topRiskyCells"):
             L.append("**风险最高的格点（按 3 年最高 DHW）：**")
