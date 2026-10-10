@@ -51,6 +51,11 @@ module.exports = {
   // 识别超时（毫秒）。首次推理含模型预热，给宽松一些
   AI_TIMEOUT: 30000,
 
+  /* 硬超时兜底（毫秒）：wx.uploadFile 的 timeout 在部分基础库/工具版本**不生效**，
+   * 请求被域名校验拦下或网络黑洞时既不 success 也不 fail → 页面会永远停在「正在分析…」。
+   * 到点强制给页面一个结果（超时错误；FALLBACK_TO_MOCK 为 true 时降级为演示数据并标注原因）。 */
+  AI_HARD_TIMEOUT: 45000,
+
   // 本地存储键（token 与官网登录接口共用同一套账号体系）
   TOKEN_KEY: 'ls_token',
   USER_KEY: 'ls_user',

@@ -61,6 +61,8 @@
     <view wx:if="{{view.isDemo}}" class="quality-alert warn">
       <view class="qa-title">🧪 演示数据</view>
       <view class="qa-desc">未连接到评估服务，以下为内置演示结果，不代表真实分析。</view>
+      <!-- 显示具体失败原因（含服务地址与排查提示），便于自行定位问题 -->
+      <view wx:if="{{view.demoReason}}" class="qa-desc">原因：{{view.demoReason}}</view>
       <view class="qa-meta">启动服务：先 cd coral_ml/scripts，再运行 python serve_fusion.py</view>
     </view>
 

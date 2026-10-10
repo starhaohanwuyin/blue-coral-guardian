@@ -15,6 +15,9 @@ const config = require('./config.js')
 const req = require('./request.js')
 const mock = require('./mock.js')
 
+/* 当前进行中的上传任务：硬超时触发时用它 abort，避免请求悬着不放 */
+let pendingUploadTask = null
+
 /* 后端接口路径（按官网实际接口调整这里） */
 const URL = {
   authLogin: '/api/auth/login',
@@ -375,7 +378,10 @@ function realAnalyze(filePath, site, year) {
     if (year != null) fd.year = String(year)
   }
   return new Promise((resolve, reject) => {
-    wx.uploadFile({
+    // ⚠️ 记录上传任务：`wx.uploadFile` 的 timeout 在部分基础库/开发者工具版本**不生效**，
+    //    当请求被域名校验拦下或网络黑洞时，success/fail 都不会回调，
+    //    页面就会永远停在「正在分析珊瑚影像…」。故由外层硬超时兜底并 abort。
+    pendingUploadTask = wx.uploadFile({
       url: config.CORAL_API + '/analyze',
       filePath,
       name: 'file',
@@ -383,6 +389,7 @@ function realAnalyze(filePath, site, year) {
       timeout: config.AI_TIMEOUT || 30000,
       header: {},
       success(res) {
+        pendingUploadTask = null
         if (res.statusCode !== 200) {
           let detail = ''
           try { detail = JSON.parse(res.data).detail || '' } catch (e) {}
@@ -397,8 +404,11 @@ function realAnalyze(filePath, site, year) {
           reject(new Error('识别结果解析失败'))
         }
       },
-      fail() {
-        reject(new Error('无法连接评估服务，请确认已启动 serve_fusion.py'))
+      fail(err) {
+        pendingUploadTask = null
+        const msg = (err && err.errMsg) || ''
+        reject(new Error('无法连接评估服务（' + config.CORAL_API + '，' + msg + '）。'
+          + '请确认已启动 serve_fusion.py；开发者工具需勾选「不校验合法域名」'))
       }
     })
   })
@@ -488,7 +498,21 @@ function mockCoralResult() {
  */
 api.recognize = function (filePath, site, year) {
   if (config.USE_REAL_AI) {
-    return realAnalyze(filePath, site, year).catch((e) => {
+    // 硬超时兜底：即便 wx.uploadFile 既不 success 也不 fail，也必须在 N 秒后给页面一个结果，
+    // 否则页面会永远停在 loading（本会话实测到的现象）。
+    const hard = new Promise((_, reject) => {
+      setTimeout(() => {
+        if (pendingUploadTask && pendingUploadTask.abort) {
+          try { pendingUploadTask.abort() } catch (e) {}
+          pendingUploadTask = null
+        }
+        reject(new Error('识别请求超时未返回（' + config.CORAL_API + '）。排查顺序：'
+          + '①服务是否在跑（浏览器打开 /health）；'
+          + '②开发者工具「详情→本地设置」勾选「不校验合法域名」；'
+          + '③真机调试请把 CORAL_API 改为电脑局域网 IP（如 http://10.0.250.15:8000）'))
+      }, config.AI_HARD_TIMEOUT || 45000)
+    })
+    return Promise.race([realAnalyze(filePath, site, year), hard]).catch((e) => {
       if (!config.FALLBACK_TO_MOCK) throw e
       return mock.delay(mockCoralResult(), 700).then((r) => {
         r.isDemo = true
