@@ -1,0 +1,34 @@
+# 蓝珊 · 珊瑚礁智能评估 —— Python 依赖
+# ------------------------------------------------------------------
+# 安装：
+#     pip install -r requirements.txt
+#
+# 只用「路线 A（纯小程序）」不需要装这些。
+# 想跑真实 AI 推理（serve_fusion.py）才需要。
+#
+# 显卡说明：
+#   · 有 NVIDIA 显卡：先按 https://pytorch.org 的指引装对应 CUDA 版 torch，
+#     再执行上面的 pip install（已装的 torch 不会被覆盖）。
+#   · 没有显卡：直接 pip install 即可，会自动使用 CPU（约 5–10 秒/张）。
+# ------------------------------------------------------------------
+
+# ---- 推理必需 ----
+torch>=2.2
+torchvision>=0.17
+transformers>=4.40          # SegFormer 语义分割
+fastapi>=0.110
+uvicorn>=0.27
+python-multipart>=0.0.9     # /analyze 的文件上传
+pillow>=10.0
+numpy>=1.24
+
+# ---- 评估与数据处理（只跑推理可不装）----
+pyarrow>=14.0               # 读 Coralscapes parquet
+requests>=2.31              # 下载 NOAA / iNaturalist 数据
+pandas>=2.0
+scikit-learn>=1.3           # 评估指标
+tqdm>=4.66
+
+# ---- 环境数据分析（仅 cache_noaa.py 需要）----
+xarray>=2024.1
+netCDF4>=1.6
