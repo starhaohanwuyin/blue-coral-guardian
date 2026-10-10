@@ -37,6 +37,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SEG_DIR = ROOT / "weights" / "segformer_coralscapes"
 SEG_DIR_INV = ROOT / "weights" / "segformer_coralscapes_degradinv"
 SPECIES_CKPT = ROOT / "weights" / "species_ip" / "best.pt"
+# 珊瑚个体计数权重（P3 附加能力，YOLOv9c）。缺失时服务照常工作，只是少一个附加字段。
+COUNT_CKPT = ROOT / "weights" / "yolo_coral" / "best.pt"
 # 白化状态分类模型（全图级）。
 # ⚠️ 实测：分割模型（Model A）的白化像素占比在第三方数据上 AUC 仅 0.46（无效），
 #    因此「白化程度」必须由分类模型给出，不能用 cover.bleachedPct。
@@ -79,6 +81,7 @@ DISCLAIMER = ("本结果由AI模型给出，仅供保育决策参考，不作为
 SEG = None
 SPECIES = None
 BLEACH = None                   # 白化状态分类模型
+COUNTER = None                  # 珊瑚个体计数模型（P3，附加）
 SEG_LOADED_DIR = None          # 实际加载的分割权重目录（供 /health 如实报告）
 BLEACH_LOADED = None
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -170,6 +173,42 @@ def load_models(prefer_degradinv=False):
     if BLEACH is None:
         print("[跳过] 白化分类模型未就绪（白化评估将不可用）")
 
+    # ---- 珊瑚个体计数模型（P3 附加能力）----
+    # ⚠️ 只**新增**输出字段，不参与也不修改覆盖率 / 属 / 白化的任何计算。
+    global COUNTER
+    if COUNT_CKPT.exists():
+        try:
+            from count_coral_yolo import CoralCounter
+            COUNTER = CoralCounter(COUNT_CKPT)
+            print("[加载] 个体计数模型: YOLOv9c（附加能力，不影响现有输出）")
+        except Exception as e:
+            COUNTER = None
+            print(f"[跳过] 个体计数模型加载失败: {e}")
+    else:
+        print(f"[跳过] 个体计数模型未就绪（{COUNT_CKPT} 不存在，仅少一个附加字段）")
+
+
+def count_coral_individuals(img: Image.Image, conf=None, iou=None):
+    """P3 附加能力：珊瑚个体数量 + 位置。
+
+    任何异常都返回 None（或带 error 的字典），**绝不影响**主结果可用性 ——
+    计数是锦上添花，覆盖率/属/白化才是主结论。
+    """
+    if COUNTER is None:
+        return None
+    try:
+        t0 = time.time()
+        kw = {}
+        if conf is not None:
+            kw["conf"] = conf
+        if iou is not None:
+            kw["iou"] = iou
+        r = COUNTER.count(img, **kw)
+        r["elapsedMs"] = round((time.time() - t0) * 1000, 1)
+        return r
+    except Exception as e:
+        return {"count": None, "error": f"{type(e).__name__}: {e}"}
+
 
 CN_BC = {"bleached": "白化", "healthy": "健康", "dead": "死亡",
          "Bleached": "白化", "Healthy": "健康", "Dead": "死亡"}
@@ -253,7 +292,9 @@ def health():
             "species": "loaded" if SPECIES else "not_trained",
             "segModel": SEG_LOADED_DIR.name if SEG_LOADED_DIR else "none",
             "segCalibrated": SEG_LOADED_DIR == SEG_DIR,
-            "categories": SEG.n_classes if SEG else 0}
+            "categories": SEG.n_classes if SEG else 0,
+            # P3 新增：个体计数模型状态（原有字段语义与取值均未改动）
+            "coralCounter": "loaded" if COUNTER else "not_trained"}
 
 
 @app.get("/sample")
@@ -295,7 +336,7 @@ def sample_list(limit: int = 20):
 async def analyze(request: Request, file: UploadFile = File(...),
                   enhance_first: bool = False,
                   lat: float = Form(None), lon: float = Form(None),
-                  year: int = Form(None)):
+                  year: int = Form(None), count: bool = True):
     # 兼容两种传参方式：
     #   · 表单字段（小程序 wx.uploadFile 的 formData 走这条）
     #   · 查询参数（curl / Skill 拼接 URL 走这条）
@@ -348,6 +389,9 @@ async def analyze(request: Request, file: UploadFile = File(...),
                        for k, v in sorted(cls_frac.items(), key=lambda kv: -kv[1])[:8]],
         "coralRegion": classify_coral_region(img, pred),
         "bleaching": bleach,
+        # P3 新增字段（附加能力）：珊瑚个体数量 + 位置。count=False 时为 None。
+        # 注意：只新增键，上面所有既有键的名称、类型与取值口径均未改动。
+        "coralCount": count_coral_individuals(src) if count else None,
         "captureQuality": {
             "level": qv["level"],            # good / warn / poor
             "usable": qv["usable"],
@@ -411,6 +455,32 @@ async def analyze_base64(payload: dict):
         async def read(self):
             return buf.getvalue()
     return await analyze(_F(), payload.get("enhance_first", False))
+
+
+# ---------------------------------------------------------------- 个体计数（P3）
+@app.post("/count")
+async def count_only(file: UploadFile = File(...),
+                     conf: float = Form(0.15), iou: float = Form(0.5),
+                     enhance_first: bool = False):
+    """P3 附加端点：只做珊瑚个体计数（YOLOv9c），不跑分割/分类。
+
+    返回：个体总数 + 每个个体的像素框与置信度。
+    `/analyze` 的响应里也新增了同样口径的 `coralCount` 字段（附加，不覆盖既有结论）。
+    """
+    if COUNTER is None:
+        raise HTTPException(503, "个体计数模型未加载（缺少 weights/yolo_coral/best.pt）")
+    data = await file.read()
+    if not data:
+        raise HTTPException(400, "空文件")
+    try:
+        img = Image.open(io.BytesIO(data))
+    except Exception:
+        raise HTTPException(400, "无法解析图片")
+    src = enhance(img, clahe=True) if enhance_first else img
+    r = count_coral_individuals(src, conf=conf, iou=iou) or {}
+    r["enhanced"] = bool(enhance_first)
+    r["disclaimer"] = DISCLAIMER
+    return JSONResponse(r)
 
 
 # ---------------------------------------------------------------- 环境数据

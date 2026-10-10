@@ -1,0 +1,59 @@
+{
+  "task": "P3 acceptance self-check",
+  "allPassed": true,
+  "checks": {
+    "① 计数质量：mAP@0.5 ≥ 0.35": {
+      "passed": true,
+      "detail": "mAP@0.5 = 0.385822（阈值 0.35）",
+      "mAP50": 0.385822,
+      "mAP50_95": 0.241642,
+      "precision": 0.465255,
+      "recall": 0.416081,
+      "valImages": 166,
+      "epochs": 50,
+      "imgsz": 640,
+      "trainMinutes": 145.96,
+      "counting": {
+        "gtTotal": 4266,
+        "predTotal": 3109,
+        "countBias": -0.2712,
+        "maePerImage": 11.4398,
+        "exactMatchRate": 0.0783,
+        "note": "计数在 conf/iou 阈值下统计；MAE 为逐图 |预测框数-真值框数| 的均值"
+      }
+    },
+    "② 不伤现有：分割指标不下降": {
+      "passed": true,
+      "detail": "mIoU 0.548414 → 0.548414（Δ +0.000000）；像素准确率 0.773085 → 0.773085（Δ +0.000000）",
+      "mIoUBefore": 0.548414,
+      "mIoUAfter": 0.548414,
+      "mIoUDelta": 0.0,
+      "pixelAccBefore": 0.773085,
+      "pixelAccAfter": 0.773085,
+      "nImages": 166,
+      "inputSize": 1024
+    },
+    "③ 只新增字段：既有输出不变": {
+      "passed": true,
+      "detail": "既有键最大数值变化 0；新增键 ['plain.coralCount', 'withGeo.coralCount']",
+      "existingKeysMaxChange": 0.0,
+      "addedKeys": [
+        "plain.coralCount",
+        "withGeo.coralCount"
+      ],
+      "problems": []
+    },
+    "④ 链路可用：端到端自检": {
+      "passed": 19,
+      "detail": "端到端自检 19/19",
+      "total": 19,
+      "returncode": 0
+    }
+  },
+  "criteria": {
+    "counting": "mAP@0.5 >= 0.35（Coralscapes 官方 validation split，166 张，单类 coral）",
+    "segmentation": "分割 mIoU / 逐像素准确率不下降（同口径 1024px 复跑）",
+    "additive": "serve_fusion.py 既有输出逐键未变，只新增 coralCount / coralCounter / POST /count",
+    "e2e": "e2e_check.py 全项通过"
+  }
+}

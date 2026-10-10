@@ -21,6 +21,7 @@
 | **修复优先级 + 保育报告**（综合研判插件）| 规则型决策支持启发式 | 可解释，不报准确率 |
 | **修复模拟**（10 年恢复轨迹）| 逻辑斯蒂增长 + 热浪致死 | 示意性推演，非预测 |
 | **水下图像增强** | 传统 CV + **CNN（U-Net）** | 三方对比见 `reports/enhance_compare.json` |
+| **珊瑚个体数量 + 位置**（P3 附加能力）| YOLOv9c 单类检测 | mAP@0.5 **0.3858**（官方 val 166 张）|
 
 **核心外部验证**：模型在仙本那 180 张照片上的活珊瑚覆盖估计 **39.71%**，
 与 Reef Check Malaysia 2024 实地调查的区域平均 **39.56%** 相差 **0.15 个百分点**。
@@ -36,7 +37,7 @@ cd scripts
 python serve_fusion.py --port 8000
 ```
 
-等待约 40–60 秒（加载分割 + 属分类 + 白化分类三个模型），看到
+等待约 40–90 秒（加载分割 + 属分类 + 白化分类 + 个体计数四个模型），看到
 `Uvicorn running on http://0.0.0.0:8000` 即为就绪。
 
 ### 2. 健康检查
@@ -48,7 +49,8 @@ curl http://127.0.0.1:8000/health
 关键字段：
 ```json
 {"status":"ok","segmentation":"loaded","species":"loaded",
- "segModel":"segformer_coralscapes","segCalibrated":true,"categories":40}
+ "segModel":"segformer_coralscapes","segCalibrated":true,"categories":40,
+ "coralCounter":"loaded"}
 ```
 
 > ⚠️ `segCalibrated` 必须为 `true`。若为 `false` 说明加载了未校准的实验权重，
@@ -59,7 +61,7 @@ curl http://127.0.0.1:8000/health
 ```bash
 python scripts/e2e_check.py
 ```
-期望输出 `通过 15/15`。
+期望输出 `通过 19/19`（计数模型未训练时 15/15，并跳过计数项）。
 
 ### 4. 单张照片评估
 
@@ -74,8 +76,9 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
 | 端点 | 说明 |
 |---|---|
 | `GET /health` | 服务与模型状态 |
-| `POST /analyze` | 上传图片 → 覆盖率 + 珊瑚属 + 白化状态 + 拍摄条件 |
+| `POST /analyze` | 上传图片 → 覆盖率 + 珊瑚属 + 白化状态 + 拍摄条件 + **个体计数** |
 | `POST /analyze_base64` | 同上，base64 传图 |
+| **`POST /count`** | **只做珊瑚个体计数**（P3 附加；不跑分割/分类，可选 `conf`/`iou`）|
 | `GET /sample?set=semporna&index=0` | 样例图（`semporna` / `bleached` / `healthy`），供无图时演示 |
 
 `/analyze` 返回结构：
@@ -87,11 +90,17 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
             "bleachingShareOfCoral":0.0696},
   "coralRegion": {"reliable":true,"top":[{"genus":"Acropora","confidence":0.78}]},
   "bleaching": {"label":"bleached","labelCn":"白化","confidence":0.96,"reliable":true},
+  "coralCount": {"count":15,"threshold":{"conf":0.15,"iou":0.5,"imgsz":640},
+                 "boxes":[{"x0":0,"y0":0,"x1":0,"y1":0,"confidence":0.9}],"elapsedMs":85.2},
   "captureQuality": {"level":"good","usable":true,"contrast":0.23,
                      "thresholds":{"goodContrast":0.0306,"warnContrast":0.0243}},
   "inferenceMs": 620
 }
 ```
+
+> **P3 是纯新增**：`coralCount` 是新增键，`/count` 是新增端点；原有键的名称、类型与
+> 取值口径**完全未变**（可用 `python scripts/verify_serve_additive.py` 复跑比对证明）。
+> 不需要计数时，`POST /analyze?count=false` 可跳过，响应里 `coralCount` 为 `null`。
 
 ---
 
@@ -102,7 +111,7 @@ coral_ml/
 ├── scripts/            训练与评估脚本
 ├── docs/               方案、核验、答辩要点、评估方法与局限
 ├── reports/            结果 JSON（报告的权威数据源）
-├── dsh-skill/          DSH Agent 插件（3 个工具）
+├── dsh-skill/          DSH Agent 插件（1 个 Skill + 5 个工具）
 ├── NOTICE.md           许可证与合规声明
 ├── data/               数据集（已 gitignore，约 13 GB）
 └── weights/            模型权重（已 gitignore，约 1.1 GB）
@@ -124,9 +133,13 @@ coral_ml/
 | `cache_noaa.py` | NOAA CRW 数据离线缓存（PacIOOS 镜像）|
 | `cross_validate.py` | 星地交叉验证 |
 | `validate_site_level.py` | 站点级验证 |
-| `e2e_check.py` | 端到端自检（15 项）|
-| `resume_all.py` | **一键状态体检 / 续跑** |
+| `e2e_check.py` | 端到端自检（19 项；计数模型未训练时 15 项且跳过计数）|
+| `resume_all.py` | **一键状态体检 / 续跑**（22 阶段）|
 | `make_report.py` | 自动生成汇总报告（读 JSON，无人工誊抄）|
+| **`build_yolo_coral_dataset.py`** | **P3**：Coralscapes 掩膜 → 个体框 → YOLO 数据集 |
+| **`train_yolo_coral.py`** | **P3**：YOLOv9c 训练 + 评估（mAP / 逐图计数误差）|
+| **`count_coral_yolo.py`** | **P3**：个体计数推理（CLI + 服务用 `CoralCounter`）|
+| **`verify_serve_additive.py`** | **P3**：证明「只新增字段」的改动前后逐键比对 |
 
 ---
 
@@ -158,7 +171,24 @@ coral_ml/
 | 原 Kaggle 域 | 88.78% | 91.26% |
 | 印太域（印尼） | 42.31% | 82.95% |
 
-### 5.4 使用边界（**重要**）
+### 5.4 珊瑚个体计数（P3 · 附加能力）
+
+| 项目 | 结果 |
+|---|---|
+| **mAP@0.5**（官方 val 166 张，单类 `coral`）| **0.3858**（验收线 0.35）|
+| mAP@0.5:0.95 / precision / recall | 0.2416 / 0.4653 / 0.4161 |
+| 个体数总量偏差 / 逐图 MAE（conf=0.15）| **+8.7%**（真值 4266 vs 预测 4638）/ 11.22 个 |
+| 训练集（官方 train 全 9 分片）| 1517 张 / 33027 个个体框 |
+| 泄漏隔离 | train 22 个站点 vs val 3 个站点，**不重叠** |
+
+> 📌 **计数工作点**：mAP 与置信度阈值无关，但**数出来几株**强相关 —— 默认 `conf=0.15` 时
+> 总量偏差 +8.7%，而 `conf=0.25` 时会少算 27%。完整扫描见 `reports/yolo_coral_count_thresholds.json`。
+
+> ⚠️ **真值口径**：个体框由 Coralscapes **语义掩膜的同类连通域**自动导出（**非人工实例标注**），
+> 且紧贴的同类珊瑚会合并成 1 个。因此上表是「与该自动真值的一致程度」，
+> 不能等同于人工标注标准下的实例检测精度。详见 [docs/项目交接与续接指引.md](docs/项目交接与续接指引.md) §7.6。
+
+### 5.5 使用边界（**重要**）
 
 | 拍摄条件 | 活珊瑚估计误差 |
 |---|---|
@@ -183,6 +213,7 @@ coral_ml/
 | **无人类基线** | 无法回答"模型达到什么水平"，已声明为永久局限 |
 | **无逐样本覆盖率误差** | 缺少像素级/样方级真值，需标准化样方照片 |
 | **白化检测印太域召回偏低** | 仅 42.31%，根因是判别边界跨域错位 |
+| **计数真值为自动标注** | 个体框来自掩膜连通域，紧贴个体合并 → 计数系统性偏少；跨域（仙本那实拍）未做实例级人工核验 |
 | β=6 工作点为测试集调参 | 该工作点指标偏乐观 |
 
 ---
@@ -215,7 +246,7 @@ python scripts/make_report.py
 | Python | 3.12 |
 | PyTorch | 2.x + CUDA |
 | transformers | 5.x（SegFormer）|
-| 关键依赖 | torchvision / fastapi / uvicorn / pyarrow / pillow / numpy |
+| 关键依赖 | torchvision / **ultralytics 8.4（YOLOv9c 个体计数）** / **scipy + opencv（连通域）** / fastapi / uvicorn / pyarrow / pillow / numpy |
 
 ---
 

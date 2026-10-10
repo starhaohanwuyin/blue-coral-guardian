@@ -173,6 +173,9 @@ def main():
         print(f"    {name:<38} IoU={v:.4f}  像素数={cnt}")
 
     out = Path(args.out) if args.out else (ROOT / "reports" / f"segmentation_miou_{args.size}.json")
+    # 允许 --out 指向尚不存在的目录（相对路径在 scripts/ 下会被解析成 scripts/reports/…）
+    out = out if out.is_absolute() else (ROOT / out)
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
         "dataset": "Coralscapes official validation split",
         "nImages": ok_img, "inputSize": args.size,

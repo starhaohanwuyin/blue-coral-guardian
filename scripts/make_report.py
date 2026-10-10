@@ -448,6 +448,74 @@ def main():
                  "后者正需要现场影像，即本项目要填补的空白。**")
         L.append("")
 
+    # ---------- 5.5 P3：珊瑚个体计数（附加能力）----------
+    ycm = load("yolo_coral_metrics.json")
+    ycd = load("yolo_coral_dataset.json")
+    miou_after = load("segmentation_miou_1024_after_p3.json")
+    if ycm:
+        acc = ycm.get("acceptance", {})
+        det = ycm.get("detection", {})
+        cnt = ycm.get("counting", {})
+        L.append("## 5.5 珊瑚个体计数（P3 · YOLOv9 附加能力）")
+        L.append("")
+        L.append("> **定位：附加能力，不替换分割。** 现有覆盖率/属/白化结论完全未改动"
+                 "（见 `reports/serve_before_p3.json` 与 `serve_after_p3.json` 的逐键比对）。")
+        L.append("")
+        if ycd:
+            tr = ycd.get("splits", {}).get("train", {})
+            va = ycd.get("splits", {}).get("val", {})
+            L.append(f"真值来源：Coralscapes 掩膜连通域（面积 ≥ {ycd.get('minAreaPx')} px，"
+                     f"8 邻域），珊瑚类合并为单类 `coral`。")
+            L.append("")
+            L.append("| 数据集 | 图片 | 个体框 |")
+            L.append("|---|---|---|")
+            L.append(f"| train（官方 train split 已下载分片 {len(ycd.get('trainShards', []))} 个） | "
+                     f"{tr.get('imagesOnDisk', '—')} | {tr.get('boxesOnDisk', '—')} |")
+            L.append(f"| **val（官方 validation split，与分割 mIoU 同源）** | "
+                     f"{va.get('imagesOnDisk', '—')} | {va.get('boxesOnDisk', '—')} |")
+            L.append("")
+        L.append(f"| 指标 | 数值 |")
+        L.append("|---|---|")
+        L.append(f"| **mAP@0.5** | **{det.get('mAP50', '—')}**（验收线 0.35 → "
+                 f"{'✅ 达标' if acc.get('passed') else '❌ 未达标'}） |")
+        L.append(f"| mAP@0.5:0.95 | {det.get('mAP50_95', '—')} |")
+        L.append(f"| precision / recall | {det.get('precision', '—')} / {det.get('recall', '—')} |")
+        th = load("yolo_coral_count_thresholds.json")
+        if th:
+            rec = next((r for r in th["rows"] if r["conf"] == th["recommendedConf"]), {})
+            L.append(f"| **个体计数（推荐阈值 conf={th['recommendedConf']}）** | "
+                     f"真值 {th['gtTotal']} vs 预测 {rec.get('predTotal')}"
+                     f"（偏差 {pct(rec.get('bias', 0), 1)}），逐图 MAE {rec.get('maePerImage')}，"
+                     f"完全命中 {pct(rec.get('exactMatchRate', 0))} |")
+            L.append(f"| 个体计数（评估脚本默认 conf={det.get('confThreshold')}） | "
+                     f"真值 {cnt.get('gtTotal')} vs 预测 {cnt.get('predTotal')}"
+                     f"（偏差 {pct(cnt.get('countBias', 0), 1)}），逐图 MAE {cnt.get('maePerImage')}，"
+                     f"完全命中 {pct(cnt.get('exactMatchRate', 0))} |")
+        else:
+            L.append(f"| 个体计数（conf={det.get('confThreshold')}） | "
+                     f"真值 {cnt.get('gtTotal')} vs 预测 {cnt.get('predTotal')}"
+                     f"（偏差 {pct(cnt.get('countBias', 0), 1)}），逐图 MAE {cnt.get('maePerImage')}，"
+                     f"完全命中 {pct(cnt.get('exactMatchRate', 0))} |")
+        L.append(f"| 训练 | YOLOv9c，{ycm.get('epochs')} epochs，imgsz {ycm.get('imgsz')}，"
+                 f"batch {ycm.get('batch')}，{ycm.get('trainMinutes')} 分钟 |")
+        L.append("")
+        if th:
+            L.append("> 📌 **口径提示**：mAP **与置信度阈值无关**（PR 曲线面积），"
+                     "但**「数出来有几株」与阈值强相关** —— 因此上表把两者分开报。"
+                     f"阈值扫描见 `reports/yolo_coral_count_thresholds.json`："
+                     + "；".join(f"conf={r['conf']} → 偏差 {pct(r['bias'], 1)}" for r in th["rows"]) + "。")
+            L.append("")
+        if miou_after and miou1024:
+            d = miou_after["mIoU"] - miou1024["mIoU"]
+            L.append(f"> **P3 未使分割指标下降**：同口径复跑 {miou_after['nImages']} 张官方验证集，"
+                     f"mIoU {miou1024['mIoU']} → {miou_after['mIoU']}（Δ {d:+.6f}）；"
+                     f"逐像素准确率 {miou1024['pixelAccuracy']} → {miou_after['pixelAccuracy']}。")
+            L.append("")
+        L.append("> ⚠️ **口径说明**：真值框由**语义掩膜的连通域**导出（同一类相邻个体会合并为一个框），"
+                 "属自动标注而非人工实例标注；因此 mAP 反映的是「与该方法生成的真值一致程度」，"
+                 "不能等同于人类标注标准下的实例检测精度。")
+        L.append("")
+
     # ---------- 8. 结论适用范围与已知局限 ----------
     mcn = load("mcnemar_bleaching_ip_vs_bleaching_new_test_ip.json")
     sl = load("site_level_validation.json")

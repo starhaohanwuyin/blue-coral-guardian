@@ -10,6 +10,7 @@
   4. 拍摄条件自检是否工作
   5. 属级识别是否给出合理置信度
   6. 超边界照片是否被正确拒绝
+  7. 珊瑚个体计数（P3 附加能力）是否可用且未影响既有字段
 
 用法：
     python e2e_check.py
@@ -33,7 +34,7 @@ def get(url, timeout=30):
         return json.loads(r.read().decode("utf-8"))
 
 
-def post_image(api, path, timeout=120):
+def post_image(api, path, timeout=120, endpoint="/analyze"):
     """用 urllib 手工构造 multipart/form-data 上传。"""
     boundary = "----e2echeckboundary"
     data = path.read_bytes()
@@ -42,7 +43,7 @@ def post_image(api, path, timeout=120):
         f'Content-Disposition: form-data; name="file"; filename="{path.name}"\r\n'
         f"Content-Type: image/jpeg\r\n\r\n"
     ).encode() + data + f"\r\n--{boundary}--\r\n".encode()
-    req = Request(f"{api}/analyze", data=body, method="POST",
+    req = Request(f"{api}{endpoint}", data=body, method="POST",
                   headers={"Content-Type": f"multipart/form-data; boundary={boundary}",
                            "User-Agent": "e2e-check/1.0"})
     with urlopen(req, timeout=timeout) as r:
@@ -151,6 +152,30 @@ def main():
             print("  ⏭  未找到降质样本（需先运行 degrade_underwater.py），跳过")
     except Exception as e:
         check("超边界识别", False, f"{type(e).__name__}: {e}")
+
+    # ---- 5. 珊瑚个体计数（P3 附加能力，未训练则跳过而非失败）----
+    print("\n[5] 珊瑚个体计数（P3 附加能力）")
+    try:
+        if h.get("coralCounter") != "loaded":
+            print("  ⏭  计数模型未训练（weights/yolo_coral/best.pt 缺失），跳过")
+        else:
+            p2 = fetch_sample(api, "semporna", 0)
+            r = post_image(api, p2)
+            cc = r.get("coralCount") or {}
+            check("计数模型已加载（/health.coralCounter）", h.get("coralCounter") == "loaded")
+            check("/analyze 新增 coralCount 字段", isinstance(cc.get("count"), int),
+                  f"个体数 {cc.get('count')}  耗时 {cc.get('elapsedMs')}ms")
+            check("既有字段未被改动（cover/groups 齐备）",
+                  all(k in r["cover"] for k in ("alivePct", "bleachedPct", "deadPct",
+                                                "algaePct", "substratePct", "seagrassPct",
+                                                "coralTotalPct", "bleachingShareOfCoral"))
+                  and isinstance(r.get("topClasses"), list) and "bleaching" in r,
+                  f"coralTotalPct={r['cover']['coralTotalPct']:.1%}")
+            r2 = post_image(api, p2, endpoint="/count")
+            check("POST /count 端点可用", isinstance(r2.get("count"), int),
+                  f"个体数 {r2.get('count')}  阈值 conf={r2.get('threshold', {}).get('conf')}")
+    except Exception as e:
+        check("珊瑚个体计数", False, f"{type(e).__name__}: {e}")
 
     # ---- 汇总 ----
     print("\n" + "=" * 72)

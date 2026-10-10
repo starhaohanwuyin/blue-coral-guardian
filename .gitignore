@@ -22,6 +22,9 @@ weights/
 reports/*.log
 *.log
 
+# ---- Ultralytics 训练运行目录（中间产物；训练曲线另存 reports/*.csv）----
+runs/
+
 # ---- Python ----
 __pycache__/
 *.py[cod]

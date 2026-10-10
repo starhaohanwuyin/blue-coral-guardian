@@ -11,6 +11,8 @@
     ② 可幂等重跑（已完成的跳过，未完成的续跑）
     ③ 判活不依赖 wmic（新版 Windows 已移除）
 
+当前阶段数：22（P3 个体计数新增 3 个阶段）。
+
 用法：
     python resume_all.py                 # 状态体检
     python resume_all.py --run           # 续跑
@@ -124,6 +126,19 @@ STAGES = [
     ("cv_genus", "属级模型交叉验证（固定地理隔离测试集）",
      "reports/cv_genus_results.json", ["species_ip"],
      [PY, "-u", "run_cv_genus.py", "--folds", "3", "--frac", "0.7", "--epochs", "14"]),
+
+    # ---- P3：YOLOv9 珊瑚个体计数（附加能力，不替换分割）----
+    ("yolo_coral_dataset", "YOLO 个体框数据集（掩膜 → 连通域 → 框）",
+     "data/yolo_coral/data.yaml", ["coralscapes"],
+     [PY, "-u", "build_yolo_coral_dataset.py"]),
+
+    ("yolo_coral_train", "YOLOv9c 个体计数模型（mAP@0.5 ≥ 0.35 验收）",
+     "weights/yolo_coral/best.pt", ["yolo_coral_dataset"],
+     [PY, "-u", "train_yolo_coral.py", "--epochs", "50", "--imgsz", "640", "--batch", "8"]),
+
+    ("yolo_coral_eval", "个体计数评估（mAP + 逐图计数误差）",
+     "reports/yolo_coral_metrics.json", ["yolo_coral_train"],
+     [PY, "-u", "train_yolo_coral.py", "--eval-only"]),
 ]
 
 CRITICAL = {"inat_semporna", "inat_triangle", "genus_dataset", "genus_images", "species_ip"}

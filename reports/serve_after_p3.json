@@ -1,0 +1,680 @@
+{
+  "plain": {
+    "bleaching": {
+      "confidence": 0.454602,
+      "label": "bleached",
+      "labelCn": "白化",
+      "model": "bleaching_all",
+      "probabilities": {
+        "bleached": 0.454602,
+        "dead": 0.179551,
+        "healthy": 0.365847
+      },
+      "reliable": false,
+      "top": [
+        {
+          "confidence": 0.454602,
+          "label": "bleached",
+          "labelCn": "白化"
+        },
+        {
+          "confidence": 0.365847,
+          "label": "healthy",
+          "labelCn": "健康"
+        },
+        {
+          "confidence": 0.179551,
+          "label": "dead",
+          "labelCn": "死亡"
+        }
+      ]
+    },
+    "captureQuality": {
+      "contrast": 0.2279,
+      "level": "good",
+      "message": "拍摄条件良好，评估结果可信",
+      "rgRatio": 0.6549,
+      "thresholds": {
+        "goodContrast": 0.0306,
+        "warnContrast": 0.0243
+      },
+      "usable": true
+    },
+    "climate": null,
+    "coralCount": {
+      "boxes": [
+        {
+          "confidence": 0.8373,
+          "x0": 379,
+          "x1": 519,
+          "y0": 430,
+          "y1": 659
+        },
+        {
+          "confidence": 0.7844,
+          "x0": 239,
+          "x1": 354,
+          "y0": 289,
+          "y1": 417
+        },
+        {
+          "confidence": 0.5617,
+          "x0": 863,
+          "x1": 1024,
+          "y0": 479,
+          "y1": 684
+        },
+        {
+          "confidence": 0.5094,
+          "x0": 467,
+          "x1": 880,
+          "y0": 347,
+          "y1": 684
+        },
+        {
+          "confidence": 0.5044,
+          "x0": 104,
+          "x1": 494,
+          "y0": 3,
+          "y1": 410
+        },
+        {
+          "confidence": 0.4856,
+          "x0": 592,
+          "x1": 1022,
+          "y0": 8,
+          "y1": 345
+        },
+        {
+          "confidence": 0.4549,
+          "x0": 503,
+          "x1": 602,
+          "y0": 126,
+          "y1": 200
+        },
+        {
+          "confidence": 0.373,
+          "x0": 0,
+          "x1": 134,
+          "y0": 192,
+          "y1": 440
+        },
+        {
+          "confidence": 0.3359,
+          "x0": 359,
+          "x1": 719,
+          "y0": 1,
+          "y1": 342
+        },
+        {
+          "confidence": 0.3209,
+          "x0": 348,
+          "x1": 1024,
+          "y0": 2,
+          "y1": 434
+        },
+        {
+          "confidence": 0.2738,
+          "x0": 0,
+          "x1": 30,
+          "y0": 522,
+          "y1": 625
+        },
+        {
+          "confidence": 0.243,
+          "x0": 122,
+          "x1": 467,
+          "y0": 0,
+          "y1": 214
+        },
+        {
+          "confidence": 0.1974,
+          "x0": 96,
+          "x1": 232,
+          "y0": 237,
+          "y1": 396
+        },
+        {
+          "confidence": 0.1687,
+          "x0": 121,
+          "x1": 256,
+          "y0": 3,
+          "y1": 176
+        },
+        {
+          "confidence": 0.1656,
+          "x0": 100,
+          "x1": 152,
+          "y0": 639,
+          "y1": 683
+        }
+      ],
+      "count": 15,
+      "elapsedMs": 406.6,
+      "imageSize": [
+        1024,
+        684
+      ],
+      "model": "yolov9c",
+      "note": "个体 = 珊瑚类掩膜连通域；与覆盖率、属、白化结论相互独立，互不覆盖",
+      "threshold": {
+        "conf": 0.15,
+        "imgsz": 640,
+        "iou": 0.5
+      },
+      "truncated": false
+    },
+    "coralRegion": {
+      "coralPixelRatio": 0.5947,
+      "regionBox": [
+        0,
+        0,
+        1024,
+        683
+      ],
+      "reliable": true,
+      "top": [
+        {
+          "confidence": 0.844003,
+          "genus": "Merulina"
+        },
+        {
+          "confidence": 0.048325,
+          "genus": "Pectinia"
+        },
+        {
+          "confidence": 0.034293,
+          "genus": "Mycedium"
+        }
+      ]
+    },
+    "cover": {
+      "algaePct": 0.068458,
+      "alivePct": 0.486518,
+      "bleachedPct": 0.005127,
+      "bleachingShareOfCoral": 0.008621,
+      "coralTotalPct": 0.594735,
+      "deadPct": 0.10309,
+      "seagrassPct": 0.0,
+      "substratePct": 0.291652
+    },
+    "disclaimer": "本结果由AI模型给出，仅供保育决策参考，不作为唯一依据。模型在拍摄深度 ≤10m、能见度良好时表现最佳；15m 以上浑浊水域需人工复核。本项目仅用于学术研究与竞赛，非商业用途。",
+    "enhanced": false,
+    "groups": {
+      "其他": 0.045154,
+      "死亡珊瑚": 0.10309,
+      "沙/碎石/底质": 0.291652,
+      "活珊瑚": 0.486518,
+      "白化珊瑚": 0.005127,
+      "藻类覆盖": 0.068458
+    },
+    "inferenceMs": 2554.7,
+    "restoration": null,
+    "restorationHint": "传入 lat/lon 即可获得气候背景与修复优先级研判",
+    "success": true,
+    "topClasses": [
+      {
+        "name": "other coral alive",
+        "pct": 0.385748
+      },
+      {
+        "name": "unknown hard substrate",
+        "pct": 0.168633
+      },
+      {
+        "name": "dark",
+        "pct": 0.101653
+      },
+      {
+        "name": "pocillopora alive",
+        "pct": 0.100263
+      },
+      {
+        "name": "branching dead",
+        "pct": 0.072354
+      },
+      {
+        "name": "algae covered substrate",
+        "pct": 0.068458
+      },
+      {
+        "name": "sea urchin",
+        "pct": 0.030429
+      },
+      {
+        "name": "background",
+        "pct": 0.021367
+      }
+    ]
+  },
+  "withGeo": {
+    "bleaching": {
+      "confidence": 0.454602,
+      "label": "bleached",
+      "labelCn": "白化",
+      "model": "bleaching_all",
+      "probabilities": {
+        "bleached": 0.454602,
+        "dead": 0.179551,
+        "healthy": 0.365847
+      },
+      "reliable": false,
+      "top": [
+        {
+          "confidence": 0.454602,
+          "label": "bleached",
+          "labelCn": "白化"
+        },
+        {
+          "confidence": 0.365847,
+          "label": "healthy",
+          "labelCn": "健康"
+        },
+        {
+          "confidence": 0.179551,
+          "label": "dead",
+          "labelCn": "死亡"
+        }
+      ]
+    },
+    "captureQuality": {
+      "contrast": 0.2279,
+      "level": "good",
+      "message": "拍摄条件良好，评估结果可信",
+      "rgRatio": 0.6549,
+      "thresholds": {
+        "goodContrast": 0.0306,
+        "warnContrast": 0.0243
+      },
+      "usable": true
+    },
+    "climate": {
+      "anomalyNote": "比其它年份平均高 +3.23（+148%）",
+      "anomalyVsOtherYears": 3.23,
+      "availableYears": [
+        "2023",
+        "2024",
+        "2025"
+      ],
+      "baa": 3,
+      "baaDays": {
+        "0": 83,
+        "1": 245,
+        "2": 24,
+        "3": 9
+      },
+      "baaLabel": "白化警报一级",
+      "baaSource": "官方 CRW_BAA 产品",
+      "daysDhwGe4": 58,
+      "daysDhwGe8": 0,
+      "dhwMax": 5.42,
+      "gridCell": {
+        "distanceDeg": 0.035,
+        "lat": 4.425,
+        "lon": 118.775
+      },
+      "hotspotMax": 1.58,
+      "ok": true,
+      "peakDate": "2024-06-05",
+      "riskScore": 0.75,
+      "source": "NOAA CRW v3.1 5km via PacIOOS mirror",
+      "sstAnomalyMax": 1.82,
+      "sstMax": 30.8,
+      "sstMean": 29.581,
+      "typicalDhwMax": 2.19,
+      "verdict": "中度热应激：已具备明显白化条件",
+      "year": 2024
+    },
+    "coralCount": {
+      "boxes": [
+        {
+          "confidence": 0.8373,
+          "x0": 379,
+          "x1": 519,
+          "y0": 430,
+          "y1": 659
+        },
+        {
+          "confidence": 0.7844,
+          "x0": 239,
+          "x1": 354,
+          "y0": 289,
+          "y1": 417
+        },
+        {
+          "confidence": 0.5617,
+          "x0": 863,
+          "x1": 1024,
+          "y0": 479,
+          "y1": 684
+        },
+        {
+          "confidence": 0.5094,
+          "x0": 467,
+          "x1": 880,
+          "y0": 347,
+          "y1": 684
+        },
+        {
+          "confidence": 0.5044,
+          "x0": 104,
+          "x1": 494,
+          "y0": 3,
+          "y1": 410
+        },
+        {
+          "confidence": 0.4856,
+          "x0": 592,
+          "x1": 1022,
+          "y0": 8,
+          "y1": 345
+        },
+        {
+          "confidence": 0.4549,
+          "x0": 503,
+          "x1": 602,
+          "y0": 126,
+          "y1": 200
+        },
+        {
+          "confidence": 0.373,
+          "x0": 0,
+          "x1": 134,
+          "y0": 192,
+          "y1": 440
+        },
+        {
+          "confidence": 0.3359,
+          "x0": 359,
+          "x1": 719,
+          "y0": 1,
+          "y1": 342
+        },
+        {
+          "confidence": 0.3209,
+          "x0": 348,
+          "x1": 1024,
+          "y0": 2,
+          "y1": 434
+        },
+        {
+          "confidence": 0.2738,
+          "x0": 0,
+          "x1": 30,
+          "y0": 522,
+          "y1": 625
+        },
+        {
+          "confidence": 0.243,
+          "x0": 122,
+          "x1": 467,
+          "y0": 0,
+          "y1": 214
+        },
+        {
+          "confidence": 0.1974,
+          "x0": 96,
+          "x1": 232,
+          "y0": 237,
+          "y1": 396
+        },
+        {
+          "confidence": 0.1687,
+          "x0": 121,
+          "x1": 256,
+          "y0": 3,
+          "y1": 176
+        },
+        {
+          "confidence": 0.1656,
+          "x0": 100,
+          "x1": 152,
+          "y0": 639,
+          "y1": 683
+        }
+      ],
+      "count": 15,
+      "elapsedMs": 47.5,
+      "imageSize": [
+        1024,
+        684
+      ],
+      "model": "yolov9c",
+      "note": "个体 = 珊瑚类掩膜连通域；与覆盖率、属、白化结论相互独立，互不覆盖",
+      "threshold": {
+        "conf": 0.15,
+        "imgsz": 640,
+        "iou": 0.5
+      },
+      "truncated": false
+    },
+    "coralRegion": {
+      "coralPixelRatio": 0.5947,
+      "regionBox": [
+        0,
+        0,
+        1024,
+        683
+      ],
+      "reliable": true,
+      "top": [
+        {
+          "confidence": 0.844003,
+          "genus": "Merulina"
+        },
+        {
+          "confidence": 0.048325,
+          "genus": "Pectinia"
+        },
+        {
+          "confidence": 0.034293,
+          "genus": "Mycedium"
+        }
+      ]
+    },
+    "cover": {
+      "algaePct": 0.068458,
+      "alivePct": 0.486518,
+      "bleachedPct": 0.005127,
+      "bleachingShareOfCoral": 0.008621,
+      "coralTotalPct": 0.594735,
+      "deadPct": 0.10309,
+      "seagrassPct": 0.0,
+      "substratePct": 0.291652
+    },
+    "disclaimer": "本结果由AI模型给出，仅供保育决策参考，不作为唯一依据。模型在拍摄深度 ≤10m、能见度良好时表现最佳；15m 以上浑浊水域需人工复核。本项目仅用于学术研究与竞赛，非商业用途。",
+    "enhanced": false,
+    "groups": {
+      "其他": 0.045154,
+      "死亡珊瑚": 0.10309,
+      "沙/碎石/底质": 0.291652,
+      "活珊瑚": 0.486518,
+      "白化珊瑚": 0.005127,
+      "藻类覆盖": 0.068458
+    },
+    "inferenceMs": 500.7,
+    "restoration": {
+      "actions": [
+        "**暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评"
+      ],
+      "bleachRatioOfCoral": 0.0086,
+      "climate": {
+        "anomalyNote": "比其它年份平均高 +3.23（+148%）",
+        "baa": 3,
+        "baaLabel": "白化警报一级",
+        "daysDhwGe4": 58,
+        "daysDhwGe8": 0,
+        "dhwMax": 5.42,
+        "gridCell": {
+          "distanceDeg": 0.035,
+          "lat": 4.425,
+          "lon": 118.775
+        },
+        "peakDate": "2024-06-05",
+        "source": "NOAA CRW v3.1 5km via PacIOOS mirror",
+        "verdict": "中度热应激：已具备明显白化条件",
+        "year": 2024
+      },
+      "disclaimer": "本结果为基于规则的决策支持参考，非经验证的预测模型，不提供准确率指标，不替代专业珊瑚礁评估。",
+      "genusDiversity": {
+        "count": 3,
+        "genera": [
+          "Merulina",
+          "Pectinia",
+          "Mycedium"
+        ]
+      },
+      "grade": "medium",
+      "gradeLabel": "三级 · 可观察",
+      "method": "rule-based decision support heuristic（规则型决策支持启发式）",
+      "ok": true,
+      "priority": 53.6,
+      "priorityWeights": {
+        "recovery": 0.55,
+        "urgency": 0.45
+      },
+      "qualityPenalty": null,
+      "reasoning": "恢复潜力 65 分，主要由 coralStock100、lowAlgae77 贡献；热应激维度受 NOAA 等级「白化警报一级」约束。紧迫度 40 分，thermal75、mortality52 是主要来源。 短板：lowThermal 仅 25 分。",
+      "recovery": {
+        "components": {
+          "coralStock": 100.0,
+          "diversity": 37.5,
+          "lowAlgae": 77.2,
+          "lowThermal": 25.0,
+          "structure": 48.5
+        },
+        "score": 64.5,
+        "weights": {
+          "coralStock": 0.3,
+          "diversity": 0.15,
+          "lowAlgae": 0.2,
+          "lowThermal": 0.15,
+          "structure": 0.2
+        }
+      },
+      "report": "【礁区保育研判报告】\n\n一、点位与气候背景\n    经纬度：4.425°N 118.775°E（最近 NOAA 5km 格点）\n    评估年份：2024\n    海表热压力：DHW 峰值 5.42，白化预警等级「白化警报一级」（3/4）\n    热浪天数：DHW≥4 共 58 天，DHW≥8 共 0 天\n    年度对比：比其它年份平均高 +3.23（+148%）\n    气候解读：中度热应激：已具备明显白化条件\n\n二、图像研判结果\n    活珊瑚覆盖率：48.65%\n    白化珊瑚占比：0.51%（占珊瑚总量 0.9%）\n    死亡珊瑚占比：10.31%\n    藻类覆盖    ：6.85%\n    珊瑚总覆盖  ：59.47%\n    主要珊瑚属  ：Merulina(84%)、Pectinia(5%)、Mycedium(3%)\n\n三、研判结论\n    恢复潜力：64.5/100  （中）\n    修复紧迫度：40.3/100  （低）\n    修复优先级：53.6/100 → 【三级 · 可观察】\n    苗投放适宜度：49.1/100\n\n    主要依据：恢复潜力 65 分，主要由 coralStock100、lowAlgae77 贡献；热应激维度受 NOAA 等级「白化警报一级」约束。紧迫度 40 分，thermal75、mortality52 是主要来源。 短板：lowThermal 仅 25 分。\n\n四、行动建议\n    · **暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评\n\n五、修复模拟（10 年恢复轨迹 · 示意性）\n    起始覆盖 48.65%，年增长率 r=0.112，容纳量 K=60%\n    · 无热浪（理想）：48.6% → 60.0%（+11.3%）\n    · 2024 型事件复现：48.6% → 23.4%（-25.2%）\n    · 五年一遇：48.6% → 57.4%（+8.7%）\n    ⚠️ 示意性推演，未做本地参数标定，不得作为预测使用。\n\n六、定位声明\n    本报告由规则型决策支持启发式自动生成，评分维度与权重来自\n    NOAA CRW 公开标准与珊瑚礁修复文献的通行做法。\n    「优先修复哪个点位」属价值判断，不存在客观标准答案，\n    故本报告不提供准确率指标，仅供人工决策参考，不替代专业评估。",
+      "seedlingSuitability": 49.1,
+      "simulation": {
+        "growthRateUsed": 0.1122,
+        "params": {
+          "K": 0.6,
+          "algae_penalty": 0.6,
+          "mortality_alert2": 0.35,
+          "mortality_severe": 0.15,
+          "mortality_warning": 0.05,
+          "r_branching": 0.18,
+          "r_massive": 0.08,
+          "r_mixed": 0.12,
+          "seed_per_year": 0.02
+        },
+        "scenarios": {
+          "2024 型事件复现": {
+            "curve": [
+              0.4865,
+              0.4337,
+              0.3919,
+              0.3582,
+              0.3305,
+              0.3074,
+              0.2879,
+              0.2714,
+              0.2571,
+              0.2449,
+              0.2342
+            ],
+            "deltaVsStart": -0.2523,
+            "finalAlive": 0.2342,
+            "severeYears": 10
+          },
+          "五年一遇": {
+            "curve": [
+              0.4865,
+              0.5067,
+              0.5253,
+              0.5425,
+              0.5581,
+              0.4886,
+              0.5086,
+              0.5271,
+              0.5441,
+              0.5596,
+              0.5737
+            ],
+            "deltaVsStart": 0.0872,
+            "finalAlive": 0.5737,
+            "severeYears": 1
+          },
+          "无热浪（理想）": {
+            "curve": [
+              0.4865,
+              0.5067,
+              0.5253,
+              0.5425,
+              0.5581,
+              0.5723,
+              0.5851,
+              0.5965,
+              0.6,
+              0.6,
+              0.6
+            ],
+            "deltaVsStart": 0.1135,
+            "finalAlive": 0.6,
+            "severeYears": 0
+          }
+        },
+        "startAlive": 0.4865,
+        "years": 10
+      },
+      "simulationReport": "【修复模拟 · 恢复轨迹推演（示意）】\n\n起始活珊瑚覆盖：48.65%\n采用的年增长率 r：0.112（由藻类压力与珊瑚属数推定）\n环境容纳量 K：60%\n苗投放适宜度：49/100 → 年投放增量 0.98%\n\n情景对比：\n  · 无热浪（理想）：48.6% → 60.0%（+11.3%）\n  · 2024 型事件复现：48.6% → 23.4%（-25.2%），其中 10 年遇严重热浪\n  · 五年一遇：48.6% → 57.4%（+8.7%），其中 1 年遇严重热浪\n\n逐年曲线（覆盖率）：\n  无热浪（理想）: 48.6% → 50.7% → 52.5% → 54.2% → 55.8% → 57.2% → 58.5% → 59.7% → 60.0% → 60.0% → 60.0%\n  2024 型事件复现: 48.6% → 43.4% → 39.2% → 35.8% → 33.1% → 30.7% → 28.8% → 27.1% → 25.7% → 24.5% → 23.4%\n  五年一遇: 48.6% → 50.7% → 52.5% → 54.2% → 55.8% → 48.9% → 50.9% → 52.7% → 54.4% → 56.0% → 57.4%\n\n⚠️ 本模拟为**示意性推演**，采用文献常见量级的简化模型，未针对仙本那做参数标定，也无真实修复后监测数据可用于验证。**不得作为预测使用**，仅用于比较不同情景的相对差异。",
+      "urgency": {
+        "components": {
+          "bleaching": 5.7,
+          "mortality": 51.5,
+          "thermal": 75.0
+        },
+        "score": 40.3,
+        "weights": {
+          "bleaching": 0.4,
+          "mortality": 0.3,
+          "thermal": 0.3
+        }
+      }
+    },
+    "success": true,
+    "topClasses": [
+      {
+        "name": "other coral alive",
+        "pct": 0.385748
+      },
+      {
+        "name": "unknown hard substrate",
+        "pct": 0.168633
+      },
+      {
+        "name": "dark",
+        "pct": 0.101653
+      },
+      {
+        "name": "pocillopora alive",
+        "pct": 0.100263
+      },
+      {
+        "name": "branching dead",
+        "pct": 0.072354
+      },
+      {
+        "name": "algae covered substrate",
+        "pct": 0.068458
+      },
+      {
+        "name": "sea urchin",
+        "pct": 0.030429
+      },
+      {
+        "name": "background",
+        "pct": 0.021367
+      }
+    ]
+  }
+}

@@ -38,7 +38,10 @@ def get_size(p: Path) -> int:
     return p.stat().st_size if p.exists() else 0
 
 
-def download(name: str, max_rounds: int = 20) -> bool:
+def download(name: str, max_rounds: int = 20, max_time: int = 600) -> bool:
+    """max_time：单轮 curl 上限（秒）。原为 1800，实测镜像会「先给 1–4MB/s、
+    随后掉到 200KB/s 并长时间不推进」，30 分钟的单轮上限会把重试拖死；
+    缩短到 10 分钟后由 `-C -` 续传，整体更快也更稳。"""
     DST.mkdir(parents=True, exist_ok=True)
     dst = DST / name
     expect = EXPECTED.get(name)
@@ -50,7 +53,7 @@ def download(name: str, max_rounds: int = 20) -> bool:
         print(f"  [轮 {r}] {name}  当前 {cur/1024/1024:.1f} MB"
               + (f" / {expect/1024/1024:.1f} MB" if expect else ""), flush=True)
         cmd = ["curl.exe", "-L", "-C", "-", "--retry", "5", "--retry-delay", "2",
-               "--retry-all-errors", "--connect-timeout", "20", "--max-time", "1800",
+               "--retry-all-errors", "--connect-timeout", "20", "--max-time", str(max_time),
                "-s", "-o", str(dst), f"{BASE}/{name}"]
         rc = subprocess.run(cmd).returncode
         time.sleep(2)

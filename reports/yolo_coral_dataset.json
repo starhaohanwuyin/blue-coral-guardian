@@ -1,0 +1,245 @@
+{
+  "task": "YOLOv9 coral individual counting (P3)",
+  "source": "Coralscapes official splits (masks → connected components → boxes)",
+  "coralClassIds": {
+    "3": "other coral dead",
+    "4": "other coral bleached",
+    "6": "other coral alive",
+    "16": "massive/meandering bleached",
+    "17": "massive/meandering alive",
+    "19": "branching bleached",
+    "20": "branching dead",
+    "22": "branching alive",
+    "23": "massive/meandering dead",
+    "25": "acropora alive",
+    "28": "table acropora alive",
+    "31": "pocillopora alive",
+    "32": "table acropora dead",
+    "33": "meandering bleached",
+    "34": "stylophora alive",
+    "36": "meandering alive",
+    "37": "meandering dead",
+    "39": "dead clam"
+  },
+  "yoloClasses": [
+    "coral"
+  ],
+  "minAreaPx": 200,
+  "minSidePx": 6,
+  "connectivity": 8,
+  "trainShards": [
+    {
+      "name": "train-00000-of-00009.parquet",
+      "rows": 169
+    },
+    {
+      "name": "train-00001-of-00009.parquet",
+      "rows": 169
+    },
+    {
+      "name": "train-00002-of-00009.parquet",
+      "rows": 169
+    },
+    {
+      "name": "train-00003-of-00009.parquet",
+      "rows": 169
+    },
+    {
+      "name": "train-00004-of-00009.parquet",
+      "rows": 169
+    },
+    {
+      "name": "train-00005-of-00009.parquet",
+      "rows": 168
+    },
+    {
+      "name": "train-00006-of-00009.parquet",
+      "rows": 168
+    },
+    {
+      "name": "train-00007-of-00009.parquet",
+      "rows": 168
+    },
+    {
+      "name": "train-00008-of-00009.parquet",
+      "rows": 168
+    }
+  ],
+  "valShards": [
+    {
+      "name": "validation-00000-of-00001.parquet",
+      "rows": 166
+    }
+  ],
+  "splits": {
+    "train": {
+      "images": 1517,
+      "boxes": 33027,
+      "emptyImages": 20,
+      "classes": {
+        "3": [
+          "other coral dead",
+          "dead"
+        ],
+        "4": [
+          "other coral bleached",
+          "bleached"
+        ],
+        "6": [
+          "other coral alive",
+          "alive"
+        ],
+        "16": [
+          "massive/meandering bleached",
+          "bleached"
+        ],
+        "17": [
+          "massive/meandering alive",
+          "alive"
+        ],
+        "19": [
+          "branching bleached",
+          "bleached"
+        ],
+        "20": [
+          "branching dead",
+          "dead"
+        ],
+        "22": [
+          "branching alive",
+          "alive"
+        ],
+        "23": [
+          "massive/meandering dead",
+          "dead"
+        ],
+        "25": [
+          "acropora alive",
+          "alive"
+        ],
+        "28": [
+          "table acropora alive",
+          "alive"
+        ],
+        "31": [
+          "pocillopora alive",
+          "alive"
+        ],
+        "32": [
+          "table acropora dead",
+          "dead"
+        ],
+        "33": [
+          "meandering bleached",
+          "bleached"
+        ],
+        "34": [
+          "stylophora alive",
+          "alive"
+        ],
+        "36": [
+          "meandering alive",
+          "alive"
+        ],
+        "37": [
+          "meandering dead",
+          "dead"
+        ],
+        "39": [
+          "dead clam",
+          "dead"
+        ]
+      },
+      "boxesOnDisk": 33027,
+      "imagesOnDisk": 1517,
+      "labelsMissing": 0
+    },
+    "val": {
+      "images": 166,
+      "boxes": 4266,
+      "emptyImages": 0,
+      "classes": {
+        "3": [
+          "other coral dead",
+          "dead"
+        ],
+        "4": [
+          "other coral bleached",
+          "bleached"
+        ],
+        "6": [
+          "other coral alive",
+          "alive"
+        ],
+        "16": [
+          "massive/meandering bleached",
+          "bleached"
+        ],
+        "17": [
+          "massive/meandering alive",
+          "alive"
+        ],
+        "19": [
+          "branching bleached",
+          "bleached"
+        ],
+        "20": [
+          "branching dead",
+          "dead"
+        ],
+        "22": [
+          "branching alive",
+          "alive"
+        ],
+        "23": [
+          "massive/meandering dead",
+          "dead"
+        ],
+        "25": [
+          "acropora alive",
+          "alive"
+        ],
+        "28": [
+          "table acropora alive",
+          "alive"
+        ],
+        "31": [
+          "pocillopora alive",
+          "alive"
+        ],
+        "32": [
+          "table acropora dead",
+          "dead"
+        ],
+        "33": [
+          "meandering bleached",
+          "bleached"
+        ],
+        "34": [
+          "stylophora alive",
+          "alive"
+        ],
+        "36": [
+          "meandering alive",
+          "alive"
+        ],
+        "37": [
+          "meandering dead",
+          "dead"
+        ],
+        "39": [
+          "dead clam",
+          "dead"
+        ]
+      },
+      "boxesOnDisk": 4266,
+      "imagesOnDisk": 166,
+      "labelsMissing": 0
+    }
+  },
+  "totalBoxesOnDisk": 37293,
+  "meanBoxW": 0.0836,
+  "meanBoxH": 0.12,
+  "meanBoxAreaFrac": 374.343998,
+  "note": "val = Coralscapes 官方 validation split；train = 官方 train split 已下载分片"
+}
