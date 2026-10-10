@@ -613,3 +613,26 @@
 .pa-dot      { color: #26a69a; font-size: 26rpx; margin-right: 10rpx; flex-shrink: 0; }
 .pa-text     { font-size: 24rpx; color: #37474f; line-height: 1.55; flex: 1; }
 .prio-note   { margin-top: 14rpx; font-size: 21rpx; color: #b0bec5; line-height: 1.5; }
+
+/* ===== 新增卡片（环境数据 / 综合研判）标题行 =====
+   ⚠️ 这两张卡片首次提交时**只写了 class 名、没有在 wxss 里定义** .res-title/.res-sub，
+   导致标题渲染成无样式裸文字。此处按既有 .res-head-title 的规格补齐 */
+.res-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12rpx;
+  padding-bottom: 18rpx;
+  margin-bottom: 20rpx;
+  border-bottom: 2rpx solid var(--border);
+}
+.res-title > text:first-child {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.res-sub {
+  font-size: 22rpx;
+  color: #90a4ae;
+  flex-shrink: 0;
+}
