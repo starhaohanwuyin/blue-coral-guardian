@@ -1,7 +1,7 @@
 {
   "task": "bleaching_ip",
   "split": "test_ip",
-  "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_ip\\best.pt",
+  "weights": "weights/bleaching_ip/best.pt",
   "temperature": 0.871719479560852,
   "n_samples": 176,
   "n_classes": 3,

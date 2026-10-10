@@ -188,7 +188,8 @@ def evaluate(args, train_sec=None, save_dir=None):
         "imgsz": args.imgsz, "epochs": args.epochs, "batch": args.batch,
         "trainMinutes": round(train_sec / 60, 2) if train_sec else None,
         "trainingArgs": {
-            "initModel": resolve_model(args.model), "optimizer": args.optimizer,
+            # ⚠️ 一律用 rel()：绝对路径会把本机目录带进报告（换机器即失效）
+            "initModel": rel(resolve_model(args.model)), "optimizer": args.optimizer,
             "lr0": args.lr0, "lrf": args.lrf, "mosaic": args.mosaic,
             "closeMosaic": args.close_mosaic, "patience": args.patience,
             "fineTuneFrom": rel(resolve_model(args.model)) if Path(resolve_model(args.model)).exists() else None,

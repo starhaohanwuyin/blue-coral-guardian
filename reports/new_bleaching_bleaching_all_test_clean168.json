@@ -6,7 +6,7 @@
   "nHealthy": 75,
   "excludedPhashLeak": 89,
   "excludePhash": true,
-  "phashFile": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\reports\\phash_new_bleaching.json",
+  "phashFile": "reports/phash_new_bleaching.json",
   "bleachedRecall": 0.967742,
   "bleachedPrecision": 1.0,
   "healthyRecall": 1.0,

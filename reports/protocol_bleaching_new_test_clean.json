@@ -1,7 +1,7 @@
 {
   "task": "bleaching_new",
   "split": "test",
-  "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_new\\best.pt",
+  "weights": "weights/bleaching_new/best.pt",
   "temperature": 0.6050282120704651,
   "n_samples": 168,
   "n_classes": 2,

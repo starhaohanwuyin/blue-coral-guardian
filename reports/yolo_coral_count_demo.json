@@ -133,5 +133,5 @@
   "truncated": false,
   "model": "yolov9c",
   "note": "个体 = 珊瑚类掩膜连通域；与覆盖率、属、白化结论相互独立，互不覆盖",
-  "image": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\semporna_photos\\102767934_52446.jpg"
+  "image": "data/semporna_photos/102767934_52446.jpg"
 }

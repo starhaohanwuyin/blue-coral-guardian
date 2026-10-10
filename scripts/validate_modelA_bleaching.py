@@ -21,6 +21,7 @@ Model A（分割）白化检测能力验证
 """
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -31,8 +32,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from segment_coral import CoralSegmenter  # noqa: E402
 
-NEW_ROOT = Path(r"D:\大学作业\广东海洋大学的珊瑚评测小程序\competition_data"
-                r"\AI4Climate_data\Kaggle_coral_images\Coral Reef Images")
+# ⚠️ 不硬编码主机绝对路径（换机器即失效，且会把本机目录名带进仓库）。
+#    优先取环境变量 CORAL_COMPETITION_DATA，否则按仓库同级目录推导。
+NEW_ROOT = Path(os.environ.get(
+    "CORAL_COMPETITION_DATA",
+    str(ROOT.parent / "competition_data"
+        / "AI4Climate_data" / "Kaggle_coral_images" / "Coral Reef Images")))
 
 
 def auc(y_true, scores):

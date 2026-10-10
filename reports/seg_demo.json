@@ -1,5 +1,5 @@
 {
-  "image": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\raw\\coral_indo\\dataset_preparation_output\\Bunaken\\2_yolo_filtered\\32001006601_x0_y448.jpg",
+  "image": "data/raw/coral_indo/dataset_preparation_output/Bunaken/2_yolo_filtered/32001006601_x0_y448.jpg",
   "groups": {
     "other": 0.00412750244140625,
     "algae": 0.9461860656738281,

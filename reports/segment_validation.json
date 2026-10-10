@@ -1,6 +1,6 @@
 {
   "n_images": 180,
-  "dir": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\semporna_photos",
+  "dir": "data/semporna_photos",
   "model": "EPFL-ECEO/segformer-b2-finetuned-coralscapes-1024-1024",
   "estimates": {
     "alive": {

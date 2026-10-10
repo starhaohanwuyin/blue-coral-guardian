@@ -1,5 +1,5 @@
 {
-  "dir": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\semporna_photos",
+  "dir": "data/semporna_photos",
   "n": 24,
   "qualityCounts": {
     "good": 24

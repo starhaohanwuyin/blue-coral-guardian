@@ -1,7 +1,7 @@
 {
   "task": "species_ip",
   "split": "test",
-  "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\species_ip\\best.pt",
+  "weights": "weights/species_ip/best.pt",
   "temperature": 0.7626704573631287,
   "n_samples": 1116,
   "n_classes": 34,

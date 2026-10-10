@@ -1,5 +1,5 @@
 {
-  "root": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\data\\inat_dataset\\images",
+  "root": "data/inat_dataset/images",
   "threshold": 6,
   "counts": {
     "train": 8860,
