@@ -1,0 +1,40 @@
+{
+  "task": "CNN 增强 vs 传统 CV 增强 vs 不增强（下游分割覆盖率偏差）",
+  "nPerLevel": 60,
+  "rows": [
+    {
+      "level": "L1_near",
+      "n": 60,
+      "cleanBase": 0.3805,
+      "none": 0.3818,
+      "noneErr": 0.0012,
+      "cv": 0.4124,
+      "cvErr": 0.0319,
+      "cnn": 0.4408,
+      "cnnErr": 0.0603
+    },
+    {
+      "level": "L2_typical",
+      "n": 60,
+      "cleanBase": 0.3805,
+      "none": 0.3875,
+      "noneErr": 0.007,
+      "cv": 0.4251,
+      "cvErr": 0.0446,
+      "cnn": 0.4171,
+      "cnnErr": 0.0366
+    },
+    {
+      "level": "L3_far",
+      "n": 60,
+      "cleanBase": 0.3805,
+      "none": 0.0,
+      "noneErr": -0.3805,
+      "cv": 0.0842,
+      "cvErr": -0.2963,
+      "cnn": 0.0004,
+      "cnnErr": -0.3801
+    }
+  ],
+  "note": "误差 = 该处理下的活珊瑚覆盖率 − clean 基准；越接近 0 越好"
+}

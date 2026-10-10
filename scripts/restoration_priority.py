@@ -33,10 +33,12 @@ from pathlib import Path
 
 try:
     from climate_context import context_for
+    from restoration_simulation import simulate as run_simulation, report_text as sim_report_text
 except ImportError:  # 允许独立运行
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from climate_context import context_for
+    from restoration_simulation import simulate as run_simulation, report_text as sim_report_text
 
 # ---------------------------------------------------------------- 参考基准
 # 各维度的「参考满值」：达到该值即认为该维度满分。
@@ -173,7 +175,18 @@ def _report_text(p, cover, climate, genus, quality, cell):
         L.append("    本次评分已按数据质量降级，建议重拍后复评。")
         L.append("")
 
-    L.append("五、定位声明")
+    if p.get("simulation"):
+        L.append("五、修复模拟（10 年恢复轨迹 · 示意性）")
+        sim = p["simulation"]
+        L.append(f"    起始覆盖 {sim['startAlive']:.2%}，年增长率 r={sim['growthRateUsed']:.3f}，"
+                 f"容纳量 K={sim['params']['K']:.0%}")
+        for nm, sc in sim["scenarios"].items():
+            L.append(f"    · {nm}：{sim['startAlive']:.1%} → {sc['finalAlive']:.1%}"
+                     f"（{sc['deltaVsStart']:+.1%}）")
+        L.append("    ⚠️ 示意性推演，未做本地参数标定，不得作为预测使用。")
+        L.append("")
+
+    L.append("六、定位声明")
     L.append("    本报告由规则型决策支持启发式自动生成，评分维度与权重来自")
     L.append("    NOAA CRW 公开标准与珊瑚礁修复文献的通行做法。")
     L.append("    「优先修复哪个点位」属价值判断，不存在客观标准答案，")
@@ -301,9 +314,21 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
     if genus_count == 0:
         actions.append("本次未获得属级多样性信息，该维度权重已均摊至其他维度")
 
+    # ---- 修复模拟：投放后的恢复轨迹（示意性）----
+    sim = run_simulation(
+        alive0=float(cover.get("alivePct") or 0),
+        algae0=float(cover.get("algaePct") or 0),
+        genus_count=genus_count,
+        years=10,
+        seedling=seedling,
+    )
+    sim_txt = sim_report_text(sim, cover, climate, seedling)
+
     result = {
         "ok": True,
         "method": "rule-based decision support heuristic（规则型决策支持启发式）",
+        "simulation": sim,
+        "simulationReport": sim_txt,
         "disclaimer": (
             "本结果为基于规则的决策支持参考，非经验证的预测模型，"
             "不提供准确率指标，不替代专业珊瑚礁评估。"

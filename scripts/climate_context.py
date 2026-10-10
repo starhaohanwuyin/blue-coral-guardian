@@ -99,9 +99,10 @@ def build_index(force: bool = False):
     baa_files = _series_files("BAA")
     hs_files = _series_files("HOTSPOT")
     sa_files = _series_files("SSTANOMALY")
+    sst_files = _series_files("SST")
 
     out = {"source": "NOAA CRW v3.1 5km via PacIOOS mirror",
-           "variables": ["CRW_DHW", "CRW_BAA", "CRW_HOTSPOT", "CRW_SSTANOMALY"],
+           "variables": ["CRW_DHW", "CRW_BAA", "CRW_HOTSPOT", "CRW_SSTANOMALY", "CRW_SST"],
            "baaSource": "NOAA 官方 CRW_BAA 产品（非阈值推算）",
            "region": "4.025-5.025N, 118.025-119.525E", "years": {}}
 
@@ -145,12 +146,16 @@ def build_index(force: bool = False):
                     from collections import Counter
                     cells[k]["baaDays"] = dict(sorted(Counter(int(round(v)) for v in vals).items()))
         # --- HotSpot / SST 距平：取峰值 ---
-        for src, field in ((hs_files, "hotspotMax"), (sa_files, "sstAnomalyMax")):
+        for src, field, agg in ((hs_files, "hotspotMax", max),
+                                (sa_files, "sstAnomalyMax", max),
+                                (sst_files, "sstMax", max),
+                                (sst_files, "sstMean", None)):
             if year in src:
                 for k, series in _read_cell_series(src[year], keys).items():
                     vals = [v for _, v in series]
-                    if vals:
-                        cells[k][field] = round(max(vals), 3)
+                    if not vals:
+                        continue
+                    cells[k][field] = round(max(vals), 3) if agg else round(sum(vals) / len(vals), 3)
 
         for c in cells.values():
             m = c["max"]
@@ -245,6 +250,12 @@ def context_for(lat: float, lon: float, year: int | None = None):
         "daysDhwGe8": c["ge8"],
         "peakDate": c["peak"],
         "verdict": dhw_verdict(c["max"]),
+        "hotspotMax": c.get("hotspotMax"),
+        "sstMax": c.get("sstMax"),
+        "sstMean": c.get("sstMean"),
+        "sstAnomalyMax": c.get("sstAnomalyMax"),
+        "baaDays": c.get("baaDays"),
+        "baaSource": "官方 CRW_BAA 产品" if "baaOfficial" in c else "DHW 阈值推算（已校准）",
         "typicalDhwMax": round(typical, 2) if typical is not None else None,
         "anomalyVsOtherYears": round(anomaly, 2) if anomaly is not None else None,
         "anomalyNote": (
@@ -301,6 +312,13 @@ def main():
     print(f"  峰值日期      : {ctx['peakDate']}")
     print(f"  与其它年份    : {ctx['anomalyNote']}")
     print(f"  解读          : {ctx['verdict']}")
+    if ctx.get("sstMax") is not None:
+        print(f"  海表温度      : 最高 {ctx['sstMax']}°C，平均 {ctx['sstMean']}°C")
+    if ctx.get("sstAnomalyMax") is not None:
+        print(f"  海温距平峰值  : {ctx['sstAnomalyMax']}°C")
+    if ctx.get("hotspotMax") is not None:
+        print(f"  热异常峰值    : {ctx['hotspotMax']}°C")
+    print(f"  BAA 数据来源  : {ctx.get('baaSource')}")
 
 
 if __name__ == "__main__":
