@@ -119,7 +119,10 @@ Page({
       level: q.level || 'unknown',
       usable: q.usable !== false,
       contrast: q.contrast != null ? Math.round(q.contrast * 10000) / 10000 : null,
-      message: q.message || ''
+      message: q.message || '',
+      // 阈值由服务端下发（避免前端写死后与实际标定值失配）
+      goodContrast: (q.thresholds && q.thresholds.goodContrast) != null
+        ? q.thresholds.goodContrast : 0.0306
     }
 
     // 白化状态：来自**分类模型**（不是分割模型的 bleachedPct —— 后者经实测跨域无效）
@@ -196,7 +199,9 @@ Page({
     const finish = (savedPath) => {
       const list = this.data.history.slice()
       list.unshift({
-        id: Date.now(),
+        // ⚠️ 不能只用 Date.now()：连续两次分析落在同一毫秒会 ID 冲突，
+        //    导致 onHistoryTap 取到错误记录。加随机后缀保证唯一。
+        id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
         time: this.formatTime(new Date()),
         img: savedPath || this.data.imgPath,
         alivePct: Number(c.alivePct) || 0,
