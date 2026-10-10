@@ -175,6 +175,72 @@
     <view class="disclaimer-sub">推理耗时 {{view.inferenceMs}} ms · 数据来源可追溯 · 建议拍摄深度 ≤10m</view>
 
     <view class="result-action-btn" hover-class="btn-hover" bindtap="resetUpload">🔄 重新识别</view>
+<!-- ============ 环境数据：海表热压力（NOAA CRW）============ -->
+<view class="res-card card" wx:if="{view.climate}">
+  <view class="res-title">
+    <text>环境数据 · 海表热压力</text>
+    <text class="res-sub">NOAA CRW 5km · {view.climate.year} 年</text>
+  </view>
+  <view class="climate-head climate-{view.climate.level}">
+    <view class="climate-grade">{view.climate.baaLabel}</view>
+    <view class="climate-dhw">DHW 峰值 {view.climate.dhwMax}</view>
+  </view>
+  <view class="climate-rows">
+    <view class="climate-row">
+      <text class="cr-k">热浪天数</text>
+      <text class="cr-v">DHW≥4 共 {view.climate.daysGe4} 天 · DHW≥8 共 {view.climate.daysGe8} 天</text>
+    </view>
+    <view class="climate-row" wx:if="{view.climate.peakDate}">
+      <text class="cr-k">峰值日期</text>
+      <text class="cr-v">{view.climate.peakDate}</text>
+    </view>
+    <view class="climate-row" wx:if="{view.climate.anomalyNote}">
+      <text class="cr-k">年度对比</text>
+      <text class="cr-v">{view.climate.anomalyNote}</text>
+    </view>
+  </view>
+  <view class="climate-verdict">{view.climate.verdict}</view>
+</view>
+
+<!-- ============ 综合研判：修复优先级 + 苗投放建议 ============ -->
+<view class="res-card card" wx:if="{view.restoration}">
+  <view class="res-title">
+    <text>综合研判 · 修复优先级</text>
+    <text class="res-sub">规则型决策支持</text>
+  </view>
+
+  <view class="prio-head prio-{view.restoration.grade}">
+    <view class="prio-score">{view.restoration.priority}<text class="prio-unit">/100</text></view>
+    <view class="prio-grade">{view.restoration.gradeLabel}</view>
+  </view>
+
+  <view class="prio-bars">
+    <view class="pb-item">
+      <text class="pb-k">恢复潜力</text>
+      <view class="pb-track"><view class="pb-fill pb-rec" style="width: {view.restoration.recovery}%"></view></view>
+      <text class="pb-v">{view.restoration.recovery}</text>
+    </view>
+    <view class="pb-item">
+      <text class="pb-k">修复紧迫度</text>
+      <view class="pb-track"><view class="pb-fill pb-urg" style="width: {view.restoration.urgency}%"></view></view>
+      <text class="pb-v">{view.restoration.urgency}</text>
+    </view>
+    <view class="pb-item">
+      <text class="pb-k">苗投放适宜度</text>
+      <view class="pb-track"><view class="pb-fill pb-seed" style="width: {view.restoration.seedling}%"></view></view>
+      <text class="pb-v">{view.restoration.seedling}</text>
+    </view>
+  </view>
+
+  <view class="prio-actions">
+    <view class="pa-item" wx:for="{view.restoration.actions}" wx:key="*this">
+      <text class="pa-dot">·</text><text class="pa-text">{item}</text>
+    </view>
+  </view>
+
+  <view class="prio-note">本研判为规则型决策支持参考，非经验证的预测模型，不替代专业评估</view>
+</view>
+
   </block>
 
   <!-- 识别历史 -->

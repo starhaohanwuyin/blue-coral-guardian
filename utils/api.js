@@ -366,12 +366,20 @@ api.getAllSpecies = function () {
  *   topClasses  主要底栖类别明细
  *   coralRegion 从分割掩膜裁剪珊瑚主体后做的属分类（未训练时为空）
  */
-function realAnalyze(filePath) {
+function realAnalyze(filePath, site, year) {
+  // site = {lat, lon}；给了就请求「气候背景 + 修复优先级」研判
+  const fd = {}
+  if (config.USE_RESTORATION && site && site.lat != null && site.lon != null) {
+    fd.lat = String(site.lat)
+    fd.lon = String(site.lon)
+    if (year != null) fd.year = String(year)
+  }
   return new Promise((resolve, reject) => {
     wx.uploadFile({
       url: config.CORAL_API + '/analyze',
       filePath,
       name: 'file',
+      formData: fd,
       timeout: config.AI_TIMEOUT || 30000,
       header: {},
       success(res) {
@@ -441,7 +449,31 @@ function mockCoralResult() {
       ]
     },
     disclaimer: '本结果由AI模型给出，仅供保育决策参考；建议拍摄深度 ≤10m。本项目仅用于学术研究与竞赛，非商业用途。',
-    inferenceMs: 812
+      inferenceMs: 812,
+    // 环境数据（演示值取自仙本那 2024 年 NOAA 实况）
+    climate: {
+      ok: true, year: 2024,
+      gridCell: { lat: 4.425, lon: 118.775, distanceDeg: 0.035 },
+      dhwMax: 5.42, baa: 2, baaLabel: '白化警告', riskScore: 0.5,
+      daysDhwGe4: 58, daysDhwGe8: 0, peakDate: '2024-06-05',
+      verdict: '中度热应激：已具备明显白化条件',
+      typicalDhwMax: 2.19, anomalyVsOtherYears: 3.23,
+      anomalyNote: '比其它年份平均高 +3.23（+148%）',
+      source: 'NOAA CRW v3.1 5km via PacIOOS mirror',
+    },
+    // 综合研判（演示值）
+    restoration: {
+      ok: true, priority: 52.3, grade: 'medium', gradeLabel: '三级 · 可观察',
+      seedlingSuitability: 49.9,
+      recovery: { score: 68.3, components: { coralStock: 100, structure: 100, lowAlgae: 70, diversity: 50, lowThermal: 50 } },
+      urgency: { score: 32.8, components: { bleaching: 20, mortality: 10, thermal: 50 } },
+      bleachRatioOfCoral: 0.0696,
+      reasoning: '恢复潜力 68 分，主要由 coralStock、structure 贡献；紧迫度 33 分。',
+      actions: ['**建议苗圃暂养**：热压力为「白化警告」，场地本身条件尚可，待本季热浪结束、确认无二次白化后投放'],
+      disclaimer: '本结果为基于规则的决策支持参考，非经验证的预测模型，不提供准确率指标，不替代专业珊瑚礁评估。',
+      report: '【礁区保育研判报告】（演示数据）\n\n本报告由规则型决策支持启发式自动生成，仅供人工决策参考。',
+    },
+    isDemo: true,
   }
 }
 
@@ -454,9 +486,9 @@ function mockCoralResult() {
  * 若 FALLBACK_TO_MOCK 为 true，则返回演示数据并标记 `isDemo`，
  * 便于无服务环境下演示（页面会显示「演示数据」标记，不会冒充真实结果）。
  */
-api.recognize = function (filePath) {
+api.recognize = function (filePath, site, year) {
   if (config.USE_REAL_AI) {
-    return realAnalyze(filePath).catch((e) => {
+    return realAnalyze(filePath, site, year).catch((e) => {
       if (!config.FALLBACK_TO_MOCK) throw e
       return mock.delay(mockCoralResult(), 700).then((r) => {
         r.isDemo = true

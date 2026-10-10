@@ -83,6 +83,45 @@ Page({
   },
 
   /* 把接口结果转成视图字段（百分比等） */
+  /* 环境数据视图（NOAA 海表热压力） */
+  buildClimateView(cl) {
+    if (!cl || !cl.ok) return null
+    const lvl = cl.baa >= 3 ? 'danger' : cl.baa === 2 ? 'warn' : 'ok'
+    return {
+      year: cl.year,
+      gridLat: cl.gridCell && cl.gridCell.lat,
+      gridLon: cl.gridCell && cl.gridCell.lon,
+      dhwMax: cl.dhwMax,
+      baa: cl.baa,
+      baaLabel: cl.baaLabel,
+      level: lvl,
+      daysGe4: cl.daysDhwGe4,
+      daysGe8: cl.daysDhwGe8,
+      anomalyNote: cl.anomalyNote || '',
+      verdict: cl.verdict || '',
+      peakDate: cl.peakDate || '',
+      source: cl.source || ''
+    }
+  },
+
+  /* 综合研判视图（修复优先级 + 苗投放建议） */
+  buildRestorationView(r) {
+    if (!r || !r.ok) return null
+    return {
+      priority: Math.round(Number(r.priority || 0)),
+      gradeLabel: r.gradeLabel || '',
+      grade: r.grade || 'medium',
+      seedling: Math.round(Number(r.seedlingSuitability || 0)),
+      recovery: Math.round(Number((r.recovery && r.recovery.score) || 0)),
+      urgency: Math.round(Number((r.urgency && r.urgency.score) || 0)),
+      actions: (r.actions || []).map((a) => String(a).replace(/\*\*/g, '')),
+      report: r.report || '',
+      reasoning: r.reasoning || '',
+      disclaimer: r.disclaimer || '',
+      hasReport: !!(r.report && r.report.length > 40)
+    }
+  },
+
   buildView(res) {
     const c = res.cover || {}
     const cr = res.coralRegion || {}
@@ -161,7 +200,11 @@ Page({
       })),
       // 白化占比 > 10% 时给出提示（阈值可按项目口径调整）
       bleachAlert: Number(c.bleachingShareOfCoral || 0) > 0.10,
-      inferenceMs: res.inferenceMs || 0
+      inferenceMs: res.inferenceMs || 0,
+        // 环境数据（NOAA 海表热压力）
+        climate: this.buildClimateView(res.climate),
+        // 综合研判（修复优先级 + 苗投放建议 + 保育报告）
+        restoration: this.buildRestorationView(res.restoration)
     }
   },
 
@@ -170,7 +213,7 @@ Page({
     if (!this.data.imgPath) return
     this.setData({ state: 'loading', errorMsg: '' })
 
-    api.recognize(this.data.imgPath).then((res) => {
+    api.recognize(this.data.imgPath, config.DEFAULT_SITE, config.DEFAULT_YEAR).then((res) => {
       this.setData({
         state: 'result',
         result: res,
