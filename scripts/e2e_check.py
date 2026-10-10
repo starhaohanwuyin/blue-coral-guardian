@@ -11,6 +11,7 @@
   5. 属级识别是否给出合理置信度
   6. 超边界照片是否被正确拒绝
   7. 珊瑚个体计数（P3 附加能力）是否可用且未影响既有字段
+  8. 投放窗口档案（往年白化预警记录 → 建议避开月份）与**空间覆盖闸门**
 
 用法：
     python e2e_check.py
@@ -176,6 +177,25 @@ def main():
                   f"个体数 {r2.get('count')}  阈值 conf={r2.get('threshold', {}).get('conf')}")
     except Exception as e:
         check("珊瑚个体计数", False, f"{type(e).__name__}: {e}")
+
+    # ---- 6. 投放窗口与热压力档案（未生成则跳过而非失败）----
+    print("\n[6] 投放窗口与热压力档案（往年白化预警记录）")
+    try:
+        prof = get(f"{api}/climate/profile?lat=4.425&lon=118.775")
+        if not prof.get("ok"):
+            print("  ⏭  档案不可用（先运行 climate_site_profile.py --build），跳过")
+        else:
+            check("可按坐标查档案", bool(prof.get("label")),
+                  f"{prof.get('label')}；逐年峰值 {prof.get('peakByYear')}")
+            adv = prof.get("advice") or {}
+            check("给出建议避开月份", bool(adv.get("text")),
+                  f"避开 {prof.get('avoidMonths')} 月"
+                  f"（无风险月份 {prof.get('safeMonths')}）")
+            out = get(f"{api}/climate/profile?lat=22.5&lon=114.0")
+            check("覆盖闸门：网格外拒绝给建议", out.get("ok") is False,
+                  f"深圳 ok={out.get('ok')}（应为 false，不得返回最近格点结论）")
+    except Exception as e:
+        check("投放窗口档案", False, f"{type(e).__name__}: {e}")
 
     # ---- 汇总 ----
     print("\n" + "=" * 72)

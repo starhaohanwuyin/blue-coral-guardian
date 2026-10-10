@@ -545,6 +545,36 @@ def main():
                  "不能等同于人类标注标准下的实例检测精度。")
         L.append("")
 
+    # ---------- 5.6 投放窗口与热压力档案 ----------
+    dw = load("deployment_windows.json")
+    if dw:
+        L.append("## 5.6 投放窗口与热压力档案（往年白化预警记录 → 建议避开月份）")
+        L.append("")
+        L.append(f"数据：{dw['source']}；年份 **{dw['years']}**；格点 **{dw['gridCells']}** 个")
+        L.append("")
+        lc = dw.get("levelCounts", {})
+        L.append("| 判定 | 格点数 | 含义 |")
+        L.append("|---|---|---|")
+        L.append(f"| 年年达白化警戒 | **{lc.get('high', 0)}** | 3 年都出现 DHW≥4：不建议投放 |")
+        L.append(f"| 部分年份达警戒 | {lc.get('medium', 0)} | 建议避开风险月份投放 |")
+        L.append(f"| 3 年均未达警戒 | {lc.get('low', 0)} | 热压力维度较友好 |")
+        L.append("")
+        if dw.get("topRiskyCells"):
+            L.append("**风险最高的格点（按 3 年最高 DHW）：**")
+            L.append("")
+            L.append("| 格点 | 3 年最高 DHW | 判定 | 风险月份 |")
+            L.append("|---|---|---|---|")
+            for c in dw["topRiskyCells"][:5]:
+                L.append(f"| {c['cell']} | **{c['maxPeak']}** | {c['label']} | {c['riskyMonths']} |")
+            L.append("")
+        L.append(f"- 三年内出现过 **DHW≥8**（严重档）的格点：**{dw.get('severeCellsAnyYear', '—')}**")
+        L.append(f"- 3 年峰值极差中位数：{dw.get('medianPeakRange', '—')}（越大越受单次事件驱动）")
+        if dw.get("spatialWarning"):
+            L.append(f"- {dw['spatialWarning']}")
+        L.append("")
+        L.append("> ⚠️ **口径（引用时必须一并说明）**：" + "；".join(dw.get("caveats", [])))
+        L.append("")
+
     # ---------- 8. 结论适用范围与已知局限 ----------
     mcn = load("mcnemar_bleaching_ip_vs_bleaching_new_test_ip.json")
     sl = load("site_level_validation.json")

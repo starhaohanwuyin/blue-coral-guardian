@@ -11,7 +11,7 @@
     ② 可幂等重跑（已完成的跳过，未完成的续跑）
     ③ 判活不依赖 wmic（新版 Windows 已移除）
 
-当前阶段数：22（P3 个体计数新增 3 个阶段）。
+当前阶段数：23（P3 个体计数新增 3 个；投放时间窗档案新增 1 个）。
 
 用法：
     python resume_all.py                 # 状态体检
@@ -139,6 +139,11 @@ STAGES = [
     ("yolo_coral_eval", "个体计数评估（mAP + 逐图计数误差）",
      "reports/yolo_coral_metrics.json", ["yolo_coral_train"],
      [PY, "-u", "train_yolo_coral.py", "--eval-only"]),
+
+    # ---- 投放时间窗档案（往年白化预警记录 → 建议避开月份）----
+    ("climate_profile", "投放时间窗档案（格点级热压力 + 风险月份）",
+     "reports/deployment_windows.json", ["noaa"],
+     [PY, "-u", "climate_site_profile.py", "--build"]),
 ]
 
 CRITICAL = {"inat_semporna", "inat_triangle", "genus_dataset", "genus_images", "species_ip"}

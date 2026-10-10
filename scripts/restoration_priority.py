@@ -147,6 +147,12 @@ def _report_text(p, cover, climate, genus, quality, cell):
             if climate.get("anomalyNote"):
                 L.append(f"    年度对比：{climate['anomalyNote']}")
             L.append(f"    气候解读：{climate.get('verdict')}")
+        if p.get("deploymentWindow"):
+            w = p["deploymentWindow"]
+            L.append(f"    历史热压力档案（2023–2025）：{w['label']}"
+                     f"（达警戒年份：{w.get('alertYears') or '无'}；严重档：{w.get('severeYears') or '无'}）")
+            L.append(f"    建议避开月份：{w.get('avoidMonths') or '无'}　"
+                     f"无风险信号月份：{'全年' if len(w.get('safeMonths') or []) == 12 else (w.get('safeMonths') or '无')}")
         L.append("")
 
     L.append("二、图像研判结果")
@@ -174,6 +180,8 @@ def _report_text(p, cover, climate, genus, quality, cell):
     L.append("四、行动建议")
     for a in p["actions"]:
         L.append(f"    · {a}")
+    if p.get("deploymentWindow"):
+        L.append(f"    · 【投放时间窗】{p['deploymentWindow']['text']}")
     L.append("")
 
     if not quality.get("usable", True):
@@ -201,7 +209,7 @@ def _report_text(p, cover, climate, genus, quality, cell):
 
 
 def assess(cover, climate=None, coral_region=None, capture_quality=None,
-           lat=None, lon=None, year=None, cell=None):
+           lat=None, lon=None, year=None, cell=None, profile=None):
     """
     cover:          {alivePct, bleachedPct, deadPct, algaePct, coralTotalPct, ...}
     climate:        由 climate_context.context_for() 返回；不给则用 lat/lon 查
@@ -225,6 +233,15 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
         climate = {"baa": 0, "baaLabel": "数据缺失", "dhwMax": None, "source": "无",
                    "year": (climate or {}).get("year") or year,
                    "note": err or "未提供坐标或环境数据"}
+
+    # 历史热压力档案（往年白化预警记录 → 投放时间窗）。未提供则按坐标查。
+    # 覆盖闸门与气候插件一致：网格外返回 ok=False，此时不产出投放建议。
+    if profile is None and lat is not None and lon is not None:
+        try:
+            from climate_site_profile import profile_for as _profile_for
+            profile = _profile_for(lat, lon)
+        except Exception as e:                      # 档案缺失/损坏都不该拖垮主结果
+            profile = {"ok": False, "error": f"{type(e).__name__}: {e}"}
 
     top = coral_region.get("top") or []
     if coral_region.get("reliable") is False:
@@ -335,6 +352,24 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
     )
     sim_txt = sim_report_text(sim, cover, climate, seedling)
 
+    # 投放时间窗：把「往年白化预警记录」转成一句可执行建议（网格外/档案缺失 → None）
+    deployment_window = None
+    if profile and profile.get("ok"):
+        adv = profile.get("advice") or {}
+        deployment_window = {
+            "label": profile.get("label"),
+            "riskLevel": profile.get("riskLevel"),
+            "alertYears": profile.get("alertYears"),
+            "severeYears": profile.get("severeYears"),
+            "riskyMonths": profile.get("riskyMonths"),
+            "heatMonths": profile.get("heatMonths"),
+            "avoidMonths": profile.get("avoidMonths"),
+            "safeMonths": profile.get("safeMonths"),
+            "text": adv.get("text"),
+            "note": profile.get("adviceNote"),
+            "source": "reports/deployment_windows.json（NOAA CRW 2023–2025 日数据聚合）",
+        }
+
     result = {
         "ok": True,
         # 新增（附加字段）：本次研判是否真的用到了气候数据
@@ -365,6 +400,8 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
         "qualityPenalty": quality_penalty,
         "reasoning": reasoning,
         "actions": actions,
+        # 新增（附加字段）：历史热压力档案 → 投放时间窗建议（网格外或档案缺失时为 None）
+        "deploymentWindow": deployment_window,
     }
     result["report"] = _report_text(result, cover, climate, genus_txt,
                                     capture_quality, cell)

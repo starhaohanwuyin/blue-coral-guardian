@@ -60,6 +60,7 @@ from uw_enhance import enhance  # noqa: E402
 from check_capture_quality import metrics as quality_metrics, verdict as quality_verdict, \
     DEFAULT_THRESHOLDS  # noqa: E402
 from climate_context import context_for as climate_context  # noqa: E402
+from climate_site_profile import profile_for as climate_profile_for  # noqa: E402
 from restoration_priority import assess as assess_restoration  # noqa: E402
 
 # 拍摄条件阈值（若已标定则读取标定结果）
@@ -413,6 +414,8 @@ async def analyze(request: Request, file: UploadFile = File(...),
     if lat is not None and lon is not None:
         try:
             result["climate"] = climate_context(lat, lon, year)
+            # 新增（P5 之外的独立能力）：往年白化预警记录 → 投放时间窗建议
+            result["deployment"] = climate_profile_for(lat, lon)
             result["restoration"] = assess_restoration(
                 cover={
                     "alivePct": live,
@@ -432,6 +435,7 @@ async def analyze(request: Request, file: UploadFile = File(...),
             result["climateError"] = f"{type(e).__name__}: {e}"
     else:
         result["climate"] = None
+        result["deployment"] = None
         result["restoration"] = None
         result["restorationHint"] = "传入 lat/lon 即可获得气候背景与修复优先级研判"
 
@@ -488,6 +492,18 @@ async def count_only(file: UploadFile = File(...),
 def climate(lat: float, lon: float, year: int = None):
     """环境数据插件：查询某坐标的海表热压力（NOAA CRW DHW / 白化预警等级）。"""
     return JSONResponse(climate_context(lat, lon, year))
+
+
+@app.get("/climate/profile")
+def climate_profile(lat: float, lon: float):
+    """投放窗口与热压力档案：把**往年白化预警记录**（DHW/BAA/HotSpot，2023–2025）变成
+    「建议避开哪几个月投放 / 哪些格点在热压力维度上更友好」的规则化建议。
+
+    ⚠️ 三条口径（响应里也带）：仅热压力维度、样本仅 3 年、5km 格点非礁点；
+    且**不是投放效果评估**（项目没有投放后的存活率数据）。
+    与 `/climate` 相同的**空间覆盖闸门**：网格外返回 `ok=false`。
+    """
+    return JSONResponse(climate_profile_for(lat, lon))
 
 
 @app.get("/climate/cells")
