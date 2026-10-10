@@ -460,7 +460,7 @@ async def analyze_base64(payload: dict):
 # ---------------------------------------------------------------- 个体计数（P3）
 @app.post("/count")
 async def count_only(file: UploadFile = File(...),
-                     conf: float = Form(0.15), iou: float = Form(0.5),
+                     conf: float = Form(0.20), iou: float = Form(0.5),
                      enhance_first: bool = False):
     """P3 附加端点：只做珊瑚个体计数（YOLOv9c），不跑分割/分类。
 

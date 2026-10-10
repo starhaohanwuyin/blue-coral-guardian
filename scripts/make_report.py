@@ -465,7 +465,10 @@ def main():
             tr = ycd.get("splits", {}).get("train", {})
             va = ycd.get("splits", {}).get("val", {})
             L.append(f"真值来源：Coralscapes 掩膜连通域（面积 ≥ {ycd.get('minAreaPx')} px，"
-                     f"8 邻域），珊瑚类合并为单类 `coral`。")
+                     f"8 邻域），珊瑚类合并为单类 `coral`"
+                     + (f"；已排除非珊瑚类 {list(ycd.get('excludedNonCoral', {}).values())}"
+                        if ycd.get("excludedNonCoral") else "")
+                     + "。")
             L.append("")
             L.append("| 数据集 | 图片 | 个体框 |")
             L.append("|---|---|---|")
@@ -476,7 +479,12 @@ def main():
             L.append("")
         L.append(f"| 指标 | 数值 |")
         L.append("|---|---|")
-        L.append(f"| **mAP@0.5** | **{det.get('mAP50', '—')}**（验收线 0.35 → "
+        r0 = load("yolo_coral_metrics_640r0.json")
+        r0s = load("yolo_coral_resolution_640r0.json")
+        r0_640 = next((x["mAP50"] for x in (r0s or {}).get("rows", []) if x["imgsz"] == 640), None)
+        r0txt = f"（R0@640 同口径复评：{r0_640}）" if r0_640 else (
+            f"（R0 640：{r0['detection']['mAP50']}）" if r0 else "")
+        L.append(f"| **mAP@0.5** | **{det.get('mAP50', '—')}**{r0txt}（验收线 0.35 → "
                  f"{'✅ 达标' if acc.get('passed') else '❌ 未达标'}） |")
         L.append(f"| mAP@0.5:0.95 | {det.get('mAP50_95', '—')} |")
         L.append(f"| precision / recall | {det.get('precision', '—')} / {det.get('recall', '—')} |")
@@ -496,8 +504,10 @@ def main():
                      f"真值 {cnt.get('gtTotal')} vs 预测 {cnt.get('predTotal')}"
                      f"（偏差 {pct(cnt.get('countBias', 0), 1)}），逐图 MAE {cnt.get('maePerImage')}，"
                      f"完全命中 {pct(cnt.get('exactMatchRate', 0))} |")
-        L.append(f"| 训练 | YOLOv9c，{ycm.get('epochs')} epochs，imgsz {ycm.get('imgsz')}，"
-                 f"batch {ycm.get('batch')}，{ycm.get('trainMinutes')} 分钟 |")
+        L.append(f"| 训练 | YOLOv9c **两轮**：R0 640/batch8/50 epochs"
+                 + (f"（{r0.get('trainMinutes')} 分钟，从零）" if r0 else "（从零）")
+                 + f" → R1 {ycm.get('imgsz')}/batch{ycm.get('batch')}/{ycm.get('epochs')} epochs"
+                 + f"（{ycm.get('trainMinutes')} 分钟，微调）|")
         L.append("")
         if th:
             L.append("> 📌 **口径提示**：mAP **与置信度阈值无关**（PR 曲线面积），"
@@ -575,15 +585,23 @@ def main():
         L.append("")
         L.append("> **推荐运营点：阈值 0.90 → 70% 自动化、97% 准确率、拦截 85% 的错误。**")
         L.append("")
-    L.append("### 6.4 尚未完成的评估项")
+    # 修正：原表把「已完成」的项也列为「尚未完成」（与本报告 §1.0 自相矛盾）
+    L.append("### 6.4 评估项完成情况（逐项如实标注）")
     L.append("")
-    L.append("| 项 | 原因 | 修复路径 |")
+    L.append("| 项 | 状态 | 说明 |")
     L.append("|---|---|---|")
-    L.append("| **分割模型 mIoU** | Coralscapes 验证集下载被墙 | 重试下载 / 手工标注 30 张自算 |")
-    L.append("| **人类基线** | 未组织标注 | 2–3 人 × 1 小时，附标注者间 κ |")
-    L.append("| **逐样本覆盖率误差** | 无像素级真值 | 标准化样方照片或手工标注 50 张 |")
-    L.append("| **β=6 为测试集调参** | 工作点在 test_ip 上选取 | 拆 test/test_holdout 重选 |")
-    L.append("| 交叉验证 | 未做 | 3–5 折重训 |")
+    if miou1024:
+        L.append(f"| **分割模型 mIoU** | ✅ 已完成 | {miou1024['mIoU']}"
+                 f"（{miou1024['nImages']} 张官方验证集，1024px），见 §1.0 |")
+    else:
+        L.append("| **分割模型 mIoU** | ❌ 未完成 | Coralscapes 验证集未下载 |")
+    _cv = load("cv_genus_results.json")
+    L.append(f"| **属级交叉验证** | {'✅ 已完成' if _cv else '❌ 未完成'} | "
+             + ("3 折完整重训，见 reports/cv_genus_results.json |" if _cv else "未做 |"))
+    L.append("| **人类基线** | ❌ **永久局限** | 已确认无法组织标注 |")
+    L.append("| **逐样本覆盖率误差** | ❌ 未做 | 无像素级/样方级真值 |")
+    L.append("| **β=6 为测试集调参** | ⚠️ 已知风险 | 工作点在 test_ip 上选取，指标偏乐观 |")
+    L.append("| **P3 计数真值非人工** | ⚠️ 已知局限 | 个体框由掩膜连通域自动导出，见 §5.5 |")
     L.append("")
     L.append("> **聚类置信区间说明**：属级 Top-1 的推荐口径为**按观察聚类的 95% CI**"
              "（比朴素 bootstrap 更宽），因同一观察的多张照片高度相关。")

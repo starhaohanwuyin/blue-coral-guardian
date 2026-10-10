@@ -1,0 +1,865 @@
+{
+  "task": "YOLOv9 coral individual counting (P3)",
+  "acceptance": {
+    "criterion": "mAP@0.5 >= 0.35",
+    "value": 0.385822,
+    "passed": true
+  },
+  "weights": "weights\\yolo_coral\\best.pt",
+  "runDir": "runs\\coral_yolov9c_full",
+  "imgsz": 640,
+  "epochs": 50,
+  "batch": 8,
+  "trainMinutes": 145.96,
+  "valImages": 166,
+  "detection": {
+    "mAP50": 0.385822,
+    "mAP50_95": 0.241642,
+    "precision": 0.465255,
+    "recall": 0.416081,
+    "confThreshold": 0.25,
+    "iouThreshold": 0.5
+  },
+  "counting": {
+    "gtTotal": 4266,
+    "predTotal": 3109,
+    "countBias": -0.2712,
+    "maePerImage": 11.4398,
+    "exactMatchRate": 0.0783,
+    "note": "计数在 conf/iou 阈值下统计；MAE 为逐图 |预测框数-真值框数| 的均值"
+  },
+  "perImage": [
+    {
+      "image": "site29_000001_010000.jpg",
+      "gtCount": 12,
+      "predCount": 5
+    },
+    {
+      "image": "site29_000002_014200.jpg",
+      "gtCount": 1,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000001_016044.jpg",
+      "gtCount": 2,
+      "predCount": 3
+    },
+    {
+      "image": "site30_000002_007140.jpg",
+      "gtCount": 3,
+      "predCount": 1
+    },
+    {
+      "image": "site30_000003_010050.jpg",
+      "gtCount": 4,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000004_000353.jpg",
+      "gtCount": 24,
+      "predCount": 31
+    },
+    {
+      "image": "site30_000005_001178.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000006_007024.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000007_009702.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000008_015294.jpg",
+      "gtCount": 28,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000009_000357.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000010_001783.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000011_003232.jpg",
+      "gtCount": 3,
+      "predCount": 5
+    },
+    {
+      "image": "site30_000012_008531.jpg",
+      "gtCount": 27,
+      "predCount": 12
+    },
+    {
+      "image": "site30_000013_009600.jpg",
+      "gtCount": 2,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000014_011822.jpg",
+      "gtCount": 9,
+      "predCount": 10
+    },
+    {
+      "image": "site30_000015_017936.jpg",
+      "gtCount": 85,
+      "predCount": 35
+    },
+    {
+      "image": "site30_000016_020895.jpg",
+      "gtCount": 19,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000017_021477.jpg",
+      "gtCount": 17,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000018_010866.jpg",
+      "gtCount": 11,
+      "predCount": 6
+    },
+    {
+      "image": "site30_000019_004108.jpg",
+      "gtCount": 2,
+      "predCount": 5
+    },
+    {
+      "image": "site30_000020_019793.jpg",
+      "gtCount": 15,
+      "predCount": 30
+    },
+    {
+      "image": "site30_000021_020394.jpg",
+      "gtCount": 4,
+      "predCount": 8
+    },
+    {
+      "image": "site30_000022_021070.jpg",
+      "gtCount": 1,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000023_021459.jpg",
+      "gtCount": 44,
+      "predCount": 10
+    },
+    {
+      "image": "site30_000024_001782.jpg",
+      "gtCount": 35,
+      "predCount": 31
+    },
+    {
+      "image": "site30_000025_006927.jpg",
+      "gtCount": 5,
+      "predCount": 6
+    },
+    {
+      "image": "site30_000026_014018.jpg",
+      "gtCount": 8,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000027_016741.jpg",
+      "gtCount": 26,
+      "predCount": 37
+    },
+    {
+      "image": "site30_000028_017770.jpg",
+      "gtCount": 27,
+      "predCount": 33
+    },
+    {
+      "image": "site30_000029_006863.jpg",
+      "gtCount": 18,
+      "predCount": 31
+    },
+    {
+      "image": "site30_000030_006990.jpg",
+      "gtCount": 20,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000031_008064.jpg",
+      "gtCount": 10,
+      "predCount": 18
+    },
+    {
+      "image": "site30_000032_009004.jpg",
+      "gtCount": 17,
+      "predCount": 38
+    },
+    {
+      "image": "site30_000033_009670.jpg",
+      "gtCount": 13,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000034_010786.jpg",
+      "gtCount": 10,
+      "predCount": 19
+    },
+    {
+      "image": "site30_000035_011690.jpg",
+      "gtCount": 13,
+      "predCount": 13
+    },
+    {
+      "image": "site30_000036_012581.jpg",
+      "gtCount": 0,
+      "predCount": 0
+    },
+    {
+      "image": "site30_000037_000882.jpg",
+      "gtCount": 35,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000038_002130.jpg",
+      "gtCount": 28,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000039_003675.jpg",
+      "gtCount": 15,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000040_000932.jpg",
+      "gtCount": 17,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000041_002225.jpg",
+      "gtCount": 26,
+      "predCount": 19
+    },
+    {
+      "image": "site30_000042_002628.jpg",
+      "gtCount": 19,
+      "predCount": 13
+    },
+    {
+      "image": "site30_000043_004742.jpg",
+      "gtCount": 20,
+      "predCount": 15
+    },
+    {
+      "image": "site30_000044_006360.jpg",
+      "gtCount": 46,
+      "predCount": 37
+    },
+    {
+      "image": "site30_000045_014739.jpg",
+      "gtCount": 0,
+      "predCount": 1
+    },
+    {
+      "image": "site30_000046_019707.jpg",
+      "gtCount": 28,
+      "predCount": 28
+    },
+    {
+      "image": "site30_000047_021091.jpg",
+      "gtCount": 14,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000048_024899.jpg",
+      "gtCount": 34,
+      "predCount": 12
+    },
+    {
+      "image": "site30_000049_010075.jpg",
+      "gtCount": 9,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000050_012662.jpg",
+      "gtCount": 2,
+      "predCount": 4
+    },
+    {
+      "image": "site30_000051_018149.jpg",
+      "gtCount": 19,
+      "predCount": 16
+    },
+    {
+      "image": "site30_000052_002016.jpg",
+      "gtCount": 15,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000053_006120.jpg",
+      "gtCount": 12,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000054_007273.jpg",
+      "gtCount": 9,
+      "predCount": 9
+    },
+    {
+      "image": "site30_000055_007557.jpg",
+      "gtCount": 28,
+      "predCount": 34
+    },
+    {
+      "image": "site30_000056_007728.jpg",
+      "gtCount": 14,
+      "predCount": 13
+    },
+    {
+      "image": "site30_000057_009937.jpg",
+      "gtCount": 11,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000058_012837.jpg",
+      "gtCount": 3,
+      "predCount": 17
+    },
+    {
+      "image": "site30_000059_017147.jpg",
+      "gtCount": 15,
+      "predCount": 18
+    },
+    {
+      "image": "site30_000060_019424.jpg",
+      "gtCount": 15,
+      "predCount": 15
+    },
+    {
+      "image": "site30_000061_000269.jpg",
+      "gtCount": 9,
+      "predCount": 18
+    },
+    {
+      "image": "site30_000062_014862.jpg",
+      "gtCount": 0,
+      "predCount": 1
+    },
+    {
+      "image": "site30_000063_003320.jpg",
+      "gtCount": 15,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000064_022072.jpg",
+      "gtCount": 15,
+      "predCount": 30
+    },
+    {
+      "image": "site30_000065_003686.jpg",
+      "gtCount": 4,
+      "predCount": 5
+    },
+    {
+      "image": "site30_000066_004390.jpg",
+      "gtCount": 5,
+      "predCount": 9
+    },
+    {
+      "image": "site30_000067_006892.jpg",
+      "gtCount": 12,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000068_018004.jpg",
+      "gtCount": 41,
+      "predCount": 44
+    },
+    {
+      "image": "site30_000069_018678.jpg",
+      "gtCount": 42,
+      "predCount": 36
+    },
+    {
+      "image": "site30_000070_021471.jpg",
+      "gtCount": 40,
+      "predCount": 41
+    },
+    {
+      "image": "site30_000071_021865.jpg",
+      "gtCount": 49,
+      "predCount": 39
+    },
+    {
+      "image": "site30_000072_000808.jpg",
+      "gtCount": 27,
+      "predCount": 37
+    },
+    {
+      "image": "site30_000073_001051.jpg",
+      "gtCount": 26,
+      "predCount": 22
+    },
+    {
+      "image": "site30_000074_001643.jpg",
+      "gtCount": 8,
+      "predCount": 2
+    },
+    {
+      "image": "site30_000075_002198.jpg",
+      "gtCount": 36,
+      "predCount": 28
+    },
+    {
+      "image": "site30_000076_002748.jpg",
+      "gtCount": 12,
+      "predCount": 13
+    },
+    {
+      "image": "site30_000077_004516.jpg",
+      "gtCount": 14,
+      "predCount": 16
+    },
+    {
+      "image": "site30_000078_005835.jpg",
+      "gtCount": 6,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000079_008962.jpg",
+      "gtCount": 37,
+      "predCount": 10
+    },
+    {
+      "image": "site30_000080_012205.jpg",
+      "gtCount": 4,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000081_019793.jpg",
+      "gtCount": 42,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000082_020236.jpg",
+      "gtCount": 9,
+      "predCount": 8
+    },
+    {
+      "image": "site30_000083_007730.jpg",
+      "gtCount": 11,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000084_005327.jpg",
+      "gtCount": 6,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000085_006756.jpg",
+      "gtCount": 34,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000086_015958.jpg",
+      "gtCount": 8,
+      "predCount": 17
+    },
+    {
+      "image": "site30_000087_016933.jpg",
+      "gtCount": 15,
+      "predCount": 17
+    },
+    {
+      "image": "site30_000088_018497.jpg",
+      "gtCount": 37,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000089_019135.jpg",
+      "gtCount": 11,
+      "predCount": 15
+    },
+    {
+      "image": "site30_000090_020423.jpg",
+      "gtCount": 18,
+      "predCount": 22
+    },
+    {
+      "image": "site30_000091_004310.jpg",
+      "gtCount": 22,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000092_015053.jpg",
+      "gtCount": 38,
+      "predCount": 33
+    },
+    {
+      "image": "site30_000093_017201.jpg",
+      "gtCount": 70,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000094_017907.jpg",
+      "gtCount": 9,
+      "predCount": 11
+    },
+    {
+      "image": "site30_000095_018596.jpg",
+      "gtCount": 28,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000096_001892.jpg",
+      "gtCount": 45,
+      "predCount": 19
+    },
+    {
+      "image": "site30_000097_010335.jpg",
+      "gtCount": 37,
+      "predCount": 31
+    },
+    {
+      "image": "site30_000098_010886.jpg",
+      "gtCount": 36,
+      "predCount": 25
+    },
+    {
+      "image": "site30_000099_011055.jpg",
+      "gtCount": 14,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000100_011393.jpg",
+      "gtCount": 64,
+      "predCount": 47
+    },
+    {
+      "image": "site30_000101_012043.jpg",
+      "gtCount": 50,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000102_017633.jpg",
+      "gtCount": 20,
+      "predCount": 18
+    },
+    {
+      "image": "site30_000103_018251.jpg",
+      "gtCount": 10,
+      "predCount": 13
+    },
+    {
+      "image": "site30_000104_018514.jpg",
+      "gtCount": 32,
+      "predCount": 30
+    },
+    {
+      "image": "site30_000105_020677.jpg",
+      "gtCount": 28,
+      "predCount": 19
+    },
+    {
+      "image": "site30_000106_002245.jpg",
+      "gtCount": 11,
+      "predCount": 34
+    },
+    {
+      "image": "site30_000107_002788.jpg",
+      "gtCount": 45,
+      "predCount": 29
+    },
+    {
+      "image": "site30_000108_004057.jpg",
+      "gtCount": 24,
+      "predCount": 17
+    },
+    {
+      "image": "site30_000109_005196.jpg",
+      "gtCount": 17,
+      "predCount": 16
+    },
+    {
+      "image": "site30_000110_005912.jpg",
+      "gtCount": 48,
+      "predCount": 35
+    },
+    {
+      "image": "site30_000111_006242.jpg",
+      "gtCount": 114,
+      "predCount": 47
+    },
+    {
+      "image": "site30_000112_006796.jpg",
+      "gtCount": 35,
+      "predCount": 24
+    },
+    {
+      "image": "site30_000113_000902.jpg",
+      "gtCount": 34,
+      "predCount": 16
+    },
+    {
+      "image": "site30_000114_005157.jpg",
+      "gtCount": 7,
+      "predCount": 8
+    },
+    {
+      "image": "site30_000115_007841.jpg",
+      "gtCount": 15,
+      "predCount": 21
+    },
+    {
+      "image": "site30_000116_012587.jpg",
+      "gtCount": 24,
+      "predCount": 19
+    },
+    {
+      "image": "site30_000117_013420.jpg",
+      "gtCount": 19,
+      "predCount": 15
+    },
+    {
+      "image": "site30_000118_000125.jpg",
+      "gtCount": 12,
+      "predCount": 12
+    },
+    {
+      "image": "site30_000119_008248.jpg",
+      "gtCount": 20,
+      "predCount": 15
+    },
+    {
+      "image": "site30_000120_001341.jpg",
+      "gtCount": 24,
+      "predCount": 9
+    },
+    {
+      "image": "site30_000121_006255.jpg",
+      "gtCount": 14,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000122_007916.jpg",
+      "gtCount": 19,
+      "predCount": 23
+    },
+    {
+      "image": "site30_000123_008587.jpg",
+      "gtCount": 12,
+      "predCount": 22
+    },
+    {
+      "image": "site30_000124_009372.jpg",
+      "gtCount": 6,
+      "predCount": 8
+    },
+    {
+      "image": "site30_000125_011857.jpg",
+      "gtCount": 6,
+      "predCount": 9
+    },
+    {
+      "image": "site30_000126_016137.jpg",
+      "gtCount": 18,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000127_020513.jpg",
+      "gtCount": 14,
+      "predCount": 7
+    },
+    {
+      "image": "site30_000128_000925.jpg",
+      "gtCount": 12,
+      "predCount": 16
+    },
+    {
+      "image": "site30_000129_001987.jpg",
+      "gtCount": 58,
+      "predCount": 26
+    },
+    {
+      "image": "site30_000130_006648.jpg",
+      "gtCount": 30,
+      "predCount": 27
+    },
+    {
+      "image": "site30_000131_008581.jpg",
+      "gtCount": 31,
+      "predCount": 14
+    },
+    {
+      "image": "site30_000132_010337.jpg",
+      "gtCount": 47,
+      "predCount": 33
+    },
+    {
+      "image": "site30_000133_016956.jpg",
+      "gtCount": 31,
+      "predCount": 9
+    },
+    {
+      "image": "site6_000001_009800.jpg",
+      "gtCount": 66,
+      "predCount": 28
+    },
+    {
+      "image": "site6_000002_001954.jpg",
+      "gtCount": 34,
+      "predCount": 9
+    },
+    {
+      "image": "site6_000003_001377.jpg",
+      "gtCount": 21,
+      "predCount": 2
+    },
+    {
+      "image": "site6_000004_000404.jpg",
+      "gtCount": 56,
+      "predCount": 21
+    },
+    {
+      "image": "site6_000005_001663.jpg",
+      "gtCount": 69,
+      "predCount": 35
+    },
+    {
+      "image": "site6_000006_002922.jpg",
+      "gtCount": 97,
+      "predCount": 43
+    },
+    {
+      "image": "site6_000007_003101.jpg",
+      "gtCount": 122,
+      "predCount": 86
+    },
+    {
+      "image": "site6_000008_003371.jpg",
+      "gtCount": 87,
+      "predCount": 42
+    },
+    {
+      "image": "site6_000009_004180.jpg",
+      "gtCount": 50,
+      "predCount": 20
+    },
+    {
+      "image": "site6_000010_007147.jpg",
+      "gtCount": 34,
+      "predCount": 26
+    },
+    {
+      "image": "site6_000011_008946.jpg",
+      "gtCount": 57,
+      "predCount": 33
+    },
+    {
+      "image": "site6_000012_009125.jpg",
+      "gtCount": 31,
+      "predCount": 18
+    },
+    {
+      "image": "site6_000013_011013.jpg",
+      "gtCount": 24,
+      "predCount": 18
+    },
+    {
+      "image": "site6_000014_011193.jpg",
+      "gtCount": 47,
+      "predCount": 17
+    },
+    {
+      "image": "site6_000015_011283.jpg",
+      "gtCount": 25,
+      "predCount": 22
+    },
+    {
+      "image": "site6_000016_011553.jpg",
+      "gtCount": 33,
+      "predCount": 16
+    },
+    {
+      "image": "site6_000017_013711.jpg",
+      "gtCount": 19,
+      "predCount": 15
+    },
+    {
+      "image": "site6_000018_014340.jpg",
+      "gtCount": 17,
+      "predCount": 13
+    },
+    {
+      "image": "site6_000019_014610.jpg",
+      "gtCount": 18,
+      "predCount": 14
+    },
+    {
+      "image": "site6_000020_015689.jpg",
+      "gtCount": 120,
+      "predCount": 35
+    },
+    {
+      "image": "site6_000021_016048.jpg",
+      "gtCount": 91,
+      "predCount": 24
+    },
+    {
+      "image": "site6_000022_017307.jpg",
+      "gtCount": 34,
+      "predCount": 37
+    },
+    {
+      "image": "site6_000023_019555.jpg",
+      "gtCount": 20,
+      "predCount": 10
+    },
+    {
+      "image": "site6_000024_019735.jpg",
+      "gtCount": 41,
+      "predCount": 26
+    },
+    {
+      "image": "site6_000025_020184.jpg",
+      "gtCount": 102,
+      "predCount": 19
+    },
+    {
+      "image": "site6_000026_020454.jpg",
+      "gtCount": 24,
+      "predCount": 15
+    },
+    {
+      "image": "site6_000027_004414.jpg",
+      "gtCount": 39,
+      "predCount": 23
+    },
+    {
+      "image": "site6_000028_010004.jpg",
+      "gtCount": 11,
+      "predCount": 4
+    },
+    {
+      "image": "site6_000029_017119.jpg",
+      "gtCount": 44,
+      "predCount": 14
+    },
+    {
+      "image": "site6_000030_018359.jpg",
+      "gtCount": 3,
+      "predCount": 4
+    },
+    {
+      "image": "site6_000031_000440.jpg",
+      "gtCount": 38,
+      "predCount": 22
+    }
+  ],
+  "device": "0",
+  "note": "val = Coralscapes 官方 validation split（与分割 mIoU 同源，无训练泄漏）；1 类 coral；真值框 = 掩膜连通域外接矩形"
+}

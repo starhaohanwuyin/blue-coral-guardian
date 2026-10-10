@@ -136,7 +136,7 @@ def main():
     pixel_acc = float(inter.sum() / max(conf.sum(), 1))
     fiou = float(inter.sum() / max(union[present].sum(), 1))
 
-    print(f"{'mIoU（宏平均，{present.sum()} 类）':<34}{miou:>10.4f}")
+    print(f"{f'mIoU（宏平均，{present.sum()} 类）':<34}{miou:>10.4f}")
     print(f"{'频次加权 IoU (fIoU)':<34}{fiou:>10.4f}")
     print(f"{'逐像素准确率 (pixel acc)':<34}{pixel_acc:>10.4f}")
     print("-" * 82)

@@ -21,7 +21,7 @@
 | **修复优先级 + 保育报告**（综合研判插件）| 规则型决策支持启发式 | 可解释，不报准确率 |
 | **修复模拟**（10 年恢复轨迹）| 逻辑斯蒂增长 + 热浪致死 | 示意性推演，非预测 |
 | **水下图像增强** | 传统 CV + **CNN（U-Net）** | 三方对比见 `reports/enhance_compare.json` |
-| **珊瑚个体数量 + 位置**（P3 附加能力）| YOLOv9c 单类检测 | mAP@0.5 **0.3858**（官方 val 166 张）|
+| **珊瑚个体数量 + 位置**（P3 附加能力）| YOLOv9c 单类检测 | mAP@0.5 **0.4217**（官方 val 166 张）|
 
 **核心外部验证**：模型在仙本那 180 张照片上的活珊瑚覆盖估计 **39.71%**，
 与 Reef Check Malaysia 2024 实地调查的区域平均 **39.56%** 相差 **0.15 个百分点**。
@@ -90,7 +90,7 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
             "bleachingShareOfCoral":0.0696},
   "coralRegion": {"reliable":true,"top":[{"genus":"Acropora","confidence":0.78}]},
   "bleaching": {"label":"bleached","labelCn":"白化","confidence":0.96,"reliable":true},
-  "coralCount": {"count":15,"threshold":{"conf":0.15,"iou":0.5,"imgsz":640},
+  "coralCount": {"count":16,"threshold":{"conf":0.20,"iou":0.5,"imgsz":896},
                  "boxes":[{"x0":0,"y0":0,"x1":0,"y1":0,"confidence":0.9}],"elapsedMs":85.2},
   "captureQuality": {"level":"good","usable":true,"contrast":0.23,
                      "thresholds":{"goodContrast":0.0306,"warnContrast":0.0243}},
@@ -113,8 +113,8 @@ coral_ml/
 ├── reports/            结果 JSON（报告的权威数据源）
 ├── dsh-skill/          DSH Agent 插件（1 个 Skill + 5 个工具）
 ├── NOTICE.md           许可证与合规声明
-├── data/               数据集（已 gitignore，约 13 GB）
-└── weights/            模型权重（已 gitignore，约 1.1 GB）
+├── data/               数据集（已 gitignore，约 16.9 GB）
+└── weights/            模型权重（已 gitignore，约 2.8 GB）
 ```
 
 ### 关键脚本
@@ -175,14 +175,15 @@ coral_ml/
 
 | 项目 | 结果 |
 |---|---|
-| **mAP@0.5**（官方 val 166 张，单类 `coral`）| **0.3858**（验收线 0.35）|
-| mAP@0.5:0.95 / precision / recall | 0.2416 / 0.4653 / 0.4161 |
-| 个体数总量偏差 / 逐图 MAE（conf=0.15）| **+8.7%**（真值 4266 vs 预测 4638）/ 11.22 个 |
-| 训练集（官方 train 全 9 分片）| 1517 张 / 33027 个个体框 |
+| **mAP@0.5**（官方 val 166 张，单类 `coral`）| **0.4217**（验收线 0.35）|
+| mAP@0.5:0.95 / precision / recall | 0.2757 / 0.4917 / 0.4377 |
+| 个体数总量偏差 / 逐图 MAE（conf=0.20）| **+2.3%**（真值 4254 vs 预测 4350）/ 9.43 个 |
+| 训练集（官方 train 全 9 分片）| 1517 张 / 32976 个个体框 |
 | 泄漏隔离 | train 22 个站点 vs val 3 个站点，**不重叠** |
 
-> 📌 **计数工作点**：mAP 与置信度阈值无关，但**数出来几株**强相关 —— 默认 `conf=0.15` 时
-> 总量偏差 +8.7%，而 `conf=0.25` 时会少算 27%。完整扫描见 `reports/yolo_coral_count_thresholds.json`。
+> 📌 **计数工作点**：mAP 与置信度阈值无关，但**数出来几株**强相关 —— 默认 `conf=0.20` 时
+> 总量偏差 +2.3%，而 `conf=0.25` 时会少算 15.7%。完整扫描见 `reports/yolo_coral_count_thresholds.json`。
+> 服务推理长边为 **896**（分辨率扫描显示 896 与 1024 等价，取更快的 896）。
 
 > ⚠️ **真值口径**：个体框由 Coralscapes **语义掩膜的同类连通域**自动导出（**非人工实例标注**），
 > 且紧贴的同类珊瑚会合并成 1 个。因此上表是「与该自动真值的一致程度」，

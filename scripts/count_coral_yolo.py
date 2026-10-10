@@ -19,12 +19,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 WEIGHTS = ROOT / "weights" / "yolo_coral" / "best.pt"
-DEFAULT_IMGSZ = 640
+# 推理长边。Coralscapes 是 2:1 图像，方图 letterbox 会浪费一半画布，
+# 所以「分辨率」是这类小目标检测的主要瓶颈（详见 reports/yolo_coral_resolution.json）：
+#   R0（640 从零）：640→0.3858 / 800→0.4012 / 1024→0.4053
+#   R1（896 微调后）：640→0.3952 / 800→0.4156 / **896→0.4217** / 1024→0.4224 / 1152→0.4202
+# 896 与 1024 已在噪声内（+0.0007），故取**训练分辨率 896**（延迟更低）。
+DEFAULT_IMGSZ = 896
 # 计数用的置信度阈值。⚠️ 与 mAP 无关（mAP 是 PR 曲线面积），但**直接决定数出来几株**：
-# 官方 val 上实测（scripts/tune_yolo_counting_threshold.py）：
-#   conf=0.25 → 总数偏差 −27.1%；conf=0.20 → −12.1%（MAE 最低 10.59）；
-#   **conf=0.15 → +8.7%（偏差最小，故选它）**；conf=0.10 → +44.6%。
-DEFAULT_CONF = 0.15
+# 官方 val 上实测（scripts/tune_yolo_counting_threshold.py --imgsz 896）：
+#   conf=0.25 → 总数偏差 −15.7%；conf=0.15 → +26.7%；
+#   **conf=0.20 → +2.3%（偏差最小，故选它）**；conf=0.10 → +67.7%。
+DEFAULT_CONF = 0.20
 DEFAULT_IOU = 0.5
 
 

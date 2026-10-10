@@ -66,7 +66,7 @@ def train(args):
 
     model = YOLO(resolve_model(args.model))
     t0 = time.time()
-    res = model.train(
+    kwargs = dict(
         data=str(DATA),
         epochs=args.epochs,
         imgsz=args.imgsz,
@@ -77,9 +77,17 @@ def train(args):
         patience=args.patience,
         plots=False, val=True, seed=0, deterministic=True,
         resume=args.resume,
-        optimizer="auto",
+        optimizer=args.optimizer,
+        close_mosaic=args.close_mosaic,
         pretrained=True,
     )
+    if args.lr0 is not None:
+        kwargs["lr0"] = args.lr0
+    if args.lrf is not None:
+        kwargs["lrf"] = args.lrf
+    if args.mosaic is not None:
+        kwargs["mosaic"] = args.mosaic
+    res = model.train(**kwargs)
     train_sec = time.time() - t0
     save_dir = Path(res.save_dir) if getattr(res, "save_dir", None) else ROOT / "runs" / args.name
     best = save_dir / "weights" / "best.pt"
@@ -140,6 +148,12 @@ def evaluate(args, train_sec=None, save_dir=None):
         "runDir": rel(save_dir) if save_dir else None,
         "imgsz": args.imgsz, "epochs": args.epochs, "batch": args.batch,
         "trainMinutes": round(train_sec / 60, 2) if train_sec else None,
+        "trainingArgs": {
+            "initModel": resolve_model(args.model), "optimizer": args.optimizer,
+            "lr0": args.lr0, "lrf": args.lrf, "mosaic": args.mosaic,
+            "closeMosaic": args.close_mosaic, "patience": args.patience,
+            "fineTuneFrom": rel(resolve_model(args.model)) if Path(resolve_model(args.model)).exists() else None,
+        },
         "valImages": len(gt_counts),
         "detection": {
             "mAP50": round(mAP50, 6),
@@ -185,6 +199,11 @@ def main():
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--patience", type=int, default=15)
+    ap.add_argument("--optimizer", default="auto", help="auto / AdamW / SGD …")
+    ap.add_argument("--lr0", type=float, default=None, help="初始学习率（微调时建议调低）")
+    ap.add_argument("--lrf", type=float, default=None, help="末端学习率比例")
+    ap.add_argument("--mosaic", type=float, default=None, help="mosaic 概率（默认 1.0）")
+    ap.add_argument("--close-mosaic", type=int, default=10, help="最后 N 个 epoch 关闭 mosaic")
     ap.add_argument("--conf", type=float, default=0.25)
     ap.add_argument("--iou", type=float, default=0.5)
     ap.add_argument("--name", default="coral_yolov9c")

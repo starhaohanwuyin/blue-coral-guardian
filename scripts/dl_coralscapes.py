@@ -18,20 +18,36 @@ ROOT = Path(__file__).resolve().parent.parent
 DST = ROOT / "data" / "raw" / "coralscapes" / "data"
 BASE = "https://hf-mirror.com/datasets/EPFL-ECEO/coralscapes/resolve/main/data"
 
-# 已知文件大小（用于校验完整性），来自 HF tree API
+# ⚠️ 已修的 bug：原表数值比**真实字节数低约 4.9%**（疑似把 Windows 显示的 MiB 当字节记了），
+#    于是「大小 ≥ 预期×0.995」这条判据会把**只下到 ~95% 的残片当成完整**。
+#    现在：① 已知文件填**真实字节数**；② 真正的完整性判据改为**读 parquet footer**
+#    （见 parquet_ok()），大小只当快速早筛。
+#    末尾三个 test 分片未下载过，故不填（由 footer 判据兜底）。
 EXPECTED = {
-    "validation-00000-of-00001.parquet": 386_810_000,
-    "train-00000-of-00009.parquet": 450_100_000,
-    "train-00001-of-00009.parquet": 427_300_000,
-    "train-00002-of-00009.parquet": 481_500_000,
-    "train-00003-of-00009.parquet": 423_200_000,
-    "train-00004-of-00009.parquet": 446_900_000,
-    "train-00005-of-00009.parquet": 395_900_000,
-    "train-00006-of-00009.parquet": 480_900_000,
-    "train-00007-of-00009.parquet": 496_100_000,
-    "train-00008-of-00009.parquet": 475_400_000,
+    "validation-00000-of-00001.parquet": 405_616_835,
+    "train-00000-of-00009.parquet": 471_962_413,
+    "train-00001-of-00009.parquet": 448_022_029,
+    "train-00002-of-00009.parquet": 504_852_201,
+    "train-00003-of-00009.parquet": 443_807_216,
+    "train-00004-of-00009.parquet": 468_562_974,
+    "train-00005-of-00009.parquet": 415_150_694,
+    "train-00006-of-00009.parquet": 504_281_776,
+    "train-00007-of-00009.parquet": 520_213_271,
+    "train-00008-of-00009.parquet": 498_469_209,
     "test-00000-of-00003.parquet": 401_200_000,
 }
+
+
+def parquet_ok(p: Path) -> bool:
+    """结构完整性判据：parquet footer 可读且行数 > 0。
+
+    文件被截断时尾部 magic 必然缺失，pyarrow 会直接报错 —— 这是比"看大小"可靠得多的判据。
+    """
+    try:
+        import pyarrow.parquet as pq
+        return pq.ParquetFile(str(p)).metadata.num_rows > 0
+    except Exception:
+        return False
 
 
 def get_size(p: Path) -> int:
@@ -47,7 +63,7 @@ def download(name: str, max_rounds: int = 20, max_time: int = 600) -> bool:
     expect = EXPECTED.get(name)
     for r in range(1, max_rounds + 1):
         cur = get_size(dst)
-        if expect and cur >= expect * 0.995:
+        if cur and parquet_ok(dst):          # 结构完整才算完成（不看大小）
             print(f"  [完成] {name}  {cur/1024/1024:.1f} MB", flush=True)
             return True
         print(f"  [轮 {r}] {name}  当前 {cur/1024/1024:.1f} MB"
@@ -57,7 +73,10 @@ def download(name: str, max_rounds: int = 20, max_time: int = 600) -> bool:
                "-s", "-o", str(dst), f"{BASE}/{name}"]
         rc = subprocess.run(cmd).returncode
         time.sleep(2)
-    return get_size(dst) > 0
+    ok = parquet_ok(dst)
+    if not ok:
+        print(f"  [未完成] {name} 仍无法读取 parquet footer（{get_size(dst)/1024/1024:.1f} MB）")
+    return ok
 
 
 def main():

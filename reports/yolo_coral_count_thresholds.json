@@ -2,61 +2,61 @@
   "task": "P3 counting confidence-threshold sweep",
   "weights": "weights\\yolo_coral\\best.pt",
   "valImages": 166,
-  "gtTotal": 4266,
-  "imgsz": 640,
+  "gtTotal": 4254,
+  "imgsz": 896,
   "iou": 0.5,
   "rows": [
     {
       "conf": 0.05,
-      "predTotal": 9923,
-      "bias": 1.3261,
-      "maePerImage": 34.8373,
-      "exactMatchRate": 0.0301
+      "predTotal": 11161,
+      "bias": 1.6236,
+      "maePerImage": 41.7651,
+      "exactMatchRate": 0.0181
     },
     {
       "conf": 0.1,
-      "predTotal": 6168,
-      "bias": 0.4459,
-      "maePerImage": 15.9398,
-      "exactMatchRate": 0.0482
+      "predTotal": 7134,
+      "bias": 0.677,
+      "maePerImage": 19.0361,
+      "exactMatchRate": 0.0301
     },
     {
       "conf": 0.15,
-      "predTotal": 4638,
-      "bias": 0.0872,
-      "maePerImage": 11.2169,
-      "exactMatchRate": 0.0542
+      "predTotal": 5391,
+      "bias": 0.2673,
+      "maePerImage": 11.8976,
+      "exactMatchRate": 0.0422
     },
     {
       "conf": 0.2,
-      "predTotal": 3750,
-      "bias": -0.121,
-      "maePerImage": 10.5904,
+      "predTotal": 4350,
+      "bias": 0.0226,
+      "maePerImage": 9.4337,
       "exactMatchRate": 0.0723
     },
     {
       "conf": 0.25,
-      "predTotal": 3109,
-      "bias": -0.2712,
-      "maePerImage": 11.4398,
-      "exactMatchRate": 0.0783
+      "predTotal": 3588,
+      "bias": -0.1566,
+      "maePerImage": 9.3976,
+      "exactMatchRate": 0.0723
     },
     {
       "conf": 0.3,
-      "predTotal": 2660,
-      "bias": -0.3765,
-      "maePerImage": 12.253,
-      "exactMatchRate": 0.1145
+      "predTotal": 3056,
+      "bias": -0.2816,
+      "maePerImage": 10.5783,
+      "exactMatchRate": 0.0904
     },
     {
       "conf": 0.4,
-      "predTotal": 1947,
-      "bias": -0.5436,
-      "maePerImage": 14.8976,
-      "exactMatchRate": 0.0843
+      "predTotal": 2249,
+      "bias": -0.4713,
+      "maePerImage": 13.3313,
+      "exactMatchRate": 0.0723
     }
   ],
-  "recommendedConf": 0.15,
-  "recommendedBias": 0.0872,
+  "recommendedConf": 0.2,
+  "recommendedBias": 0.0226,
   "note": "mAP 与阈值无关，但计数与阈值强相关；推荐值 = |总量偏差| 最小者。真值为掩膜连通域（自动标注）。"
 }
