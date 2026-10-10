@@ -51,8 +51,44 @@ def _year_files():
     return sorted(NOAA_DIR.glob("_raw_CRW_DHW_*.csv"))
 
 
+def _series_files(var: str):
+    """按变量取逐年文件，如 var='BAA' -> _raw_CRW_BAA_2023.csv"""
+    return {f.stem.split("_")[-1]: f for f in sorted(NOAA_DIR.glob(f"_raw_CRW_{var}_*.csv"))}
+
+
+def _read_cell_series(path, cell_filter=None):
+    """读取一个 CSV，返回 {格点key: [(时间, 值), ...]}。NaN 跳过。"""
+    out = {}
+    with open(path, newline="", encoding="utf-8") as fh:
+        r = csv.reader(fh)
+        next(r)
+        next(r)
+        for row in r:
+            if len(row) < 4:
+                continue
+            try:
+                v = float(row[3])
+                la, lo = float(row[1]), float(row[2])
+            except ValueError:
+                continue
+            if math.isnan(v):      # ⚠️ float("NaN") 不报错，必须显式过滤
+                continue
+            key = f"{la:.3f}_{lo:.3f}"
+            if cell_filter is not None and key not in cell_filter:
+                continue
+            out.setdefault(key, []).append((row[0][:10], v))
+    return out
+
+
 def build_index(force: bool = False):
-    """把逐年 CSV 压缩成「格点 × 年份」统计索引（一次性）。"""
+    """
+    把逐年 CSV 压缩成「格点 × 年份」统计索引（一次性）。
+
+    ⚠️ 重要：BAA 等级**直接取 NOAA 官方 CRW_BAA 产品的最大值**，
+       不用 DHW 阈值推算 —— 二者实测会差一级
+       （仙本那核心区 2024：官方 BAA=3，按 DHW 推算仅得 2）。
+    同时接入 HotSpot（热异常）与 SSTANOMALY（海温距平）作为补充指标。
+    """
     files = _year_files()
     if not files:
         raise SystemExit(f"未找到 NOAA 数据：{NOAA_DIR}/_raw_CRW_DHW_*.csv")
@@ -60,24 +96,31 @@ def build_index(force: bool = False):
         print(f"索引已存在（--force 可重建）：{INDEX}")
         return json.loads(INDEX.read_text(encoding="utf-8"))
 
+    baa_files = _series_files("BAA")
+    hs_files = _series_files("HOTSPOT")
+    sa_files = _series_files("SSTANOMALY")
+
     out = {"source": "NOAA CRW v3.1 5km via PacIOOS mirror",
+           "variables": ["CRW_DHW", "CRW_BAA", "CRW_HOTSPOT", "CRW_SSTANOMALY"],
+           "baaSource": "NOAA 官方 CRW_BAA 产品（非阈值推算）",
            "region": "4.025-5.025N, 118.025-119.525E", "years": {}}
 
     for f in files:
         year = f.stem.split("_")[-1]
-        # key = "lat_lon" → 该格点该年的统计
         cells = {}
         with open(f, newline="", encoding="utf-8") as fh:
             r = csv.reader(fh)
             next(r)
-            next(r)  # 两行表头
+            next(r)
             for row in r:
                 if len(row) < 4:
                     continue
                 try:
                     dhw = float(row[3])
                 except ValueError:
-                    continue  # NaN
+                    continue
+                if math.isnan(dhw):    # ⚠️ 必须显式判断，float("NaN") 不会抛异常
+                    continue
                 key = f"{float(row[1]):.3f}_{float(row[2]):.3f}"
                 c = cells.get(key)
                 if c is None:
@@ -91,29 +134,50 @@ def build_index(force: bool = False):
                     c["ge8"] += 1
                 c["day"] += 1
 
-        # 由 DHW 峰值推 BAA 等级
-        #   简化规则（与 NOAA 的 5km 产品一致）：
-        #     DHW < 1              → 0 无压力
-        #     1 ≤ DHW < 4          → 1 白化观察
-        #     4 ≤ DHW < 8          → 2 白化警告
-        #     DHW ≥ 8 且 hotspot<1 → 3 白化警报一级
-        #     DHW ≥ 8 且 hotspot≥1 → 4 白化警报二级（此处按 DHW≥12 近似）
+        keys = set(cells)
+        # --- 官方 BAA：取该格点该年的最大等级 ---
+        if year in baa_files:
+            for k, series in _read_cell_series(baa_files[year], keys).items():
+                vals = [v for _, v in series]
+                if vals:
+                    cells[k]["baaOfficial"] = int(round(max(vals)))
+                    # 各等级天数
+                    from collections import Counter
+                    cells[k]["baaDays"] = dict(sorted(Counter(int(round(v)) for v in vals).items()))
+        # --- HotSpot / SST 距平：取峰值 ---
+        for src, field in ((hs_files, "hotspotMax"), (sa_files, "sstAnomalyMax")):
+            if year in src:
+                for k, series in _read_cell_series(src[year], keys).items():
+                    vals = [v for _, v in series]
+                    if vals:
+                        cells[k][field] = round(max(vals), 3)
+
         for c in cells.values():
             m = c["max"]
-            if m < 1:
-                baa = 0
-            elif m < 4:
-                baa = 1
-            elif m < 8:
-                baa = 2
-            elif m < 12:
-                baa = 3
+            if "baaOfficial" in c:
+                baa = c["baaOfficial"]          # ✅ 优先用官方值
             else:
-                baa = 4
+                # 兜底：无官方值时才用 DHW 阈值推算。
+                # ⚠️ 阈值已按 NOAA 5km BAA 产品实测校准（此前假设错了整整一档）：
+                #      BAA 2 白化警告   : DHW > 0（且 HotSpot ≥ 1）
+                #      BAA 3 警报一级   : DHW ≥ 4
+                #      BAA 4 警报二级   : DHW ≥ 8
+                if m <= 0:
+                    baa = 0
+                elif m < 4:
+                    baa = 2
+                elif m < 8:
+                    baa = 3
+                else:
+                    baa = 4
+                c["baaEstimated"] = True
             c["baa"] = baa
-            c["baaLabel"] = BAA_LABEL[baa]
+            c["baaLabel"] = BAA_LABEL.get(baa, f"等级{baa}")
         out["years"][year] = cells
-        print(f"  {year}: {len(cells)} 个格点，峰值 DHW = {max(c['max'] for c in cells.values()):.2f}")
+        n_off = sum(1 for c in cells.values() if "baaOfficial" in c)
+        print(f"  {year}: {len(cells)} 个格点，峰值 DHW = "
+              f"{max(c['max'] for c in cells.values()):.2f}，"
+              f"官方 BAA 覆盖 {n_off} 个格点")
 
     INDEX.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
     print(f"索引已写入：{INDEX}  ({INDEX.stat().st_size/1024:.0f} KB)")
