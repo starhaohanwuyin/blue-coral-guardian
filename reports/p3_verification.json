@@ -4,22 +4,34 @@
   "checks": {
     "① 计数质量：mAP@0.5 ≥ 0.35": {
       "passed": true,
-      "detail": "mAP@0.5 = 0.421725（阈值 0.35）",
-      "mAP50": 0.421725,
-      "mAP50_95": 0.275729,
-      "precision": 0.491689,
-      "recall": 0.437718,
+      "detail": "mAP@0.5 = 0.421721（阈值 0.35）；计数工作点 conf=0.2 偏差 +2.3%，MAE 9.4337",
+      "mAP50": 0.421721,
+      "mAP50_95": 0.275743,
+      "precision": 0.492893,
+      "recall": 0.437471,
       "valImages": 166,
-      "epochs": 30,
+      "epochs": 50,
       "imgsz": 896,
-      "trainMinutes": 155.86,
+      "trainMinutes": null,
       "counting": {
+        "conf": 0.2,
+        "iou": 0.5,
         "gtTotal": 4254,
-        "predTotal": 3588,
-        "countBias": -0.1566,
-        "maePerImage": 9.3976,
+        "predTotal": 4350,
+        "countBias": 0.0226,
+        "maePerImage": 9.4337,
         "exactMatchRate": 0.0723,
-        "note": "计数在 conf/iou 阈值下统计；MAE 为逐图 |预测框数-真值框数| 的均值"
+        "note": "生产工作点（服务 /analyze 与 count_coral_yolo.py 默认阈值）",
+        "otherThresholds": {
+          "conf": 0.2,
+          "iou": 0.5,
+          "gtTotal": 4254,
+          "predTotal": 4350,
+          "countBias": 0.0226,
+          "maePerImage": 9.4337,
+          "exactMatchRate": 0.0723,
+          "note": "计数在 conf/iou 阈值下统计；MAE 为逐图 |预测框数-真值框数| 的均值"
+        }
       }
     },
     "② 不伤现有：分割指标不下降": {

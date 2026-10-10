@@ -148,7 +148,7 @@ coral_ml/
 | `cross_validate.py` | 星地交叉验证 |
 | `validate_site_level.py` | 站点级验证 |
 | `e2e_check.py` | 端到端自检（19 项；计数模型未训练时 15 项且跳过计数）|
-| `resume_all.py` | **一键状态体检 / 续跑**（23 阶段）|
+| `resume_all.py` | **一键状态体检 / 续跑**（24 阶段：含 R0 训练 / R1 微调 / 工作点评估）|
 | `make_report.py` | 自动生成汇总报告（读 JSON，无人工誊抄）|
 | **`build_yolo_coral_dataset.py`** | **P3**：Coralscapes 掩膜 → 个体框 → YOLO 数据集 |
 | **`train_yolo_coral.py`** | **P3**：YOLOv9c 训练 + 评估（mAP / 逐图计数误差）|
@@ -193,7 +193,7 @@ coral_ml/
 | 项目 | 结果 |
 |---|---|
 | **mAP@0.5**（官方 val 166 张，单类 `coral`）| **0.4217**（验收线 0.35）|
-| mAP@0.5:0.95 / precision / recall | 0.2757 / 0.4917 / 0.4377 |
+| mAP@0.5:0.95 / precision / recall | 0.2757 / 0.4929 / 0.4375 |
 | 个体数总量偏差 / 逐图 MAE（conf=0.20）| **+2.3%**（真值 4254 vs 预测 4350）/ 9.43 个 |
 | 训练集（官方 train 全 9 分片）| 1517 张 / 32976 个个体框 |
 | 泄漏隔离 | train 22 个站点 vs val 3 个站点，**不重叠** |

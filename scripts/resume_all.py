@@ -131,13 +131,25 @@ STAGES = [
      "data/yolo_coral/data.yaml", ["coralscapes"],
      [PY, "-u", "build_yolo_coral_dataset.py"]),
 
-    ("yolo_coral_train", "YOLOv9c 个体计数模型（mAP@0.5 ≥ 0.35 验收）",
-     "weights/yolo_coral/best.pt", ["yolo_coral_dataset"],
-     [PY, "-u", "train_yolo_coral.py", "--epochs", "50", "--imgsz", "640", "--batch", "8"]),
+    # ⚠️ 两阶段：R0 在 640 从零训练 → R1 在 896 微调（验收用的 0.4217 来自 R1）。
+    #    此前只写了一阶段（640），导致"一键重跑"会得到 R0 的 0.3864，与验收口径不符。
+    ("yolo_coral_train", "YOLOv9c 计数 R0（640 从零训练）",
+     "weights/yolo_coral_r0/best.pt", ["yolo_coral_dataset"],
+     [PY, "-u", "train_yolo_coral.py", "--epochs", "50", "--imgsz", "640", "--batch", "8",
+      "--weights-dir", "weights/yolo_coral_r0"]),
 
-    ("yolo_coral_eval", "个体计数评估（mAP + 逐图计数误差）",
-     "reports/yolo_coral_metrics.json", ["yolo_coral_train"],
-     [PY, "-u", "train_yolo_coral.py", "--eval-only"]),
+    ("yolo_coral_finetune", "YOLOv9c 计数 R1（896 微调 → 验收模型）",
+     "weights/yolo_coral/best.pt", ["yolo_coral_train"],
+     [PY, "-u", "train_yolo_coral.py", "--model", "weights/yolo_coral_r0/best.pt",
+      "--imgsz", "896", "--batch", "4", "--epochs", "30", "--patience", "10",
+      "--optimizer", "AdamW", "--lr0", "0.0015", "--lrf", "0.01",
+      "--name", "coral_yolov9c_896"]),
+
+    # ⚠️ 必须用生产工作点参数（imgsz 896 / conf 0.20）：默认值 640/0.25 会让评估结果
+    #    与"服务实际工作点"不一致（曾出现证据说 −15.7%、文档说 +2.3% 的阈值错配）
+    ("yolo_coral_eval", "个体计数评估（mAP + 逐图计数误差，工作点 896/0.20）",
+     "reports/yolo_coral_metrics.json", ["yolo_coral_finetune"],
+     [PY, "-u", "train_yolo_coral.py", "--eval-only", "--imgsz", "896", "--conf", "0.20"]),
 
     # ---- 投放时间窗档案（往年白化预警记录 → 建议避开月份）----
     ("climate_profile", "投放时间窗档案（格点级热压力 + 风险月份）",

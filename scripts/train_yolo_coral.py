@@ -140,6 +140,45 @@ def evaluate(args, train_sec=None, save_dir=None):
     tot_gt, tot_pred = sum(gt_counts), sum(pred_counts)
     bias = (tot_pred - tot_gt) / max(tot_gt, 1)
 
+    # ---- 生产工作点单独统计（conf = 服务/CLI 默认值，可能不同于 --conf）----
+    work_point = None
+    try:
+        from count_coral_yolo import DEFAULT_CONF as WORK_CONF, DEFAULT_IOU as WORK_IOU
+    except Exception:
+        WORK_CONF, WORK_IOU = 0.20, 0.7
+    if abs(WORK_CONF - args.conf) > 1e-9:
+        print(f"  另计生产工作点 conf={WORK_CONF}（服务与 CLI 默认）…", flush=True)
+        wp_pred, wp_gt = [], []
+        for i, jpg in enumerate(jpgs):
+            lab = val_lab / f"{jpg.stem}.txt"
+            g = sum(1 for line in lab.read_text(encoding="utf-8").splitlines() if line.strip()) if lab.exists() else 0
+            r2 = model.predict(source=str(jpg), imgsz=args.imgsz, conf=WORK_CONF, iou=WORK_IOU,
+                               device=pick_device(), verbose=False, plots=False)[0]
+            wp_gt.append(g)
+            wp_pred.append(int(len(r2.boxes)) if r2.boxes is not None else 0)
+            if (i + 1) % 50 == 0:
+                print(f"    工作点计数 {i + 1}/{len(jpgs)}", flush=True)
+        n2 = max(len(wp_gt), 1)
+        wp_tot_gt, wp_tot_pred = sum(wp_gt), sum(wp_pred)
+        work_point = {
+            "conf": WORK_CONF, "iou": WORK_IOU, "imgsz": args.imgsz,
+            "gtTotal": wp_tot_gt, "predTotal": wp_tot_pred,
+            "countBias": round((wp_tot_pred - wp_tot_gt) / max(wp_tot_gt, 1), 4),
+            "maePerImage": round(sum(abs(a - b) for a, b in zip(wp_gt, wp_pred)) / n2, 4),
+            "exactMatchRate": round(sum(1 for a, b in zip(wp_gt, wp_pred) if a == b) / n2, 4),
+            "note": "服务 /analyze 与 count_coral_yolo.py 的默认阈值（生产工作点）",
+        }
+        print(f"  工作点计数（conf={WORK_CONF}）: GT {wp_tot_gt} / 预测 {wp_tot_pred}"
+              f"（偏差 {work_point['countBias']:+.1%}）", flush=True)
+    else:
+        work_point = dict(report_counting := {
+            "conf": args.conf, "iou": args.iou, "imgsz": args.imgsz,
+            "gtTotal": tot_gt, "predTotal": tot_pred,
+            "countBias": round(bias, 4), "maePerImage": round(mae, 4),
+            "exactMatchRate": round(exact, 4),
+            "note": "与 --conf 相同，故即工作点",
+        })
+
     passed = mAP50 >= ACCEPT_MAP50
     report = {
         "task": "YOLOv9 coral individual counting (P3)",
@@ -163,12 +202,16 @@ def evaluate(args, train_sec=None, save_dir=None):
             "confThreshold": args.conf, "iouThreshold": args.iou,
         },
         "counting": {
+            "conf": args.conf, "iou": args.iou,
             "gtTotal": tot_gt, "predTotal": tot_pred,
             "countBias": round(bias, 4),
             "maePerImage": round(mae, 4),
             "exactMatchRate": round(exact, 4),
             "note": "计数在 conf/iou 阈值下统计；MAE 为逐图 |预测框数-真值框数| 的均值",
         },
+        # ⚠️ 生产工作点（服务 /analyze 与 CLI 的默认 conf）单独记一遍：
+        #    此前只记 --conf（默认 0.25），验收证据因此与服务实际工作点不一致（+2.3% vs −15.7%）
+        "countingWorkPoint": work_point,
         "perImage": rows,
         "device": pick_device(),
         "note": ("val = Coralscapes 官方 validation split（与分割 mIoU 同源，无训练泄漏）；"

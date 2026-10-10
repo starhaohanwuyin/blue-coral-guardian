@@ -39,11 +39,23 @@ def check_counting():
         return False, "缺少 reports/yolo_coral_metrics.json（先跑 train_yolo_coral.py）", {}
     det = m["detection"]
     ok = det["mAP50"] >= 0.35
-    return ok, f"mAP@0.5 = {det['mAP50']}（阈值 0.35）", {
+    # ⚠️ 计数值必须报告**生产工作点**（服务/CLI 默认 conf），且把 conf 写进证据；
+    #    否则会出现"证据说 −15.7%、文档说 +2.3%"这种阈值不一致（两个数都是真的，但阈值不同）
+    wp = m.get("countingWorkPoint") or m.get("counting") or {}
+    cnt = {
+        "conf": wp.get("conf"), "iou": wp.get("iou"),
+        "gtTotal": wp.get("gtTotal"), "predTotal": wp.get("predTotal"),
+        "countBias": wp.get("countBias"), "maePerImage": wp.get("maePerImage"),
+        "exactMatchRate": wp.get("exactMatchRate"),
+        "note": "生产工作点（服务 /analyze 与 count_coral_yolo.py 默认阈值）",
+        "otherThresholds": m.get("counting") if m.get("countingWorkPoint") else None,
+    }
+    return ok, f"mAP@0.5 = {det['mAP50']}（阈值 0.35）；计数工作点 conf={cnt['conf']} " \
+               f"偏差 {cnt['countBias']:+.1%}，MAE {cnt['maePerImage']}", {
         "mAP50": det["mAP50"], "mAP50_95": det["mAP50_95"],
         "precision": det["precision"], "recall": det["recall"],
         "valImages": m["valImages"], "epochs": m["epochs"], "imgsz": m["imgsz"],
-        "trainMinutes": m["trainMinutes"], "counting": m["counting"],
+        "trainMinutes": m["trainMinutes"], "counting": cnt,
     }
 
 
