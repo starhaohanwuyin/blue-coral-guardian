@@ -35,11 +35,14 @@
     },
     "③ 只新增字段：既有输出不变": {
       "passed": true,
-      "detail": "既有键最大数值变化 0；新增键 ['plain.coralCount', 'withGeo.coralCount']",
+      "detail": "既有键最大数值变化 0；新增键 ['plain.coralCount', 'withGeo.climate.coverageBBox', 'withGeo.climate.withinGrid', 'withGeo.coralCount', 'withGeo.restoration.climateAvailable']",
       "existingKeysMaxChange": 0.0,
       "addedKeys": [
         "plain.coralCount",
-        "withGeo.coralCount"
+        "withGeo.climate.coverageBBox",
+        "withGeo.climate.withinGrid",
+        "withGeo.coralCount",
+        "withGeo.restoration.climateAvailable"
       ],
       "problems": []
     },

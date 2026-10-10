@@ -72,10 +72,15 @@ def capture(api, out: Path):
     return 0
 
 
-def diff(before, after, path="", out=None, maxdiff=None):
-    """递归比对；返回 (缺失/变化列表, 新增键列表)。"""
+def diff(before, after, path="", out=None, added=None, maxdiff=None):
+    """递归比对；返回 (缺失/变化列表, 新增键列表)。
+
+    ⚠️ 修过的 bug：`added` 必须像 `out` 一样**传引用下去**，否则递归只保留顶层新增键，
+    嵌套新增字段（如 `withGeo.climate.withinGrid`）会被静默丢掉 —— 而「只新增了哪些字段」
+    恰恰是这项检查要回答的问题。
+    """
     out = [] if out is None else out
-    added = []
+    added = [] if added is None else added
     if isinstance(before, dict) and isinstance(after, dict):
         for k, v in before.items():
             if k in VOLATILE:
@@ -84,7 +89,7 @@ def diff(before, after, path="", out=None, maxdiff=None):
             if k not in after:
                 out.append(f"缺少键 {p}")
             else:
-                diff(v, after[k], p, out, maxdiff)
+                diff(v, after[k], p, out, added, maxdiff)
         for k in after:
             if k not in before:
                 added.append(f"{path}.{k}" if path else k)
@@ -93,7 +98,7 @@ def diff(before, after, path="", out=None, maxdiff=None):
             out.append(f"列表长度变化 {path}: {len(before)} → {len(after)}")
         else:
             for i, (a, b) in enumerate(zip(before, after)):
-                diff(a, b, f"{path}[{i}]", out, maxdiff)
+                diff(a, b, f"{path}[{i}]", out, added, maxdiff)
     elif isinstance(before, bool) or isinstance(after, bool):
         if before != after:
             out.append(f"{path}: {before} → {after}")

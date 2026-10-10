@@ -164,7 +164,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 446.2,
+      "elapsedMs": 80.5,
       "imageSize": [
         1024,
         684
@@ -222,7 +222,7 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 2442.2,
+    "inferenceMs": 791.7,
     "restoration": null,
     "restorationHint": "传入 lat/lon 即可获得气候背景与修复优先级研判",
     "success": true,
@@ -319,6 +319,12 @@
       },
       "baaLabel": "白化警报一级",
       "baaSource": "官方 CRW_BAA 产品",
+      "coverageBBox": {
+        "latMax": 5.025,
+        "latMin": 4.025,
+        "lonMax": 119.525,
+        "lonMin": 118.025
+      },
       "daysDhwGe4": 58,
       "daysDhwGe8": 0,
       "dhwMax": 5.42,
@@ -337,6 +343,7 @@
       "sstMean": 29.581,
       "typicalDhwMax": 2.19,
       "verdict": "中度热应激：已具备明显白化条件",
+      "withinGrid": true,
       "year": 2024
     },
     "coralCount": {
@@ -462,7 +469,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 76.0,
+      "elapsedMs": 76.7,
       "imageSize": [
         1024,
         684
@@ -520,7 +527,7 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 514.8,
+    "inferenceMs": 649.0,
     "restoration": {
       "actions": [
         "**暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评"
@@ -543,6 +550,7 @@
         "verdict": "中度热应激：已具备明显白化条件",
         "year": 2024
       },
+      "climateAvailable": true,
       "disclaimer": "本结果为基于规则的决策支持参考，非经验证的预测模型，不提供准确率指标，不替代专业珊瑚礁评估。",
       "genusDiversity": {
         "count": 3,
