@@ -23,7 +23,21 @@ module.exports = {
    * 开发期指向本机即可（开发者工具 urlCheck 已关闭）；
    * 真机/发布需换成 HTTPS 已备案域名。
    */
-  CORAL_API: 'http://127.0.0.1:8000',
+  /* 评估服务地址（coral_ml/scripts/serve_fusion.py，监听 0.0.0.0:8000）
+   * ⚠️ 真机（手机预览/调试）里 `127.0.0.1` 指的是**手机自己**，永远连不到电脑，
+   *    表现就是识别页一直转圈且服务端日志里没有任何请求 —— 所以这里按运行环境自动选择。 */
+  CORAL_API: (function pickCoralApi() {
+    var DEVTOOLS = 'http://127.0.0.1:8000'
+    var LAN = 'http://10.0.250.15:8000'   // 电脑局域网 IP；换网络后需同步修改
+    try {
+      var info = (typeof wx !== 'undefined' && wx.getDeviceInfo)
+        ? wx.getDeviceInfo()
+        : (typeof wx !== 'undefined' && wx.getSystemInfoSync ? wx.getSystemInfoSync() : null)
+      // 开发者工具模拟器的 platform 为 'devtools'；真机为 'ios' / 'android'
+      if (info && info.platform && info.platform !== 'devtools') return LAN
+    } catch (e) {}
+    return DEVTOOLS
+  })(),
 
   // true  = 调用真实评估服务（需要 serve_fusion.py 在运行）
   // false = 直接使用本地演示数据
