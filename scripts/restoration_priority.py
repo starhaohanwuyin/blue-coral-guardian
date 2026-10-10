@@ -134,13 +134,19 @@ def _report_text(p, cover, climate, genus, quality, cell):
         L.append(f"    经纬度：{cell.get('gridCell', {}).get('lat')}°N "
                  f"{cell.get('gridCell', {}).get('lon')}°E（最近 NOAA 5km 格点）")
         L.append(f"    评估年份：{climate.get('year')}")
-        L.append(f"    海表热压力：DHW 峰值 {climate.get('dhwMax')}，"
-                 f"白化预警等级「{climate.get('baaLabel')}」（{climate.get('baa')}/4）")
-        L.append(f"    热浪天数：DHW≥4 共 {climate.get('daysDhwGe4')} 天，"
-                 f"DHW≥8 共 {climate.get('daysDhwGe8')} 天")
-        if climate.get("anomalyNote"):
-            L.append(f"    年度对比：{climate['anomalyNote']}")
-        L.append(f"    气候解读：{climate.get('verdict')}")
+        if climate.get("dhwMax") is None:
+            # 网格外：如实说明"无数据"，不打印 None 让人误以为有值
+            L.append(f"    海表热压力：**无数据**（{climate.get('note') or climate.get('baaLabel')}）")
+            L.append(f"    说明：该坐标不在本项目 NOAA 网格覆盖范围内，"
+                     f"本次研判**未使用**热压力维度。")
+        else:
+            L.append(f"    海表热压力：DHW 峰值 {climate.get('dhwMax')}，"
+                     f"白化预警等级「{climate.get('baaLabel')}」（{climate.get('baa')}/4）")
+            L.append(f"    热浪天数：DHW≥4 共 {climate.get('daysDhwGe4')} 天，"
+                     f"DHW≥8 共 {climate.get('daysDhwGe8')} 天")
+            if climate.get("anomalyNote"):
+                L.append(f"    年度对比：{climate['anomalyNote']}")
+            L.append(f"    气候解读：{climate.get('verdict')}")
         L.append("")
 
     L.append("二、图像研判结果")
@@ -211,9 +217,14 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
     if climate is None and lat is not None and lon is not None:
         climate = context_for(lat, lon, year)
         cell = climate
-    if not climate:
-        climate = {"baa": 0, "baaLabel": "数据缺失", "dhwMax": None,
-                   "source": "无", "note": "未提供坐标或环境数据"}
+    # climate_context 在**网格外**会返回 ok=False（宁可报缺数据也不给最近的错格点）：
+    # 这里要如实降级为「气候数据缺失」，并让报告文字说清原因，而不是打印一串 None。
+    climate_available = bool(climate) and climate.get("ok") is not False
+    if not climate_available:
+        err = (climate or {}).get("error")
+        climate = {"baa": 0, "baaLabel": "数据缺失", "dhwMax": None, "source": "无",
+                   "year": (climate or {}).get("year") or year,
+                   "note": err or "未提供坐标或环境数据"}
 
     top = coral_region.get("top") or []
     if coral_region.get("reliable") is False:
@@ -326,6 +337,8 @@ def assess(cover, climate=None, coral_region=None, capture_quality=None,
 
     result = {
         "ok": True,
+        # 新增（附加字段）：本次研判是否真的用到了气候数据
+        "climateAvailable": climate_available,
         "method": "rule-based decision support heuristic（规则型决策支持启发式）",
         "simulation": sim,
         "simulationReport": sim_txt,

@@ -209,6 +209,21 @@ def _nearest_cell(idx, year, lat, lon):
     return best, math.sqrt(bestd)
 
 
+# 空间覆盖闸门（修过的 bug）：
+# 本项目 NOAA 网格只覆盖仙本那核心区，但 context_for() 原先对**任何**坐标都
+# 「取最近格点」并照常返回 ok=True —— 实测查深圳（约 2000 km 外）会得到
+# DHW 9.65 / BAA 4 /「严重热应激：大面积白化并可能出现死亡」，属于**错误结论**。
+# 现在：超出网格 bbox 一个格点容差之外 → 直接 ok=False，宁可报缺数据也不猜。
+GRID_MARGIN_DEG = 0.05
+
+
+def grid_bbox(cells) -> tuple:
+    """由索引里的实际格点推出覆盖范围 (latMin, lonMin, latMax, lonMax)。"""
+    lats = [float(k.split("_")[0]) for k in cells]
+    lons = [float(k.split("_")[1]) for k in cells]
+    return min(lats), min(lons), max(lats), max(lons)
+
+
 def dhw_verdict(dhw_max: float) -> str:
     for th, desc in DHW_THRESHOLDS:
         if dhw_max >= th:
@@ -228,8 +243,30 @@ def context_for(lat: float, lon: float, year: int | None = None):
         return {"ok": False, "error": f"无 {year} 年数据",
                 "availableYears": years}
 
-    c = idx["years"][str(year)][key]
+    cells_year = idx["years"][str(year)]
+    y0, x0, y1, x1 = grid_bbox(cells_year)
     la, lo = (float(x) for x in key.split("_"))
+
+    # ---- 覆盖闸门：网格外不返回结论（见 GRID_MARGIN_DEG 处说明）----
+    if not (y0 - GRID_MARGIN_DEG <= lat <= y1 + GRID_MARGIN_DEG and
+            x0 - GRID_MARGIN_DEG <= lon <= x1 + GRID_MARGIN_DEG):
+        return {
+            "ok": False,
+            "year": year,
+            "error": (f"坐标 ({lat}, {lon}) 不在气候数据覆盖范围内"
+                      f"（网格 {y0:.3f}~{y1:.3f}N, {x0:.3f}~{x1:.3f}E），"
+                      f"拒绝给出热压力结论"),
+            "reason": ("网格外取「最近格点」的距离可达数十至数千公里，"
+                       "据此报出的 DHW / 白化预警会是错误结论，故此处报缺数据而非猜测值。"),
+            "coverageBBox": {"latMin": y0, "latMax": y1, "lonMin": x0, "lonMax": x1},
+            # gridCell 与成功响应同形（供报告/前端复用）；nearestCell 额外给出距离
+            "gridCell": {"lat": la, "lon": lo, "distanceDeg": round(dist, 3)},
+            "nearestCell": {"lat": la, "lon": lo, "distanceDeg": round(dist, 3)},
+            "availableYears": years,
+            "hint": "如需覆盖该区域：用 cache_noaa.py 扩充网格后重建 data/noaa/climate_index.json",
+        }
+
+    c = cells_year[key]
 
     # 与其它年份对比，判断该年是否异常
     others = [idx["years"][y][key]["max"] for y in years
@@ -264,6 +301,9 @@ def context_for(lat: float, lon: float, year: int | None = None):
         ),
         "source": idx["source"],
         "availableYears": years,
+        # P3 后新增（附加字段，原键值与口径未动）：让调用方自行判断是否在覆盖区内
+        "withinGrid": True,
+        "coverageBBox": {"latMin": y0, "latMax": y1, "lonMin": x0, "lonMax": x1},
     }
 
 
