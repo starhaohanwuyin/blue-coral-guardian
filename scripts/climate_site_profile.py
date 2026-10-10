@@ -110,22 +110,25 @@ def build(years_pin=None) -> dict:
 
         # ---- 月份按"出现频率"统计（年份多寡都能用；3 年与 41 年同一套口径）----
         #   对每个月统计：有多少年的该月出现过 DHW≥4 / HotSpot≥1
-        alert_month_freq = {m: sum(1 for y in ys if m in ys[y]["alertMonths"]) / n for m in range(1, 13)}
-        heat_month_freq = {m: sum(1 for y in ys if m in ys[y]["heatMonths"]) / n for m in range(1, 13)}
-        # ---- 风险月：按"相对本格点峰值频率"取季节窗口（长序列必须这样做）----
-        # 41 年样本里"某月曾出现过 DHW≥4"几乎覆盖全年（实测高危格点会得到 10 个月），
-        # 结论不可用。改为：取频率 ≥ 峰值 50% 的月份 → 得到紧凑的季节窗口
-        # （3 年样本下各月频率相同，结果与"出现过即计入"一致，行为向后兼容）
-        def _rel_months(freq_map, floor=0.5):
-            if not freq_map:
-                return []
-            mx = max(freq_map.values())
+        alert_month_count = {m: sum(1 for y in ys if m in ys[y]["alertMonths"]) for m in range(1, 13)}
+        heat_month_count = {m: sum(1 for y in ys if m in ys[y]["heatMonths"]) for m in range(1, 13)}
+        alert_month_freq = {m: alert_month_count[m] / n for m in range(1, 13)}
+        heat_month_freq = {m: heat_month_count[m] / n for m in range(1, 13)}
+
+        # ---- 风险月：按"相对本格点峰值"取季节窗口（长序列必须这样做）----
+        # 41 年样本里"某月曾出现过 DHW≥4"几乎覆盖全年（实测高危格点会得到 10 个月），结论不可用。
+        # 改为：取**出现次数** ≥ ceil(峰值月次数 / 2) 的月份 → 紧凑季节窗口
+        # ⚠️ 用**整数计数**而不是浮点频率比较：频率存成小数会四舍五入，
+        #    导致"恰好等于峰值一半"的月份在外部重算时翻转（实测 544 格中 84 格受影响）。
+        def _season_months(counts):
+            mx = max(counts.values()) if counts else 0
             if mx <= 0:
                 return []
-            return sorted(m for m, v in freq_map.items() if v >= mx * floor)
+            thr = -(-mx // 2)          # ceil(mx/2)，纯整数运算
+            return sorted(m for m, c in counts.items() if c >= thr)
 
-        risky = _rel_months(alert_month_freq)
-        heat = _rel_months(heat_month_freq)
+        risky = _season_months(alert_month_count)
+        heat = _season_months(heat_month_count)
         # 建议避开 = DHW 已达警戒的月份 ∪ 出现过热异常（HotSpot≥1）的月份
         # （DHW 是 12 周累积量、会滞后，用 HotSpot 把"提前预警窗口"也覆盖进来，取并集更保守）
         avoid = sorted(set(risky) | set(heat))
@@ -157,8 +160,11 @@ def build(years_pin=None) -> dict:
             "peakMean": round(mean_p, 2),
             "peakStd": round(std_p, 2),
             "peakRange": round(max(pv) - min(pv), 2),
-            "alertMonthFreq": {str(m): round(v, 3) for m, v in alert_month_freq.items() if v},
-            "heatMonthFreq": {str(m): round(v, 3) for m, v in heat_month_freq.items() if v},
+            "alertMonthFreq": {str(m): round(v, 4) for m, v in alert_month_freq.items() if v},
+            "heatMonthFreq": {str(m): round(v, 4) for m, v in heat_month_freq.items() if v},
+            # 整数计数（权威口径）：风险月由它算出，避免浮点四舍五入造成外部重算不一致
+            "alertMonthCount": {str(m): c for m, c in alert_month_count.items() if c},
+            "heatMonthCount": {str(m): c for m, c in heat_month_count.items() if c},
             "riskyMonths": risky,          # DHW≥4 出现频率达标的月份
             "heatMonths": heat,            # HotSpot≥1 半数以上年份出现的月份（更及时）
             "avoidMonths": avoid,          # 建议避开（两者并集）
@@ -191,15 +197,17 @@ def build(years_pin=None) -> dict:
     n_yr = len(years)
     span = f"{years[0]}–{years[-1]}（{n_yr} 年）" if years else "无"
     caveats = [
-        (f"仅 {span} 的样本" + ("；样本较短，'多年稳定'不等于'以后不会遇上'"
+        (f"样本为 {span}" + ("；样本较短，'多年稳定'不等于'以后不会遇上'"
                              if n_yr < 10 else "；已可做频率统计，但历史记录不等于未来情景")),
         "5km 格点 ≠ 礁点：只能给'哪片海'，不能给'哪个礁'",
         "仅热压力维度；不是投放效果评估（项目无投放后存活率数据）",
         "DHW 为 12 周累积量，月份会滞后；heatMonths 用 HotSpot≥1 定位热事件窗口",
+        "风险月由**出现次数**（整数）算出：取 ≥ ceil(峰值月次数/2) 的月份；"
+        "字段 alertMonthCount/heatMonthCount 为权威值",
     ]
     if lt_years:
-        caveats.append(f"其中 {len(lt_years)} 个年份为**每 5 天抽稀**缓存（长序列下载中），"
-                       f"峰值可能略低于逐日值；警戒月份判定不受影响")
+        caveats.append(f"其中 {len(lt_years)} 个年份为**每 5 天抽稀**采样（峰值是下界，"
+                       f"可能略低于逐日真值；警戒月份判定不受影响）")
 
     data = {
         "source": "NOAA CRW v3.1 5km via PacIOOS/CoastWatch mirror（本地缓存聚合）",
