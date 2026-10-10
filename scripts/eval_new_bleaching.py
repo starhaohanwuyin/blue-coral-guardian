@@ -40,6 +40,9 @@ def main():
     ap.add_argument("--split", default="test", choices=["train", "valid", "test"])
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--exclude-phash", action="store_true",
+                    help="剔除与其它 split 近似重复（pHash）的样本——防止数据泄漏虚高指标")
+    ap.add_argument("--phash-file", default=str(ROOT / "reports" / "phash_new_bleaching.json"))
     args = ap.parse_args()
 
     wpath = ROOT / "weights" / args.task / "best.pt"
@@ -70,6 +73,21 @@ def main():
     bi = ci
 
     rows = []
+    leak_names, n_skipped = set(), 0
+    if args.exclude_phash:
+        pf = Path(args.phash_file)
+        if not pf.exists():
+            raise SystemExit(f"--exclude-phash 需要 pHash 审计文件，但 {pf} 不存在")
+        audit = json.loads(pf.read_text(encoding="utf-8"))
+        for pr in audit.get("pairs", []):
+            a, b = str(pr.get("a", "")), str(pr.get("b", ""))
+            sa, sb = a.split("/")[0], b.split("/")[0]
+            if sa == args.split and sb != args.split:
+                leak_names.add(a.split("/")[-1])
+            if sb == args.split and sa != args.split:
+                leak_names.add(b.split("/")[-1])
+        print(f"⚠ 剔除 {len(leak_names)} 张与其它 split 近似重复的图片（pHash 泄漏）")
+
     for cls in ("Bleached", "Healthy"):
         d = NEW_ROOT / args.split / cls
         if not d.exists():
@@ -78,6 +96,9 @@ def main():
         if args.limit:
             files = files[: args.limit]
         for f in files:
+            if f.name in leak_names:          # 泄漏样本直接跳过（不参与指标）
+                n_skipped += 1
+                continue
             try:
                 x = tf(Image.open(f).convert("RGB")).unsqueeze(0).to(device)
                 with torch.no_grad(), torch.amp.autocast("cuda", enabled=(device.type == "cuda")):
@@ -150,11 +171,14 @@ def main():
     out.write_text(json.dumps({
         "model": args.task, "split": args.split, "n": len(rows),
         "nBleached": n_ble, "nHealthy": n_hea,
+        "excludedPhashLeak": n_skipped, "excludePhash": bool(args.exclude_phash),
+        "phashFile": str(args.phash_file) if args.exclude_phash else None,
         "bleachedRecall": round(ble_rec, 6), "bleachedPrecision": round(ble_prec, 6),
         "healthyRecall": round(hea_rec, 6), "binaryAccuracy": round(acc2, 6),
         "bestThreshold": {"th": best[0], "recall": best[1], "precision": best[2], "acc2": best[3]},
         "confusion": dict(dist),
-        "note": "该数据集与本项目原训练数据哈希零重叠，属独立测试集",
+        "note": ("该数据集与本项目原训练数据哈希零重叠，属独立测试集"
+                 + ("；已按 pHash 审计剔除跨 split 近似重复" if args.exclude_phash else "")),
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n结果: {out}")
 

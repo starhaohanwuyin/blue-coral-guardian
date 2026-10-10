@@ -378,10 +378,29 @@ def main():
             L.append("> McNemar 检验：合并 vs 旧在印尼域 **p = 0.424（不显著）** → 未丢失跨域能力；"
                      "而新模型 vs 旧 **p < 10⁻⁶（显著退化）**。")
             L.append("")
-            L.append("| 模型 | 新域（剔除泄漏 n=168） |")
-            L.append("|---|---|")
-            L.append("| bleaching_new | 99.40% |")
-            L.append("| **bleaching_all（合并）** | **98.21%**（白化召回 96.77%，精确 100%）|")
+            # 修复：原实现把这两行**写死在脚本里**（无 JSON 出处），与报告自身
+            # 「所有数字均直接读取结果 JSON，未人工誊抄」的声明矛盾。现改为读 JSON，
+            # 并给 eval_new_bleaching.py 加了 --exclude-phash 使其可脚本复现。
+            clean_all = load("new_bleaching_bleaching_all_test_clean168.json")
+            clean_new = load("protocol_bleaching_new_test_clean.json")
+            L.append("| 模型 | 新域（剔除 pHash 泄漏）| 来源 JSON |")
+            L.append("|---|---|---|")
+            if clean_new:
+                L.append(f"| bleaching_new | Top-1 **{pct(clean_new['top1'])}**"
+                         f"（n={clean_new['n_samples']}）| `protocol_bleaching_new_test_clean.json` |")
+            if clean_all:
+                L.append(f"| **bleaching_all（合并，生产模型）** | 二分类准确率 "
+                         f"**{pct(clean_all['binaryAccuracy'])}**（白化召回 "
+                         f"{pct(clean_all['bleachedRecall'])}，精确 {pct(clean_all['bleachedPrecision'])}，"
+                         f"n={clean_all['n']}）| `new_bleaching_bleaching_all_test_clean168.json` |")
+            L.append("")
+            L.append("> 🔧 **修复记录（2026-10-10 复核）**：上表原来是本脚本里**写死的数字**，"
+                     "无 JSON 可追溯。已改为读 JSON，并新增可复现入口："
+                     "`python scripts/eval_new_bleaching.py --task bleaching_all --split test "
+                     "--exclude-phash --out reports/new_bleaching_bleaching_all_test_clean168.json`。"
+                     "**复现结果与原文完全一致**（98.21% / 96.77% / 100%）—— 即数字本来就是对的，"
+                     "坏的是可追溯性。")
+            L.append("")
             L.append("")
 
     # ---------- 6. 数据合规 ----------

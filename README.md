@@ -168,6 +168,9 @@ coral_ml/
 | 目标域 | 白化召回 | 二分类准确率 |
 |---|---|---|
 | 第三方独立数据集（Roboflow，剔除泄漏）| 96.77% | **98.21%** |
+
+> 来源：`reports/new_bleaching_bleaching_all_test_clean168.json`（n=168，剔 89 张 pHash 跨 split 近重复）。
+> 可脚本复现：`python scripts/eval_new_bleaching.py --task bleaching_all --split test --exclude-phash`。
 | 原 Kaggle 域 | 88.78% | 91.26% |
 | 印太域（印尼） | 42.31% | 82.95% |
 
