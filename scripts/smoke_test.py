@@ -11,6 +11,7 @@
 """
 import argparse
 import json
+import os
 import re
 import subprocess
 import time
@@ -18,7 +19,18 @@ from pathlib import Path
 
 BC = Path(r"D:\大学作业\广东海洋大学的珊瑚评测小程序\blue_coral")
 CLI = r"C:\Program Files (x86)\Tencent\微信web开发者工具\wechatide.cmd"
-TOKEN = "<REDACTED>"
+# ⚠️ token 不硬编码（避免凭证进仓库）：在开发者工具「设置 → 安全设置 → 服务端口」
+#    可查看，通过环境变量传入。注意 DevTools 重启后 token 会重新生成。
+TOKEN = os.environ.get("WECHAT_IDE_TOKEN", "")
+if not TOKEN:
+    raise SystemExit(
+        "缺少 WECHAT_IDE_TOKEN 环境变量。\n"
+        "  1) 打开微信开发者工具 → 设置 → 安全设置 → 开启「服务端口」\n"
+        "  2) 复制其中的 token，然后设置环境变量：\n"
+        "     PowerShell:  $env:WECHAT_IDE_TOKEN='<你的token>'\n"
+        "     bash:        export WECHAT_IDE_TOKEN='<你的token>'\n"
+        "  3) 重新运行本脚本"
+    )
 
 # 忽略的已知噪声（开发者工具自身的路由/懒加载提示）
 NOISE = [
