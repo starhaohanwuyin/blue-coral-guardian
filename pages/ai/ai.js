@@ -86,26 +86,44 @@ Page({
     const bb = config.GRID_BBOX
     if (this.data.locating) return
     this.setData({ locating: true })
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        const lat = Number(res.latitude)
-        const lon = Number(res.longitude)
-        const inside = lat >= bb.latMin && lat <= bb.latMax && lon >= bb.lonMin && lon <= bb.lonMax
-        if (!inside) {
+
+    // ⚠️ 真机上 `wx.getLocation` 需满足两个前提，否则直接 fail：
+    //   ① app.json 声明 `permission.scope.userLocation` 与 `requiredPrivateInfos: ["getLocation"]`（已声明）
+    //   ② 用户已同意隐私授权 —— 新基础库需先调 `wx.requirePrivacyAuthorize`
+    const locate = () => {
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          const lat = Number(res.latitude)
+          const lon = Number(res.longitude)
+          const inside = lat >= bb.latMin && lat <= bb.latMax && lon >= bb.lonMin && lon <= bb.lonMax
+          if (!inside) {
+            this.setData({ locating: false })
+            util.toast('当前位置不在 NOAA 覆盖网格内（仙本那及周边），请选预设点位')
+            return
+          }
+          const site = { lat: lat, lon: lon, name: `我的位置 ${lat.toFixed(2)}N ${lon.toFixed(2)}E` }
+          this.setData({ customSite: site, siteName: site.name, locating: false })
+          if (this.data.state === 'result' && this.data.imgPath) this.startAnalysis()
+        },
+        fail: () => {
           this.setData({ locating: false })
-          util.toast('当前位置不在 NOAA 覆盖网格内（仙本那及周边），请选预设点位')
-          return
-        }
-        const site = { lat: lat, lon: lon, name: `我的位置 ${lat.toFixed(2)}N ${lon.toFixed(2)}E` }
-        this.setData({ customSite: site, siteName: site.name, locating: false })
-        if (this.data.state === 'result' && this.data.imgPath) this.startAnalysis()
-      },
-      fail: () => {
-        this.setData({ locating: false })
-        util.toast('定位不可用（未授权或未开启），已保留当前点位')
-      },
-    })
+          util.toast('定位不可用（未授权或未开启），已保留当前点位')
+        },
+      })
+    }
+
+    if (typeof wx.requirePrivacyAuthorize === 'function') {
+      wx.requirePrivacyAuthorize({
+        success: locate,
+        fail: () => {
+          this.setData({ locating: false })
+          util.toast('需先同意隐私授权（含定位用途说明）才能使用「我的位置」')
+        },
+      })
+    } else {
+      locate()
+    }
   },
 
   onLoad() {
