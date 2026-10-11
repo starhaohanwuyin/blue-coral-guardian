@@ -87,10 +87,18 @@ Page({
   },
 
   /* 把接口结果转成视图字段（百分比等） */
-  /* 环境数据视图（NOAA 海表热压力） */
-  buildClimateView(cl) {
+  /* 环境数据视图（NOAA 海表热压力）
+   * dep = 后端同一次返回里的 deployment（41 年历史热压力档案），无需额外请求。
+   * ⚠️ 卡片展示的是**年度等级**（该年 DHW 峰值对应的 BAA），不是实时状态，
+   *    因此补一行"该点位历史"与"建议避开月份"，避免把单年等级误读为常态。 */
+  buildClimateView(cl, dep) {
     if (!cl || !cl.ok) return null
     const lvl = cl.baa >= 3 ? 'danger' : cl.baa === 2 ? 'warn' : 'ok'
+    const d = dep && dep.ok ? dep : null
+    const alertYears = (d && d.alertYears) || []
+    const severeYears = (d && d.severeYears) || []
+    const avoid = (d && d.avoidMonths) || []
+    const monthTxt = (arr) => arr.map((m) => m + ' 月').join('、')
     return {
       year: cl.year,
       gridLat: cl.gridCell && cl.gridCell.lat,
@@ -101,6 +109,14 @@ Page({
       level: lvl,
       daysGe4: cl.daysDhwGe4,
       daysGe8: cl.daysDhwGe8,
+      // —— 年度等级口径提示 + 41 年历史（来自同一响应的 deployment）——
+      hasHistory: !!d,
+      historyYears: d ? d.nYears : 0,
+      historyText: d ? `${(d.alertYears || []).length} 年达警戒`
+        + (alertYears.length ? `（${alertYears.join('、')}）` : '') : '',
+      severeText: severeYears.length ? `${severeYears.length} 年达严重档（${severeYears.join('、')}）` : '',
+      avoidText: avoid.length ? monthTxt(avoid) : '',
+      avoidNote: d && d.riskLevel === 'high' ? '该点位历史上反复发生白化，不建议投放' : '',
       anomalyNote: cl.anomalyNote || '',
       verdict: cl.verdict || '',
       peakDate: cl.peakDate || '',
@@ -206,7 +222,7 @@ Page({
       bleachAlert: Number(c.bleachingShareOfCoral || 0) > 0.10,
       inferenceMs: res.inferenceMs || 0,
         // 环境数据（NOAA 海表热压力）
-        climate: this.buildClimateView(res.climate),
+        climate: this.buildClimateView(res.climate, res.deployment),
         // 综合研判（修复优先级 + 苗投放建议 + 保育报告）
         restoration: this.buildRestorationView(res.restoration)
     }

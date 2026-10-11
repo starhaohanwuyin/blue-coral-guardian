@@ -181,7 +181,7 @@
 <view class="res-card card" wx:if="{{view.climate}}">
   <view class="res-title">
     <text>环境数据 · 海表热压力</text>
-    <text class="res-sub">NOAA CRW 5km · {{view.climate.year}} 年</text>
+    <text class="res-sub">NOAA CRW 5km · {{view.climate.year}} 年年度等级（非实时）</text>
   </view>
   <view class="climate-head climate-{{view.climate.level}}">
     <view class="climate-grade">{{view.climate.baaLabel}}</view>
@@ -199,6 +199,15 @@
     <view class="climate-row" wx:if="{{view.climate.anomalyNote}}">
       <text class="cr-k">年度对比</text>
       <text class="cr-v">{{view.climate.anomalyNote}}</text>
+    </view>
+    <!-- 41 年历史（来自同一次响应的 deployment），避免把单年等级误读为常态 -->
+    <view class="climate-row" wx:if="{{view.climate.hasHistory}}">
+      <text class="cr-k">历史热压力</text>
+      <text class="cr-v">近 {{view.climate.historyYears}} 年 {{view.climate.historyText}}{{view.climate.severeText ? '；' + view.climate.severeText : ''}}</text>
+    </view>
+    <view class="climate-row" wx:if="{{view.climate.avoidText}}">
+      <text class="cr-k">建议避开</text>
+      <text class="cr-v">{{view.climate.avoidText}}<text wx:if="{{view.climate.avoidNote}}">（{{view.climate.avoidNote}}）</text></text>
     </view>
   </view>
   <view class="climate-verdict">{{view.climate.verdict}}</view>

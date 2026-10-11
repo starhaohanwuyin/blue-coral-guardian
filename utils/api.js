@@ -460,16 +460,25 @@ function mockCoralResult() {
     },
     disclaimer: '本结果由AI模型给出，仅供保育决策参考；建议拍摄深度 ≤10m。本项目仅用于学术研究与竞赛，非商业用途。',
       inferenceMs: 812,
-    // 环境数据（演示值取自仙本那 2024 年 NOAA 实况）
+    // 环境数据（演示值取自仙本那核心格点 2025 年 NOAA 实况，与"默认取最新年"一致）
     climate: {
-      ok: true, year: 2024,
+      ok: true, year: 2025,
       gridCell: { lat: 4.425, lon: 118.775, distanceDeg: 0.035 },
-      dhwMax: 5.42, baa: 2, baaLabel: '白化警告', riskScore: 0.5,
-      daysDhwGe4: 58, daysDhwGe8: 0, peakDate: '2024-06-05',
-      verdict: '中度热应激：已具备明显白化条件',
-      typicalDhwMax: 2.19, anomalyVsOtherYears: 3.23,
-      anomalyNote: '比其它年份平均高 +3.23（+148%）',
+      dhwMax: 2.69, baa: 2, baaLabel: '白化警告', riskScore: 0.5,
+      daysDhwGe4: 0, daysDhwGe8: 0, peakDate: '2025-05-27',
+      verdict: '轻度热应激：需持续关注',
+      typicalDhwMax: 3.55, anomalyVsOtherYears: -0.86,
+      anomalyNote: '比其它年份平均高 -0.86（-24%）',
       source: 'NOAA CRW v3.1 5km via PacIOOS mirror',
+    },
+    // 投放时间窗档案（41 年历史；演示值取自本项目实算结果）
+    deployment: {
+      ok: true, nYears: 41,
+      gridCell: { lat: 4.425, lon: 118.775, distanceDeg: 0.035 },
+      label: '41 年中 3 年达白化警戒（7%）',
+      riskLevel: 'medium',
+      alertYears: ['2016', '2020', '2024'], severeYears: [],
+      avoidMonths: [4, 5, 6, 7], safeMonths: [1, 2, 3, 8, 9, 10, 11, 12],
     },
     // 综合研判（演示值）
     restoration: {
