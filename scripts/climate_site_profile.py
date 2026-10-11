@@ -375,12 +375,37 @@ def _nearest_cell_key(pf, lat, lon):
 
 
 # ------------------------------------------------------------------ CLI
+def input_fingerprint() -> str:
+    """输入指纹：所有参与聚合的原始 CSV 的 (变量, 文件名, 大小) 摘要。
+
+    用途：长序列抽稀年份正被逐日数据逐步替换时，**防止误重建**把已验收的
+    峰值/警戒年份悄悄改掉。指纹不一致时 --build 会拒绝执行（除非显式 --allow-input-change）。
+    """
+    import hashlib
+    h = hashlib.sha1()
+    for var in ("DHW", "BAA", "HOTSPOT", "SSTANOMALY", "SST"):
+        try:
+            files = _series_files(var, include_lt=True)
+        except Exception:
+            continue
+        for y, p in sorted(files.items()):
+            try:
+                h.update(f"{var}|{p.name}|{p.stat().st_size}|".encode())
+            except OSError:
+                pass
+    return h.hexdigest()[:16]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--build", action="store_true", help="预计算档案（写入 data/noaa/site_profiles.json）")
     ap.add_argument("--lat", type=float)
     ap.add_argument("--lon", type=float)
     ap.add_argument("--list-risky", action="store_true", help="列出年年达警戒的格点")
+    ap.add_argument("--allow-input-change", action="store_true",
+                    help="原始缓存已变（如逐日补全进行中）时仍允许重建档案")
+    ap.add_argument("--check-inputs", action="store_true",
+                    help="只比对输入指纹与已构建档案是否一致（不改动任何文件）")
     ap.add_argument("--years", default="",
                     help="固定年份集合（逗号分隔，如 2023,2024,2025）；缺省用缓存里全部年份。"
                          "长序列下载未完成时用它保证产物可复现")
@@ -388,9 +413,45 @@ def main():
 
     years_pin = [y.strip() for y in args.years.split(",") if y.strip()] or None
 
+    if args.check_inputs:
+        cur = input_fingerprint()
+        old = None
+        if PROFILES.exists():
+            try:
+                old = json.loads(PROFILES.read_text(encoding="utf-8")).get("inputFingerprint")
+            except (OSError, ValueError):
+                old = None
+        print(f"当前输入指纹: {cur}")
+        print(f"档案里记录  : {old or '（该档案构建于本守卫加入之前）'}")
+        if not old:
+            print("→ 无法比对（旧档案没有指纹）。下次 --build 会写入指纹。")
+        elif old == cur:
+            print("→ ✅ 一致：重建不会改变已验收的数字。")
+        else:
+            print("→ ⚠️ 不一致：原始缓存已变（很可能是逐日补全进行中）；此时重建会改变已验收数字。")
+        return 0
+
     if args.build:
         print("聚合 NOAA 数据（DHW/BAA/HotSpot）…")
+        # ⚠️ 输入指纹守卫：原始缓存一旦变动（例如长序列抽稀年份正被逐日数据替换），
+        #    重建出的峰值/警戒年份就会与**已验收的数字**不同。先比对再动手，避免误改。
+        fp = input_fingerprint()
+        old_fp = None
+        if PROFILES.exists():
+            try:
+                old_fp = json.loads(PROFILES.read_text(encoding="utf-8")).get("inputFingerprint")
+            except (OSError, ValueError):
+                old_fp = None
+        if old_fp and old_fp != fp:
+            print("  ⚠️ 原始缓存自上次构建后已变化（指纹不一致）：")
+            print(f"     已验收产物指纹 {old_fp} → 当前输入 {fp}")
+            print("     重建后的峰值/警戒年份可能与文档中已验收的数字不同；")
+            print("     若长序列（1985–2022）的逐日补全尚未完成，建议**暂不重建**。")
+            if not args.allow_input_change:
+                print("     如确实要重建：加 `--allow-input-change`。")
+                return 2
         data = build(years_pin=years_pin)
+        data["inputFingerprint"] = fp
         PROFILES.parent.mkdir(parents=True, exist_ok=True)
         PROFILES.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         print(f"档案：{PROFILES}（{(PROFILES.stat().st_size/1024):.0f} KB，{data['gridCells']} 个格点）")
@@ -459,4 +520,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # ⚠️ 必须把 main() 的返回码传出去：否则守卫"拒绝重建"时退出码仍是 0，
+    #    CI / resume_all 会把它当成成功（本轮实测踩到）
+    sys.exit(main())
