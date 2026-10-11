@@ -16,7 +16,7 @@ import json
 import pathlib
 from collections import Counter
 
-ROOT = pathlib.Path(r"D:\大学作业\广东海洋大学的珊瑚评测小程序\coral_ml")
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "reports/p4_step2_feasibility.json"
 
 # ---------- ① 日期与采样趋势 ----------

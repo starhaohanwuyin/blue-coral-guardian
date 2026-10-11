@@ -19,6 +19,7 @@
     python resume_all.py --run --only species_ip
 """
 import argparse
+import json
 import subprocess
 import sys
 import time
@@ -170,8 +171,25 @@ CRITICAL = {"inat_semporna", "inat_triangle", "genus_dataset", "genus_images", "
 
 
 def status(stage):
+    """阶段是否已完成。
+
+    ⚠️ 不能只看"标记文件是否存在"：闸门类的标记即使 `passed: false` 也存在，
+    会把回归掩盖成 ✅（本轮真实踩到——`gate_abs_paths` 被我新加的脚本弄失败，
+    但旧标记让它显示完成）。因此对带 `passed` 字段的 JSON 标记，false 视为未完成，
+    下次 `--run` 会自动重跑该闸门。
+    """
     sid, desc, marker, deps, cmd = stage
-    return (ROOT / marker).exists()
+    p = ROOT / marker
+    if not p.exists():
+        return False
+    if p.suffix == ".json":
+        try:
+            j = json.loads(p.read_text(encoding="utf-8"))
+            if isinstance(j, dict) and j.get("passed") is False:
+                return False
+        except (OSError, ValueError):
+            pass
+    return True
 
 
 def log_active(path: Path, idle_sec=240):

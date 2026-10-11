@@ -19,7 +19,7 @@
 import json
 import pathlib
 
-ROOT = pathlib.Path(r"D:\大学作业\广东海洋大学的珊瑚评测小程序\coral_ml")
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 ART = ROOT / "data/noaa/site_profiles.json"
 OUT = ROOT / "reports/p4_event_timeline.json"
 
