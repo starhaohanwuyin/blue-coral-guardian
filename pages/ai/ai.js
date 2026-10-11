@@ -50,9 +50,28 @@ Page({
     locating: false,
     version: config.VERSION,
     // 年份选择（环境卡片的"年度等级"随年份变化）
-    years: config.YEARS,
+    years: config.YEARS,          // 快捷芯片
+    allYears: config.ALL_YEARS,   // 「其他年份」选择器的完整列表（1985–2025）
     yearIndex: 0,
     year: config.YEARS[0],
+    yearIsQuick: true,            // 当前年份是否在快捷芯片里（WXML 不能调 indexOf，先在 JS 算好）
+  },
+
+  /* 统一设置年份：同步 yearIsQuick（决定"其他年份"那个芯片显示什么） */
+  setYear(y) {
+    const yy = Number(y)
+    if (!yy) return
+    this.setData({ year: yy, yearIsQuick: config.YEARS.indexOf(yy) !== -1 })
+  },
+
+  /* 把服务端返回的 availableYears 并入下拉列表（以实际数据为准；上次已选年份保留） */
+  mergeAvailableYears(list) {
+    if (!Array.isArray(list) || !list.length) return
+    const ys = list.map(Number).filter((v) => v > 1900).sort((a, b) => b - a)
+    if (!ys.length) return
+    const same = ys.length === this.data.allYears.length &&
+      ys.every((v, i) => v === this.data.allYears[i])
+    if (!same) this.setData({ allYears: ys })
   },
 
   /* 当前使用的点位：定位点优先，否则用预设点 */
@@ -71,12 +90,23 @@ Page({
     }
   },
 
-  /** 切换评估年份；已有结果时自动重跑，让"年度等级"立刻反映所选年份 */
+  /** 点快捷年份芯片；已有结果时自动重跑，让"年度等级"立刻反映所选年份。
+   *  用**年份值**判断选中（而不是下标），这样「其他年份」选择器选了 1998 时，
+   *  快捷芯片里没有 1998 也不会误高亮。 */
   onYearTap(e) {
-    const idx = Number(e.currentTarget.dataset.index)
-    const y = this.data.years[idx]
-    if (!y || idx === this.data.yearIndex) return
-    this.setData({ yearIndex: idx, year: y })
+    const y = Number(e.currentTarget.dataset.year)
+    if (!y || y === this.data.year) return
+    this.setYear(y)
+    if (this.data.state === 'result' && this.data.imgPath) {
+      this.startAnalysis()
+    }
+  },
+
+  /** 「其他年份」选择器：可从 1985–2025 全部 41 年里选 */
+  onYearPick(e) {
+    const y = Number(this.data.allYears[Number(e.detail.value)])
+    if (!y || y === this.data.year) return
+    this.setYear(y)
     if (this.data.state === 'result' && this.data.imgPath) {
       this.startAnalysis()
     }
@@ -346,6 +376,10 @@ Page({
           result: res,
           view: this.buildView(res)
         })
+        // 用服务端返回的 availableYears 校准年份下拉（以实际数据为准，防止列表与后端不一致）
+        if (res && res.climate && res.climate.availableYears) {
+          this.mergeAvailableYears(res.climate.availableYears)
+        }
         this.persistAndRecord(res)
       }).catch((e) => {
         this.setData({

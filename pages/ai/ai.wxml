@@ -33,11 +33,18 @@
       <text class="site-label">评估年份</text>
       <!-- ⚠️ 用**换行**而不是横向滚动：scroll-view 放在 flex 行里会塌陷/裁切，
            实测 6 个芯片只显示得下 3 个（用户反馈"并未完成"就是这个原因）。
-           换行后 6 个必然全部可见，不依赖滚动。 -->
+           换行后芯片必然全部可见，不依赖滚动。 -->
       <view class="site-chips site-chips-wrap">
         <view wx:for="{{years}}" wx:key="*this"
-              class="site-chip year {{index === yearIndex ? 'on' : ''}}"
-              data-index="{{index}}" bindtap="onYearTap">{{item}}</view>
+              class="site-chip year {{item === year ? 'on' : ''}}"
+              data-year="{{item}}" bindtap="onYearTap">{{item}}</view>
+        <!-- 完整年份表（1985–2025 共 41 年）：芯片只放常用年，其他年份从这里选。
+             选中非快捷年份时，这个芯片显示当前年份并高亮。 -->
+        <picker mode="selector" range="{{allYears}}" bindchange="onYearPick">
+          <view class="site-chip year pick {{yearIsQuick ? '' : 'on'}}">
+            {{yearIsQuick ? '其他年份 ▾' : year}}
+          </view>
+        </picker>
       </view>
     </view>
     <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>

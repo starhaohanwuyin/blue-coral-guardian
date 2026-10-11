@@ -676,6 +676,7 @@
 .site-row-year { margin-top: 16rpx; flex-wrap: wrap; }
 .site-chips-wrap { flex-wrap: wrap; row-gap: 10rpx; }
 .site-chip.year { min-width: 88rpx; text-align: center; }
+.site-chip.pick { color: #00695c; background: #e0f2f1; border-color: #b2dfdb; }
 
 /* ===== 图片失效兜底（临时文件被 saveFile 移动 / 历史记录里的旧会话临时路径）===== */
 .img-fallback {
