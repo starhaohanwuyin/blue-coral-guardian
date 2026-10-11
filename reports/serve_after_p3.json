@@ -164,7 +164,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 74.9,
+      "elapsedMs": 75.5,
       "imageSize": [
         1024,
         684
@@ -223,7 +223,7 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 532.2,
+    "inferenceMs": 517.8,
     "restoration": null,
     "restorationHint": "传入 lat/lon 即可获得气候背景与修复优先级研判",
     "success": true,
@@ -470,7 +470,7 @@
         }
       ],
       "count": 17,
-      "elapsedMs": 74.1,
+      "elapsedMs": 75.7,
       "imageSize": [
         1024,
         684
@@ -719,7 +719,7 @@
       "白化珊瑚": 0.005127,
       "藻类覆盖": 0.068458
     },
-    "inferenceMs": 500.9,
+    "inferenceMs": 506.8,
     "restoration": {
       "actions": [
         "**暂不宜投放**：该海域处于「白化警报一级」（DHW 峰值 5.42，DHW≥8 共 0 天），建议等热浪过后（DHW 回落至 4 以下）再复评"

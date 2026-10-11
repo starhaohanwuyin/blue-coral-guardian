@@ -581,6 +581,29 @@ def main():
         L.append("> ⚠️ **口径（引用时必须一并说明）**：" + "；".join(dw.get("caveats", [])))
         L.append("")
 
+    # ---------- 5.7 P4 前置：白化事件年表 × 41 年 DHW 序列 ----------
+    p4 = load("p4_event_timeline.json")
+    if p4:
+        L.append("## 5.7 P4 前置：实地报告白化事件年表 × 41 年 DHW 序列（事件级一致性核对）")
+        L.append("")
+        L.append(f"我们的序列：{p4['ourSeries']['years'][0]}–{p4['ourSeries']['years'][1]}"
+                 f"（{p4['ourSeries']['nYears']} 年 / {p4['ourSeries']['gridCells']} 格点）；"
+                 f"事件年表来自 Reef Check Malaysia 报告原文（每条标注页码）。")
+        L.append("")
+        L.append("| 报告记载的事件年 | 区域均值 | 均值排名 | 区域最大 | 警戒格点占比 |")
+        L.append("|---|---|---|---|---|")
+        for e in p4.get("events", []):
+            L.append(f"| {e['year']}（{e['desc'][:24]}…）| {e['regionMeanPeak']} | {e['meanRank']} "
+                     f"| {e['regionMaxPeak']} | {e['alertCellFraction']:.1%} |")
+        L.append("")
+        a = p4.get("anchorCheck", {})
+        L.append(f"- 定量锚点核对（{a.get('claim', '')}）：我们的区域最大值差 **{a.get('ourRegionMaxGap')}**、"
+                 f"区域均值差 **{a.get('ourRegionMeanGap')}** °C-weeks（{a.get('note', '')}）")
+        L.append("")
+        for c in p4.get("caveats", []):
+            L.append(f"> ⚠️ {c}")
+        L.append("")
+
     # ---------- 8. 结论适用范围与已知局限 ----------
     mcn = load("mcnemar_bleaching_ip_vs_bleaching_new_test_ip.json")
     sl = load("site_level_validation.json")
