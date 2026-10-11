@@ -31,11 +31,13 @@
     </scroll-view>
     <view class="site-row site-row-year">
       <text class="site-label">评估年份</text>
-      <view class="site-chips">
-        <view wx:for="{{years}}" wx:key="*this"
-              class="site-chip year {{index === yearIndex ? 'on' : ''}}"
-              data-index="{{index}}" bindtap="onYearTap">{{item}} 年</view>
-      </view>
+      <scroll-view class="site-scroll site-scroll-year" scroll-x="true">
+        <view class="site-chips">
+          <view wx:for="{{years}}" wx:key="*this"
+                class="site-chip year {{index === yearIndex ? 'on' : ''}}"
+                data-index="{{index}}" bindtap="onYearTap">{{item}}</view>
+        </view>
+      </scroll-view>
     </view>
     <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>
   </view>
