@@ -51,7 +51,8 @@
 
   <!-- ② 预览 -->
   <view wx:if="{{state === 'preview'}}" class="ai-preview-container card">
-    <image class="ai-preview-img" src="{{imgPath}}" mode="aspectFit" />
+    <image wx:if="{{!imgFailed}}" class="ai-preview-img" src="{{imgPath}}" mode="aspectFit" binderror="onImgError" />
+    <view wx:else class="img-fallback">图片已失效，请重新选择</view>
     <view class="ai-preview-actions">
       <view class="btn-upload-new" hover-class="btn-hover" bindtap="resetUpload">重新选择</view>
       <view class="btn-start" hover-class="btn-hover" bindtap="startAnalysis">开始识别</view>
@@ -81,7 +82,8 @@
   <!-- ⑤ 结果 -->
   <block wx:if="{{state === 'result' && result}}">
     <view class="res-photo card">
-      <image class="res-photo-img" src="{{imgPath}}" mode="aspectFit" />
+      <image wx:if="{{!imgFailed}}" class="res-photo-img" src="{{imgPath}}" mode="aspectFit" binderror="onImgError" />
+      <view wx:else class="img-fallback">图片已失效（可重新识别）</view>
     </view>
 
     <!-- 演示数据标记（服务不可用时的降级，不冒充真实结果） -->
@@ -290,7 +292,9 @@
     <view class="ai-history">
       <view class="history-item card" wx:for="{{history}}" wx:key="id"
             hover-class="card-hover" bindtap="onHistoryTap" data-id="{{item.id}}">
-        <image class="history-thumb" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <image wx:if="{{item.img}}" class="history-thumb" src="{{item.img}}" mode="aspectFill" lazy-load
+               binderror="onHistoryImgError" data-id="{{item.id}}" />
+        <view wx:else class="history-thumb history-thumb-empty">—</view>
         <view class="history-info">
           <view class="history-title">珊瑚覆盖 {{item.coralTotalPct ? item.coralTotalPct : 0}}%</view>
           <view class="history-sub">{{item.time}}{{item.topGenus ? ' · ' + item.topGenus : ''}}</view>

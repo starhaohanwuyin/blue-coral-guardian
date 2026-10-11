@@ -676,3 +676,23 @@
 .site-row-year { margin-top: 16rpx; align-items: center; }
 .site-scroll-year { flex: 1; width: auto; margin-top: 0; }
 .site-chip.year { min-width: 88rpx; text-align: center; }
+
+/* ===== 图片失效兜底（临时文件被 saveFile 移动 / 历史记录里的旧会话临时路径）===== */
+.img-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220rpx;
+  border-radius: 12rpx;
+  background: #eceff1;
+  color: #90a4ae;
+  font-size: 24rpx;
+}
+.history-thumb-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eceff1;
+  color: #b0bec5;
+  font-size: 26rpx;
+}

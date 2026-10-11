@@ -104,7 +104,7 @@ module.exports = {
   TOKEN_KEY: 'ls_token',
   USER_KEY: 'ls_user',
 
-  VERSION: '2.2.0',
+  VERSION: '2.2.1',
 
   // 客服邮箱
   SERVICE_EMAIL: 'service@bluecoral.cn'

@@ -41,6 +41,7 @@ Page({
     result: null,
     view: {},              // 预计算好的展示字段（WXML 不便做运算）
     errorMsg: '',
+    imgFailed: false,     // 图片路径失效（临时文件被移动/清理）时的兜底标记
     history: [],
     // 点位选择（环境背景随点位变化；此前是写死仙本那核心区）
     sites: config.SITES,
@@ -165,7 +166,20 @@ Page({
   },
 
   resetUpload() {
-    this.setData({ state: 'upload', imgPath: '', savedImgPath: '', result: null, errorMsg: '' })
+    this.setData({ state: 'upload', imgPath: '', savedImgPath: '', result: null, errorMsg: '', imgFailed: false })
+  },
+
+  /** 图片路径失效时的兜底（历史记录里可能存着上个会话的临时路径）：
+   *  DevTools 的临时目录端口每次会话都会变，旧路径必然 404 —— 显示占位而不是裂图。 */
+  onImgError() {
+    if (!this.data.imgFailed) this.setData({ imgFailed: true })
+  },
+
+  onHistoryImgError(e) {
+    const id = e.currentTarget.dataset.id
+    this.setData({
+      history: this.data.history.map((h) => (h.id === id ? Object.assign({}, h, { img: '' }) : h)),
+    })
   },
 
   /* 把接口结果转成视图字段（百分比等） */
@@ -373,7 +387,11 @@ Page({
       })
       const trimmed = list.slice(0, HMAX)
       wx.setStorageSync(HKEY, trimmed)
-      this.setData({ history: trimmed, savedImgPath: savedPath || '' })
+      // ⚠️ `FileSystemManager.saveFile` 会**移动**临时文件：调用成功后 `tempFilePath` 就不可用了。
+      //    所以保存成功后必须把 imgPath 也换成持久路径，否则预览图/结果图会加载失败
+      //    （DevTools 控制台报 `Failed to load image .../__tmp__/xxx.jpg`，真机上同样会白图）。
+      const shown = savedPath || this.data.imgPath
+      this.setData({ history: trimmed, savedImgPath: savedPath || '', imgPath: shown, imgFailed: false })
     }
 
     try {
@@ -403,7 +421,8 @@ Page({
       state: 'result',
       result: item.result,
       view: this.buildView(item.result),
-      imgPath: item.img || ''
+      imgPath: item.img || '',
+      imgFailed: false,      // 新记录重新尝试加载；若路径已失效由 onImgError 兜底
     })
     wx.pageScrollTo({ scrollTop: 0, duration: 200 })
   },
