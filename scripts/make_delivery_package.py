@@ -21,11 +21,28 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "delivery"
 
+# ⚠️ 只打**运行必需**的文件：**不含** `last.pt`（训练末轮检查点）、
+#    `yolo_coral/best_640r0.pt`（R0 中间产物）、`yolov9c.pt`（预训练基线）。
+#    这三类合计约 311 MB，服务运行完全用不到（服务只加载 segformer + species_ip/best.pt
+#    + bleaching_all/best.pt + yolo_coral/best.pt）。加 `--full` 可打完整版（归档用）。
 WEIGHTS = [
-    ("weights/segformer_coralscapes", "礁区语义分割（40 类底栖，覆盖率用）"),
-    ("weights/species_ip", "珊瑚属识别（34 属）"),
-    ("weights/bleaching_all", "白化状态识别（三分类）"),
-    ("weights/yolo_coral", "个体计数 YOLOv9c（P3 附加能力，缺失只是少一个字段）"),
+    ("weights/segformer_coralscapes", "礁区语义分割（40 类底栖，含 id2label/label2color）"),
+    ("weights/species_ip/best.pt", "珊瑚属识别（34 属，类别名内嵌在权重里）"),
+    ("weights/bleaching_all/best.pt", "白化状态识别（三分类）"),
+    ("weights/yolo_coral/best.pt", "个体计数 YOLOv9c（P3 附加能力）"),
+]
+# 默认排除的冗余文件（打完整版时包含）
+REDUNDANT = [
+    "weights/species_ip/last.pt",
+    "weights/bleaching_all/last.pt",
+    "weights/yolo_coral/best_640r0.pt",
+    "weights/yolo_coral/yolov9c.pt",
+]
+FULL_WEIGHTS = [
+    ("weights/segformer_coralscapes", "礁区语义分割"),
+    ("weights/species_ip", "珊瑚属识别（含 last.pt）"),
+    ("weights/bleaching_all", "白化状态识别（含 last.pt）"),
+    ("weights/yolo_coral", "个体计数（含中间产物）"),
 ]
 CLIMATE = [
     ("data/noaa/climate_index.json", "气候快速索引（环境卡片查询用，~4 MB）"),
@@ -132,9 +149,12 @@ def main() -> int:
     ap.add_argument("--build", action="store_true", help="实际复制到 delivery/")
     ap.add_argument("--zip", action="store_true", help="再打成 delivery.zip")
     ap.add_argument("--no-photos", action="store_true", help="不含样例图")
+    ap.add_argument("--full", action="store_true",
+                    help="打完整版（含 last.pt / R0 / yolov9c 等冗余，约多 311 MB，仅供归档）")
     a = ap.parse_args()
 
-    items = list(WEIGHTS) + list(CLIMATE) + ([] if a.no_photos else [PHOTOS])
+    weights = FULL_WEIGHTS if a.full else WEIGHTS
+    items = list(weights) + list(CLIMATE) + ([] if a.no_photos else [PHOTOS])
     total, missing, rows = 0, [], []
     for rel, desc in items:
         p = ROOT / rel
@@ -146,11 +166,18 @@ def main() -> int:
         rows.append((rel, desc, size, ok))
 
     print("=" * 78)
-    print(f"交付包内容（目标目录 {OUT}）")
+    print(f"交付包内容（目标目录 {OUT}）" + ("  【完整版】" if a.full else "  【精简版：只含运行必需】"))
     print("=" * 78)
     for rel, desc, size, ok in rows:
-        print(f"  {'✅' if ok else '❌ 缺失'} {rel:<34} {human(size):>10}   {desc}")
+        print(f"  {'✅' if ok else '❌ 缺失'} {rel:<38} {human(size):>10}   {desc}")
     print(f"\n  合计: {human(total)}")
+    if not a.full:
+        skipped = sum(dir_size(ROOT / r) for r in REDUNDANT if (ROOT / r).exists())
+        print(f"  已排除 {len([r for r in REDUNDANT if (ROOT / r).exists()])} 个非必需文件（{human(skipped)}）：")
+        for r in REDUNDANT:
+            if (ROOT / r).exists():
+                print(f"     – {r}  ({human(dir_size(ROOT / r))})")
+        print("     （想连它们一起打包：加 --full）")
     req = ROOT / "requirements.txt"
     print(f"  {'✅' if req.exists() else '❌'} requirements.txt（会让队友 pip install）")
 
