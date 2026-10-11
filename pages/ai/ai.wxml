@@ -31,13 +31,14 @@
     </scroll-view>
     <view class="site-row site-row-year">
       <text class="site-label">评估年份</text>
-      <scroll-view class="site-scroll site-scroll-year" scroll-x="true">
-        <view class="site-chips">
-          <view wx:for="{{years}}" wx:key="*this"
-                class="site-chip year {{index === yearIndex ? 'on' : ''}}"
-                data-index="{{index}}" bindtap="onYearTap">{{item}}</view>
-        </view>
-      </scroll-view>
+      <!-- ⚠️ 用**换行**而不是横向滚动：scroll-view 放在 flex 行里会塌陷/裁切，
+           实测 6 个芯片只显示得下 3 个（用户反馈"并未完成"就是这个原因）。
+           换行后 6 个必然全部可见，不依赖滚动。 -->
+      <view class="site-chips site-chips-wrap">
+        <view wx:for="{{years}}" wx:key="*this"
+              class="site-chip year {{index === yearIndex ? 'on' : ''}}"
+              data-index="{{index}}" bindtap="onYearTap">{{item}}</view>
+      </view>
     </view>
     <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>
   </view>
