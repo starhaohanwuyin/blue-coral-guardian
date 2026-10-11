@@ -176,7 +176,17 @@
     "convention": "文件名前缀 = obs_id（如 144599556_71165.jpg）"
   },
   "bleachingClassifierDomainValidity": {
-    "crossDomain_indoPacific": {
+    "deployedModel_bleaching_all": {
+      "model": "bleaching_all（服务部署）",
+      "split": "test_ip",
+      "n": 176,
+      "accuracy": 0.8295454545454546,
+      "bleachedRecall": 0.4231,
+      "majorityBaseline": 0.8522727272727273,
+      "source": "reports/decision_rules_bleaching_all_test_ip.json",
+      "vsBaseline": "低于多数类基线"
+    },
+    "otherModel_bleaching_ip": {
       "split": "test_ip",
       "n": 176,
       "top1": 0.852273,
@@ -189,7 +199,7 @@
         "precision": 0.5
       }
     },
-    "inDomain_sameDomain": {
+    "inDomainSameDomain_bleaching_ip": {
       "split": "test",
       "n": 412,
       "top1": 0.915049,
@@ -215,13 +225,21 @@
         "precision": 1.0
       }
     },
-    "note": "区分同域/跨域：`protocol_bleaching_ip_test.json`(split=test, n=412) 是同域 top1 91.50%；`protocol_bleaching_ip_test_ip.json`(split=test_ip, n=176) 才是跨域留出，top1 85.23% **恰等于**多数类基线 85.23%，bleached 召回仅 42.31% → 该域不可用"
+    "modelComparison_mcnemar": {
+      "modelA": "bleaching_all",
+      "modelB": "bleaching_ip",
+      "accA": 0.8295454545454546,
+      "accB": 0.8522727272727273,
+      "p_exact": 0.42395,
+      "significant": false,
+      "note": "两模型在 test_ip 上的差异不显著 → 换模型也救不了该域"
+    },
+    "note": "⚠️ 别把两个模型混引：服务部署的是 **bleaching_all**（serve_fusion.py 的 BLEACH_DIRS[0]），它在 test_ip 上 0.8295 < 基线 0.8523；`protocol_bleaching_ip_test_ip.json` 是**bleaching_ip** 模型（0.8523 = 基线）；两者差异 McNemar p=0.424 不显著。同域 test 的高分（0.9150）不可外推到印太域。"
   },
   "verdict": "not_viable",
   "reasons": [
-    "照片级白化标签缺失：本项目白化分类器在**跨域（印太留出）**上 top1 = 0.852273，恰等于多数类基线 0.8523（即等同于『全预测 healthy』的平凡基线），且 **bleached 类召回仅 0.4231**（同域 test 上 top1 有 0.915049，但那是同域数字，不能外推）→ 拿它给 iNat 照片打白化标签＝在测量模型偏差而非现实",
-    "iNat 缓存元数据里没有 iNat 自身的白化注释字段（只有 label/url/license/attribution/lat/lon/observed_on/taxon_name）",
-    "采样非平稳：iNat 观察量逐年暴增（2000→2026 增长两个量级），年度白化率必然与『谁在什么时候上传』混淆",
+    "照片级白化标签不可靠：**部署模型 bleaching_all** 在跨域印太留出（test_ip, n=176）上总体准确率 0.8295 **低于**多数类基线 0.8523，bleached 类召回仅 0.4231；另一模型 bleaching_ip 为 0.852273（= 基线），两者差异 McNemar p=0.42395 **不显著**（换模型也救不了）→ 拿它给 iNat 照片打白化标签＝在测量模型偏差而非现实；iNat 缓存元数据里也没有 iNat 自身的白化注释字段",
+    "采样非平稳：iNat 观察量逐年暴增（2000→2026 约两个量级），年度白化率必然与『谁在什么时候上传』混淆",
     "观察者自选择：爱好者更愿意拍好看的珊瑚，白化照片的入样概率未知"
   ],
   "whatWouldUnblock": [

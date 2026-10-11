@@ -189,6 +189,10 @@ coral_ml/
 | 原 Kaggle 域 | 88.78% | 91.26% |
 | 印太域（印尼） | 42.31% | 82.95% |
 
+> ⚠️ 上表为**服务实际部署的 `bleaching_all`**（`serve_fusion.py` 的 `BLEACH_DIRS[0]`）。
+> 另一模型 `bleaching_ip` 在同一 `test_ip`（n=176）上准确率为 85.23%＝多数类基线 85.23%，
+> 两者差异 **McNemar p=0.424 不显著** —— 引用时务必写明是哪个模型（见 `reports/mcnemar_bleaching_all_vs_bleaching_ip_test_ip.json`）。
+
 ### 5.4 珊瑚个体计数（P3 · 附加能力）
 
 | 项目 | 结果 |
