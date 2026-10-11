@@ -15,6 +15,31 @@
     <view class="ai-hero-sub">一次上传 · 输出珊瑚覆盖率、白化占比与主要珊瑚属</view>
   </view>
 
+  <!-- 点位选择：环境背景（海表热压力）随点位变化 -->
+  <view class="site-bar card">
+    <view class="site-row">
+      <text class="site-label">评估点位</text>
+      <text class="site-cur">{{siteName}}</text>
+    </view>
+    <scroll-view class="site-scroll" scroll-x="true">
+      <view class="site-chips">
+        <view wx:for="{{sites}}" wx:key="name"
+              class="site-chip {{index === siteIndex ? 'on' : ''}}"
+              data-index="{{index}}" bindtap="onSiteTap">{{item.name}}</view>
+        <view class="site-chip loc {{locating ? 'busy' : ''}}" bindtap="useMyLocation">{{locating ? '定位中…' : '用我的位置'}}</view>
+      </view>
+    </scroll-view>
+    <view class="site-row site-row-year">
+      <text class="site-label">评估年份</text>
+      <view class="site-chips">
+        <view wx:for="{{years}}" wx:key="*this"
+              class="site-chip year {{index === yearIndex ? 'on' : ''}}"
+              data-index="{{index}}" bindtap="onYearTap">{{item}} 年</view>
+      </view>
+    </view>
+    <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>
+  </view>
+
   <!-- ① 上传 -->
   <view wx:if="{{state === 'upload'}}" class="ai-upload-area" hover-class="upload-hover" bindtap="chooseImage">
     <view class="upload-icon">📸</view>
@@ -181,7 +206,7 @@
 <view class="res-card card" wx:if="{{view.climate}}">
   <view class="res-title">
     <text>环境数据 · 海表热压力</text>
-    <text class="res-sub">NOAA CRW 5km · {{view.climate.year}} 年年度等级（非实时）</text>
+    <text class="res-sub">{{view.climate.siteName}} · {{view.climate.year}} 年年度等级（非实时）</text>
   </view>
   <view class="climate-head climate-{{view.climate.level}}">
     <view class="climate-grade">{{view.climate.baaLabel}}</view>

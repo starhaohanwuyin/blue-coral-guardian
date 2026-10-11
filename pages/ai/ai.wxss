@@ -636,3 +636,42 @@
   color: #90a4ae;
   flex-shrink: 0;
 }
+
+/* ===== 点位选择条（环境背景随点位变化）===== */
+.site-bar {
+  margin: 0 32rpx 20rpx;
+  padding: 22rpx 24rpx;
+}
+.site-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+.site-label { font-size: 24rpx; color: #90a4ae; flex-shrink: 0; }
+.site-cur   { font-size: 27rpx; font-weight: 700; color: var(--text); }
+.site-scroll { width: 100%; white-space: nowrap; margin-top: 14rpx; }
+.site-chips { display: inline-flex; align-items: center; gap: 12rpx; }
+.site-chip {
+  display: inline-block;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 23rpx;
+  color: #546e7a;
+  background: #eceff1;
+  border: 2rpx solid transparent;
+}
+.site-chip.on {
+  color: #fff;
+  background: var(--primary, #26a69a);
+  font-weight: 600;
+}
+.site-chip.loc {
+  color: #00695c;
+  background: #e0f2f1;
+  border-color: #b2dfdb;
+}
+.site-chip.busy { opacity: 0.6; }
+.site-hint { margin-top: 12rpx; font-size: 20rpx; color: #b0bec5; line-height: 1.5; }
+.site-row-year { margin-top: 16rpx; align-items: center; }
+.site-chip.year { min-width: 96rpx; text-align: center; }

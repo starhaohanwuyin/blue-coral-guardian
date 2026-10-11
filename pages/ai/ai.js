@@ -41,7 +41,71 @@ Page({
     result: null,
     view: {},              // 预计算好的展示字段（WXML 不便做运算）
     errorMsg: '',
-    history: []
+    history: [],
+    // 点位选择（环境背景随点位变化；此前是写死仙本那核心区）
+    sites: config.SITES,
+    siteIndex: 0,
+    siteName: config.SITES[0].name,
+    locating: false,
+    version: config.VERSION,
+    // 年份选择（环境卡片的"年度等级"随年份变化）
+    years: config.YEARS,
+    yearIndex: 0,
+    year: config.YEARS[0],
+  },
+
+  /* 当前使用的点位：定位点优先，否则用预设点 */
+  currentSite() {
+    return this.data.customSite || this.data.sites[this.data.siteIndex] || config.DEFAULT_SITE
+  },
+
+  /** 切换预设点位；已有结果时自动按新点位重跑，避免"卡片还是旧点位"的误解 */
+  onSiteTap(e) {
+    const idx = Number(e.currentTarget.dataset.index)
+    const site = this.data.sites[idx]
+    if (!site || idx === this.data.siteIndex) return
+    this.setData({ siteIndex: idx, siteName: site.name, customSite: null })
+    if (this.data.state === 'result' && this.data.imgPath) {
+      this.startAnalysis()
+    }
+  },
+
+  /** 切换评估年份；已有结果时自动重跑，让"年度等级"立刻反映所选年份 */
+  onYearTap(e) {
+    const idx = Number(e.currentTarget.dataset.index)
+    const y = this.data.years[idx]
+    if (!y || idx === this.data.yearIndex) return
+    this.setData({ yearIndex: idx, year: y })
+    if (this.data.state === 'result' && this.data.imgPath) {
+      this.startAnalysis()
+    }
+  },
+
+  /** 用定位作为点位；超出 NOAA 网格则提示（网格外后端会返回"无数据"） */
+  useMyLocation() {
+    const bb = config.GRID_BBOX
+    if (this.data.locating) return
+    this.setData({ locating: true })
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        const lat = Number(res.latitude)
+        const lon = Number(res.longitude)
+        const inside = lat >= bb.latMin && lat <= bb.latMax && lon >= bb.lonMin && lon <= bb.lonMax
+        if (!inside) {
+          this.setData({ locating: false })
+          util.toast('当前位置不在 NOAA 覆盖网格内（仙本那及周边），请选预设点位')
+          return
+        }
+        const site = { lat: lat, lon: lon, name: `我的位置 ${lat.toFixed(2)}N ${lon.toFixed(2)}E` }
+        this.setData({ customSite: site, siteName: site.name, locating: false })
+        if (this.data.state === 'result' && this.data.imgPath) this.startAnalysis()
+      },
+      fail: () => {
+        this.setData({ locating: false })
+        util.toast('定位不可用（未授权或未开启），已保留当前点位')
+      },
+    })
   },
 
   onLoad() {
@@ -111,6 +175,7 @@ Page({
       daysGe8: cl.daysDhwGe8,
       // —— 年度等级口径提示 + 41 年历史（来自同一响应的 deployment）——
       hasHistory: !!d,
+      siteName: this.data.siteName || config.DEFAULT_SITE.name,
       historyYears: d ? d.nYears : 0,
       historyText: d ? `${(d.alertYears || []).length} 年达警戒`
         + (alertYears.length ? `（${alertYears.join('、')}）` : '') : '',
@@ -208,7 +273,9 @@ Page({
       genusTop,
       hasGenus: genusTop.length > 0,
       genusUnreliable: !!(cr && cr.reliable === false),
-      genusNote: (cr && cr.note) || '',
+      // 本次识别用的点位与前端版本（便于确认"跑的是哪版代码/哪个点位"）
+      siteName: this.data.siteName || config.DEFAULT_SITE.name,
+      version: config.VERSION,
       quality,
       qualityWarn: quality.level === 'warn',
       qualityPoor: quality.level === 'poor',
@@ -236,7 +303,7 @@ Page({
     // ⚠️ 整段包 try/catch：参数求值阶段的**同步异常**（如变量未定义）不会进入 .catch，
     //    会把页面永久留在 loading（曾因 config 未 require 真实踩到）。这里兜底成 error 态。
     try {
-      const p = api.recognize(this.data.imgPath, config.DEFAULT_SITE, config.DEFAULT_YEAR)
+      const p = api.recognize(this.data.imgPath, this.currentSite(), this.data.year)
       if (!p || typeof p.then !== 'function') {
         this.setData({ state: 'error', errorMsg: '识别接口返回异常（未返回 Promise）' })
         return
