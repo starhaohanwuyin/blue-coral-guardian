@@ -37,11 +37,16 @@ CACHE = ROOT / "data" / "noaa"
 #   而**只有 PacIOOS 镜像真正可达**（直连 coastwatch 拿不到数据）。
 #   因此把 PacIOOS 作为主端点，其余作为兜底。
 ERDDAP_ENDPOINTS = [
-    "https://pae-paha.pacioos.hawaii.edu/erddap/griddap/dhw_5km.csv",       # ✅ 实测可用
-    "https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.csv",          # 302 → PacIOOS
-    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhw5km.csv",          # 兜底
+    "https://pae-paha.pacioos.hawaii.edu/erddap/griddap/dhw_5km.csv",       # ✅ 2026-10-11 实测仍可用
+    "https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.csv",          # ⚠️ 2026-10-11 本机 IP 被该站
+    #                                                                          request blacklist（403，无 Retry-After）
+    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhw5km.csv",          # ❌ 2026-10-11 实测 404（数据集 ID 已失效）
 ]
 ERDDAP = ERDDAP_ENDPOINTS[0]
+
+# 运行期可由 CLI 覆盖：只打单一镜像 / 请求间放慢（避免触发 ERDDAP 黑名单）
+FETCH_ENDPOINTS = None
+FETCH_THROTTLE = 0.0
 VARS = ["CRW_DHW", "CRW_HOTSPOT", "CRW_SSTANOMALY", "CRW_BAA", "CRW_SST"]
 UA = "CoralReefResearch/1.0 (academic; contact: coral-research@example.org)"
 # NOAA 白化预警等级定义（实测确认）
@@ -94,17 +99,26 @@ def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
     return "\n".join((head or []) + rows) + "\n"
 
 
-def fetch(url, timeout=300, retries=3, verbose=True):
-    """依次尝试各个 ERDDAP 端点，全部失败才抛错。"""
+def fetch(url, timeout=300, retries=3, verbose=True, endpoints=None, throttle=0.0):
+    """依次尝试各个 ERDDAP 端点，全部失败才抛错。
+
+    ⚠️ 2026-10-11 教训：`coastwatch.pfeg.noaa.gov` 因请求过多把本机 IP 加入
+    **request blacklist**（403，无 Retry-After），而 `coastwatch.noaa.gov` 的
+    兜底数据集 ID（`noaacrwdhw5km`）已失效（404）。PacIOOS 仍可用（200）。
+    因此支持 `endpoints` 只打一个镜像 + `throttle` 放慢节奏，避免再次被封。
+    """
+    eps = endpoints or FETCH_ENDPOINTS or ERDDAP_ENDPOINTS
     last = None
     for i in range(retries):
-        for ep in ERDDAP_ENDPOINTS:
+        for ep in eps:
             u = url.replace(ERDDAP, ep, 1)
             try:
                 req = Request(u, headers={"User-Agent": UA})
                 with urlopen(req, timeout=timeout) as r:
                     txt = r.read().decode("utf-8", errors="replace")
                     if txt.startswith("time") and len(txt) > 100:
+                        if throttle or FETCH_THROTTLE:
+                            time.sleep(throttle or FETCH_THROTTLE)
                         return txt
                     last = RuntimeError(f"{ep.split('/')[2]} 返回非 CSV")
             except Exception as e:
@@ -172,12 +186,29 @@ def main():
                     help="优先使用的镜像 URL（默认 PacIOOS；实测 CoastWatch-PFEG 快约 5 倍）")
     ap.add_argument("--force", action="store_true",
                     help="忽略已有缓存重新抓取（用于改变抽稀步长后补全，如把每 5 天升为逐日）")
+    ap.add_argument("--skip-daily", action="store_true",
+                    help="跳过**已是逐日**的年份（用于长时间补全中断后续跑，避免重抓已完成年份）")
+    ap.add_argument("--retries", type=int, default=3,
+                    help="单个年份失败后的重试次数（镜像时段性不可用，默认 3）")
+    ap.add_argument("--retry-sleep", type=float, default=20.0,
+                    help="重试前的等待秒数（默认 20）")
+    ap.add_argument("--single-endpoint", action="store_true",
+                    help="只用 --endpoint 指定的镜像（被 ERDDAP 拉黑时用：不再浪费重试在 403 的服务器上）")
+    ap.add_argument("--throttle", type=float, default=0.0,
+                    help="每次成功请求后额外等待秒数（放慢节奏，避免被 ERDDAP 加入黑名单）")
     args = ap.parse_args()
 
-    global ERDDAP, ERDDAP_ENDPOINTS
+    global ERDDAP, ERDDAP_ENDPOINTS, FETCH_ENDPOINTS, FETCH_THROTTLE
     if args.endpoint:
         ERDDAP = args.endpoint
         ERDDAP_ENDPOINTS = [args.endpoint] + [e for e in ERDDAP_ENDPOINTS if e != args.endpoint]
+    if args.single_endpoint:
+        # 只打一个镜像：被拉黑时不再把重试浪费在 403/404 的服务器上
+        FETCH_ENDPOINTS = [ERDDAP]
+        print(f"（--single-endpoint：只用 {ERDDAP.split('/')[2]}）")
+    FETCH_THROTTLE = args.throttle
+    if args.throttle:
+        print(f"（--throttle {args.throttle}s：每次成功请求后等待，避免触发 ERDDAP 黑名单）")
 
     sel_vars = [v.strip() for v in args.vars.split(",") if v.strip() in VARS]
     if not sel_vars:
@@ -208,8 +239,26 @@ def main():
 
     ok_years, failed = [], []
     manifest = []
+
+    def is_daily(p: Path) -> bool:
+        """该变量文件是否已是**逐日**（≈360 个时间点/年），用于 --skip-daily 跳过已完成年份。"""
+        if not p.exists() or p.stat().st_size < 3_000_000:
+            return False
+        try:
+            with p.open(encoding="utf-8", errors="replace") as fh:
+                return len({ln.split(",", 1)[0] for i, ln in enumerate(fh)
+                            if i >= 2 and ln.strip()}) >= 200
+        except OSError:
+            return False
+
     for y, a, b in years(args.start, args.end):
         out = CACHE / f"CRW_semporna{args.suffix}_{y}.csv"
+        raws = [CACHE / f"_raw_{v}{args.suffix}_{y}.csv" for v in sel_vars]
+        if args.skip_daily and all(is_daily(p) for p in raws):
+            print(f"  [跳过] {y}  已是逐日（{args.stride} 天步长请求下无需重抓）")
+            ok_years.append(y)
+            manifest.append({"year": y, "file": out.name, "status": "already-daily"})
+            continue
         if out.exists() and out.stat().st_size > 200 and not args.force:
             n = sum(1 for _ in out.open(encoding="utf-8", errors="replace")) - 1
             print(f"  [跳过] {y}  已缓存 {n} 行")
@@ -222,23 +271,34 @@ def main():
               + ("（--force：忽略已有缓存，按 stride=%d 重新抓取）" % args.stride
                  if args.force else ""), flush=True)
         yfiles, err = [], None
-        for var in sel_vars:
-            vp = CACHE / f"_raw_{var}{args.suffix}_{y}.csv"
-            if vp.exists() and vp.stat().st_size > 200 and not args.force:
-                yfiles.append((var, vp))
-                print(f"      {var:<18} 已缓存", flush=True)
-                continue
-            try:
-                txt = fetch_year(var, a, b, bbox, stride=args.stride,
-                                 chunk_days=args.chunk_days, suffix=args.suffix)
-                vp.write_text(txt, encoding="utf-8")
-                n = txt.count("\n") - 2
-                yfiles.append((var, vp))
-                print(f"      {var:<18} OK  {n} 行  {vp.stat().st_size/1024:.0f} KB", flush=True)
-            except Exception as e:
-                print(f"      {var:<18} 失败: {type(e).__name__}", flush=True)
-                err = e
-            time.sleep(0.8)
+        attempt = 0
+        while attempt < max(1, args.retries):
+            attempt += 1
+            if attempt > 1:
+                print(f"      ↻ 第 {attempt} 次尝试（等待 {args.retry_sleep}s）", flush=True)
+                time.sleep(args.retry_sleep)
+            yfiles, err = [], None
+            for var in sel_vars:
+                vp = CACHE / f"_raw_{var}{args.suffix}_{y}.csv"
+                if is_daily(vp) if args.skip_daily else (vp.exists() and vp.stat().st_size > 200):
+                    if not args.force or is_daily(vp):
+                        yfiles.append((var, vp))
+                        print(f"      {var:<18} 已是逐日/已缓存", flush=True)
+                        continue
+                try:
+                    txt = fetch_year(var, a, b, bbox, stride=args.stride,
+                                     chunk_days=args.chunk_days, suffix=args.suffix)
+                    vp.write_text(txt, encoding="utf-8")
+                    n = txt.count("\n") - 2
+                    yfiles.append((var, vp))
+                    print(f"      {var:<18} OK  {n} 行  {vp.stat().st_size/1024:.0f} KB", flush=True)
+                except Exception as e:
+                    print(f"      {var:<18} 失败: {type(e).__name__}", flush=True)
+                    err = e
+                time.sleep(0.8)
+            if len(yfiles) >= len(sel_vars):
+                break
+            print(f"      （本次 {len(yfiles)}/{len(sel_vars)} 个变量成功）", flush=True)
 
         # ⚠️ 门槛必须按**本次选中的变量数**判，不能写死 3（否则子集下载永远失败）
         if len(yfiles) >= len(sel_vars):
