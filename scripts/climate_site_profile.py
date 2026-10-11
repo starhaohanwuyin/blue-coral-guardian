@@ -63,21 +63,35 @@ def build(years_pin=None) -> dict:
         if miss:
             print(f"  ⚠️ 以下年份无缓存、已忽略：{miss}")
     lt_years = [y for y in years if "_lt_" in _series_files("DHW", include_lt=True)[y].name]
+
     # ⚠️ 不能只看文件名判断"抽稀"：`--force --stride 1` 补全后，文件名仍带 `_lt_` 但数据已是逐日。
     #    改为按**实际采样密度**判定（逐日约 360 个时间点/年，每 5 天约 73 个）。
-    sampled_years = []
-    for y in years:
-        p = _series_files("DHW", include_lt=True)[y]
+    #    DHW 与 HotSpot 分开统计：两者可分别补齐，档案必须**如实标注各自的覆盖状态**，
+    #    否则会出现"DHW 已逐日但 HotSpot 仍抽稀"却被记成全逐日的失真。
+    def _n_times(path):
         try:
-            with p.open(encoding="utf-8", errors="replace") as fh:
-                times = {ln.split(",", 1)[0] for i, ln in enumerate(fh) if i >= 2 and ln.strip()}
+            with path.open(encoding="utf-8", errors="replace") as fh:
+                return len({ln.split(",", 1)[0] for i, ln in enumerate(fh) if i >= 2 and ln.strip()})
         except OSError:
-            times = set()
-        if 0 < len(times) < 200:
+            return 0
+
+    sampled_years = []            # DHW 仍抽稀的年份（决定"峰值是下界"这一限制）
+    sampled_hotspot = []          # HotSpot 仍抽稀的年份（只影响"热事件月份"的采样密度）
+    for y in years:
+        n_dhw = _n_times(_series_files("DHW", include_lt=True)[y])
+        if 0 < n_dhw < 200:
             sampled_years.append(y)
+        hs = _series_files("HOTSPOT", include_lt=True).get(y)
+        n_hs = _n_times(hs) if hs else 0
+        if 0 < n_hs < 200:
+            sampled_hotspot.append(y)
     if sampled_years:
-        print(f"  注：{len(sampled_years)} 个年份为**抽稀采样**（每 5 天一个点），"
+        print(f"  注：{len(sampled_years)} 个年份 DHW 为**抽稀采样**（每 5 天一个点），"
               f"逐日年份 {len([y for y in years if y not in sampled_years])} 个")
+    else:
+        print(f"  注：DHW 全部 {len(years)} 年已为**逐日**（峰值不再受抽稀下界影响）")
+    if sampled_hotspot:
+        print(f"  注：{len(sampled_hotspot)} 个年份 HotSpot 仍为抽稀（仅影响热事件月份的采样密度）")
     lt_years = sampled_years      # 沿用旧变量名，供后续 caveats 使用
 
     dhw_files, baa_files, hs_files = (_series_files("DHW", include_lt=True),
@@ -222,8 +236,13 @@ def build(years_pin=None) -> dict:
         "官方源本身有零星空缺日（如 2024 年缺 5 天，已现场核对确认非下载问题）",
     ]
     if lt_years:
-        caveats.append(f"其中 {len(lt_years)} 个年份为**每 5 天抽稀**采样（峰值是下界，"
+        caveats.append(f"其中 {len(lt_years)} 个年份 DHW 为**每 5 天抽稀**采样（峰值是下界，"
                        f"可能略低于逐日真值；警戒月份判定不受影响）")
+    else:
+        caveats.append(f"DHW 全部 {n_yr} 年均为**逐日**（已消除「峰值是下界」的限制）")
+    if sampled_hotspot:
+        caveats.append(f"其中 {len(sampled_hotspot)} 个年份 HotSpot 仍为每 5 天抽稀"
+                       f"（仅影响热事件月份的采样密度，每月仍有约 6 个采样点）")
 
     data = {
         "source": "NOAA CRW v3.1 5km via PacIOOS/CoastWatch mirror（本地缓存聚合）",
@@ -231,6 +250,7 @@ def build(years_pin=None) -> dict:
         "yearSpan": span,
         "nYears": n_yr,
         "sampledYears": sorted(lt_years),
+        "sampledHotspotYears": sorted(sampled_hotspot),
         "gridCells": len(out_cells),
         "coverageBBox": {"latMin": min(lats), "latMax": max(lats),
                          "lonMin": min(lons), "lonMax": max(lons)},

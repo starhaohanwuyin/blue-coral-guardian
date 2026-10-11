@@ -54,10 +54,11 @@ def _year_files():
 def _series_files(var: str, include_lt: bool = False):
     """按变量取逐年文件，如 var='BAA' -> _raw_CRW_BAA_2023.csv
 
-    ⚠️ 长时序抽稀文件（`_raw_CRW_DHW_lt_1986.csv`，每 5 天一个采样点）默认**排除**：
-    插件口径必须保持逐日，否则「DHW≥4 天数」这类口径会因采样变稀而不可比。
+    ⚠️ 长时序文件（`_raw_CRW_DHW_lt_1986.csv`）默认**排除**：插件口径必须保持与近三年一致。
+    2026-10-11 起这些长时序文件已**补全为逐日**（DHW 全部 41 年逐日；仅 2006/2010/2018/2022
+    的 HotSpot 仍是每 5 天），但它们仍带 `_lt_` 后缀，故默认不进入插件索引。
     档案分析（climate_site_profile）需要 1985 年起的长期记录，故显式传 include_lt=True；
-    此时**同一年份优先用逐日文件**（近三年），抽稀文件只补更早的年份。
+    此时**同一年份优先用逐日文件**（同名不带 `_lt_` 的），抽稀文件只补更早的年份。
     """
     out = {}
     for f in sorted(NOAA_DIR.glob(f"_raw_CRW_{var}_*.csv")):
