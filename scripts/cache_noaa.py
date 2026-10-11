@@ -44,6 +44,10 @@ ERDDAP_ENDPOINTS = [
     # ✅ 2026-10-11 实测可用：该站**没有 DHW 数据集**，但托管了 HotSpot 每日 5km
     #    （覆盖 1985-01-01 → 2026-10-03，逐日）。⚠️ 变量名是小写 `hotspot`，靠下面的别名表映射。
     "https://coastwatch.noaa.gov/erddap/griddap/noaacrwhotspotDaily.csv",
+    # ✅ 2026-10-11 实测可用：官方 **BAA（白化预警区）7 天最大合成**，覆盖 1985-03-31 → 2026-10-09。
+    #    ⚠️ 变量名是 `bleaching_alert_area`。已做对照试验：用它算的 **2024 年逐格点全年最大等级
+    #    与现有逐日产品完全一致（544/544 格，0 处差异）** → 可安全用于补老年份。
+    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv",
 ]
 ERDDAP = ERDDAP_ENDPOINTS[0]
 
@@ -51,6 +55,7 @@ ERDDAP = ERDDAP_ENDPOINTS[0]
 # 否则下游 _raw_*.csv 的 schema 会不一致）
 ENDPOINT_VAR_ALIAS = {
     "https://coastwatch.noaa.gov/erddap/griddap/noaacrwhotspotDaily.csv": {"CRW_HOTSPOT": "hotspot"},
+    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv": {"CRW_BAA": "bleaching_alert_area"},
 }
 
 # 运行期可由 CLI 覆盖：只打单一镜像 / 请求间放慢（避免触发 ERDDAP 黑名单）
@@ -329,7 +334,7 @@ def main():
                 manifest.append({"year": y, "file": out.name, "rows": n,
                                  "vars": [v for v, _ in yfiles], "status": "ok"})
                 continue
-        print(f"      失败：可用变量不足（{len(yfiles)}/{len(VARS)}）")
+        print(f"      失败：可用变量不足（{len(yfiles)}/{len(sel_vars)}）")
         failed.append(y)
         manifest.append({"year": y, "file": None, "rows": 0,
                          "vars": [v for v, _ in yfiles], "status": f"failed: {err}"})

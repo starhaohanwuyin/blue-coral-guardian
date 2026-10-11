@@ -51,25 +51,43 @@ def _year_files():
     return sorted(NOAA_DIR.glob("_raw_CRW_DHW_*.csv"))
 
 
+def _is_daily(path, min_points: int = 200) -> bool:
+    """文件是否**逐日**（约 360 个时间点/年；每 5 天抽稀约 73 个）。
+
+    ⚠️ 用**实际采样密度**判断，不看文件名：`_lt_` 曾经代表抽稀，但 2026-10-11
+    长序列补全后，这些文件已是逐日。
+    """
+    try:
+        if path.stat().st_size < 3_000_000:
+            return False
+        with path.open(encoding="utf-8", errors="replace") as fh:
+            return len({ln.split(",", 1)[0] for i, ln in enumerate(fh)
+                        if i >= 2 and ln.strip()}) >= min_points
+    except OSError:
+        return False
+
+
 def _series_files(var: str, include_lt: bool = False):
     """按变量取逐年文件，如 var='BAA' -> _raw_CRW_BAA_2023.csv
 
-    ⚠️ 长时序文件（`_raw_CRW_DHW_lt_1986.csv`）默认**排除**：插件口径必须保持与近三年一致。
-    2026-10-11 起这些长时序文件已**补全为逐日**（DHW 全部 41 年逐日；仅 2006/2010/2018/2022
-    的 HotSpot 仍是每 5 天），但它们仍带 `_lt_` 后缀，故默认不进入插件索引。
-    档案分析（climate_site_profile）需要 1985 年起的长期记录，故显式传 include_lt=True；
-    此时**同一年份优先用逐日文件**（同名不带 `_lt_` 的），抽稀文件只补更早的年份。
+    **插件口径（include_lt=False）：只收逐日文件**，但判断依据是**实际采样密度**
+    而不是文件名。历史原因：`_lt_` 文件曾是每 5 天抽稀，所以一律排除；2026-10-11
+    补成逐日后，这些文件也能进入插件索引 → 年份范围从 2023–2025 扩到 **1985–2025**。
+    万一将来还有抽稀文件，仍会被自动挡在外面（保证"天数"类口径可比）。
+
+    档案分析（climate_site_profile）传 include_lt=True：不限密度（混合分辨率时
+    由档案自己如实标注 sampledYears），同一年份优先用不带 `_lt_` 的文件。
     """
     out = {}
     for f in sorted(NOAA_DIR.glob(f"_raw_CRW_{var}_*.csv")):
         is_lt = "_lt_" in f.name
-        if is_lt and not include_lt:
-            continue
         y = f.stem.split("_")[-1]
         if not y.isdigit():
             continue
-        if y in out and is_lt:          # 已有逐日文件 → 抽稀文件不得覆盖
+        if y in out and is_lt:              # 已有非 `_lt_` 文件 → 不让 `_lt_` 覆盖
             continue
+        if not include_lt and not _is_daily(f):
+            continue                        # 插件口径：抽稀文件一律不收
         out[y] = f
     return out
 
