@@ -196,8 +196,7 @@
     "DHW 为 12 周累积量，月份会滞后；heatMonths 用 HotSpot≥1 定位热事件窗口",
     "风险月由**出现次数**（整数）算出：取 ≥ ceil(峰值月次数/2) 的月份；字段 alertMonthCount/heatMonthCount 为权威值",
     "官方源本身有零星空缺日（如 2024 年缺 5 天，已现场核对确认非下载问题）",
-    "DHW 全部 41 年均为**逐日**（已消除「峰值是下界」的限制）",
-    "其中 4 个年份 HotSpot 仍为每 5 天抽稀（仅影响热事件月份的采样密度，每月仍有约 6 个采样点）"
+    "DHW 全部 41 年均为**逐日**（已消除「峰值是下界」的限制）"
   ],
   "adviceNote": "口径：仅热压力维度（DHW/BAA/HotSpot），未含底质/水深/水流/藻类/人力等；样本 1985–2025（41 年）；空间为 5km 格点，非礁点；本档案不是投放效果评估。",
   "cells": {
@@ -599,17 +598,18 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
-        6,
         7,
         8,
         9,
@@ -669,17 +669,18 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
-        6,
         7,
         8,
         9,
@@ -1211,7 +1212,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -2108,17 +2110,18 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
-        6,
         7,
         8,
         9,
@@ -2639,12 +2642,14 @@
       ],
       "heatMonths": [
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         1,
         5,
         6,
+        10,
         11,
         12
       ],
@@ -2654,8 +2659,7 @@
         4,
         7,
         8,
-        9,
-        10
+        9
       ],
       "riskLevel": "medium",
       "label": "41 年中 2 年达白化警戒（5%）",
@@ -3291,8 +3295,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -3451,8 +3454,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -3530,8 +3532,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -4172,17 +4173,18 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
-        6,
         7,
         8,
         9,
@@ -4888,7 +4890,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -4970,7 +4973,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -5462,8 +5466,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -5542,8 +5545,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -5701,8 +5703,7 @@
       ],
       "heatMonths": [
         4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
         4,
@@ -7056,7 +7057,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -7138,7 +7140,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -8463,17 +8466,16 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        4,
         5
       ],
       "avoidMonths": [
-        4,
         5
       ],
       "safeMonths": [
         1,
         2,
         3,
+        4,
         6,
         7,
         8,
@@ -8680,14 +8682,10 @@
         12
       ],
       "heatMonths": [
-        4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
-        4,
         5,
-        6,
         11,
         12
       ],
@@ -8695,6 +8693,8 @@
         1,
         2,
         3,
+        4,
+        6,
         7,
         8,
         9,
@@ -9225,7 +9225,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -9308,7 +9309,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -9390,7 +9392,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -10124,7 +10127,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -10203,7 +10207,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -10634,18 +10639,17 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5,
-        6
+        5
       ],
       "avoidMonths": [
-        5,
-        6
+        5
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
+        6,
         7,
         8,
         9,
@@ -10705,18 +10709,17 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        5,
-        6
+        5
       ],
       "avoidMonths": [
-        5,
-        6
+        5
       ],
       "safeMonths": [
         1,
         2,
         3,
         4,
+        6,
         7,
         8,
         9,
@@ -10776,19 +10779,17 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        4,
-        5,
-        6
+        5
       ],
       "avoidMonths": [
-        4,
-        5,
-        6
+        5
       ],
       "safeMonths": [
         1,
         2,
         3,
+        4,
+        6,
         7,
         8,
         9,
@@ -10853,12 +10854,10 @@
         12
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         11,
@@ -10868,6 +10867,7 @@
         1,
         2,
         3,
+        4,
         7,
         8,
         9,
@@ -10938,7 +10938,8 @@
       ],
       "heatMonths": [
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         1,
@@ -10946,6 +10947,7 @@
         6,
         7,
         8,
+        10,
         11,
         12
       ],
@@ -10953,8 +10955,7 @@
         2,
         3,
         4,
-        9,
-        10
+        9
       ],
       "riskLevel": "medium",
       "label": "41 年中 3 年达白化警戒（7%）",
@@ -11406,7 +11407,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -11489,7 +11491,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -11572,7 +11575,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -11655,7 +11659,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -12307,7 +12312,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -12386,7 +12392,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -12817,12 +12824,10 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6
       ],
@@ -12830,6 +12835,7 @@
         1,
         2,
         3,
+        4,
         7,
         8,
         9,
@@ -13204,7 +13210,8 @@
       ],
       "heatMonths": [
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         1,
@@ -13212,6 +13219,7 @@
         6,
         7,
         8,
+        10,
         11,
         12
       ],
@@ -13219,8 +13227,7 @@
         2,
         3,
         4,
-        9,
-        10
+        9
       ],
       "riskLevel": "medium",
       "label": "41 年中 3 年达白化警戒（7%）",
@@ -13937,7 +13944,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -14188,7 +14196,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -14427,7 +14436,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -14506,7 +14516,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -14790,17 +14801,18 @@
       "riskyMonths": [],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
-        6,
         7,
         8,
         9,
@@ -14932,12 +14944,10 @@
       "severeYears": [],
       "riskyMonths": [],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6
       ],
@@ -14945,6 +14955,7 @@
         1,
         2,
         3,
+        4,
         7,
         8,
         9,
@@ -15240,7 +15251,8 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         1,
@@ -15249,14 +15261,14 @@
         6,
         7,
         8,
+        10,
         11,
         12
       ],
       "safeMonths": [
         2,
         3,
-        9,
-        10
+        9
       ],
       "riskLevel": "medium",
       "label": "41 年中 4 年达白化警戒（10%）",
@@ -15980,7 +15992,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -16229,7 +16242,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -16546,7 +16560,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -16836,17 +16851,18 @@
       "riskyMonths": [],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
-        6,
         7,
         8,
         9,
@@ -16907,17 +16923,18 @@
       "riskyMonths": [],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
-        6,
         7,
         8,
         9,
@@ -17931,7 +17948,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -18101,21 +18119,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -18185,21 +18204,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -18585,7 +18605,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -19888,21 +19909,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -19971,21 +19993,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -20053,21 +20076,23 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -20132,7 +20157,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -20211,7 +20237,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -20290,7 +20317,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -20366,7 +20394,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -20726,12 +20755,10 @@
         7
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7
@@ -20740,6 +20767,7 @@
         1,
         2,
         3,
+        4,
         8,
         9,
         10,
@@ -21688,21 +21716,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -21771,21 +21800,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -21933,7 +21963,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -22088,7 +22119,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -22301,17 +22333,18 @@
       "riskyMonths": [],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
-        6,
         7,
         8,
         9,
@@ -23331,7 +23364,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -23703,17 +23737,18 @@
       "riskyMonths": [],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
-        5
+        5,
+        6
       ],
       "safeMonths": [
         1,
         2,
         3,
-        6,
         7,
         8,
         9,
@@ -23779,7 +23814,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -23855,7 +23891,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -24728,21 +24765,22 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -25282,7 +25320,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -25359,7 +25398,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -25436,7 +25476,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -27054,7 +27095,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -27130,7 +27172,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -27207,7 +27250,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -27438,12 +27482,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -27453,6 +27495,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -28334,7 +28377,8 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        11
       ],
       "avoidMonths": [
         4,
@@ -28423,22 +28467,24 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10,
+        11
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10,
+        11
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
-        11,
         12
       ],
       "riskLevel": "high",
@@ -28514,7 +28560,8 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         1,
@@ -28523,14 +28570,14 @@
         6,
         7,
         8,
+        10,
         11,
         12
       ],
       "safeMonths": [
         2,
         3,
-        9,
-        10
+        9
       ],
       "riskLevel": "high",
       "label": "41 年中 6 年达白化警戒（15%），其中 3 年达严重档（DHW≥8）",
@@ -29526,7 +29573,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -29837,12 +29885,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -29852,6 +29898,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -29916,7 +29963,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -30305,12 +30353,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -30320,6 +30366,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -30712,7 +30759,8 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        11
       ],
       "avoidMonths": [
         1,
@@ -30803,7 +30851,8 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        11
       ],
       "avoidMonths": [
         4,
@@ -30980,21 +31029,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -32459,7 +32509,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -32536,7 +32587,8 @@
       ],
       "heatMonths": [
         4,
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         4,
@@ -32849,12 +32901,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -32864,6 +32914,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -33006,12 +33057,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -33021,6 +33070,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -33162,12 +33212,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -33177,6 +33225,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -33521,21 +33570,22 @@
       "heatMonths": [
         4,
         5,
-        6
+        6,
+        10
       ],
       "avoidMonths": [
         4,
         5,
         6,
         7,
-        8
+        8,
+        10
       ],
       "safeMonths": [
         1,
         2,
         3,
         9,
-        10,
         11,
         12
       ],
@@ -33954,7 +34004,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -34982,7 +35033,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -35688,12 +35740,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -35703,6 +35753,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -36392,7 +36443,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -36474,7 +36526,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -37106,7 +37159,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -38895,7 +38949,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -39055,7 +39110,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -39605,7 +39661,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -39682,7 +39739,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -40694,12 +40752,10 @@
         8
       ],
       "heatMonths": [
-        4,
         5,
         6
       ],
       "avoidMonths": [
-        4,
         5,
         6,
         7,
@@ -40709,6 +40765,7 @@
         1,
         2,
         3,
+        4,
         9,
         10,
         11,
@@ -41550,7 +41607,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -41630,7 +41688,8 @@
         7
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -42023,7 +42082,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -42101,7 +42161,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -42178,7 +42239,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -42255,7 +42317,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,
@@ -42488,7 +42551,8 @@
         8
       ],
       "heatMonths": [
-        5
+        5,
+        6
       ],
       "avoidMonths": [
         5,

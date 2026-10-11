@@ -41,8 +41,17 @@ ERDDAP_ENDPOINTS = [
     "https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.csv",          # ⚠️ 2026-10-11 本机 IP 被该站
     #                                                                          request blacklist（403，无 Retry-After）
     "https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhw5km.csv",          # ❌ 2026-10-11 实测 404（数据集 ID 已失效）
+    # ✅ 2026-10-11 实测可用：该站**没有 DHW 数据集**，但托管了 HotSpot 每日 5km
+    #    （覆盖 1985-01-01 → 2026-10-03，逐日）。⚠️ 变量名是小写 `hotspot`，靠下面的别名表映射。
+    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwhotspotDaily.csv",
 ]
 ERDDAP = ERDDAP_ENDPOINTS[0]
+
+# 同一物理量在不同 ERDDAP 上的变量名可能不同（用别名表映射；响应列名会归一化回 VARS 里的名字，
+# 否则下游 _raw_*.csv 的 schema 会不一致）
+ENDPOINT_VAR_ALIAS = {
+    "https://coastwatch.noaa.gov/erddap/griddap/noaacrwhotspotDaily.csv": {"CRW_HOTSPOT": "hotspot"},
+}
 
 # 运行期可由 CLI 覆盖：只打单一镜像 / 请求间放慢（避免触发 ERDDAP 黑名单）
 FETCH_ENDPOINTS = None
@@ -71,7 +80,7 @@ def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
       2) 段大小按实测取 90 天（约 450 KB / 请求，~10 秒）。
     """
     if chunk_days <= 0:
-        return fetch(build_url(bbox, a, b, var, stride=stride))
+        return fetch(build_url(bbox, a, b, var, stride=stride), var=var)
     from datetime import date, timedelta
     d0, d1 = date.fromisoformat(a), date.fromisoformat(b)
     spans, cur = [], d0
@@ -88,7 +97,7 @@ def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
             txt = cf.read_text(encoding="utf-8", errors="replace")
             done += 1
         else:
-            txt = fetch(build_url(bbox, ca, cb, var, stride=stride))
+            txt = fetch(build_url(bbox, ca, cb, var, stride=stride), var=var)
             cf.write_text(txt, encoding="utf-8")
             time.sleep(0.5)
         lines = txt.splitlines()
@@ -99,24 +108,33 @@ def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
     return "\n".join((head or []) + rows) + "\n"
 
 
-def fetch(url, timeout=300, retries=3, verbose=True, endpoints=None, throttle=0.0):
+def fetch(url, timeout=300, retries=3, verbose=True, endpoints=None, throttle=0.0, var=None):
     """依次尝试各个 ERDDAP 端点，全部失败才抛错。
 
     ⚠️ 2026-10-11 教训：`coastwatch.pfeg.noaa.gov` 因请求过多把本机 IP 加入
     **request blacklist**（403，无 Retry-After），而 `coastwatch.noaa.gov` 的
     兜底数据集 ID（`noaacrwdhw5km`）已失效（404）。PacIOOS 仍可用（200）。
     因此支持 `endpoints` 只打一个镜像 + `throttle` 放慢节奏，避免再次被封。
+
+    `var`：本请求的物理量。若该端点在其变量名不同（见 ENDPOINT_VAR_ALIAS，例如
+    HotSpot 在 coastwatch.noaa 上叫 `hotspot`），这里会做**双向映射**：
+    请求时把变量名换成别名、响应时把列名换回标准名（保证 `_raw_*.csv` schema 一致）。
     """
     eps = endpoints or FETCH_ENDPOINTS or ERDDAP_ENDPOINTS
     last = None
     for i in range(retries):
         for ep in eps:
+            alias = (ENDPOINT_VAR_ALIAS.get(ep) or {}).get(var) if var else None
             u = url.replace(ERDDAP, ep, 1)
+            if alias:
+                u = u.replace(var, alias, 1)
             try:
                 req = Request(u, headers={"User-Agent": UA})
                 with urlopen(req, timeout=timeout) as r:
                     txt = r.read().decode("utf-8", errors="replace")
                     if txt.startswith("time") and len(txt) > 100:
+                        if alias:
+                            txt = txt.replace(alias, var)      # 列名归一化
                         if throttle or FETCH_THROTTLE:
                             time.sleep(throttle or FETCH_THROTTLE)
                         return txt
