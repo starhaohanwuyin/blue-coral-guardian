@@ -12,8 +12,10 @@
 import contextlib
 import importlib.util
 import io
+import json
 import pathlib
 import sys
+import time
 import traceback
 
 SCRIPTS = pathlib.Path(__file__).resolve().parent
@@ -21,6 +23,10 @@ sys.path.insert(0, str(SCRIPTS))
 
 
 def main() -> int:
+    out = None
+    if "--out" in sys.argv:
+        out = pathlib.Path(sys.argv[sys.argv.index("--out") + 1])
+    t0 = time.time()
     ok, fail = [], []
     for p in sorted(SCRIPTS.glob("*.py")):
         name = p.stem
@@ -34,13 +40,23 @@ def main() -> int:
             ok.append(name)                 # 模块级 sys.exit（如缺参数）不算失败
         except Exception as e:
             tb = traceback.format_exc().strip().splitlines()
-            fail.append((name, f"{type(e).__name__}: {e}", tb[-3].strip() if len(tb) >= 3 else ""))
+            fail.append({"script": name, "error": f"{type(e).__name__}: {e}",
+                         "where": tb[-3].strip() if len(tb) >= 3 else ""})
 
     print(f"已导入 {len(ok) + len(fail)} 个脚本；失败 {len(fail)} 个")
-    for n, err, line in fail:
-        print(f"  ❌ {n}: {err}")
-        if line:
-            print(f"       {line}")
+    for f in fail:
+        print(f"  ❌ {f['script']}: {f['error']}")
+        if f["where"]:
+            print(f"       {f['where']}")
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "task": "scripts import check", "passed": not fail,
+            "total": len(ok) + len(fail), "failed": len(fail), "failures": fail,
+            "seconds": round(time.time() - t0, 2),
+            "note": "比 py_compile 强一档：会执行模块级代码，能抓 NameError/缺 import 等运行即错",
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"结果写入 {out}")
     if fail:
         print("\n提示：这类错误 py_compile 查不出来（语法合法、运行才错）。")
         return 1

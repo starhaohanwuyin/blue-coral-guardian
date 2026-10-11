@@ -11,7 +11,7 @@
     ② 可幂等重跑（已完成的跳过，未完成的续跑）
     ③ 判活不依赖 wmic（新版 Windows 已移除）
 
-当前阶段数：23（P3 个体计数新增 3 个；投放时间窗档案新增 1 个）。
+当前阶段数：26（P3 个体计数新增 3 个；投放时间窗档案新增 1 个；代码闸门新增 2 个）。
 
 用法：
     python resume_all.py                 # 状态体检
@@ -155,6 +155,15 @@ STAGES = [
     ("climate_profile", "投放时间窗档案（格点级热压力 + 风险月份）",
      "reports/deployment_windows.json", ["noaa"],
      [PY, "-u", "climate_site_profile.py", "--build"]),
+
+    # ---- 代码质量闸门（不需要 GPU/网络，几秒完成）----
+    ("gate_imports", "闸门：全脚本导入检查（抓 py_compile 查不出的运行即错）",
+     "reports/gate_imports.json", [],
+     [PY, "-u", "check_imports.py", "--out", "../reports/gate_imports.json"]),
+
+    ("gate_abs_paths", "闸门：主机绝对路径扫描（可移植性）",
+     "reports/gate_abs_paths.json", [],
+     [PY, "-u", "check_abs_paths.py", "--allow-docs", "--out", "../reports/gate_abs_paths.json"]),
 ]
 
 CRITICAL = {"inat_semporna", "inat_triangle", "genus_dataset", "genus_images", "species_ip"}

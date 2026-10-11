@@ -1,0 +1,9 @@
+{
+  "task": "scripts import check",
+  "passed": true,
+  "total": 57,
+  "failed": 0,
+  "failures": [],
+  "seconds": 16.77,
+  "note": "比 py_compile 强一档：会执行模块级代码，能抓 NameError/缺 import 等运行即错"
+}

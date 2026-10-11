@@ -8,10 +8,12 @@
     python check_abs_paths.py        # 有残留则退出码 1（文档里作为示例的路径可用 --allow-docs 放行）
 """
 import argparse
+import json
 import pathlib
 import re
 import subprocess
 import sys
+import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 # 主机绝对路径：Windows 盘符 或 Unix 家目录
@@ -23,7 +25,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--allow-docs", action="store_true",
                     help="文档里的示例路径不算问题（推荐：真交付物里不允许）")
+    ap.add_argument("--out", default="", help="把结果写成 JSON（供 resume_all 作阶段标记）")
     args = ap.parse_args()
+    t0 = time.time()
 
     files = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True).stdout.split()
     hits = []
@@ -47,6 +51,16 @@ def main() -> int:
         print(f"  · {f}:{line}  {frag}")
     if len(hits) > 40:
         print(f"  … 其余 {len(hits) - 40} 处")
+    if args.out:
+        p = pathlib.Path(args.out)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps({
+            "task": "host absolute path scan", "passed": not hits,
+            "scanned": len(files), "hits": len(hits),
+            "samples": [{"file": f, "line": ln, "path": frag} for f, ln, frag in hits[:20]],
+            "seconds": round(time.time() - t0, 2),
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"结果写入 {p}")
     if hits:
         print("\n修复：改用 os.environ.get(..., 默认值) 或按 __file__ 推导仓库相对路径；"
               "报告 JSON 用脚本内的 rel() 落盘。")

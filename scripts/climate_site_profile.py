@@ -63,9 +63,22 @@ def build(years_pin=None) -> dict:
         if miss:
             print(f"  ⚠️ 以下年份无缓存、已忽略：{miss}")
     lt_years = [y for y in years if "_lt_" in _series_files("DHW", include_lt=True)[y].name]
-    if lt_years:
-        print(f"  注：{len(lt_years)} 个年份为**抽稀缓存**（每 5 天一个采样点），"
-              f"逐日年份 {sorted(set(years) - set(lt_years))}")
+    # ⚠️ 不能只看文件名判断"抽稀"：`--force --stride 1` 补全后，文件名仍带 `_lt_` 但数据已是逐日。
+    #    改为按**实际采样密度**判定（逐日约 360 个时间点/年，每 5 天约 73 个）。
+    sampled_years = []
+    for y in years:
+        p = _series_files("DHW", include_lt=True)[y]
+        try:
+            with p.open(encoding="utf-8", errors="replace") as fh:
+                times = {ln.split(",", 1)[0] for i, ln in enumerate(fh) if i >= 2 and ln.strip()}
+        except OSError:
+            times = set()
+        if 0 < len(times) < 200:
+            sampled_years.append(y)
+    if sampled_years:
+        print(f"  注：{len(sampled_years)} 个年份为**抽稀采样**（每 5 天一个点），"
+              f"逐日年份 {len([y for y in years if y not in sampled_years])} 个")
+    lt_years = sampled_years      # 沿用旧变量名，供后续 caveats 使用
 
     dhw_files, baa_files, hs_files = (_series_files("DHW", include_lt=True),
                                       _series_files("BAA", include_lt=True),

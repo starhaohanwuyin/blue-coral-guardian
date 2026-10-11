@@ -76,7 +76,9 @@ def fetch_year(var, a, b, bbox, stride=1, chunk_days=0, suffix=""):
         cur = nxt + timedelta(days=1)
     head, rows, done = None, [], 0
     for i, (ca, cb) in enumerate(spans):
-        cf = CACHE / f".chunk_{var}{suffix}_{ca}_{cb}.csv"
+        # ⚠️ 分块文件名必须带 stride：否则同一日期区间的"每 5 天"缓存会被
+        #    逐日请求复用，导致**静默拿到抽稀数据**（本轮真实踩到）
+        cf = CACHE / f".chunk_{var}{suffix}_s{stride}_{ca}_{cb}.csv"
         if cf.exists() and cf.stat().st_size > 200:
             txt = cf.read_text(encoding="utf-8", errors="replace")
             done += 1
@@ -168,6 +170,8 @@ def main():
                     help=">0 时把每年的请求拆成 N 天一段（小块请求实测更快）")
     ap.add_argument("--endpoint", default="",
                     help="优先使用的镜像 URL（默认 PacIOOS；实测 CoastWatch-PFEG 快约 5 倍）")
+    ap.add_argument("--force", action="store_true",
+                    help="忽略已有缓存重新抓取（用于改变抽稀步长后补全，如把每 5 天升为逐日）")
     args = ap.parse_args()
 
     global ERDDAP, ERDDAP_ENDPOINTS
@@ -206,7 +210,7 @@ def main():
     manifest = []
     for y, a, b in years(args.start, args.end):
         out = CACHE / f"CRW_semporna{args.suffix}_{y}.csv"
-        if out.exists() and out.stat().st_size > 200:
+        if out.exists() and out.stat().st_size > 200 and not args.force:
             n = sum(1 for _ in out.open(encoding="utf-8", errors="replace")) - 1
             print(f"  [跳过] {y}  已缓存 {n} 行")
             ok_years.append(y)
@@ -214,11 +218,13 @@ def main():
             continue
 
         # ⚠️ 逐变量抓取：多变量合并查询实测会 404
-        print(f"  [拉取] {y}  ({a} → {b})  逐变量", flush=True)
+        print(f"  [拉取] {y}  ({a} → {b})  逐变量"
+              + ("（--force：忽略已有缓存，按 stride=%d 重新抓取）" % args.stride
+                 if args.force else ""), flush=True)
         yfiles, err = [], None
         for var in sel_vars:
             vp = CACHE / f"_raw_{var}{args.suffix}_{y}.csv"
-            if vp.exists() and vp.stat().st_size > 200:
+            if vp.exists() and vp.stat().st_size > 200 and not args.force:
                 yfiles.append((var, vp))
                 print(f"      {var:<18} 已缓存", flush=True)
                 continue
