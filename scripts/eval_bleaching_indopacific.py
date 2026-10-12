@@ -79,8 +79,10 @@ def load_external():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--source", default="external", choices=["external"] + list(SPLIT_FILE),
+    ap.add_argument("--source", default="external",
+                    choices=["external", "pacific", "pacific_val"] + list(SPLIT_FILE),
                     help="external = Arafura/Darwin 外部测试集（推荐，包小）；"
+                         "pacific = NOAA 太平洋岛屿（FFS/关岛，第三个印太海域，仅健康/白化两类）；"
                          "test/winter/train = 泰国 Koh Tao 主仓库标签集")
     ap.add_argument("--limit", type=int, default=0, help="只评前 N 张（快速冒烟）")
     ap.add_argument("--weights", default="", help="换用其它权重（如微调后的 bleaching_all_koh_tao/best.pt）；"
@@ -111,7 +113,27 @@ def main():
         print(f"❌ 找不到权重 {WEIGHTS}\n   交付包里有：weights/bleaching_all/best.pt")
         return 2
 
-    if split == "external":
+    if split in ("pacific", "pacific_val"):
+        _sub = "val" if split == "pacific_val" else "test"
+        # NOAA 太平洋岛屿（FFS 法属护卫舰浅滩 + 关岛）：仅 健康(CORAL)/白化(CORAL_BL) 两类
+        pac_test = CCD / ".." / "pifsc_pacific" / _sub
+        pac_test = pac_test.resolve()
+        if not pac_test.exists():
+            print("❌ 缺少 NOAA 太平洋测试集；先运行下载脚本（见手册 §9.16.13）")
+            return 3
+        idxp = {}
+        for p_ in pac_test.rglob("*.PNG"):
+            idxp.setdefault(p_.stem, p_)
+        for p_ in pac_test.rglob("*.png"):
+            idxp.setdefault(p_.stem, p_)
+        rows = []
+        for cdir, cname in (("CORAL", "healthy"), ("CORAL_BL", "bleached")):
+            for p_ in (pac_test / cdir).glob("*"):
+                if p_.suffix.lower() in (".png", ".jpg", ".jpeg"):
+                    rows.append({"tileid": p_.stem, "_truth": {cname}})
+        print(f"NOAA 太平洋岛屿测试集：{len(rows)} 张（仅健康/白化两类 → dead 类支持为 0）")
+        idx = idxp
+    elif split == "external":
         pairs = load_external()
         if not pairs or not EXT_IMGS.exists():
             print("❌ 缺少 external 包（Arafura/Darwin 印太外部测试集）。获取方式：\n")

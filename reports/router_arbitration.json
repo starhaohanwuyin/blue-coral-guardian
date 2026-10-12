@@ -1,0 +1,133 @@
+{
+  "task": "路由仲裁改进：温度校准置信度 + 分歧弃权",
+  "temperatures": {
+    "orig": {
+      "kohTao": 1.1606,
+      "orig": 1.8761
+    },
+    "indo": {
+      "kohTao": 1.9545,
+      "orig": 6.9446
+    }
+  },
+  "results": {
+    "external": {
+      "trueDomain": "indo",
+      "samples": 1991,
+      "agreement": 0.5445,
+      "tempCalibratedConfidence": {
+        "macroF1": 0.4903,
+        "perClass": {
+          "bleached": 0.3389,
+          "dead": 0.6735,
+          "healthy": 0.4586
+        }
+      },
+      "abstainOnDisagreement": {
+        "macroF1": 0.5547,
+        "perClass": {
+          "bleached": 0.3799,
+          "dead": 0.7559,
+          "healthy": 0.5284
+        },
+        "decided": 1084,
+        "coverage": 0.5445
+      }
+    },
+    "winter": {
+      "trueDomain": "indo",
+      "samples": 3204,
+      "agreement": 0.6773,
+      "tempCalibratedConfidence": {
+        "macroF1": 0.5656,
+        "perClass": {
+          "bleached": 0.3811,
+          "dead": 0.668,
+          "healthy": 0.6477
+        }
+      },
+      "abstainOnDisagreement": {
+        "macroF1": 0.6047,
+        "perClass": {
+          "bleached": 0.3981,
+          "dead": 0.7169,
+          "healthy": 0.699
+        },
+        "decided": 2170,
+        "coverage": 0.6773
+      }
+    },
+    "kaggle": {
+      "trueDomain": "orig",
+      "samples": 257,
+      "agreement": 0.4981,
+      "tempCalibratedConfidence": {
+        "macroF1": 0.6525,
+        "perClass": {
+          "bleached": 0.9738,
+          "dead": 0.0,
+          "healthy": 0.9836
+        }
+      },
+      "abstainOnDisagreement": {
+        "macroF1": 0.6667,
+        "perClass": {
+          "bleached": 1.0,
+          "dead": 0.0,
+          "healthy": 1.0
+        },
+        "decided": 128,
+        "coverage": 0.4981
+      }
+    },
+    "orig_test": {
+      "trueDomain": "orig",
+      "samples": 412,
+      "agreement": 0.4903,
+      "tempCalibratedConfidence": {
+        "macroF1": 0.8742,
+        "perClass": {
+          "bleached": 0.877,
+          "dead": 0.8462,
+          "healthy": 0.8995
+        }
+      },
+      "abstainOnDisagreement": {
+        "macroF1": 0.913,
+        "perClass": {
+          "bleached": 0.911,
+          "dead": 0.9189,
+          "healthy": 0.9091
+        },
+        "decided": 202,
+        "coverage": 0.4903
+      }
+    }
+  },
+  "baseline": {
+    "domain策略": {
+      "external": 0.4531,
+      "winter": 0.5326,
+      "kaggle": 0.5918,
+      "orig_test": 0.8487
+    },
+    "confidence策略": {
+      "external": 0.4682,
+      "winter": 0.5576,
+      "kaggle": 0.6523,
+      "orig_test": 0.7644
+    },
+    "纯D2": {
+      "external": 0.4476,
+      "winter": 0.5397,
+      "kaggle": 0.6485,
+      "orig_test": 0.891
+    },
+    "纯C": {
+      "external": 0.4826,
+      "winter": 0.5445,
+      "kaggle": 0.4183,
+      "orig_test": 0.4253
+    }
+  }
+}

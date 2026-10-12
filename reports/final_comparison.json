@@ -1,5 +1,5 @@
 {
-  "task": "白化识别最终对比：5 个模型 × 4 个测试集 × 2 种路由策略（2026-10-12）",
+  "task": "白化识别最终对比（截至 2026-10-12 深夜，含 D3 五域 / 太平洋域 / 仲裁改进）",
   "metric": "单标签宏平均 F1（多标签真值按优先级 dead>bleached>healthy 取单标签）",
   "models": {
     "A_部署原始": {
@@ -56,7 +56,44 @@
         "recall": 0.963,
         "precision": 0.9848,
         "acc": 0.9728
+      },
+      "pacificVal": {
+        "macroF1": 0.435,
+        "bleachedF1": 0.547,
+        "healthyF1": 0.758,
+        "acc": 0.6016
+      },
+      "pacificTest": {
+        "macroF1": 0.4268,
+        "bleachedF1": 0.535,
+        "healthyF1": 0.745,
+        "acc": 0.5882
       }
+    },
+    "D3_多域5域": {
+      "external": 0.3813,
+      "winter": 0.5483,
+      "inDomainValMacroF1": 0.947,
+      "kaggleArgmaxMacroF1": null,
+      "origTestArgmaxMacroF1": 0.9402,
+      "kaggleConf": {
+        "recall": 0.9926,
+        "precision": 0.964,
+        "acc": 0.9767
+      },
+      "pacificVal": {
+        "macroF1": 0.5801,
+        "bleachedF1": 0.835,
+        "healthyF1": 0.905,
+        "acc": 0.8793
+      },
+      "pacificTest": {
+        "macroF1": 0.5792,
+        "bleachedF1": 0.834,
+        "healthyF1": 0.903,
+        "acc": 0.8779
+      },
+      "note": "五域（orig/KohTao/印尼/bhd/太平洋）；域内与印太多数指标优于 D2，但 Arafura 略降"
     }
   },
   "multidomainTraining": {
@@ -138,16 +175,47 @@
       "kaggle": 0.6523,
       "orig_test": 0.7644
     },
-    "verdict": "路由**没有净收益**：域内集上严格低于纯 D（0.59/0.76 vs 0.65/0.91），跨域集上介于 D 与 C 之间（winter 略超 C）。瓶颈是仲裁精度（域判别留出 0.79）。"
+    "verdict": "路由**没有净收益**：域内集上严格低于纯 D（0.59/0.76 vs 0.65/0.91），跨域集上介于 D 与 C 之间（winter 略超 C）。瓶颈是仲裁精度（域判别留出 0.79）。",
+    "arbitrationImproved": {
+      "temperatures": {
+        "orig(D2)": {
+          "kohTao": 1.161,
+          "origDomain": 1.876
+        },
+        "indo(C)": {
+          "kohTao": 1.954,
+          "origDomain": 6.945
+        }
+      },
+      "tempCalibrated": {
+        "external": 0.4903,
+        "winter": 0.5656,
+        "kaggle": 0.6525,
+        "orig_test": 0.8742
+      },
+      "abstainOnDisagreement": {
+        "external": 0.5547,
+        "winter": 0.6047,
+        "kaggle": 0.6667,
+        "orig_test": 0.913
+      },
+      "coverage": {
+        "external": 0.544,
+        "winter": 0.677,
+        "kaggle": 0.498,
+        "orig_test": 0.49
+      },
+      "verdict": "温度校准揭示 C 在原始域极度过度自信（T≈6.95）；「分歧弃权」在 4 个集上全部超过最优单模型，代价是 1/3~1/2 图片进入待复核。"
+    }
   },
   "deployment": {
-    "current": "weights/bleaching_all/best.pt = D2（多域4域）",
+    "current": "weights/bleaching_all/best.pt = D3（五域联合，2026-10-12 深夜）",
     "rollback": {
       "原始 A": "weights/bleaching_all/best_A_backup.pt",
-      "D": "weights/bleaching_all_multidomain/best_D_archive.pt"
+      "D": "weights/bleaching_all_multidomain/best_D_archive.pt",
+      "D2": "weights/bleaching_all_multidomain2/best_D2_archive.pt"
     },
-    "e2eWithD2": "25/25 通过",
-    "reason": "D2 在域内验证 0.9402（≥ A 的 0.9191）且跨域 external 0.4476（≥ D 的 0.3646）、winter 0.5397（≥ D 的 0.5067）；即**两边都不退化**"
+    "reason": "D3 在域内验证 0.9470（>D2 0.9402）、orig_test 0.9402（>0.8910）、太平洋 val 0.5801（>0.4350）、winter 0.5483（>0.5397）；仅 external(Arafura) 0.3813 < D2 0.4476 —— 如实记录该回退"
   },
   "gcbd": {
     "records": 34846,
@@ -187,5 +255,43 @@
     },
     "verdict": "网格内白化**程度**最高的年份（2008/2012）与我们 DHW 峰值最高的年份（2016/2010）几乎不重合 → 报告/局部偏差占主导，**不能用于验证或改写阈值**；仅确认「官方 4 阈值只覆盖 27% 的有记录年份」这一方向性事实。",
     "columnNote": "判定『是否观察到白化』须用 Bleaching_Level(1/2)，而非 Severity_Code（大量为空）"
+  },
+  "pacificDomain": {
+    "dataset": "NMFS-OSI/NOAA-PIFSC-ESD-CORAL-Bleaching-Dataset（FFS 法属护卫舰浅滩 + 关岛 GUA）",
+    "labels": "CORAL(健康) / CORAL_BL(白化)，二分类，专家标注",
+    "downloaded": {
+      "train": 2951,
+      "val": 1541,
+      "test": 1564,
+      "sizeMB": 318
+    },
+    "heldOut": "test 1,564 张全程未参与训练、也未用于选模型",
+    "verdict": "D2 → D3：太平洋 test bleached F1 0.535→0.834、准确率 0.588→0.878"
+  },
+  "realPhotoCheck": {
+    "set": "180 张仙本那实拍（小程序示例图）",
+    "distributions": {
+      "A_原线上": {
+        "healthy": 0.79,
+        "bleached": 0.19,
+        "dead": 0.02
+      },
+      "C_纯域自适应": {
+        "healthy": 0.29,
+        "bleached": 0.11,
+        "dead": 0.6
+      },
+      "D2": {
+        "healthy": 0.68,
+        "bleached": 0.16,
+        "dead": 0.16
+      }
+    },
+    "agreement": {
+      "A_vs_D2": 0.744,
+      "A_vs_C": 0.289,
+      "C_vs_D2": 0.428
+    },
+    "note": "C 会把 60% 的照片判为死亡（不可接受）；D2 更接近原行为，但死亡判定 2%→16% 属用户可见变化"
   }
 }

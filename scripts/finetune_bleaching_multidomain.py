@@ -46,6 +46,7 @@ KAGGLE_TRAIN = (ROOT.parent / "competition_data" / "AI4Climate_data" / "Kaggle_c
 # 第二/第三个印太海域（用于抬高跨域上限）
 IDN_ROOT = ROOT / "data" / "raw" / "coral_indo" / "dataset_preparation_output"   # 印尼三站点
 BHD_ROOT = ROOT / "data" / "raw" / "bhd-corals" / "Dataset"                       # 三分类
+PAC_ROOT = ROOT / "data" / "raw" / "pifsc_pacific" / "train"                      # NOAA 太平洋岛屿（第三印太海域）
 IN_DOMAIN_VAL = ROOT / "data" / "processed" / "bleaching" / "val"
 INIT_W = ROOT / "weights" / "bleaching_all" / "best.pt"
 OUT_DIR = ROOT / "weights" / "bleaching_all_multidomain"
@@ -120,6 +121,15 @@ def collect():
                     items.append((p, CI[cname], "bhd"))
                     n += 1
         print(f"  其它域[bhd-corals 三分类] {n} 张")
+    # NOAA 太平洋岛屿（法属护卫舰浅滩 FFS + 关岛 GUA）—— **第三个印太海域、专家标注**（二分类：健康/白化）
+    if PAC_ROOT.exists():
+        n = 0
+        for clsdir, cname in (("CORAL", "healthy"), ("CORAL_BL", "bleached")):
+            for p in (PAC_ROOT / clsdir).glob("*"):
+                if p.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                    items.append((p, CI[cname], "pac"))
+                    n += 1
+        print(f"  印太域[NOAA 太平洋岛屿·专家标注] {n} 张（无 dead 类）")
     return items
 
 
