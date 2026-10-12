@@ -1,0 +1,29 @@
+{
+  "weights": "weights\\bleaching_all_koh_tao\\best.pt",
+  "classes": [
+    "bleached",
+    "dead",
+    "healthy"
+  ],
+  "offsets": {
+    "bleached": -2.0,
+    "dead": -1.75,
+    "healthy": -1.5
+  },
+  "tunedOn": "CCD test_set（验证集）——**未使用** Arafura/Darwin 测试集",
+  "metric": "单标签宏平均 F1（优先级 dead>bleached>healthy，与训练/评测主口径一致）",
+  "valSamples": 5514,
+  "macroF1Before": 0.7297,
+  "macroF1After": 0.73,
+  "perClassBefore": {
+    "bleached": 0.653,
+    "dead": 0.7968,
+    "healthy": 0.7393
+  },
+  "perClassAfter": {
+    "bleached": 0.6483,
+    "dead": 0.7938,
+    "healthy": 0.748
+  },
+  "caveat": "偏置等价于改类先验，可修正「某类几乎不判」，但不能凭空造出判别能力；在别的域是否同样有效需实测"
+}

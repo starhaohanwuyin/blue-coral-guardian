@@ -4,15 +4,61 @@
   "split": "external",
   "samplesEvaluated": 2577,
   "missingImage": 0,
+  "samplesWithoutThreeClass": 586,
   "model": {
-    "weights": "weights/bleaching_all/best.pt",
+    "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all\\best.pt",
     "backbone": "convnext_tiny",
     "classes": [
       "bleached",
       "dead",
       "healthy"
     ],
-    "imgSize": 224
+    "imgSize": 224,
+    "offsets": null
+  },
+  "metric": "single",
+  "singleLabel": {
+    "perClass": {
+      "bleached": {
+        "precision": 0.176,
+        "recall": 0.7882,
+        "f1": 0.2877,
+        "support": 288
+      },
+      "dead": {
+        "precision": 1.0,
+        "recall": 0.0039,
+        "f1": 0.0077,
+        "support": 1296
+      },
+      "healthy": {
+        "precision": 0.2601,
+        "recall": 0.4447,
+        "f1": 0.3282,
+        "support": 407
+      }
+    },
+    "macroF1": 0.2079,
+    "accuracy": 0.2074,
+    "samples": 1991,
+    "confusion": {
+      "bleached": {
+        "healthy": 61,
+        "bleached": 227,
+        "dead": 0
+      },
+      "dead": {
+        "healthy": 454,
+        "bleached": 837,
+        "dead": 5
+      },
+      "healthy": {
+        "healthy": 181,
+        "bleached": 226,
+        "dead": 0
+      }
+    },
+    "rule": "多标签真值按优先级 dead > bleached > healthy 取单标签（与训练一致）"
   },
   "oneVsRest": {
     "healthy": {

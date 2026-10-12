@@ -33,7 +33,8 @@ LABELS = CCD / "CoralConditionDataset-main" / "code" / "datasets"
 DRY_IMGS = CCD / "dry"                       # 干季图像（coral_images_dry.zip 解压后）
 INIT_W = ROOT / "weights" / "bleaching_all" / "best.pt"
 OUT_DIR = ROOT / "weights" / "bleaching_all_koh_tao"
-REPORT = ROOT / "reports" / "finetune_indopacific.json"
+# ⚠️ 报告文件名必须带输出目录名：否则多次微调（B/C）会写同一个文件互相覆盖（本脚本踩过）
+REPORT = ROOT / "reports" / f"finetune_{OUT_DIR.name}.json"
 
 # CCD 类别号 → 本项目三类（优先级从高到低）
 PRIORITY = [(3, "dead"), (2, "bleached"), (1, "healthy")]
@@ -74,6 +75,12 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="训练集只用前 N 张（冒烟/加速）")
     ap.add_argument("--val-limit", type=int, default=1500, help="验证集上限（每轮都要评，控制耗时）")
     ap.add_argument("--workers", type=int, default=8, help="DataLoader 进程数（解码是瓶颈，别用 0）")
+    ap.add_argument("--init", default="", help="初始化权重（默认线上 bleaching_all/best.pt；"
+                                               "可指向已微调权重做热启动继续训练）")
+    ap.add_argument("--bleached-boost", type=float, default=1.0,
+                    help="白化类的采样权重倍数（>1 提升白化召回，代价是精确率下降）。"
+                         "实测：后验类别偏置在域内几乎无提升（0.7297→0.7300），"
+                         "故白化漏检要靠训练侧加权修，而不是事后调先验。")
     ap.add_argument("--out", default=str(OUT_DIR))
     a = ap.parse_args()
 
@@ -132,7 +139,10 @@ def main():
     classes = ["bleached", "dead", "healthy"]      # 与线上 bleaching_all 的顺序保持一致
     ci = {c: i for i, c in enumerate(classes)}
 
-    ck = torch.load(INIT_W, map_location="cpu", weights_only=False)
+    init_w = pathlib.Path(a.init) if a.init else INIT_W
+    if not init_w.is_absolute():
+        init_w = ROOT / init_w
+    ck = torch.load(init_w, map_location="cpu", weights_only=False)
     if [str(c).lower() for c in ck["classes"]] != classes:
         classes = [str(c).lower() for c in ck["classes"]]
         ci = {c: i for i, c in enumerate(classes)}
@@ -141,7 +151,8 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = build_model(ck["backbone"], len(classes)).to(device)
     model.load_state_dict(ck["model"])
-    print(f"初始化自 {INIT_W.name}  骨干={ck['backbone']}  设备={device.type}")
+    print(f"初始化自 {init_w.name}  骨干={ck['backbone']}  设备={device.type}"
+          f"{f'  白化采样加权 ×{a.bleached_boost}' if a.bleached_boost != 1.0 else ''}")
     if a.freeze_backbone:
         for n, p in model.named_parameters():
             if not n.startswith("classifier") and not n.startswith("head"):
@@ -161,7 +172,7 @@ def main():
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
     counts = Counter(y for _, y in train)
-    w = [1.0 / counts[y] for _, y in train]
+    w = [(1.0 / counts[y]) * (a.bleached_boost if y == "bleached" else 1.0) for _, y in train]
     sampler = WeightedRandomSampler(w, num_samples=len(train), replacement=True)
     dl_tr = DataLoader(PatchDataset(train, tf_tr, ci), batch_size=a.batch, sampler=sampler,
                        num_workers=a.workers, pin_memory=True, persistent_workers=a.workers > 0)
@@ -192,6 +203,8 @@ def main():
         return f1s, sum(f1s.values()) / max(len(f1s), 1)
 
     out_dir = pathlib.Path(a.out)
+    global REPORT
+    REPORT = ROOT / "reports" / f"finetune_{out_dir.name}.json"   # 跟随 --out，避免多次运行互相覆盖
     out_dir.mkdir(parents=True, exist_ok=True)
     best_macro, history = -1.0, []
     for ep in range(1, a.epochs + 1):

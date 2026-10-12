@@ -1,0 +1,160 @@
+{
+  "task": "3 模型 × 2 测试集 评测矩阵（单标签口径，含精确率/召回率修正）",
+  "note": "A=部署权重（红线）；B=Koh Tao 干季域自适应；C=B+白化类采样加权 ×2.5",
+  "testSets": {
+    "external": "Arafura/Darwin 印太外部集（held-out）",
+    "winter": "Koh Tao 湿季（与训练干季不同季）"
+  },
+  "summary": {
+    "A_部署×external": {
+      "macroF1": 0.2079,
+      "accuracy": 0.2074,
+      "perClass": {
+        "bleached": {
+          "precision": 0.176,
+          "recall": 0.7882,
+          "f1": 0.2877,
+          "support": 288
+        },
+        "dead": {
+          "precision": 1.0,
+          "recall": 0.0039,
+          "f1": 0.0077,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.2601,
+          "recall": 0.4447,
+          "f1": 0.3282,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "B_域自适应×external": {
+      "macroF1": 0.4727,
+      "accuracy": 0.5505,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3333,
+          "recall": 0.3576,
+          "f1": 0.3451,
+          "support": 288
+        },
+        "dead": {
+          "precision": 0.8115,
+          "recall": 0.598,
+          "f1": 0.6886,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.2999,
+          "recall": 0.5356,
+          "f1": 0.3845,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "C_域自适应+白化加权×external": {
+      "macroF1": 0.4826,
+      "accuracy": 0.5625,
+      "perClass": {
+        "bleached": {
+          "precision": 0.2506,
+          "recall": 0.3854,
+          "f1": 0.3037,
+          "support": 288
+        },
+        "dead": {
+          "precision": 0.8376,
+          "recall": 0.6049,
+          "f1": 0.7025,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.3676,
+          "recall": 0.5528,
+          "f1": 0.4416,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "A_部署×winter": {
+      "macroF1": 0.2717,
+      "accuracy": 0.3365,
+      "perClass": {
+        "bleached": {
+          "precision": 0.2469,
+          "recall": 0.5146,
+          "f1": 0.3337,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.386,
+          "recall": 0.6388,
+          "f1": 0.4813,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    },
+    "B_域自适应×winter": {
+      "macroF1": 0.5312,
+      "accuracy": 0.5777,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3828,
+          "recall": 0.3248,
+          "f1": 0.3514,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.7254,
+          "recall": 0.5603,
+          "f1": 0.6323,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.5352,
+          "recall": 0.7087,
+          "f1": 0.6098,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    },
+    "C_域自适应+白化加权×winter": {
+      "macroF1": 0.5445,
+      "accuracy": 0.574,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3266,
+          "recall": 0.469,
+          "f1": 0.385,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.7524,
+          "recall": 0.5667,
+          "f1": 0.6464,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.5779,
+          "recall": 0.6284,
+          "f1": 0.6021,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    }
+  }
+}

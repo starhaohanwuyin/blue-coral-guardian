@@ -48,9 +48,18 @@ def main():
     ap.add_argument("--exclude-phash", action="store_true",
                     help="剔除与其它 split 近似重复（pHash）的样本——防止数据泄漏虚高指标")
     ap.add_argument("--phash-file", default=str(ROOT / "reports" / "phash_new_bleaching.json"))
+    ap.add_argument("--weights", default="",
+                    help="指定权重文件（相对 coral_ml 或绝对路径）；默认用 weights/<task>/best.pt。"
+                         "用于对比不同模型在同一测试集上的表现（如域自适应微调前后是否在原域退化）")
+    ap.add_argument("--data-root", default="",
+                    help="指定数据目录（默认 data/processed/<task>）；换权重做对比时可用原任务的数据")
     args = ap.parse_args()
 
-    wpath = ROOT / "weights" / args.task / "best.pt"
+    # ⚠️ 本文件是 `from pathlib import Path`，不能用 pathlib.Path（否则运行期 NameError，
+    #    而导入闸门只编译+导入、不会执行 main，查不出来 —— 已踩过）
+    wpath = Path(args.weights) if args.weights else (ROOT / "weights" / args.task / "best.pt")
+    if not wpath.is_absolute():
+        wpath = ROOT / wpath
     if not wpath.exists():
         raise SystemExit(f"找不到权重 {wpath}")
 

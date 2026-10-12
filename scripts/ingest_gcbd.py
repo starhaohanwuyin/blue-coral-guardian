@@ -84,32 +84,93 @@ def try_download(dest: pathlib.Path):
     return None
 
 
+def load_from_sqlite(db: pathlib.Path):
+    """直接从作者发布的 GCBD SQLite 库读出「观测」表（连接 Bleaching/Event/Site 三表）。
+
+    为什么需要：GCBD 是**关系型**库（26 张表），`Bleaching_tbl` 只有 Severity_Code，
+    时间在 `Sample_Event_tbl`、经纬度在 `Site_Info_tbl` —— 不 join 就无法做空间/年份筛选。
+    """
+    import sqlite3
+    con = sqlite3.connect(str(db))
+    con.row_factory = sqlite3.Row
+    q = """
+    SELECT b.Bleaching_ID        AS bleaching_id,
+           b.Severity_Code       AS severity,
+           b.Percent_Bleached    AS percent_bleached,
+           b.Bleaching_Level     AS bleaching_level,
+           b.Bleaching_Prevalence_Score AS prevalence,
+           e.Date_Year           AS bleaching_year,
+           e.Date_Month          AS month,
+           e.Date_Day            AS day,
+           e.Depth_m             AS depth_m,
+           s.Latitude_Degrees    AS latitude,
+           s.Longitude_Degrees   AS longitude,
+           s.Country_Name        AS country,
+           s.Ecoregion_Name      AS ecoregion,
+           s.Site_Name           AS site
+    FROM Bleaching_tbl b
+    LEFT JOIN Sample_Event_tbl e ON b.Sample_ID = e.Sample_ID
+    LEFT JOIN Site_Info_tbl    s ON e.Site_ID   = s.Site_ID
+    """
+    rows = [dict(r) for r in con.execute(q).fetchall()]
+    con.close()
+    return rows
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", default="", help="本地 GCBD CSV 路径")
+    ap.add_argument("--db", default="", help="作者发布的 GCBD **SQLite** 库（推荐，自动连接三表）")
     ap.add_argument("--try-download", action="store_true", help="尝试从候选地址下载")
+    ap.add_argument("--min-severity", type=float, default=0.0,
+                    help="只统计严重度≥该值的观测（Severity_Code；用于排除轻度/无白化记录，"
+                         "使与「官方警戒线」的比较更干净）")
     a = ap.parse_args()
 
-    path = pathlib.Path(a.file) if a.file else None
-    if path is None and a.try_download:
-        path = try_download(ROOT / "data" / "raw" / "gcbd" / "gcbd.csv")
-    if path is None or not path.exists():
-        # 也许用户已经手工放到默认目录
-        guess = sorted((ROOT / "data" / "raw" / "gcbd").glob("*.csv")) if (ROOT / "data" / "raw" / "gcbd").exists() else []
-        if guess:
-            path = guess[0]
-            print(f"发现本地文件：{path}")
-        else:
-            print("❌ 没有可用输入。用 --file 指定 CSV，或 --try-download 尝试下载（本网络大概率不通）。")
+    rows, srcname = None, None
+    if a.db:
+        dbp = pathlib.Path(a.db)
+        if not dbp.is_absolute():
+            dbp = ROOT / dbp
+        if not dbp.exists():
+            print(f"❌ 找不到数据库 {dbp}")
             return 2
+        print(f"读取 SQLite：{dbp.name}")
+        rows = load_from_sqlite(dbp)
+        srcname = dbp.name
+        cols = list(rows[0].keys()) if rows else []
+        print(f"  连接三表得到 {len(rows)} 条观测；列: {cols[:8]} …")
 
-    text = path.read_text(encoding="utf-8", errors="replace")
-    rows = list(csv.DictReader(io.StringIO(text)))
+    path = pathlib.Path(a.file) if a.file else None
+    if rows is None and path is None and a.try_download:
+        path = try_download(ROOT / "data" / "raw" / "gcbd" / "gcbd.csv")
+    if rows is None and path is None:
+        # 也许用户已经把作者仓库的文件放在默认目录
+        guess = sorted((ROOT / "data" / "raw" / "gcbd").glob("*.db")) if (ROOT / "data" / "raw" / "gcbd").exists() else []
+        if guess:
+            print(f"发现本地 GCBD 库：{guess[0].name}（自动使用）")
+            rows = load_from_sqlite(guess[0])
+            srcname = guess[0].name
+        else:
+            guess = sorted((ROOT / "data" / "raw" / "gcbd").glob("*.csv")) if (ROOT / "data" / "raw" / "gcbd").exists() else []
+            if guess:
+                path = guess[0]
+                print(f"发现本地 CSV：{path.name}")
+            else:
+                print("❌ 没有可用输入。用 --db（推荐）或 --file 指定；也可 --try-download。")
+                print("   获取途径（figshare 被墙时）：作者仓库 rvanwoesik/Global-Coral-Bleaching-Database")
+                print("   内含 SQLite 版 zip，raw.githubusercontent.com 可直接下载。")
+                return 2
+
+    if rows is None:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        rows = list(csv.DictReader(io.StringIO(text)))
+        srcname = path.name
     if not rows:
-        print(f"❌ {path} 里没有数据行")
+        print(f"❌ {srcname} 里没有数据行")
         return 2
     cols = list(rows[0].keys())
-    print(f"读取 {path.name}：{len(rows)} 条记录，{len(cols)} 列")
+    print(f"读取 {srcname}：{len(rows)} 条记录，{len(cols)} 列")
     print(f"  列名: {cols[:14]}{' …' if len(cols) > 14 else ''}")
 
     cy, cla, clo = pick(cols, COLMAP["year"]), pick(cols, COLMAP["lat"]), pick(cols, COLMAP["lon"])
@@ -146,7 +207,9 @@ def main():
     result = {
         "task": "GCBD 全球白化数据库 × 项目 41 年 DHW 序列（命中率与阈值一致性）",
         "source": {"dataset": "GCBD (van Woesik & Kratochwill 2022)",
-                   "doi": "10.1038/s41597-022-01121-y", "file": path.name,
+                   "doi": "10.1038/s41597-022-01121-y", "file": srcname,
+                   "obtainedVia": "作者 GitHub 仓库 rvanwoesik/Global-Coral-Bleaching-Database"
+                                  "（figshare/Zenodo 在本网络 403，故走 GitHub 原始文件）",
                    "records": len(rows), "columns": cols,
                    "detected": {"year": cy, "lat": cla, "lon": clo, "severity": csev}},
         "grid": GRID, "recordsInGrid": len(in_grid),
