@@ -1,0 +1,191 @@
+{
+  "task": "白化识别最终对比：5 个模型 × 4 个测试集 × 2 种路由策略（2026-10-12）",
+  "metric": "单标签宏平均 F1（多标签真值按优先级 dead>bleached>healthy 取单标签）",
+  "models": {
+    "A_部署原始": {
+      "external": 0.2079,
+      "winter": 0.2717,
+      "inDomainValMacroF1": 0.9191,
+      "kaggleConf": {
+        "recall": 0.9704,
+        "precision": 0.9924,
+        "acc": 0.9805
+      }
+    },
+    "B_纯域自适应": {
+      "external": 0.4727,
+      "winter": 0.5312,
+      "inDomainValMacroF1": 0.9247,
+      "kaggleConf": {
+        "recall": 0.2741,
+        "precision": 0.9024,
+        "note": "conf0.5；conf0.6 为 0.9355"
+      }
+    },
+    "C_B+白化加权": {
+      "external": 0.4826,
+      "winter": 0.5445,
+      "inDomainValMacroF1": 0.9247,
+      "kaggleArgmaxMacroF1": 0.4183,
+      "origTestArgmaxMacroF1": 0.4253,
+      "kaggleConf": {
+        "recall": 0.931,
+        "precision": 0.4,
+        "note": "conf0.6"
+      }
+    },
+    "D_多域2域": {
+      "external": 0.3646,
+      "winter": 0.5067,
+      "inDomainValMacroF1": 0.9247,
+      "kaggleArgmaxMacroF1": 0.6536,
+      "origTestArgmaxMacroF1": 0.9073,
+      "kaggleConf": {
+        "recall": 1.0,
+        "precision": 0.9643,
+        "acc": 0.9805
+      }
+    },
+    "D2_多域4域": {
+      "external": 0.4476,
+      "winter": 0.5397,
+      "inDomainValMacroF1": 0.9402,
+      "kaggleArgmaxMacroF1": 0.6485,
+      "origTestArgmaxMacroF1": 0.891,
+      "kaggleConf": {
+        "recall": 0.963,
+        "precision": 0.9848,
+        "acc": 0.9728
+      }
+    }
+  },
+  "multidomainTraining": {
+    "D_2域": {
+      "data": {
+        "orig": 14203,
+        "indo": 12809
+      },
+      "epochs": 3,
+      "history": [
+        {
+          "ep": 1,
+          "inDomain": 0.8786,
+          "indo": 0.5801,
+          "combined": 0.7293
+        },
+        {
+          "ep": 2,
+          "inDomain": 0.8602,
+          "indo": 0.5908,
+          "combined": 0.7255
+        },
+        {
+          "ep": 3,
+          "inDomain": 0.9247,
+          "indo": 0.585,
+          "combined": 0.7549
+        }
+      ]
+    },
+    "D2_4域": {
+      "data": {
+        "orig": 14203,
+        "indo_koh_tao": 12809,
+        "idn_indo": 877,
+        "bhd": 1582
+      },
+      "quota": "orig 40% / koh_tao 20% / 印尼 20% / bhd 20%",
+      "epochs": 3,
+      "history": [
+        {
+          "ep": 1,
+          "inDomain": 0.9453,
+          "indo": 0.6419,
+          "combined": 0.7936
+        },
+        {
+          "ep": 2,
+          "inDomain": 0.9387,
+          "indo": 0.648,
+          "combined": 0.7933
+        },
+        {
+          "ep": 3,
+          "inDomain": 0.9402,
+          "indo": 0.6617,
+          "combined": 0.8009
+        }
+      ]
+    }
+  },
+  "routing": {
+    "domain": {
+      "external": 0.4531,
+      "winter": 0.5326,
+      "kaggle": 0.5918,
+      "orig_test": 0.8487,
+      "routingHitRate": {
+        "external": 0.8,
+        "winter": 0.883,
+        "kaggle": 0.685,
+        "orig_test": 0.949
+      },
+      "classifierHoldoutAcc": 0.79
+    },
+    "confidence": {
+      "external": 0.4682,
+      "winter": 0.5576,
+      "kaggle": 0.6523,
+      "orig_test": 0.7644
+    },
+    "verdict": "路由**没有净收益**：域内集上严格低于纯 D（0.59/0.76 vs 0.65/0.91），跨域集上介于 D 与 C 之间（winter 略超 C）。瓶颈是仲裁精度（域判别留出 0.79）。"
+  },
+  "deployment": {
+    "current": "weights/bleaching_all/best.pt = D2（多域4域）",
+    "rollback": {
+      "原始 A": "weights/bleaching_all/best_A_backup.pt",
+      "D": "weights/bleaching_all_multidomain/best_D_archive.pt"
+    },
+    "e2eWithD2": "25/25 通过",
+    "reason": "D2 在域内验证 0.9402（≥ A 的 0.9191）且跨域 external 0.4476（≥ D 的 0.3646）、winter 0.5397（≥ D 的 0.5067）；即**两边都不退化**"
+  },
+  "gcbd": {
+    "records": 34846,
+    "inSempornaGrid": 954,
+    "bleachingLevelInGrid": {
+      "1": 476,
+      "2": 476
+    },
+    "monthsInGrid": {
+      "1": 4,
+      "2": 4,
+      "3": 54,
+      "4": 174,
+      "5": 90,
+      "6": 148,
+      "7": 40,
+      "8": 16,
+      "9": 176,
+      "10": 24,
+      "11": 156,
+      "12": 68
+    },
+    "hotSeasonShare": 0.491,
+    "meanS1Top5": {
+      "2008": 7.35,
+      "2012": 6.79,
+      "2019": 3.83,
+      "2015": 3.19,
+      "2014": 1.8
+    },
+    "ourDhwPeakTop5": {
+      "2016": 9.85,
+      "2010": 6.86,
+      "2019": 5.44,
+      "2017": 4.33,
+      "1998": 3.57
+    },
+    "verdict": "网格内白化**程度**最高的年份（2008/2012）与我们 DHW 峰值最高的年份（2016/2010）几乎不重合 → 报告/局部偏差占主导，**不能用于验证或改写阈值**；仅确认「官方 4 阈值只覆盖 27% 的有记录年份」这一方向性事实。",
+    "columnNote": "判定『是否观察到白化』须用 Bleaching_Level(1/2)，而非 Severity_Code（大量为空）"
+  }
+}

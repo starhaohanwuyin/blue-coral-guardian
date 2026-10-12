@@ -7,20 +7,21 @@
   "excludedPhashLeak": 0,
   "excludePhash": false,
   "phashFile": null,
-  "bleachedRecall": 1.0,
-  "bleachedPrecision": 0.964286,
-  "healthyRecall": 0.959016,
-  "binaryAccuracy": 0.980545,
+  "bleachedRecall": 0.962963,
+  "bleachedPrecision": 0.984848,
+  "healthyRecall": 0.983607,
+  "binaryAccuracy": 0.972763,
   "bestThreshold": {
     "th": 0.3,
-    "recall": 1.0,
-    "precision": 0.9574468085106383,
+    "recall": 0.9703703703703703,
+    "precision": 0.9849624060150376,
     "acc2": 0.9766536964980544
   },
   "confusion": {
-    "Bleached→bleached": 135,
-    "Healthy→healthy": 117,
-    "Healthy→bleached": 5
+    "Bleached→bleached": 130,
+    "Bleached→healthy": 5,
+    "Healthy→healthy": 120,
+    "Healthy→bleached": 2
   },
   "note": "该数据集与本项目原训练数据哈希零重叠，属独立测试集"
 }

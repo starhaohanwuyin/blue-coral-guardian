@@ -43,6 +43,9 @@ ORIG_DIRS = {                       # 原始域三分类目录
 }
 KAGGLE_TRAIN = (ROOT.parent / "competition_data" / "AI4Climate_data" / "Kaggle_coral_images"
                 / "Coral Reef Images" / "train")
+# 第二/第三个印太海域（用于抬高跨域上限）
+IDN_ROOT = ROOT / "data" / "raw" / "coral_indo" / "dataset_preparation_output"   # 印尼三站点
+BHD_ROOT = ROOT / "data" / "raw" / "bhd-corals" / "Dataset"                       # 三分类
 IN_DOMAIN_VAL = ROOT / "data" / "processed" / "bleaching" / "val"
 INIT_W = ROOT / "weights" / "bleaching_all" / "best.pt"
 OUT_DIR = ROOT / "weights" / "bleaching_all_multidomain"
@@ -95,6 +98,28 @@ def collect():
         items.append((p, CI[c], "indo"))
         n += 1
     print(f"  印太域[Koh Tao 干季] {n} 张")
+    # 印尼三站点（Bunaken/Karimunjawa/Wakatobi）—— ⚠️ 白化标签是本项目流水线的**伪标签**，
+    # 用它会让模型部分继承我们自己的判断偏差（确认偏差），必须在结论里声明。
+    if IDN_ROOT.exists():
+        n = 0
+        for site in sorted(IDN_ROOT.iterdir()):
+            pr = site / "3_bleaching_predictions"
+            if not pr.is_dir():
+                continue
+            for clsdir, cname in (("CORAL", "healthy"), ("CORAL_BL", "bleached")):
+                for p in (pr / clsdir).glob("*"):
+                    if p.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                        items.append((p, CI[cname], "idn"))
+                        n += 1
+        print(f"  印太域[印尼三站点·伪标签] {n} 张")
+    if BHD_ROOT.exists():
+        n = 0
+        for clsdir, cname in (("Healthy", "healthy"), ("Bleached", "bleached"), ("Dead", "dead")):
+            for p in (BHD_ROOT / clsdir).glob("*"):
+                if p.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                    items.append((p, CI[cname], "bhd"))
+                    n += 1
+        print(f"  其它域[bhd-corals 三分类] {n} 张")
     return items
 
 
@@ -105,7 +130,9 @@ def main():
     ap.add_argument("--lr", type=float, default=8e-5)
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--orig-weight", type=float, default=0.5,
-                    help="原始域在采样中的占比（0.5 = 两域各半；调大更保守、更不容易回退）")
+                    help="（仅默认配额用）原始域占比；更常用 --quota 显式指定各域配额")
+    ap.add_argument("--quota", default="",
+                    help="各域采样配额，如 orig=0.4,indo=0.25,idn=0.2,bhd=0.15；未列出的域平分剩余")
     ap.add_argument("--max-per-domain", type=int, default=4000,
                     help="每个域每个 epoch 的采样上限（控制耗时）")
     ap.add_argument("--val-limit", type=int, default=1200, help="印太验证集上限")
@@ -151,19 +178,37 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
-    # 采样权重 = 域配额 ÷ (该域出现的类别数 × 该类别数量)
-    #   → 每个域的权重之和恰为该域配额；域内各类别均衡。
+    # 采样权重 = 域配额 ÷ (该域出现的类别数 × 该类别数量) → 域配额精确、域内类别均衡
+    doms = sorted({d for _, _, d in items})
+    if a.quota:
+        quota = {}
+        for part in a.quota.split(","):
+            k, v = part.split("=")
+            quota[k.strip()] = float(v)
+        miss = [d for d in doms if d not in quota]
+        if miss:      # 未列出的域平分剩余配额
+            rest = max(0.0, 1.0 - sum(quota.values())) / max(len(miss), 1)
+            quota.update({d: rest for d in miss})
+    else:             # 默认：原始域 0.4，其余按数据量是否可用平均
+        quota = {"orig": 0.4}
+        rest = [d for d in doms if d != "orig"]
+        for d in rest:
+            quota[d] = 0.6 / max(len(rest), 1)
+    tot = sum(quota.get(d, 0) for d in doms)
+    quota = {d: quota.get(d, 0) / tot for d in doms}
+    print(f"  域配额: " + "  ".join(f"{d}={quota[d]:.0%}" for d in doms))
+
     weights = [0.0] * len(items)
-    for dom, quota in (("orig", a.orig_weight), ("indo", 1.0 - a.orig_weight)):
+    for dom in doms:
         sub = [(i, it) for i, it in enumerate(items) if it[2] == dom]
-        if not sub:
+        if not sub or quota[dom] <= 0:
             continue
         cnt = Counter(it[1] for _, it in sub)
         for i, it in sub:
-            weights[i] = quota / (len(cnt) * cnt[it[1]])
+            weights[i] = quota[dom] / (len(cnt) * cnt[it[1]])
     n_per_epoch = min(2 * a.max_per_domain, 8000)
     sampler = WeightedRandomSampler(weights, num_samples=n_per_epoch, replacement=True)
-    print(f"采样：每 epoch {n_per_epoch} 张（原始域配额 {a.orig_weight:.0%}，域内类别均衡）")
+    print(f"采样：每 epoch {n_per_epoch} 张（域内类别均衡）")
 
     from finetune_bleaching_indopacific import PatchDataset  # 复用模块级数据集类（可 pickle）
 
