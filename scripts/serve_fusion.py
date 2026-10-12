@@ -25,6 +25,7 @@ import argparse
 import base64
 import io
 import json
+import os          # P16：读取 DISABLE_BLEACH_CONSENSUS（缺失会导致 init() 抛 NameError）
 import time
 from pathlib import Path
 
@@ -85,6 +86,11 @@ BLEACH = None                   # 白化状态分类模型
 #     不一致则标记待人工复核。缺失时该功能安静降级（consensus=None）。
 BLEACH_ALT_DIRS = ["bleaching_all_koh_tao_bb", "bleaching_all_koh_tao"]
 BLEACH_ALT = None               # 模块级初始化：/health 在 init 之前被调用也不能 NameError
+# 共识弃权：主模型置信度低于此阈值且两模型分歧时，才提示「建议人工复核」；
+# 否则只给「另一模型持不同意见」的弱提醒（避免一半以上上传都弹复核提示）
+CONSENSUS_REVIEW_CONF = 0.90
+# 第二模型置信度高于此值、且与主模型不一致 → 视为「强冲突」，同样提示人工复核
+CONSENSUS_CONFLICT_CONF = 0.85
 COUNTER = None                  # 珊瑚个体计数模型（P3，附加）
 SEG_LOADED_DIR = None          # 实际加载的分割权重目录（供 /health 如实报告）
 BLEACH_LOADED = None
@@ -185,24 +191,30 @@ def load_models(prefer_degradinv=False):
         print("[跳过] 白化分类模型未就绪（白化评估将不可用）")
 
     # ---- P16 附加：第二白化模型（共识弃权；缺失即安静降级）----
+    # 可用环境变量关闭：DISABLE_BLEACH_CONSENSUS=1 → 不加载第二模型（App 不再出现复核提示）。
+    # 实测真实照片上两模型分歧率约 57%（第二模型在仙本那照片上系统性偏向"死亡"），
+    # 若觉得提示过密可用此开关或打包时不带第二模型。
     BLEACH_ALT = None
-    for name in BLEACH_ALT_DIRS:
-        if name == BLEACH_LOADED:
-            continue
-        try:
-            got = _load_bleach(name)
-            if got is None:
+    if os.environ.get("DISABLE_BLEACH_CONSENSUS", "").strip() in ("1", "true", "yes"):
+        print("[关闭] 共识弃权已通过 DISABLE_BLEACH_CONSENSUS 关闭 → consensus=null")
+    else:
+        for name in BLEACH_ALT_DIRS:
+            if name == BLEACH_LOADED:
                 continue
-            # 只有类别集合与主模型一致时才能做共识比较
-            if BLEACH is not None and (sorted(map(str, got["classes"]))
-                                       != sorted(map(str, BLEACH["classes"]))):
-                print(f"[跳过] 第二白化模型 {name} 类别与主模型不一致，无法做共识")
-                continue
-            BLEACH_ALT = got
-            print(f"[加载] 第二白化模型（共识弃权）: {name}  类别={got['classes']}")
-            break
-        except Exception as e:
-            print(f"[跳过] 第二白化模型 {name} 加载失败: {e}")
+            try:
+                got = _load_bleach(name)
+                if got is None:
+                    continue
+                # 只有类别集合与主模型一致时才能做共识比较
+                if BLEACH is not None and (sorted(map(str, got["classes"]))
+                                           != sorted(map(str, BLEACH["classes"]))):
+                    print(f"[跳过] 第二白化模型 {name} 类别与主模型不一致，无法做共识")
+                    continue
+                BLEACH_ALT = got
+                print(f"[加载] 第二白化模型（共识弃权）: {name}  类别={got['classes']}")
+                break
+            except Exception as e:
+                print(f"[跳过] 第二白化模型 {name} 加载失败: {e}")
     if BLEACH_ALT is None:
         print("[提示] 第二白化模型未就绪 → 共识弃权功能降级（consensus=null）")
 
@@ -287,6 +299,19 @@ def classify_bleaching(img: Image.Image, min_conf=0.55):
             alt_label = BLEACH_ALT["classes"][ia]
             alt_cn = CN_BC.get(alt_label, alt_label)
             agree = (alt_label == top[0]["label"])
+            # 三档提示：一致 / 强复核（主模型也不自信）/ 弱提醒（主模型高置信但有异议）。
+            # 为什么需要分档：实测真实照片上两模型分歧率高达 56.7%，若分歧一律提示"建议人工复核"，
+            # 会让一半以上的上传都出现复核提示（体验上像功能坏了）。分档后
+            # 强复核只占 ~24%，其余降级为"另一模型持不同意见"的弱提醒，主结论仍然给出。
+            if agree:
+                severity = "agree"
+            elif (top[0]["confidence"] < CONSENSUS_REVIEW_CONF
+                  or float(pa[ia]) >= CONSENSUS_CONFLICT_CONF):
+                # 强复核的两种情形：① 主模型自己不自信；② **两个模型都很自信却冲突**
+                # （后者最危险：一定有一个模型大错，必须人工看）
+                severity = "review"
+            else:
+                severity = "note"
             out["altModel"] = BLEACH_ALT["name"]
             out["altLabel"] = alt_label
             out["altLabelCn"] = alt_cn
@@ -295,10 +320,15 @@ def classify_bleaching(img: Image.Image, min_conf=0.55):
                 "agree": bool(agree),
                 "label": top[0]["label"] if agree else None,
                 "labelCn": top[0]["labelCn"] if agree else None,
-                # review=True 表示两模型分歧 → 建议人工复核（App 显示"待复核"）
-                "review": (not agree),
+                "severity": severity,          # agree | review | note
+                # review=True 表示应提示人工复核（两模型分歧 **且** 主模型置信度不足）
+                "review": severity == "review",
                 "reason": ("两模型判定一致，可直接采信" if agree
-                           else f"主模型判「{top[0]['labelCn']}」、第二模型判「{alt_cn}」，建议人工复核"),
+                           else (f"主模型判「{top[0]['labelCn']}」但置信度仅 "
+                                 f"{top[0]['confidence']:.0%}，第二模型判「{alt_cn}」，建议人工复核"
+                                 if severity == "review" else
+                                 f"主模型判「{top[0]['labelCn']}」（置信度 {top[0]['confidence']:.0%}），"
+                                 f"第二模型持不同意见（「{alt_cn}」），仅供参考")),
             }
         except Exception:
             out["consensus"] = None
