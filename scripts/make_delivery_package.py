@@ -130,7 +130,7 @@ curl http://127.0.0.1:8000/health
 
 - **实测**：真实照片上两模型分歧率约 **57%**（第二模型是印太域版，在仙本那照片上偏向"死亡"），
   三档抽检分布约 一致 23% / 仅供参考 30% / 建议复核 47%。
-- **若觉得提示过密**：启动前设 `DISABLE_BLEACH_CONSENSUS=1`（不加载第二模型，App 不再出现提示）；
+- **若觉得提示过密**：启动前设 `$env:DISABLE_BLEACH_CONSENSUS = '1'`（PowerShell；cmd 用 `set DISABLE_BLEACH_CONSENSUS=1`）（不加载第二模型，App 不再出现提示）；
   或打包时用 `--no-consensus` 不带该权重。缺失/关闭时服务都安静降级（`consensus: null`），其它功能不受影响。
 
 ## 六、少了什么会怎样（自检表）
