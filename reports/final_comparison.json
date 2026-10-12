@@ -94,6 +94,18 @@
         "acc": 0.8779
       },
       "note": "五域（orig/KohTao/印尼/bhd/太平洋）；域内与印太多数指标优于 D2，但 Arafura 略降"
+    },
+    "D4_多域5域(pac10%)": {
+      "external": 0.3982,
+      "winter": 0.5551,
+      "inDomainValMacroF1": 0.9507,
+      "origTestArgmaxMacroF1": 0.9409,
+      "pacificTest": {
+        "macroF1": 0.5802,
+        "bleachedF1": 0.838,
+        "healthyF1": 0.902
+      },
+      "note": "太平洋配额 25%→10%；综合 0.8184 为历代最优；Arafura 较 D3 恢复但仍低于 D2"
     }
   },
   "multidomainTraining": {
@@ -209,13 +221,18 @@
     }
   },
   "deployment": {
-    "current": "weights/bleaching_all/best.pt = D3（五域联合，2026-10-12 深夜）",
+    "current": "weights/bleaching_all/best.pt = D4（五域，pac 10%，2026-10-12 深夜）",
     "rollback": {
       "原始 A": "weights/bleaching_all/best_A_backup.pt",
       "D": "weights/bleaching_all_multidomain/best_D_archive.pt",
-      "D2": "weights/bleaching_all_multidomain2/best_D2_archive.pt"
+      "D2": "weights/bleaching_all_multidomain2/best_D2_archive.pt",
+      "D3": "weights/bleaching_all_multidomain3/best_D3_archive.pt"
     },
-    "reason": "D3 在域内验证 0.9470（>D2 0.9402）、orig_test 0.9402（>0.8910）、太平洋 val 0.5801（>0.4350）、winter 0.5483（>0.5397）；仅 external(Arafura) 0.3813 < D2 0.4476 —— 如实记录该回退"
+    "consensus": "服务同时加载 bleaching_all(D4) + bleaching_all_koh_tao_bb(C)；一致则采信，不一致 -> 待人工复核（P16）",
+    "e2e": "25/25",
+    "consensusFrontend": "13/13",
+    "additiveInvariant": "既有键变化 0，仅新增 5 个字段",
+    "reason": "D4 训练选优 0.8184（历代最优）、orig_test 0.9409、太平洋 test 0.580、winter 0.5551；Arafura 0.3982 较 D3 恢复但仍低于 D2 0.4476 —— 取舍已如实记录"
   },
   "gcbd": {
     "records": 34846,

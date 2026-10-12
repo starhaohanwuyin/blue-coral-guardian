@@ -28,8 +28,12 @@ OUT = ROOT / "delivery"
 WEIGHTS = [
     ("weights/segformer_coralscapes", "礁区语义分割（40 类底栖，含 id2label/label2color）"),
     ("weights/species_ip/best.pt", "珊瑚属识别（34 属，类别名内嵌在权重里）"),
-    ("weights/bleaching_all/best.pt", "白化状态识别（三分类）"),
+    ("weights/bleaching_all/best.pt", "白化状态识别（三分类，多域联合模型）"),
     ("weights/yolo_coral/best.pt", "个体计数 YOLOv9c（P3 附加能力）"),
+    # P16：共识弃权需要第二个白化模型；缺失时服务会安静降级（consensus=null），不影响其它功能。
+    #      `--no-consensus` 可跳过（省约 106 MB）。
+    ("weights/bleaching_all_koh_tao_bb/best.pt",
+     "第二白化模型（共识弃权用：两模型一致才判定、不一致提示人工复核；可选）"),
 ]
 # 默认排除的冗余文件（打完整版时包含）
 REDUNDANT = [
@@ -113,6 +117,19 @@ curl http://127.0.0.1:8000/health
 - **真机预览**：手机与电脑要在同一 Wi-Fi，把 `utils/config.js` 里的 `CORAL_API`
   改成电脑局域网地址（如 `http://192.168.1.20:8000`），并用 `--host 0.0.0.0` 启动服务。
 
+## 五点五、共识弃权（P16，可选但推荐）
+
+服务会加载**两个**白化模型：`bleaching_all`（主）+ `bleaching_all_koh_tao_bb`（第二）。
+
+- 两者判定**一致** → 结论直接采信（接口字段 `bleaching.consensus.agree=true`）
+- 两者判定**不一致** → `consensus.review=true`，小程序显示
+  「🔍 双模型判定不一致（主模型「X」/ 第二模型「Y」），建议人工复核」
+- **实测**该策略在 4 个测试集上都优于任一单模型（宏 F1 +0.02~0.07），
+  代价是约 1/3~1/2 的图片进入待复核
+
+> 只放主模型也能跑：服务会安静降级（`consensus: null`），其它功能完全不受影响。
+> 打包时若不需要第二模型，用 `--no-consensus`（省约 106 MB）。
+
 ## 六、少了什么会怎样（自检表）
 
 | 缺失 | 现象 | 补法 |
@@ -149,11 +166,15 @@ def main() -> int:
     ap.add_argument("--build", action="store_true", help="实际复制到 delivery/")
     ap.add_argument("--zip", action="store_true", help="再打成 delivery.zip")
     ap.add_argument("--no-photos", action="store_true", help="不含样例图")
+    ap.add_argument("--no-consensus", action="store_true",
+                    help="不含第二白化模型（省约 106 MB；共识弃权将降级为 consensus=null）")
     ap.add_argument("--full", action="store_true",
                     help="打完整版（含 last.pt / R0 / yolov9c 等冗余，约多 311 MB，仅供归档）")
     a = ap.parse_args()
 
     weights = FULL_WEIGHTS if a.full else WEIGHTS
+    if a.no_consensus:          # 可选：不带第二白化模型（共识功能将降级）
+        weights = [(r, d) for r, d in weights if "koh_tao" not in r]
     items = list(weights) + list(CLIMATE) + ([] if a.no_photos else [PHOTOS])
     total, missing, rows = 0, [], []
     for rel, desc in items:

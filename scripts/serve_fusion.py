@@ -81,6 +81,10 @@ DISCLAIMER = ("本结果由AI模型给出，仅供保育决策参考，不作为
 SEG = None
 SPECIES = None
 BLEACH = None                   # 白化状态分类模型
+# P16 附加：第二白化模型（纯域自适应版）—— 用于「共识弃权」：两模型一致才判定，
+#     不一致则标记待人工复核。缺失时该功能安静降级（consensus=None）。
+BLEACH_ALT_DIRS = ["bleaching_all_koh_tao_bb", "bleaching_all_koh_tao"]
+BLEACH_ALT = None               # 模块级初始化：/health 在 init 之前被调用也不能 NameError
 COUNTER = None                  # 珊瑚个体计数模型（P3，附加）
 SEG_LOADED_DIR = None          # 实际加载的分割权重目录（供 /health 如实报告）
 BLEACH_LOADED = None
@@ -135,43 +139,72 @@ def load_models(prefer_degradinv=False):
         print("[跳过] 属分类模型未训练（仅输出覆盖率）")
 
     # ---- 白化状态分类模型 ----
-    global BLEACH, BLEACH_LOADED
-    for name in BLEACH_DIRS:
+    global BLEACH, BLEACH_LOADED, BLEACH_ALT
+
+    def _load_bleach(name):
+        """加载指定白化权重目录；失败返回 None（调用方决定是否降级）。"""
         w = ROOT / "weights" / name / "best.pt"
         if not w.exists():
-            continue
+            return None
+        import torchvision.transforms as T
+        from torchvision import models
+        import torch.nn as nn
+        ck = torch.load(w, map_location=DEVICE, weights_only=False)
+        classes = ck["classes"]
+        size = ck.get("img_size", 224)
+        bb = ck["backbone"]
+        if bb == "convnext_tiny":
+            m = models.convnext_tiny(weights=None)
+            m.classifier[2] = nn.Linear(m.classifier[2].in_features, len(classes))
+        elif bb == "efficientnet_b0":
+            m = models.efficientnet_b0(weights=None)
+            m.classifier[1] = nn.Linear(m.classifier[1].in_features, len(classes))
+        else:
+            m = models.resnet50(weights=None)
+            m.fc = nn.Linear(m.fc.in_features, len(classes))
+        m.load_state_dict(ck["model"]); m.to(DEVICE).eval()
+        mp = ROOT / "reports" / name / "metrics.json"
+        Tt = (float(json.loads(mp.read_text(encoding="utf-8")).get("temperature", 1.0))
+              if mp.exists() else 1.0)
+        return {"model": m, "classes": classes, "size": size, "temp": Tt, "name": name,
+                "tf": T.Compose([T.Resize(int(size * 1.14)), T.CenterCrop(size),
+                                 T.ToTensor(),
+                                 T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
+
+    for name in BLEACH_DIRS:
         try:
-            import torchvision.transforms as T
-            from torchvision import models
-            import torch.nn as nn
-            ck = torch.load(w, map_location=DEVICE, weights_only=False)
-            classes = ck["classes"]
-            size = ck.get("img_size", 224)
-            bb = ck["backbone"]
-            if bb == "convnext_tiny":
-                m = models.convnext_tiny(weights=None)
-                m.classifier[2] = nn.Linear(m.classifier[2].in_features, len(classes))
-            elif bb == "efficientnet_b0":
-                m = models.efficientnet_b0(weights=None)
-                m.classifier[1] = nn.Linear(m.classifier[1].in_features, len(classes))
-            else:
-                m = models.resnet50(weights=None)
-                m.fc = nn.Linear(m.fc.in_features, len(classes))
-            m.load_state_dict(ck["model"]); m.to(DEVICE).eval()
-            mp = ROOT / "reports" / name / "metrics.json"
-            Tt = (float(json.loads(mp.read_text(encoding="utf-8")).get("temperature", 1.0))
-                  if mp.exists() else 1.0)
-            BLEACH = {"model": m, "classes": classes, "size": size, "temp": Tt, "name": name,
-                      "tf": T.Compose([T.Resize(int(size * 1.14)), T.CenterCrop(size),
-                                       T.ToTensor(),
-                                       T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
-            BLEACH_LOADED = name
-            print(f"[加载] 白化分类模型: {name}  类别={classes}  T={Tt:.4f}")
+            got = _load_bleach(name)
+            if got is None:
+                continue
+            BLEACH, BLEACH_LOADED = got, name
+            print(f"[加载] 白化分类模型: {name}  类别={got['classes']}  T={got['temp']:.4f}")
             break
         except Exception as e:
             print(f"[跳过] 白化模型 {name} 加载失败: {e}")
     if BLEACH is None:
         print("[跳过] 白化分类模型未就绪（白化评估将不可用）")
+
+    # ---- P16 附加：第二白化模型（共识弃权；缺失即安静降级）----
+    BLEACH_ALT = None
+    for name in BLEACH_ALT_DIRS:
+        if name == BLEACH_LOADED:
+            continue
+        try:
+            got = _load_bleach(name)
+            if got is None:
+                continue
+            # 只有类别集合与主模型一致时才能做共识比较
+            if BLEACH is not None and (sorted(map(str, got["classes"]))
+                                       != sorted(map(str, BLEACH["classes"]))):
+                print(f"[跳过] 第二白化模型 {name} 类别与主模型不一致，无法做共识")
+                continue
+            BLEACH_ALT = got
+            print(f"[加载] 第二白化模型（共识弃权）: {name}  类别={got['classes']}")
+            break
+        except Exception as e:
+            print(f"[跳过] 第二白化模型 {name} 加载失败: {e}")
+    if BLEACH_ALT is None:
+        print("[提示] 第二白化模型未就绪 → 共识弃权功能降级（consensus=null）")
 
     # ---- 珊瑚个体计数模型（P3 附加能力）----
     # ⚠️ 只**新增**输出字段，不参与也不修改覆盖率 / 属 / 白化的任何计算。
@@ -219,6 +252,11 @@ def classify_bleaching(img: Image.Image, min_conf=0.55):
 
     ⚠️ 为什么不用分割模型的 bleachedPct：实测该指标在第三方白化数据集上
        AUC 仅 0.46（低于随机），跨域无效。白化状态必须由分类模型给出。
+
+    P16 新增（**只增字段，不改既有键**）：若第二模型 `BLEACH_ALT` 可用，则额外给出
+    `altLabel` / `consensus`。依据：实测「两模型一致才算判定、不一致交人工复核」在
+    4 个测试集上都优于任一单模型（宏 F1 +0.02~0.07），代价是约 1/3~1/2 图片进入待复核
+    （见 docs/项目交接与续接指引.md §9.16.13）。
     """
     if BLEACH is None:
         return None
@@ -231,7 +269,7 @@ def classify_bleaching(img: Image.Image, min_conf=0.55):
     order = np.argsort(-p)
     top = [{"label": BLEACH["classes"][i], "labelCn": CN_BC.get(BLEACH["classes"][i], BLEACH["classes"][i]),
             "confidence": round(float(p[i]), 6)} for i in order]
-    return {
+    out = {
         "model": BLEACH["name"],
         "label": top[0]["label"], "labelCn": top[0]["labelCn"],
         "confidence": top[0]["confidence"],
@@ -239,6 +277,34 @@ def classify_bleaching(img: Image.Image, min_conf=0.55):
         "probabilities": {BLEACH["classes"][i]: round(float(p[i]), 6) for i in range(len(BLEACH["classes"]))},
         "top": top[:3],
     }
+    # ---- P16 附加：第二模型 + 共识（缺失时安静降级，不影响既有字段）----
+    if BLEACH_ALT is not None:
+        try:
+            with torch.no_grad():
+                xa = BLEACH_ALT["tf"](img.convert("RGB")).unsqueeze(0).to(DEVICE)
+                pa = torch.softmax(BLEACH_ALT["model"](xa).float() / BLEACH_ALT["temp"], 1)[0].cpu().numpy()
+            ia = int(pa.argmax())
+            alt_label = BLEACH_ALT["classes"][ia]
+            alt_cn = CN_BC.get(alt_label, alt_label)
+            agree = (alt_label == top[0]["label"])
+            out["altModel"] = BLEACH_ALT["name"]
+            out["altLabel"] = alt_label
+            out["altLabelCn"] = alt_cn
+            out["altConfidence"] = round(float(pa[ia]), 6)
+            out["consensus"] = {
+                "agree": bool(agree),
+                "label": top[0]["label"] if agree else None,
+                "labelCn": top[0]["labelCn"] if agree else None,
+                # review=True 表示两模型分歧 → 建议人工复核（App 显示"待复核"）
+                "review": (not agree),
+                "reason": ("两模型判定一致，可直接采信" if agree
+                           else f"主模型判「{top[0]['labelCn']}」、第二模型判「{alt_cn}」，建议人工复核"),
+            }
+        except Exception:
+            out["consensus"] = None
+    else:
+        out["consensus"] = None
+    return out
 
 
 def classify_coral_region(img: Image.Image, pred: np.ndarray, topk=3, min_conf=0.40):
@@ -294,7 +360,9 @@ def health():
             "segCalibrated": SEG_LOADED_DIR == SEG_DIR,
             "categories": SEG.n_classes if SEG else 0,
             # P3 新增：个体计数模型状态（原有字段语义与取值均未改动）
-            "coralCounter": "loaded" if COUNTER else "not_trained"}
+            "coralCounter": "loaded" if COUNTER else "not_trained",
+            # P16 新增：第二白化模型（共识弃权用）；既有字段不受影响
+            "bleachAlt": (BLEACH_ALT["name"] if BLEACH_ALT else "not_loaded")}
 
 
 @app.get("/sample")
