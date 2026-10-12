@@ -34,6 +34,21 @@ MODELS = {
 }
 
 
+def build_one(wp, device):
+    """单独加载一个权重（用于按 --alt 替换共识第二模型）。"""
+    import torch
+    from torchvision import transforms
+    from train import build_model
+    ck = torch.load(wp, map_location=device, weights_only=False)
+    m = build_model(ck["backbone"], len(ck["classes"])).to(device)
+    m.load_state_dict(ck["model"]); m.eval()
+    sz = ck.get("img_size", 224)
+    tf = transforms.Compose([transforms.Resize(int(sz * 1.14)), transforms.CenterCrop(sz),
+                             transforms.ToTensor(),
+                             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    return (m, [str(c).lower() for c in ck["classes"]], tf)
+
+
 def build():
     import torch
     from torchvision import transforms
@@ -170,6 +185,11 @@ def main():
         srcs = [sys.argv[sys.argv.index("--source") + 1]]
 
     models, device = build()
+    alt = ""
+    if "--alt" in sys.argv:
+        alt = sys.argv[sys.argv.index("--alt") + 1]
+        models["indo"] = build_one(pathlib.Path(alt), device)
+        print(f"  第二模型改为 {alt}")
     ccd, orig = calibration_sets()
     Ts = {}
     for k in MODELS:

@@ -32,8 +32,8 @@ WEIGHTS = [
     ("weights/yolo_coral/best.pt", "个体计数 YOLOv9c（P3 附加能力）"),
     # P16：共识弃权需要第二个白化模型；缺失时服务会安静降级（consensus=null），不影响其它功能。
     #      `--no-consensus` 可跳过（省约 106 MB）。
-    ("weights/bleaching_all_koh_tao_bb/best.pt",
-     "第二白化模型（共识弃权用：两模型一致才判定、不一致提示人工复核；可选）"),
+    ("weights/bleaching_all_multidomain2/best.pt",
+     "第二白化模型（共识弃权用；实测与线上模型分歧率 22.8%，域内覆盖率 92-98%；可选）"),
 ]
 # 默认排除的冗余文件（打完整版时包含）
 REDUNDANT = [
@@ -119,7 +119,7 @@ curl http://127.0.0.1:8000/health
 
 ## 五点五、共识弃权（P16，可选但推荐）
 
-服务会加载**两个**白化模型：`bleaching_all`（主）+ `bleaching_all_koh_tao_bb`（第二），
+服务会加载**两个**白化模型：`bleaching_all`（主，多域 D4）+ `bleaching_all_multidomain2`（第二，多域 D2），
 按**三档**给结论（接口字段 `bleaching.consensus.severity`）：
 
 | 档位 | 触发条件 | 小程序显示 |
@@ -177,7 +177,8 @@ def main() -> int:
 
     weights = FULL_WEIGHTS if a.full else WEIGHTS
     if a.no_consensus:          # 可选：不带第二白化模型（共识功能将降级）
-        weights = [(r, d) for r, d in weights if "koh_tao" not in r]
+        weights = [(r, d) for r, d in weights
+                   if not any(k in r for k in ("multidomain2", "koh_tao"))]
     items = list(weights) + list(CLIMATE) + ([] if a.no_photos else [PHOTOS])
     total, missing, rows = 0, [], []
     for rel, desc in items:

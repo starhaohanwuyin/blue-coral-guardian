@@ -2,105 +2,105 @@
   "task": "路由仲裁改进：温度校准置信度 + 分歧弃权",
   "temperatures": {
     "orig": {
-      "kohTao": 1.1606,
-      "orig": 1.8761
+      "kohTao": 1.5099,
+      "orig": 2.0285
     },
     "indo": {
-      "kohTao": 1.9545,
-      "orig": 6.9446
+      "kohTao": 1.1606,
+      "orig": 1.8761
     }
   },
   "results": {
     "external": {
       "trueDomain": "indo",
       "samples": 1991,
-      "agreement": 0.5445,
+      "agreement": 0.5701,
       "tempCalibratedConfidence": {
-        "macroF1": 0.4903,
+        "macroF1": 0.4377,
         "perClass": {
-          "bleached": 0.3389,
-          "dead": 0.6735,
-          "healthy": 0.4586
+          "bleached": 0.3157,
+          "dead": 0.5774,
+          "healthy": 0.42
         }
       },
       "abstainOnDisagreement": {
-        "macroF1": 0.5547,
+        "macroF1": 0.4711,
         "perClass": {
-          "bleached": 0.3799,
-          "dead": 0.7559,
-          "healthy": 0.5284
+          "bleached": 0.3184,
+          "dead": 0.6053,
+          "healthy": 0.4896
         },
-        "decided": 1084,
-        "coverage": 0.5445
+        "decided": 1135,
+        "coverage": 0.5701
       }
     },
     "winter": {
       "trueDomain": "indo",
       "samples": 3204,
-      "agreement": 0.6773,
+      "agreement": 0.7257,
       "tempCalibratedConfidence": {
-        "macroF1": 0.5656,
+        "macroF1": 0.5561,
         "perClass": {
-          "bleached": 0.3811,
-          "dead": 0.668,
-          "healthy": 0.6477
+          "bleached": 0.3172,
+          "dead": 0.7014,
+          "healthy": 0.6498
         }
       },
       "abstainOnDisagreement": {
-        "macroF1": 0.6047,
+        "macroF1": 0.6014,
         "perClass": {
-          "bleached": 0.3981,
-          "dead": 0.7169,
-          "healthy": 0.699
+          "bleached": 0.3328,
+          "dead": 0.7618,
+          "healthy": 0.7097
         },
-        "decided": 2170,
-        "coverage": 0.6773
+        "decided": 2325,
+        "coverage": 0.7257
       }
     },
     "kaggle": {
       "trueDomain": "orig",
       "samples": 257,
-      "agreement": 0.4981,
+      "agreement": 0.9805,
       "tempCalibratedConfidence": {
-        "macroF1": 0.6525,
+        "macroF1": 0.6563,
         "perClass": {
-          "bleached": 0.9738,
+          "bleached": 0.9852,
           "dead": 0.0,
           "healthy": 0.9836
         }
       },
       "abstainOnDisagreement": {
-        "macroF1": 0.6667,
+        "macroF1": 0.6614,
         "perClass": {
-          "bleached": 1.0,
+          "bleached": 0.9924,
           "dead": 0.0,
-          "healthy": 1.0
+          "healthy": 0.9917
         },
-        "decided": 128,
-        "coverage": 0.4981
+        "decided": 252,
+        "coverage": 0.9805
       }
     },
     "orig_test": {
       "trueDomain": "orig",
       "samples": 412,
-      "agreement": 0.4903,
+      "agreement": 0.9175,
       "tempCalibratedConfidence": {
-        "macroF1": 0.8742,
+        "macroF1": 0.9335,
         "perClass": {
-          "bleached": 0.877,
-          "dead": 0.8462,
-          "healthy": 0.8995
+          "bleached": 0.9195,
+          "dead": 0.9545,
+          "healthy": 0.9266
         }
       },
       "abstainOnDisagreement": {
-        "macroF1": 0.913,
+        "macroF1": 0.97,
         "perClass": {
-          "bleached": 0.911,
-          "dead": 0.9189,
-          "healthy": 0.9091
+          "bleached": 0.9529,
+          "dead": 1.0,
+          "healthy": 0.9572
         },
-        "decided": 202,
-        "coverage": 0.4903
+        "decided": 378,
+        "coverage": 0.9175
       }
     }
   },

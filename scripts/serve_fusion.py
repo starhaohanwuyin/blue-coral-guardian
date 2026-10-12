@@ -84,7 +84,14 @@ SPECIES = None
 BLEACH = None                   # 白化状态分类模型
 # P16 附加：第二白化模型（纯域自适应版）—— 用于「共识弃权」：两模型一致才判定，
 #     不一致则标记待人工复核。缺失时该功能安静降级（consensus=None）。
-BLEACH_ALT_DIRS = ["bleaching_all_koh_tao_bb", "bleaching_all_koh_tao"]
+# P16 共识弃权的第二模型候选（按顺序找第一个可用的）。
+# 为什么首选 multidomain2 而不是纯印太版：实测在**仙本那实拍**上，
+#   纯印太版与线上 D4 分歧率高达 56.7%（它系统性偏向"死亡"），提示过密；
+#   而 multidomain2（同为多域模型）分歧率仅 22.8%，且域内覆盖率 92–98%、
+#   orig_test 宏 F1 0.9700（纯印太版为 0.9130）→ 把关更有意义。
+# 可用环境变量覆盖：CONSENSUS_ALT=<权重目录名>（如 bleaching_all_koh_tao_bb 面向印太域）。
+BLEACH_ALT_DIRS = ["bleaching_all_multidomain2", "bleaching_all_koh_tao_bb",
+                   "bleaching_all_koh_tao"]
 BLEACH_ALT = None               # 模块级初始化：/health 在 init 之前被调用也不能 NameError
 # 共识弃权：主模型置信度低于此阈值且两模型分歧时，才提示「建议人工复核」；
 # 否则只给「另一模型持不同意见」的弱提醒（避免一半以上上传都弹复核提示）
@@ -195,10 +202,15 @@ def load_models(prefer_degradinv=False):
     # 实测真实照片上两模型分歧率约 57%（第二模型在仙本那照片上系统性偏向"死亡"），
     # 若觉得提示过密可用此开关或打包时不带第二模型。
     BLEACH_ALT = None
+    alt_dirs = BLEACH_ALT_DIRS
+    _env_alt = os.environ.get("CONSENSUS_ALT", "").strip()
+    if _env_alt:                      # 允许指定第二模型（如面向印太域时用 koh_tao_bb）
+        alt_dirs = [_env_alt] + [d for d in BLEACH_ALT_DIRS if d != _env_alt]
+        print(f"[共识] 已按 CONSENSUS_ALT 指定第二模型优先：{_env_alt}")
     if os.environ.get("DISABLE_BLEACH_CONSENSUS", "").strip() in ("1", "true", "yes"):
         print("[关闭] 共识弃权已通过 DISABLE_BLEACH_CONSENSUS 关闭 → consensus=null")
     else:
-        for name in BLEACH_ALT_DIRS:
+        for name in alt_dirs:
             if name == BLEACH_LOADED:
                 continue
             try:
