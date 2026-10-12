@@ -162,6 +162,12 @@
           <text class="prob-val">{{item.pct}}%</text>
         </view>
       </view>
+      <view wx:if="{{view.bleachView.review}}" class="review-tip" style="margin-top: 16rpx;">
+        🔍 双模型判定不一致（主模型「{{view.bleachView.labelCn}}」/ 第二模型「{{view.bleachView.altLabelCn}}」），建议人工复核
+      </view>
+      <view wx:elif="{{view.bleachView.hasConsensus && view.bleachView.agree}}" class="agree-tip" style="margin-top: 16rpx;">
+        ✓ 双模型判定一致（{{view.bleachView.labelCn}} {{view.bleachView.pct}}%），结论可直接采信
+      </view>
       <view wx:if="{{!view.bleachView.reliable}}" class="review-tip" style="margin-top: 16rpx;">
         ⚠️ 置信度不足，建议人工复核后再用于保育决策
       </view>

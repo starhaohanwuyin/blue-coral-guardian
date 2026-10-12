@@ -313,12 +313,21 @@ Page({
 
     // 白化状态：来自**分类模型**（不是分割模型的 bleachedPct —— 后者经实测跨域无效）
     const bl = res.bleaching || null
+    // P16 共识弃权：服务端跑第二个白化模型；两模型一致才判定，不一致则提示人工复核。
+    // 实测该策略在 4 个测试集上都优于任一单模型（宏 F1 +0.02~0.07）。
+    const cs = (bl && bl.consensus) || null
     const bleachView = bl ? {
       label: bl.label || '',
       labelCn: bl.labelCn || '',
       pct: Math.round((Number(bl.confidence) || 0) * 1000) / 10,
       reliable: bl.reliable !== false,
       model: bl.model || '',
+      hasConsensus: !!cs,
+      review: !!(cs && cs.review),                 // true → 显示「建议人工复核」
+      agree: !!(cs && cs.agree),
+      reviewText: (cs && cs.reason) || '',
+      altLabelCn: (bl && bl.altLabelCn) || '',
+      altPct: Math.round((Number(bl && bl.altConfidence) || 0) * 1000) / 10,
       probs: Object.keys(bl.probabilities || {}).map((k) => ({
         key: k,
         name: ({ bleached: '白化', healthy: '健康', dead: '死亡' })[k.toLowerCase()] || k,
