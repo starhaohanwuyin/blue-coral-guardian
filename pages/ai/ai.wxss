@@ -698,3 +698,5 @@
   font-size: 26rpx;
 }
 .agree-tip { margin-top: 16rpx; font-size: 24rpx; line-height: 1.6; color: #1b5e20; background: #e8f5e9; border-radius: 12rpx; padding: 16rpx 20rpx; }
+
+.note-tip { margin-top: 16rpx; font-size: 24rpx; line-height: 1.6; color: #00695c; background: #e0f2f1; border-radius: 12rpx; padding: 16rpx 20rpx; }

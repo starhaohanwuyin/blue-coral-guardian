@@ -163,7 +163,10 @@
         </view>
       </view>
       <view wx:if="{{view.bleachView.review}}" class="review-tip" style="margin-top: 16rpx;">
-        🔍 双模型判定不一致（主模型「{{view.bleachView.labelCn}}」/ 第二模型「{{view.bleachView.altLabelCn}}」），建议人工复核
+        🔍 两个模型判定不一致（主模型「{{view.bleachView.labelCn}}」/ 第二模型「{{view.bleachView.altLabelCn}}」），建议人工复核
+      </view>
+      <view wx:elif="{{view.bleachView.note}}" class="note-tip" style="margin-top: 16rpx;">
+        ℹ️ 第二模型持不同意见（判「{{view.bleachView.altLabelCn}}」），主模型置信度较高（{{view.bleachView.pct}}%），结果仅供参考
       </view>
       <view wx:elif="{{view.bleachView.hasConsensus && view.bleachView.agree}}" class="agree-tip" style="margin-top: 16rpx;">
         ✓ 双模型判定一致（{{view.bleachView.labelCn}} {{view.bleachView.pct}}%），结论可直接采信

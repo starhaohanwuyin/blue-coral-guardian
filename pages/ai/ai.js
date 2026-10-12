@@ -323,7 +323,9 @@ Page({
       reliable: bl.reliable !== false,
       model: bl.model || '',
       hasConsensus: !!cs,
-      review: !!(cs && cs.review),                 // true → 显示「建议人工复核」
+      severity: (cs && cs.severity) || '',        // agree | review | note
+      review: !!(cs && (cs.severity ? cs.severity === 'review' : cs.review)),
+      note: !!(cs && cs.severity === 'note'),
       agree: !!(cs && cs.agree),
       reviewText: (cs && cs.reason) || '',
       altLabelCn: (bl && bl.altLabelCn) || '',
