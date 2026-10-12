@@ -1,0 +1,71 @@
+{
+  "task": "印太域（Koh Tao）域自适应微调 —— 针对跨域白化识别不可用",
+  "init": "weights\\bleaching_all\\best.pt",
+  "out": "weights\\bleaching_all_koh_tao",
+  "classes": [
+    "bleached",
+    "dead",
+    "healthy"
+  ],
+  "args": {
+    "epochs": 3,
+    "batch": 32,
+    "lr": 0.0001,
+    "freeze_backbone": false,
+    "limit": 0,
+    "val_limit": 1500,
+    "workers": 6,
+    "out": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_koh_tao"
+  },
+  "data": {
+    "train": 12809,
+    "val": 1500,
+    "trainClassCounts": {
+      "dead": 5522,
+      "healthy": 4872,
+      "bleached": 2415
+    },
+    "dryImagesIndexed": 26431
+  },
+  "labelMapping": "CCD 9 类多标签 → 三类单标签，优先级 dead > bleached > healthy",
+  "history": [
+    {
+      "epoch": 1,
+      "trainLoss": 0.8235,
+      "valMacroF1": 0.6614,
+      "valF1": {
+        "bleached": 0.5829,
+        "dead": 0.7217,
+        "healthy": 0.6795
+      }
+    },
+    {
+      "epoch": 2,
+      "trainLoss": 0.6399,
+      "valMacroF1": 0.6997,
+      "valF1": {
+        "bleached": 0.6471,
+        "dead": 0.7548,
+        "healthy": 0.6974
+      }
+    },
+    {
+      "epoch": 3,
+      "trainLoss": 0.5357,
+      "valMacroF1": 0.7215,
+      "valF1": {
+        "bleached": 0.6543,
+        "dead": 0.7943,
+        "healthy": 0.7159
+      }
+    }
+  ],
+  "bestValMacroF1": 0.7215,
+  "next": "python eval_bleaching_indopacific.py --source external --weights weights\\bleaching_all_koh_tao/best.pt",
+  "caveats": [
+    "训练数据只有 Koh Tao 一个海域（泰国湾），不等于整个印太域都能泛化",
+    "标签映射是近似的：Compromised ≈ 白化（含非白化损伤）",
+    "Arafura/Darwin（external 包）全程未参与训练，作为 held-out 跨域测试",
+    "线上权重 weights/bleaching_all 未被覆盖；本产物是独立实验权重"
+  ]
+}

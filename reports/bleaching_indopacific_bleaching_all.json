@@ -1,0 +1,86 @@
+{
+  "task": "印太域白化三分类评测 —— 量化项目最大短板（印太域不可用）",
+  "source": "Arafura/Darwin 外部测试集（印尼—澳北，external 包）",
+  "split": "external",
+  "samplesEvaluated": 2577,
+  "missingImage": 0,
+  "model": {
+    "weights": "weights/bleaching_all/best.pt",
+    "backbone": "convnext_tiny",
+    "classes": [
+      "bleached",
+      "dead",
+      "healthy"
+    ],
+    "imgSize": 224
+  },
+  "oneVsRest": {
+    "healthy": {
+      "precision": 0.7778,
+      "recall": 0.3897,
+      "f1": 0.5192,
+      "tp": 560,
+      "fp": 160,
+      "fn": 877,
+      "truthPositives": 1437,
+      "prevalence": 0.5576
+    },
+    "bleached": {
+      "precision": 0.3067,
+      "recall": 0.7791,
+      "f1": 0.4401,
+      "tp": 568,
+      "fp": 1284,
+      "fn": 161,
+      "truthPositives": 729,
+      "prevalence": 0.2829
+    },
+    "dead": {
+      "precision": 1.0,
+      "recall": 0.0039,
+      "f1": 0.0077,
+      "tp": 5,
+      "fp": 0,
+      "fn": 1291,
+      "truthPositives": 1296,
+      "prevalence": 0.5029
+    }
+  },
+  "macroF1": 0.3223,
+  "byRegion": {
+    "Arafura/Darwin": {
+      "healthy": {
+        "tp": 560,
+        "fp": 160,
+        "fn": 877
+      },
+      "bleached": {
+        "tp": 568,
+        "fp": 1284,
+        "fn": 161
+      },
+      "dead": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 1291
+      }
+    }
+  },
+  "labelMapping": {
+    "1": "healthy",
+    "2": "bleached(≈Compromised coral)",
+    "3": "dead"
+  },
+  "caveats": [
+    "口径差异：本模型输出整图三分类；该数据集是瓦片级多标签（一个瓦片可同时含健康与死亡）",
+    "「Compromised coral」≈ 受损（含白化但不限于白化），映射到 bleached 只是近似",
+    "因此采用一对其余（one-vs-rest）评估，不与单标签混淆矩阵混用",
+    "该域（Arafura/Darwin、Koh Tao）都不在项目 NOAA 网格内，未做热压力关联",
+    "抽样偏差：external 集由数据集作者挑选，不代表该海域的随机抽样"
+  ],
+  "reference": {
+    "inDomainTest": "同域 test top1 0.9150",
+    "crossDomainTestIp": "跨域 test_ip top1 0.8523 = 多数类基线，bleached 召回 0.4231",
+    "note": "本结果可与上面两条对比，看「换成印太实拍后」域偏移有多严重"
+  }
+}
