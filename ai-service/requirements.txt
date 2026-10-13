@@ -27,6 +27,8 @@ pyarrow>=14.0               # 读 Coralscapes parquet
 requests>=2.31              # 下载 NOAA / iNaturalist 数据
 pandas>=2.0
 scikit-learn>=1.3           # 评估指标
+scipy>=1.11                 # 形态学处理 / Spearman 秩相关（build_yolo_coral_dataset、validate_site_level）
+pyyaml>=6.0                 # 标注工具读配置（yolo_manual_annotation_kit）
 tqdm>=4.66
 
 # ---- 个体计数（P3 附加能力；缺失时服务照常跑，只是没有 coralCount 字段）----
