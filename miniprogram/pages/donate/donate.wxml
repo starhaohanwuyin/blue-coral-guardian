@@ -1,0 +1,47 @@
+<!-- 公益捐赠页 -->
+<view class="page-body">
+  <!-- 头部 -->
+  <view class="dn-hero">
+    <view class="dn-hero-icon">💚</view>
+    <view class="dn-hero-title">珊瑚保护公益捐赠</view>
+    <view class="dn-hero-sub">您的每一份捐赠都将用于南海珊瑚礁的生态保护与修复，帮助我们培育更多抗逆珊瑚种苗。</view>
+  </view>
+
+  <!-- 金额选择 -->
+  <view class="dn-card card">
+    <view class="dn-section-label">选择捐赠金额</view>
+    <view class="dn-amounts">
+      <view
+        wx:for="{{amounts}}"
+        wx:key="*this"
+        class="dn-amount-btn {{amount === item && !customMode ? 'active' : ''}}"
+        bindtap="onSelectAmount"
+        data-amount="{{item}}"
+      >¥{{item}}</view>
+    </view>
+
+    <view class="dn-section-label">或自定义金额</view>
+    <view class="dn-custom-row">
+      <text class="dn-custom-unit">¥</text>
+      <input
+        class="dn-custom-input"
+        type="digit"
+        placeholder="输入金额（元）"
+        value="{{customAmount}}"
+        bindinput="onCustomInput"
+      />
+    </view>
+
+    <!-- 捐赠说明 -->
+    <view class="dn-desc">
+      <view class="dn-desc-title">💡 捐赠说明</view>
+      <view class="dn-desc-line">• 10元 ≈ 培育1株珊瑚幼苗</view>
+      <view class="dn-desc-line">• 50元 ≈ 修复1㎡珊瑚礁</view>
+      <view class="dn-desc-line">• 100元 ≈ 资助一次AI监测巡检</view>
+      <view class="dn-desc-line">• 所有捐赠将获得公益捐赠证书和积分奖励</view>
+    </view>
+
+    <view class="dn-confirm-btn" hover-class="btn-hover" bindtap="onDonate">✅ 确认捐赠 ¥{{amount || customAmount || 0}}</view>
+    <view class="dn-agreement">捐赠为公益支持行为，可获取电子公益证书；如有疑问请联系客服</view>
+  </view>
+</view>

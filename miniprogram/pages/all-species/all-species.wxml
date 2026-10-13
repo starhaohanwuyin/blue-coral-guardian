@@ -1,0 +1,35 @@
+<!-- 全部珊瑚种类页 -->
+<view class="page-body">
+  <view class="as-intro card">
+    <view class="as-intro-icon">🪸</view>
+    <view class="as-intro-text">南海常见珊瑚图鉴 · AI可识别 20+ 品种</view>
+  </view>
+
+  <view class="as-section-title">🔥 热门种类</view>
+  <view class="as-grid">
+    <view class="as-card card" wx:for="{{hot}}" wx:key="name">
+      <view class="as-imgwrap">
+        <image class="as-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="as-hot-badge">HOT</view>
+      </view>
+      <view class="as-body">
+        <view class="as-name">{{item.name}}</view>
+        <view class="as-latin">{{item.latin}}</view>
+        <view class="as-desc">{{item.desc}}</view>
+        <view class="as-dist">📍 {{item.dist}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="as-section-title">📖 全部种类（{{all.length}}）</view>
+  <view class="as-list">
+    <view class="as-row card" wx:for="{{all}}" wx:key="name">
+      <image class="as-row-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+      <view class="as-row-body">
+        <view class="as-row-name">{{item.name}} <text class="as-row-latin">{{item.latin}}</text></view>
+        <view class="as-row-desc">{{item.desc}}</view>
+        <view class="as-row-dist">📍 {{item.dist}}</view>
+      </view>
+    </view>
+  </view>
+</view>

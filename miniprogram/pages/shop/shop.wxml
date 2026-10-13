@@ -1,0 +1,46 @@
+<!-- 积分商城页：养料区 + 文创区 -->
+<view class="page-body">
+  <!-- 积分头卡 -->
+  <view class="shop-points-card">
+    <view class="shop-points-left">
+      <view class="shop-points-icon">⭐</view>
+      <view>
+        <view class="shop-points-num">{{points}}</view>
+        <view class="shop-points-label">当前积分</view>
+      </view>
+    </view>
+    <view class="shop-points-tip">完成任务获得更多积分</view>
+  </view>
+
+  <!-- 区域切换 -->
+  <view class="shop-tabs">
+    <view class="shop-tab {{tab === 'feed' ? 'active' : ''}}" bindtap="switchTab" data-tab="feed">🧪 养料区</view>
+    <view class="shop-tab {{tab === 'culture' ? 'active' : ''}}" bindtap="switchTab" data-tab="culture">🎨 文创区</view>
+  </view>
+
+  <!-- 养料区 -->
+  <block wx:if="{{tab === 'feed'}}">
+    <view class="shop-tip card">养料用于喂养虚拟珊瑚，提升成长进度。成长到100%可获得一株实物珊瑚！</view>
+    <view class="shop-item card" wx:for="{{feeds}}" wx:key="key">
+      <view class="shop-item-icon">{{item.icon}}</view>
+      <view class="shop-item-info">
+        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{shop[item.key] > 0}}">库存 ×{{shop[item.key]}}</text></view>
+        <view class="shop-item-desc">{{item.desc}} · 成长+{{item.growth}}%</view>
+      </view>
+      <view class="shop-buy-btn feed" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}积分</view>
+    </view>
+  </block>
+
+  <!-- 文创区 -->
+  <block wx:if="{{tab === 'culture'}}">
+    <view class="shop-tip card">用积分兑换蓝珊周边文创，实体商品将由客服联系寄送。</view>
+    <view class="shop-item card" wx:for="{{cultureItems}}" wx:key="id">
+      <view class="shop-item-icon">{{item.icon}}</view>
+      <view class="shop-item-info">
+        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{culture[item.id] > 0}}">已兑 ×{{culture[item.id]}}</text></view>
+        <view class="shop-item-desc">{{item.desc}}</view>
+      </view>
+      <view class="shop-buy-btn culture" hover-class="btn-hover" bindtap="onExchange" data-id="{{item.id}}">{{item.price}}积分</view>
+    </view>
+  </block>
+</view>

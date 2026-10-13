@@ -1,0 +1,34 @@
+<!-- 实时海景页：水下摄像头画面 + 环境指标 -->
+<view class="page-body">
+  <!-- 画面区 -->
+  <view class="cam-view">
+    <image class="cam-img" src="{{d.img}}" mode="aspectFill" />
+    <!-- 直播标记 -->
+    <view class="cam-live">
+      <view class="cam-live-dot"></view>
+      <text>LIVE</text>
+    </view>
+    <!-- 位置坐标 -->
+    <view class="cam-location">📍 {{d.location}}</view>
+    <view class="cam-coord">{{d.coord}}</view>
+    <!-- 水下气泡效果 -->
+    <view class="cam-bubble cb-1"></view>
+    <view class="cam-bubble cb-2"></view>
+    <view class="cam-bubble cb-3"></view>
+  </view>
+
+  <!-- 环境指标 -->
+  <view class="cam-metrics">
+    <view class="cam-metric card" wx:for="{{d.metrics}}" wx:key="label">
+      <view class="cam-metric-icon">{{item.icon}}</view>
+      <view class="cam-metric-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 说明 -->
+  <view class="cam-note card">
+    <view class="cam-note-title">ℹ️ 关于实时画面</view>
+    <view class="cam-note-text">画面来自南海珊瑚修复区水下监测设备，由AI监测系统全天候值守。数据每5分钟刷新一次，珊瑚生长状态实时可查。</view>
+    <view class="cam-refresh" hover-class="btn-hover" bindtap="onRefresh">🔄 刷新画面</view>
+  </view>
+</view>

@@ -1,0 +1,38 @@
+<view class="camp-page">
+  <image class="camp-img" src="{{data.img}}" mode="aspectFill" />
+
+  <!-- 数据统计 -->
+  <view class="camp-stats">
+    <view class="camp-stat-card" wx:for="{{data.stats}}" wx:key="label">
+      <view class="num">{{item.num}}</view>
+      <view class="lbl">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="camp-desc">{{data.desc}}</view>
+
+  <!-- 覆盖城市 -->
+  <view class="camp-cities">
+    <text class="camp-city-tag" wx:for="{{data.cities}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <!-- 班型介绍 -->
+  <view class="camp-section-title">班型介绍</view>
+  <view class="camp-list">
+    <view class="camp-card {{item.color}}" wx:for="{{data.camps}}" wx:key="name">
+      <view class="camp-card-head">
+        <text class="camp-card-name">{{item.icon}} {{item.name}}</text>
+        <text class="camp-card-price {{item.color}}">{{item.price}}</text>
+      </view>
+      <view class="camp-card-target">{{item.target}}</view>
+      <view class="camp-card-content">{{item.content}}</view>
+      <view class="camp-card-note">{{item.note}}</view>
+      <view class="camp-card-tags">
+        <text class="camp-card-tag {{item.color}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="camp-apply-btn" hover-class="btn-hover" bindtap="onApply">报名下期夏令营 →</button>
+  <view class="camp-tip">提交报名意向后，工作人员将与您联系确认</view>
+</view>

@@ -1,0 +1,16 @@
+<!-- 科普详情页 -->
+<view class="page-body">
+  <view wx:if="{{item}}">
+    <image class="kd-hero" src="{{item.img}}" mode="aspectFill" />
+    <view class="kd-body card">
+      <view class="kd-title">{{item.title}}</view>
+      <view class="kd-summary">{{item.summary}}</view>
+      <view class="kd-divider"></view>
+      <view class="kd-paragraph" wx:for="{{item.paragraphs}}" wx:for-item="p" wx:key="*this">{{p}}</view>
+    </view>
+    <view class="kd-actions">
+      <view class="kd-share-btn" hover-class="btn-hover" bindtap="goQuiz">🧠 参与知识问答，赢积分</view>
+    </view>
+  </view>
+  <view wx:else class="loading-dots">加载中...</view>
+</view>

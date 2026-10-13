@@ -1,0 +1,112 @@
+/* ============ 珊瑚详情页 ============ */
+.cd-imgwrap {
+  position: relative;
+  height: 440rpx;
+}
+.cd-img { width: 100%; height: 100%; }
+.cd-species-badge {
+  position: absolute;
+  left: 24rpx;
+  bottom: 24rpx;
+  padding: 10rpx 24rpx;
+  background: rgba(30, 136, 229, 0.9);
+  color: #fff;
+  font-size: 22rpx;
+  border-radius: 14rpx;
+  font-weight: 500;
+}
+.cd-live {
+  position: absolute;
+  right: 24rpx;
+  top: 24rpx;
+  padding: 8rpx 20rpx;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 24rpx;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.cd-card {
+  margin: -50rpx 32rpx 0;
+  position: relative;
+  z-index: 2;
+  padding: 36rpx;
+}
+.cd-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 32rpx;
+}
+
+.cd-progress {
+  display: flex;
+  align-items: center;
+  gap: 36rpx;
+}
+.cd-ring {
+  width: 190rpx;
+  height: 190rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cd-ring-inner {
+  width: 146rpx;
+  height: 146rpx;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cd-ring-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+}
+.cd-ring-label { font-size: 18rpx; color: var(--text3); }
+
+.cd-progress-info { flex: 1; min-width: 0; }
+.cd-info-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+.cd-info-row {
+  font-size: 24rpx;
+  color: var(--text2);
+  margin-top: 10rpx;
+  line-height: 1.6;
+}
+
+.cd-bar { margin-top: 32rpx; }
+.cd-bar .progress-bar { height: 16rpx; }
+
+.cd-section-title {
+  padding: 32rpx 40rpx 20rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.cd-timeline { margin: 0 32rpx; }
+
+.cd-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 32rpx 32rpx 48rpx;
+}
+.cd-action-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 24rpx;
+  background: var(--card);
+  color: var(--primary);
+  border: 3rpx solid rgba(30, 136, 229, 0.4);
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}

@@ -1,0 +1,115 @@
+/* ================= 勋章页 ================= */
+.badge-page {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+/* 勋章墙（3列） */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32rpx;
+  margin-bottom: 32rpx;
+}
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24rpx 8rpx;
+  background: var(--card);
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
+}
+.badge-icon {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
+}
+.badge-icon.achieved {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(30, 136, 229, 0.3);
+}
+.badge-icon.locked {
+  background: #E8EDF5;
+  color: #B0B8C4;
+}
+.badge-name {
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-bottom: 4rpx;
+}
+.badge-desc {
+  font-size: 20rpx;
+  color: var(--text3);
+}
+.badge-card.locked .badge-name,
+.badge-card.locked .badge-desc {
+  color: #B0B8C4;
+}
+.badge-progress-bar {
+  width: 100%;
+  height: 8rpx;
+  background: #E8EDF5;
+  border-radius: 4rpx;
+  margin-top: 12rpx;
+  overflow: hidden;
+}
+.badge-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4rpx;
+}
+.badge-progress-text {
+  font-size: 20rpx;
+  color: var(--primary);
+  margin-top: 8rpx;
+}
+
+/* 等级体系 */
+.badge-level-card {
+  background: rgba(30, 136, 229, 0.04);
+  border-radius: 28rpx;
+  padding: 28rpx;
+}
+.badge-level-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+.badge-level-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 10rpx 0;
+}
+.badge-level-star {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.badge-level-star.gold { background: linear-gradient(135deg, #FFD700, #FFA000); }
+.badge-level-star.blue { background: linear-gradient(135deg, #90CAF9, #42A5F5); }
+.badge-level-star.purple { background: linear-gradient(135deg, #CE93D8, #AB47BC); }
+.badge-level-star.coral { background: linear-gradient(135deg, #FF8A65, #FF5722); }
+.badge-level-name {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+.badge-level-desc {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 2rpx;
+}

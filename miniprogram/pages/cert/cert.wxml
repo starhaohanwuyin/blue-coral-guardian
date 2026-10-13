@@ -1,0 +1,61 @@
+<view class="cert-page {{type}}">
+
+  <!-- 实体认养证书（金色 premium 版式） -->
+  <view class="cert-card entity" wx:if="{{cert && type === 'entity'}}">
+    <view class="cert-outer-border"></view>
+    <view class="cert-inner-border"></view>
+    <view class="cert-corner tl"></view>
+    <view class="cert-corner tr"></view>
+    <view class="cert-corner bl"></view>
+    <view class="cert-corner br"></view>
+    <view class="cert-content">
+      <view class="cert-top-label">{{cert.topLabel}}</view>
+      <view class="cert-main-title">{{cert.title}}</view>
+      <view class="cert-sub-title">{{cert.subTitle}}</view>
+      <image class="cert-coral-circle" src="{{cert.img}}" mode="aspectFill" />
+      <view class="cert-field-row" wx:for="{{cert.fields}}" wx:key="label">
+        <text class="label">{{item.label}}</text>
+        <text class="value">{{item.value}}</text>
+      </view>
+      <view class="cert-seal">
+        <view class="cert-seal-stamp">
+          <view class="cert-seal-text">蓝珊<text class="seal-br">认证</text></view>
+        </view>
+        <view class="cert-org-name">{{cert.org}}</view>
+        <view class="cert-date-line">{{cert.issueDate}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 虚拟认养证书（青色版式） -->
+  <view class="cert-card virtual" wx:if="{{cert && type === 'virtual'}}">
+    <view class="v-border"></view>
+    <view class="v-top-label">{{cert.topLabel}}</view>
+    <view class="v-main-title">{{cert.title}}</view>
+    <view class="v-sub-title">{{cert.subTitle}}</view>
+    <view class="v-coral-icon">🪸</view>
+    <view class="v-field" wx:for="{{cert.fields}}" wx:key="label">
+      <text class="label">{{item.label}}</text>
+      <text class="value">{{item.value}}</text>
+    </view>
+    <view class="v-seal">
+      <view class="v-seal-icon">🐚</view>
+      <view class="v-org">{{cert.org}}</view>
+    </view>
+  </view>
+
+  <!-- 加载骨架 -->
+  <view class="cert-loading" wx:if="{{!cert}}">
+    <view class="cert-loading-icon">📜</view>
+    <view class="cert-loading-text">证书加载中...</view>
+  </view>
+
+  <!-- 操作区 -->
+  <view class="cert-actions" wx:if="{{cert}}">
+    <button class="save-btn {{type}}" hover-class="btn-hover" bindtap="onSave">📥 保存证书图片</button>
+    <view class="cert-tip">保存后可分享至朋友圈，晒出您的守护荣誉</view>
+  </view>
+
+  <!-- 导出用画布（屏幕外） -->
+  <canvas type="2d" id="certCanvas" class="cert-canvas"></canvas>
+</view>

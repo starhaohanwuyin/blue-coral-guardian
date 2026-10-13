@@ -1,0 +1,35 @@
+<view class="ma-page">
+
+  <!-- 认养列表 -->
+  <view class="my-adopt-card" wx:for="{{corals}}" wx:key="id">
+    <image class="my-adopt-img" src="{{item.img}}" mode="aspectFill" />
+    <view class="my-adopt-info">
+      <view class="ma-name">{{item.name}}</view>
+      <view class="ma-sub">{{item.species}} · 编号{{item.code}}</view>
+      <view class="ma-progress-wrap">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{item.growth}}%"></view>
+        </view>
+        <text class="ma-progress-pct">{{item.growth}}%</text>
+      </view>
+      <view class="ma-carbon">🌿 碳汇贡献：{{item.carbon}} g CO₂</view>
+      <button class="ma-detail-btn" hover-class="btn-hover" data-id="{{item.id}}" bindtap="goDetail">查看详情</button>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-tip" wx:if="{{loaded && !corals.length}}">
+    还没有认养的珊瑚，去认养一株吧 🪸
+  </view>
+
+  <!-- AI 养护建议 -->
+  <view class="ma-advice-card">
+    <view class="ma-advice-title">💡 AI养护建议</view>
+    <view class="ma-advice-body">
+      <view class="ma-advice-item"><text class="ma-bold">001号</text> 生长良好，覆盖率增长12%，建议保持当前环境参数</view>
+      <view class="ma-advice-item"><text class="ma-bold">002号</text> 虫黄藻密度正常，预计30天后进入快速生长期</view>
+      <view class="ma-advice-item"><text class="ma-bold">003号</text> 近期水温波动较大，建议关注白化风险，AI将持续监测</view>
+    </view>
+    <button class="ma-advice-btn" hover-class="btn-hover" bindtap="goAi">🔬 前往AI检测获取更多建议</button>
+  </view>
+</view>

@@ -1,0 +1,384 @@
+<!-- 珊瑚识别页：上传 → 识别 → 种类 + 白化程度 双结果 -->
+<view class="page-body">
+  <!-- 自定义导航头 -->
+  <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-header-row">
+      <view class="logo">🪸 珊瑚识别</view>
+      <view class="sub">种类识别 + 白化评估</view>
+    </view>
+  </view>
+
+  <!-- Hero -->
+  <view class="ai-hero">
+    <view class="ai-hero-icon">🔬</view>
+    <view class="ai-hero-title">礁区智能评估</view>
+    <view class="ai-hero-sub">一次上传 · 输出珊瑚覆盖率、白化占比与主要珊瑚属</view>
+  </view>
+
+  <!-- 点位选择：环境背景（海表热压力）随点位变化 -->
+  <view class="site-bar card">
+    <view class="site-row">
+      <text class="site-label">评估点位</text>
+      <text class="site-cur">{{siteName}}</text>
+    </view>
+    <scroll-view class="site-scroll" scroll-x="true">
+      <view class="site-chips">
+        <view wx:for="{{sites}}" wx:key="name"
+              class="site-chip {{index === siteIndex ? 'on' : ''}}"
+              data-index="{{index}}" bindtap="onSiteTap">{{item.name}}</view>
+        <view class="site-chip loc {{locating ? 'busy' : ''}}" bindtap="useMyLocation">{{locating ? '定位中…' : '用我的位置'}}</view>
+      </view>
+    </scroll-view>
+    <view class="site-row site-row-year">
+      <text class="site-label">评估年份</text>
+      <!-- ⚠️ 用**换行**而不是横向滚动：scroll-view 放在 flex 行里会塌陷/裁切，
+           实测 6 个芯片只显示得下 3 个（用户反馈"并未完成"就是这个原因）。
+           换行后芯片必然全部可见，不依赖滚动。 -->
+      <view class="site-chips site-chips-wrap">
+        <view wx:for="{{years}}" wx:key="*this"
+              class="site-chip year {{item === year ? 'on' : ''}}"
+              data-year="{{item}}" bindtap="onYearTap">{{item}}</view>
+        <!-- 完整年份表（1985–2025 共 41 年）：芯片只放常用年，其他年份从这里选。
+             选中非快捷年份时，这个芯片显示当前年份并高亮。 -->
+        <picker mode="selector" range="{{allYears}}" bindchange="onYearPick">
+          <view class="site-chip year pick {{yearIsQuick ? '' : 'on'}}">
+            {{yearIsQuick ? '其他年份 ▾' : year}}
+          </view>
+        </picker>
+      </view>
+    </view>
+    <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>
+  </view>
+
+  <!-- ① 上传 -->
+  <view wx:if="{{state === 'upload'}}" class="ai-upload-area" hover-class="upload-hover" bindtap="chooseImage">
+    <view class="upload-icon">📸</view>
+    <view class="upload-title">上传水下礁区照片</view>
+    <view class="upload-sub">支持 JPG / PNG · 建议拍摄深度 ≤10m 或使用补光灯</view>
+  </view>
+
+  <!-- ② 预览 -->
+  <view wx:if="{{state === 'preview'}}" class="ai-preview-container card">
+    <image wx:if="{{!imgFailed}}" class="ai-preview-img" src="{{imgPath}}" mode="aspectFit" binderror="onImgError" />
+    <view wx:else class="img-fallback">图片已失效，请重新选择</view>
+    <view class="ai-preview-actions">
+      <view class="btn-upload-new" hover-class="btn-hover" bindtap="resetUpload">重新选择</view>
+      <view class="btn-start" hover-class="btn-hover" bindtap="startAnalysis">开始识别</view>
+    </view>
+  </view>
+
+  <!-- ③ 识别中 -->
+  <view wx:if="{{state === 'loading'}}" class="ai-loading card">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">正在分析珊瑚影像...</view>
+    <view class="loading-sub">图像增强 → 目标检测 → 像素分割 → 指标统计</view>
+    <view class="loading-progress"><view class="loading-progress-bar"></view></view>
+  </view>
+
+  <!-- ④ 失败 -->
+  <view wx:if="{{state === 'error'}}" class="ai-error card">
+    <view class="err-icon">😵</view>
+    <view class="err-title">识别失败</view>
+    <view class="err-msg">{{errorMsg}}</view>
+    <view class="err-actions">
+      <view class="btn-upload-new" hover-class="btn-hover" bindtap="checkService">检查服务</view>
+      <view class="btn-start" hover-class="btn-hover" bindtap="onRetry">重试</view>
+    </view>
+    <view class="err-hint">提示：评估服务需先启动 —— cd coral_ml/scripts，然后 python serve_fusion.py</view>
+  </view>
+
+  <!-- ⑤ 结果 -->
+  <block wx:if="{{state === 'result' && result}}">
+    <view class="res-photo card">
+      <image wx:if="{{!imgFailed}}" class="res-photo-img" src="{{imgPath}}" mode="aspectFit" binderror="onImgError" />
+      <view wx:else class="img-fallback">图片已失效（可重新识别）</view>
+    </view>
+
+    <!-- 演示数据标记（服务不可用时的降级，不冒充真实结果） -->
+    <view wx:if="{{view.isDemo}}" class="quality-alert warn">
+      <view class="qa-title">🧪 演示数据</view>
+      <view class="qa-desc">未连接到评估服务，以下为内置演示结果，不代表真实分析。</view>
+      <!-- 显示具体失败原因（含服务地址与排查提示），便于自行定位问题 -->
+      <view wx:if="{{view.demoReason}}" class="qa-desc">原因：{{view.demoReason}}</view>
+      <view class="qa-meta">启动服务：先 cd coral_ml/scripts，再运行 python serve_fusion.py</view>
+    </view>
+
+    <!-- 拍摄条件自检：超出适用边界时置顶警示 -->
+    <view wx:if="{{view.qualityPoor}}" class="quality-alert poor">
+      <view class="qa-title">⚠️ 此照片超出模型适用边界</view>
+      <view class="qa-desc">{{view.quality.message}}</view>
+      <view class="qa-meta" wx:if="{{view.quality.contrast !== null}}">
+        实测对比度 {{view.quality.contrast}}（可用阈值 ≥{{view.quality.goodContrast}}）· 下方覆盖率仅供参考
+      </view>
+    </view>
+    <view wx:elif="{{view.qualityWarn && !view.isDemo}}" class="quality-alert warn">
+      <view class="qa-title">💡 拍摄条件一般</view>
+      <view class="qa-desc">{{view.quality.message}}</view>
+    </view>
+
+    <!-- 礁区覆盖评估（语义分割） -->
+    <view class="res-card card">
+      <view class="res-head">
+        <text class="res-head-icon">📊</text>
+        <text class="res-head-title">礁区覆盖评估</text>
+        <text class="res-head-badge">珊瑚 {{view.coralTotal}}%</text>
+      </view>
+
+      <view class="prob-list">
+        <view class="prob-row" wx:for="{{view.groupBars}}" wx:key="key">
+          <text class="prob-name">{{item.name}}</text>
+          <view class="prob-bar">
+            <view class="prob-fill {{item.cls}}" style="width: {{item.pct}}%;"></view>
+          </view>
+          <text class="prob-val">{{item.pct}}%</text>
+        </view>
+      </view>
+
+      <view class="cover-summary">
+        <text>珊瑚总覆盖 {{view.coralTotal}}%</text>
+        <text wx:if="{{view.bleachingShare > 0}}"> · 占珊瑚的白化比例 {{view.bleachingShare}}%</text>
+      </view>
+
+      <view wx:if="{{view.bleachAlert}}" class="review-tip" style="margin: 16rpx 0 0;">
+        ⚠️ 珊瑚白化占比偏高，建议纳入重点监测与修复名单
+      </view>
+    </view>
+
+    <!-- 白化状态（分类模型） -->
+    <view class="res-card card" wx:if="{{view.hasBleach}}">
+      <view class="res-head">
+        <text class="res-head-icon">🩺</text>
+        <text class="res-head-title">白化状态评估</text>
+        <text class="res-head-badge">{{view.bleachView.pct}}%</text>
+      </view>
+      <view class="res-main">{{view.bleachView.labelCn}}</view>
+      <view class="conf-bar"><view class="conf-fill" style="width: {{view.bleachView.pct}}%;"></view></view>
+      <view class="prob-list" style="margin-top: 18rpx;">
+        <view class="prob-row" wx:for="{{view.bleachView.probs}}" wx:key="key">
+          <text class="prob-name">{{item.name}}</text>
+          <view class="prob-bar">
+            <view class="prob-fill {{item.key}}" style="width: {{item.pct}}%;"></view>
+          </view>
+          <text class="prob-val">{{item.pct}}%</text>
+        </view>
+      </view>
+      <view wx:if="{{view.bleachView.review}}" class="review-tip" style="margin-top: 16rpx;">
+        🔍 两个模型判定不一致（主模型「{{view.bleachView.labelCn}}」/ 第二模型「{{view.bleachView.altLabelCn}}」），建议人工复核
+      </view>
+      <view wx:elif="{{view.bleachView.note}}" class="note-tip" style="margin-top: 16rpx;">
+        ℹ️ 第二模型持不同意见（判「{{view.bleachView.altLabelCn}}」），主模型置信度较高（{{view.bleachView.pct}}%），结果仅供参考
+      </view>
+      <view wx:elif="{{view.bleachView.hasConsensus && view.bleachView.agree}}" class="agree-tip" style="margin-top: 16rpx;">
+        ✓ 双模型判定一致（{{view.bleachView.labelCn}} {{view.bleachView.pct}}%），结论可直接采信
+      </view>
+      <view wx:if="{{!view.bleachView.reliable}}" class="review-tip" style="margin-top: 16rpx;">
+        ⚠️ 置信度不足，建议人工复核后再用于保育决策
+      </view>
+      <view class="bleach-tip">
+        说明：白化状态由**分类模型**（{{view.bleachView.model}}）判定；
+        上方「白化珊瑚%」是像素覆盖率，两者口径不同，前者更可靠
+      </view>
+    </view>
+
+    <!-- 珊瑚属识别 -->
+    <view class="res-card card" wx:if="{{view.hasGenus}}">
+      <view class="res-head">
+        <text class="res-head-icon">🪸</text>
+        <text class="res-head-title">主要珊瑚属</text>
+        <text class="res-head-badge">分割区域识别</text>
+      </view>
+      <view class="res-main">{{view.genusTop[0].genus}}</view>
+      <view class="conf-bar"><view class="conf-fill" style="width: {{view.genusTop[0].pct}}%;"></view></view>
+      <view class="top3" wx:if="{{view.genusTop.length > 1}}">
+        <view class="top3-title">其他可能</view>
+        <view class="top3-item" wx:for="{{view.genusTop}}" wx:key="genus" wx:if="{{index > 0}}">
+          <text class="t3-name">{{item.genus}}</text>
+          <text class="t3-conf">{{item.pct}}%</text>
+        </view>
+      </view>
+      <view class="bleach-tip">说明：属分类在「分割出的珊瑚主体区域」上进行，背景已剔除，精度优于整图分类</view>
+    </view>
+    <view class="res-card card" wx:else>
+      <view class="res-head">
+        <text class="res-head-icon">🪸</text>
+        <text class="res-head-title">主要珊瑚属</text>
+      </view>
+      <view class="bleach-tip">属分类模型尚未就绪，本次仅输出覆盖率。可运行 coral_ml 流水线训练后自动启用。</view>
+    </view>
+
+    <!-- 主要底栖类别 -->
+    <view class="res-card card" wx:if="{{view.topClasses.length > 0}}">
+      <view class="res-head">
+        <text class="res-head-icon">🔬</text>
+        <text class="res-head-title">主要底栖类别</text>
+      </view>
+      <view class="top3-item" wx:for="{{view.topClasses}}" wx:key="name">
+        <text class="t3-name">{{item.name}}</text>
+        <text class="t3-conf">{{item.pct}}%</text>
+      </view>
+    </view>
+
+    <!-- 使用边界 -->
+    <view class="disclaimer">{{result.disclaimer}}</view>
+    <view class="disclaimer-sub">推理耗时 {{view.inferenceMs}} ms · 数据来源可追溯 · 建议拍摄深度 ≤10m</view>
+
+    <view class="result-action-btn" hover-class="btn-hover" bindtap="resetUpload">🔄 重新识别</view>
+<!-- ============ 环境数据：海表热压力（NOAA CRW）============ -->
+<view class="res-card card" wx:if="{{view.climate}}">
+  <view class="res-title">
+    <text>环境数据 · 海表热压力</text>
+    <text class="res-sub">{{view.climate.siteName}} · {{view.climate.year}} 年年度等级（非实时）</text>
+  </view>
+  <view class="climate-head climate-{{view.climate.level}}">
+    <view class="climate-grade">{{view.climate.baaLabel}}</view>
+    <view class="climate-dhw">DHW 峰值 {{view.climate.dhwMax}}</view>
+  </view>
+  <view class="climate-rows">
+    <view class="climate-row">
+      <text class="cr-k">热浪天数</text>
+      <text class="cr-v">DHW≥4 共 {{view.climate.daysGe4}} 天 · DHW≥8 共 {{view.climate.daysGe8}} 天</text>
+    </view>
+    <view class="climate-row" wx:if="{{view.climate.peakDate}}">
+      <text class="cr-k">峰值日期</text>
+      <text class="cr-v">{{view.climate.peakDate}}</text>
+    </view>
+    <view class="climate-row" wx:if="{{view.climate.anomalyNote}}">
+      <text class="cr-k">年度对比</text>
+      <text class="cr-v">{{view.climate.anomalyNote}}</text>
+    </view>
+    <!-- 41 年历史（来自同一次响应的 deployment），避免把单年等级误读为常态 -->
+    <view class="climate-row" wx:if="{{view.climate.hasHistory}}">
+      <text class="cr-k">历史热压力</text>
+      <text class="cr-v">近 {{view.climate.historyYears}} 年 {{view.climate.historyText}}{{view.climate.severeText ? '；' + view.climate.severeText : ''}}</text>
+    </view>
+    <view class="climate-row" wx:if="{{view.climate.avoidText}}">
+      <text class="cr-k">建议避开</text>
+      <text class="cr-v">{{view.climate.avoidText}}<text wx:if="{{view.climate.avoidNote}}">（{{view.climate.avoidNote}}）</text></text>
+    </view>
+  </view>
+  <view class="climate-verdict">{{view.climate.verdict}}</view>
+</view>
+
+<!-- ============ 综合研判：修复优先级 + 苗投放建议 ============ -->
+<view class="res-card card" wx:if="{{view.restoration}}">
+  <view class="res-title">
+    <text>综合研判 · 修复优先级</text>
+    <text class="res-sub">规则型决策支持</text>
+  </view>
+
+  <view class="prio-head prio-{{view.restoration.grade}}">
+    <view class="prio-score">{{view.restoration.priority}}<text class="prio-unit">/100</text></view>
+    <view class="prio-grade">{{view.restoration.gradeLabel}}</view>
+  </view>
+
+  <view class="prio-bars">
+    <view class="pb-item">
+      <text class="pb-k">恢复潜力</text>
+      <view class="pb-track"><view class="pb-fill pb-rec" style="width: {{view.restoration.recovery}}%"></view></view>
+      <text class="pb-v">{{view.restoration.recovery}}</text>
+    </view>
+    <view class="pb-item">
+      <text class="pb-k">修复紧迫度</text>
+      <view class="pb-track"><view class="pb-fill pb-urg" style="width: {{view.restoration.urgency}}%"></view></view>
+      <text class="pb-v">{{view.restoration.urgency}}</text>
+    </view>
+    <view class="pb-item">
+      <text class="pb-k">苗投放适宜度</text>
+      <view class="pb-track"><view class="pb-fill pb-seed" style="width: {{view.restoration.seedling}}%"></view></view>
+      <text class="pb-v">{{view.restoration.seedling}}</text>
+    </view>
+  </view>
+
+  <view class="prio-actions">
+    <view class="pa-item" wx:for="{{view.restoration.actions}}" wx:key="*this">
+      <text class="pa-dot">·</text><text class="pa-text">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="prio-note">本研判为规则型决策支持参考，非经验证的预测模型，不替代专业评估</view>
+</view>
+
+  </block>
+
+  <!-- 识别历史 -->
+  <block wx:if="{{history.length > 0}}">
+    <view class="section-title-row">
+      <text class="section-title">识别历史</text>
+      <text class="section-action" bindtap="clearHistory">清空</text>
+    </view>
+    <view class="ai-history">
+      <view class="history-item card" wx:for="{{history}}" wx:key="id"
+            hover-class="card-hover" bindtap="onHistoryTap" data-id="{{item.id}}">
+        <image wx:if="{{item.img}}" class="history-thumb" src="{{item.img}}" mode="aspectFill" lazy-load
+               binderror="onHistoryImgError" data-id="{{item.id}}" />
+        <view wx:else class="history-thumb history-thumb-empty">—</view>
+        <view class="history-info">
+          <view class="history-title">珊瑚覆盖 {{item.coralTotalPct ? item.coralTotalPct : 0}}%</view>
+          <view class="history-sub">{{item.time}}{{item.topGenus ? ' · ' + item.topGenus : ''}}</view>
+          <view class="history-tags">
+            <text class="htag alive">活 {{item.alivePct ? item.alivePct : 0}}%</text>
+            <text class="htag bleached">白化 {{item.bleachedPct ? item.bleachedPct : 0}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 能力说明 -->
+  <view class="section-title">模型能力与使用边界</view>
+  <view class="ai-tech-section">
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(30,136,229,0.1);">📊</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">礁区语义分割 · 40 类底栖</view>
+        <view class="ai-tech-desc">基于 Coralscapes 数据集（2075 图 / 39 类像素级标注）训练的分割模型，
+         逐像素区分活珊瑚/白化/死亡/藻类/沙砾，输出覆盖率百分比。
+         在官方验证集上 mIoU 0.548（活珊瑚 IoU 0.711、白化珊瑚 0.786）</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(156,39,176,0.1);">🪸</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">珊瑚属识别 · 34 属</view>
+        <view class="ai-tech-desc">在分割出的珊瑚主体区域上做属级分类（背景已剔除），
+         训练数据来自印太珊瑚大三角（16,246 条观察）。
+         仙本那留出集（地理隔离）Top-1 <text style="font-weight:600;">86.12%</text>，宏F1 0.82，ECE 0.029</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(255,112,67,0.1);">🩺</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">白化状态识别 · 分类模型</view>
+        <view class="ai-tech-desc">区分健康 / 白化 / 死亡，在第三方独立数据集（10,382 张，哈希零重叠）
+         上二分类准确率 98.21%。注：白化状态由分类模型判定，
+         与上方「白化珊瑚%」的像素口径不同，前者更可靠</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(255,112,67,0.1);">📏</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">已量化的使用边界</view>
+        <view class="ai-tech-desc">实测：拍摄深度 ≤8m 时覆盖率估计误差 ≤2.2%；15m 以上浑浊水域显著失效。
+         建议拍摄深度 ≤10m 或使用补光灯；结果仅供保育决策参考</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(76,175,80,0.1);">🔬</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">外部一致性验证</view>
+        <view class="ai-tech-desc">模型在仙本那 180 张照片上的活珊瑚覆盖估计为 39.71%，
+         与 Reef Check Malaysia 2024 实地调查的区域平均（39.56%）相差 0.15 个百分点。
+         已做聚类自助置信区间、McNemar 显著性检验与错误归因分析</view>
+      </view>
+    </view>
+    <view class="ai-tech-card card">
+      <view class="ai-tech-icon" style="background: rgba(255,193,7,0.12);">📏</view>
+      <view class="ai-tech-info">
+        <view class="ai-tech-title">已知局限（主动声明）</view>
+        <view class="ai-tech-desc">覆盖率估计适用于<text style="font-weight:600;">区域尺度</text>，
+         不足以做单站点优劣区分（站点级验证存在 +11.7 点偏差）；
+         结果仅供保育决策参考，不替代标准化样方调查</view>
+      </view>
+    </view>
+  </view>
+</view>

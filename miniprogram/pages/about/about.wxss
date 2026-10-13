@@ -1,0 +1,119 @@
+/* ================= 关于我们页 ================= */
+.about-page {
+  padding: 40rpx 32rpx 60rpx;
+}
+
+/* 品牌头 */
+.about-hero {
+  text-align: center;
+  padding: 40rpx 0 48rpx;
+}
+.about-logo {
+  width: 140rpx;
+  height: 140rpx;
+  margin: 0 auto;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(0, 188, 212, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72rpx;
+  animation: floatSoft 3s ease-in-out infinite;
+}
+.about-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-top: 24rpx;
+}
+.about-slogan {
+  font-size: 26rpx;
+  color: var(--text3);
+  margin-top: 8rpx;
+}
+
+/* 卡片 */
+.about-card {
+  padding: 32rpx;
+  margin-bottom: 28rpx;
+}
+.about-card-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+.about-intro {
+  font-size: 26rpx;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 24rpx;
+}
+.about-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border);
+  font-size: 26rpx;
+}
+.about-row:last-child {
+  border-bottom: none;
+}
+.about-row .label {
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.about-row .value {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  margin-left: 24rpx;
+  word-break: break-all;
+}
+
+/* 团队 */
+.about-team-intro {
+  font-size: 26rpx;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 24rpx;
+}
+.about-member {
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border);
+}
+.about-member:last-child {
+  border-bottom: none;
+}
+.about-member-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.about-member-name {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.about-member-role {
+  font-size: 22rpx;
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.08);
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+.about-member-desc {
+  font-size: 24rpx;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* 底部 */
+.about-footer {
+  text-align: center;
+  padding: 24rpx 0;
+}
+.about-footer-row {
+  font-size: 22rpx;
+  color: var(--text3);
+  line-height: 1.8;
+}

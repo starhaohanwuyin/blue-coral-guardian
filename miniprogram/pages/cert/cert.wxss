@@ -1,0 +1,332 @@
+/* ================= 证书页 ================= */
+.cert-page {
+  min-height: 100vh;
+  padding: 48rpx 40rpx 60rpx;
+  box-sizing: border-box;
+}
+.cert-page.entity {
+  background: linear-gradient(180deg, #101A2E 0%, #0B1120 100%);
+}
+.cert-page.virtual {
+  background: linear-gradient(180deg, #062E33 0%, #04222A 100%);
+}
+
+/* 卡片入场动画（还原 modal 弹出） */
+.cert-card {
+  position: relative;
+  overflow: hidden;
+  animation: certIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  box-shadow: 0 40rpx 120rpx rgba(0, 0, 0, 0.45);
+}
+@keyframes certIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ================= 实体证书（金色 premium） ================= */
+.cert-card.entity {
+  background: linear-gradient(145deg, #FFFEF5 0%, #FFF9E6 50%, #FFFEF5 100%);
+  border-radius: 8rpx;
+}
+.cert-outer-border {
+  position: absolute;
+  top: 16rpx; left: 16rpx; right: 16rpx; bottom: 16rpx;
+  border: 4rpx solid #C8A84E;
+  border-radius: 4rpx;
+  pointer-events: none;
+}
+.cert-inner-border {
+  position: absolute;
+  top: 28rpx; left: 28rpx; right: 28rpx; bottom: 28rpx;
+  border: 2rpx solid #D4AF37;
+  pointer-events: none;
+}
+.cert-corner {
+  position: absolute;
+  width: 48rpx; height: 48rpx;
+  border: 4rpx solid #C8A84E;
+  pointer-events: none;
+}
+.cert-corner.tl { top: 36rpx; left: 36rpx; border-right: none; border-bottom: none; }
+.cert-corner.tr { top: 36rpx; right: 36rpx; border-left: none; border-bottom: none; }
+.cert-corner.bl { bottom: 36rpx; left: 36rpx; border-right: none; border-top: none; }
+.cert-corner.br { bottom: 36rpx; right: 36rpx; border-left: none; border-top: none; }
+
+.cert-content {
+  padding: 72rpx 56rpx 64rpx;
+  position: relative;
+  z-index: 2;
+}
+.cert-top-label {
+  text-align: center;
+  font-size: 20rpx;
+  letter-spacing: 8rpx;
+  color: #C8A84E;
+  text-transform: uppercase;
+  margin-bottom: 8rpx;
+  font-weight: 600;
+}
+.cert-main-title {
+  text-align: center;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1A2138;
+  margin-bottom: 8rpx;
+  font-family: Georgia, 'Songti SC', serif;
+}
+.cert-sub-title {
+  text-align: center;
+  font-size: 24rpx;
+  color: #8B7D3C;
+  letter-spacing: 4rpx;
+  margin-bottom: 40rpx;
+}
+.cert-coral-circle {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  margin: 0 auto 32rpx;
+  border: 6rpx solid #D4AF37;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(200, 168, 78, 0.3);
+  display: block;
+  background: #FFF3D6;
+}
+.cert-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14rpx 0;
+  border-bottom: 2rpx solid rgba(200, 168, 78, 0.15);
+}
+.cert-field-row .label {
+  font-size: 24rpx;
+  color: #8B7D3C;
+  flex-shrink: 0;
+}
+.cert-field-row .value {
+  font-size: 26rpx;
+  color: #1A2138;
+  font-weight: 600;
+  text-align: right;
+  margin-left: 24rpx;
+  word-break: break-all;
+}
+.cert-seal {
+  text-align: center;
+  margin-top: 40rpx;
+}
+.cert-seal-stamp {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  border: 6rpx solid #C41E3A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16rpx;
+  position: relative;
+}
+.cert-seal-stamp::before {
+  content: '';
+  position: absolute;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  border: 2rpx solid #C41E3A;
+}
+.cert-seal-text {
+  font-size: 20rpx;
+  color: #C41E3A;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  line-height: 1.5;
+  text-align: center;
+}
+.cert-seal-text .seal-br {
+  display: block;
+}
+.cert-org-name {
+  font-size: 24rpx;
+  color: #5A6578;
+  margin-top: 16rpx;
+}
+.cert-date-line {
+  font-size: 22rpx;
+  color: #8B7D3C;
+  margin-top: 8rpx;
+}
+
+/* ================= 虚拟证书（青色版式） ================= */
+.cert-card.virtual {
+  background: linear-gradient(145deg, #E0F7FA 0%, #B2EBF2 30%, #80DEEA 60%, #4DD0E1 100%);
+  border-radius: 40rpx;
+  padding: 56rpx 44rpx;
+}
+.cert-card.virtual::before {
+  content: '';
+  position: absolute;
+  top: -80rpx; right: -80rpx;
+  width: 320rpx; height: 320rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+.cert-card.virtual::after {
+  content: '';
+  position: absolute;
+  bottom: -100rpx; left: -60rpx;
+  width: 360rpx; height: 360rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+.v-border {
+  position: absolute;
+  top: 20rpx; left: 20rpx; right: 20rpx; bottom: 20rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.4);
+  border-radius: 28rpx;
+  pointer-events: none;
+}
+.v-top-label {
+  text-align: center;
+  color: rgba(0, 77, 64, 0.5);
+  font-size: 20rpx;
+  letter-spacing: 6rpx;
+  text-transform: uppercase;
+  margin-bottom: 8rpx;
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
+}
+.v-main-title {
+  text-align: center;
+  color: #004D40;
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+  position: relative;
+  z-index: 2;
+}
+.v-sub-title {
+  text-align: center;
+  font-size: 22rpx;
+  color: #00695C;
+  letter-spacing: 2rpx;
+  margin-bottom: 32rpx;
+  position: relative;
+  z-index: 2;
+}
+.v-coral-icon {
+  width: 144rpx;
+  height: 144rpx;
+  border-radius: 50%;
+  margin: 0 auto 28rpx;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 2;
+}
+.v-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14rpx 0;
+  border-bottom: 2rpx solid rgba(0, 77, 64, 0.08);
+  position: relative;
+  z-index: 2;
+}
+.v-field .label {
+  font-size: 24rpx;
+  color: #00695C;
+  flex-shrink: 0;
+}
+.v-field .value {
+  font-size: 26rpx;
+  color: #004D40;
+  font-weight: 600;
+  text-align: right;
+  margin-left: 24rpx;
+  word-break: break-all;
+}
+.v-seal {
+  text-align: center;
+  margin-top: 32rpx;
+  position: relative;
+  z-index: 2;
+}
+.v-seal-icon {
+  font-size: 72rpx;
+  margin-bottom: 12rpx;
+}
+.v-org {
+  font-size: 22rpx;
+  color: #00695C;
+}
+
+/* ================= 加载骨架 ================= */
+.cert-loading {
+  padding: 200rpx 0;
+  text-align: center;
+}
+.cert-loading-icon {
+  font-size: 80rpx;
+  animation: certFloat 2s ease-in-out infinite;
+}
+.cert-loading-text {
+  margin-top: 24rpx;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+@keyframes certFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16rpx); }
+}
+
+/* ================= 操作区 ================= */
+.cert-actions {
+  margin-top: 48rpx;
+}
+.save-btn {
+  width: 100%;
+  padding: 26rpx 0;
+  border: none;
+  border-radius: 24rpx;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.save-btn::after {
+  border: none;
+}
+.save-btn.entity {
+  background: linear-gradient(135deg, #C8A84E, #D4AF37);
+  box-shadow: 0 8rpx 32rpx rgba(200, 168, 78, 0.4);
+}
+.save-btn.virtual {
+  background: linear-gradient(135deg, #00ACC1, #26C6DA);
+  box-shadow: 0 8rpx 32rpx rgba(0, 188, 212, 0.4);
+}
+.btn-hover {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+.cert-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 24rpx;
+  line-height: 1.6;
+}
+
+/* ================= 导出画布（屏幕外） ================= */
+.cert-canvas {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 375px;
+  height: 500px;
+}

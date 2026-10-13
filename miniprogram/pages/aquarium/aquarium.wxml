@@ -1,0 +1,49 @@
+<view class="aqua-page">
+
+  <!-- 水族箱动画场景 -->
+  <view class="aqua-scene">
+    <view class="aqua-floor"></view>
+    <view class="aq-emoji aqua-coral1">🪸</view>
+    <view class="aq-emoji aqua-coral2">🪸</view>
+    <view class="aq-emoji aqua-coral3">🪸</view>
+    <view class="aq-emoji aqua-fish1">🐠</view>
+    <view class="aq-emoji aqua-fish2">🐡</view>
+    <view class="aq-emoji aqua-fish3">🐟</view>
+    <view class="aq-bubble b1"></view>
+    <view class="aq-bubble b2"></view>
+    <view class="aq-bubble b3"></view>
+    <view class="aq-bubble b4"></view>
+  </view>
+
+  <!-- 水质数据 -->
+  <view class="aqua-data-grid">
+    <view class="aqua-data-item" wx:for="{{data.metrics}}" wx:key="lbl">
+      <view class="val">{{item.val}}</view>
+      <view class="lbl">{{item.lbl}}</view>
+    </view>
+  </view>
+
+  <!-- AI 健康诊断 -->
+  <view class="aqua-ai-card">
+    <view class="aqua-ai-head">
+      <view class="aqua-ai-icon">🤖</view>
+      <view>
+        <view class="aqua-ai-title">AI健康诊断</view>
+        <view class="aqua-ai-sub">基于YOLOv9+SAM3模型实时分析</view>
+      </view>
+    </view>
+    <view class="aqua-ai-row">
+      <view class="aqua-ai-item" wx:for="{{data.diagnosis}}" wx:key="name">
+        <view class="aqua-ai-status {{item.level}}">{{item.status}}</view>
+        <view class="aqua-ai-name">{{item.name}}</view>
+      </view>
+    </view>
+    <button class="aqua-ai-btn" hover-class="btn-hover" bindtap="goAiDetect">📷 上传新照片进行AI检测</button>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="aqua-btn-row">
+    <button class="aqua-btn primary" hover-class="btn-hover" bindtap="goCamera">📹 查看实时相机</button>
+    <button class="aqua-btn secondary" hover-class="btn-hover" bindtap="onChangeBg">🎨 更换背景</button>
+  </view>
+</view>

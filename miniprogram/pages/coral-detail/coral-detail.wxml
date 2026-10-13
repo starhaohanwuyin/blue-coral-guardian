@@ -1,0 +1,55 @@
+<!-- 珊瑚详情页：环形进度 + 生长记录时间线 -->
+<view class="page-body">
+  <view wx:if="{{d}}">
+    <!-- 头图 -->
+    <view class="cd-imgwrap">
+      <image class="cd-img" src="{{d.img}}" mode="aspectFill" />
+      <view class="cd-species-badge">{{d.species}}</view>
+      <view class="cd-live" wx:if="{{d.liveTag}}">🔴 AI监测中</view>
+    </view>
+
+    <!-- 信息卡 -->
+    <view class="cd-card card">
+      <view class="cd-name">{{d.name}}</view>
+
+      <!-- 环形进度 + 成长信息 -->
+      <view class="cd-progress">
+        <view class="cd-ring" style="background: conic-gradient(var(--primary) 0deg {{deg}}deg, #E8EDF5 {{deg}}deg 360deg);">
+          <view class="cd-ring-inner">
+            <text class="cd-ring-num">{{d.growth}}%</text>
+            <text class="cd-ring-label">成长进度</text>
+          </view>
+        </view>
+        <view class="cd-progress-info">
+          <view class="cd-info-title">成长进度 {{d.growth}}%</view>
+          <view class="cd-info-row">预计还需 {{d.remain}} 成长值即可成熟</view>
+          <view class="cd-info-row">修复区：{{d.area}}</view>
+          <view class="cd-info-row">品种：{{d.species}}</view>
+        </view>
+      </view>
+
+      <!-- 成长进度条 -->
+      <view class="cd-bar">
+        <view class="progress-bar"><view class="progress-fill" style="width: {{d.growth}}%;"></view></view>
+      </view>
+    </view>
+
+    <!-- 生长记录 -->
+    <view class="cd-section-title">📅 生长记录</view>
+    <view class="cd-timeline card">
+      <view class="timeline" style="padding: 32rpx 32rpx 8rpx;">
+        <view class="timeline-item" wx:for="{{d.timeline}}" wx:key="time">
+          <view class="time">{{item.time}}</view>
+          <view class="desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="cd-actions">
+      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCamera">📹 实时查看</view>
+      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCert">📜 认养证书</view>
+    </view>
+  </view>
+  <view wx:else class="loading-dots">加载中...</view>
+</view>
