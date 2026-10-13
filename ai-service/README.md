@@ -121,7 +121,7 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
 ## 四、目录结构
 
 ```
-coral_ml/
+ai-service/
 ├── scripts/            训练与评估脚本
 ├── docs/               方案、核验、答辩要点、评估方法与局限
 ├── reports/            结果 JSON（报告的权威数据源）

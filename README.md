@@ -82,7 +82,7 @@ python serve_fusion.py --host 0.0.0.0 --port 8000
 ## 四、目录结构
 
 ```
-blue_coral_guardian/
+blue-coral-guardian/            ← 克隆下来的目录名
 ├── README.md                     ← 本文件
 ├── 演示指南.md                    ← 3 分钟演示脚本 + 答辩问答准备
 ├── 启动演示.bat                   ← Windows 一键启动（检查权重 → 起服务 → 开浏览器）
