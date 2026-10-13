@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>style probe</title>
+<style>body{margin:0}iframe{width:480px;height:900px;border:1px solid #ccc}pre{font:11px/1.4 monospace;white-space:pre-wrap}</style>
+</head><body>
+<iframe id="fr" src="/"></iframe><pre id="out">…</pre>
+<script>
+  const q=new URLSearchParams(location.search);
+  const page=q.get('page')||'index';
+  const sels=(q.get('sel')||'.logo,.sub,.custom-header,.custom-header-row,.btn-adopt').split(',');
+  const lines=[];const R=s=>{lines.push(s);document.getElementById('out').textContent=lines.join('\n');};
+  const fr=document.getElementById('fr');
+  setTimeout(function(){
+    fr.contentWindow.location.hash='#/'+page;
+    setTimeout(function(){
+      const d=fr.contentDocument,w=fr.contentWindow,host=d.getElementById('page-host');
+      sels.forEach(function(s){
+        const el=host.querySelector(s.trim());
+        if(!el){R(s+' → 未找到');return;}
+        const cs=w.getComputedStyle(el), r=el.getBoundingClientRect();
+        R(s+'  '+Math.round(r.width)+'x'+Math.round(r.height)+
+          '  text="'+(el.textContent||'').trim().slice(0,14)+'"'+
+          '  color='+cs.color+'  bg='+cs.backgroundImage.slice(0,42)+'/'+cs.backgroundColor+
+          '  font='+cs.fontSize+'  overflow='+cs.overflow);
+      });
+      R('DONE');
+    },2500);
+  },1500);
+</script></body></html>

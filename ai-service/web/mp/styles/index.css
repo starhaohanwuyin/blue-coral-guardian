@@ -11,7 +11,7 @@
 /* 光柱 */
 .hero-ray {
   position: absolute;
-  top: -calc(40 * var(--rpx));
+  top: calc(-40 * var(--rpx));
   width: calc(120 * var(--rpx));
   height: calc(420 * var(--rpx));
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));

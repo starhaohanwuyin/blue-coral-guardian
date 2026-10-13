@@ -30,13 +30,20 @@
     for (let i = 0; i < vis.length; i++) for (let j = i + 1; j < vis.length; j++) {
       const a = vis[i], b = vis[j];
       if (a.contains(b) || b.contains(a)) continue;
-      if (!isTextLeaf(a) || !isTextLeaf(b)) continue;      // 只看文字叶子节点互压
+      const txtA = isTextLeaf(a), txtB = isTextLeaf(b);
+      const imgA = a.tagName === 'IMG', imgB = b.tagName === 'IMG';
+      const textText = txtA && txtB;                 // 文字压文字：一定是 bug
+      const imgText = (imgA && txtB) || (imgB && txtA);  // 图片压文字：大概率是 bug（徽章/光晕是 div，不是 img）
+      if (!textText && !imgText) continue;
       const ra = rectOf(a), rb = rectOf(b), ov = inter(ra, rb);
       if (ov <= 4) continue;
       const small = Math.min(ra.w * ra.h, rb.w * rb.h);
       if (ov / small < 0.15) continue;
-      bad.push((a.tagName + '.' + (a.className || '').toString().slice(0, 20)) + '"' + a.textContent.trim().slice(0, 10) + '"×' +
-               (b.tagName + '.' + (b.className || '').toString().slice(0, 20)) + '"' + b.textContent.trim().slice(0, 10) + '"');
+      const lbl = function (el) {
+        return el.tagName + '.' + (el.className || '').toString().slice(0, 20) +
+               (el.textContent ? '"' + el.textContent.trim().slice(0, 8) + '"' : '');
+      };
+      bad.push((textText ? '[文压文] ' : '[图压文] ') + lbl(a) + '×' + lbl(b));
     }
     // ② 图片被压缩/拉伸
     const imgBad = [];

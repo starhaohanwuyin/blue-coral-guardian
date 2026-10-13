@@ -62,8 +62,8 @@
 }
 .profile-avatar-edit {
   position: absolute;
-  right: -calc(4 * var(--rpx));
-  bottom: -calc(4 * var(--rpx));
+  right: calc(-4 * var(--rpx));
+  bottom: calc(-4 * var(--rpx));
   width: calc(48 * var(--rpx));
   height: calc(48 * var(--rpx));
   border-radius: 50%;
@@ -106,7 +106,7 @@
 /* 统计卡 */
 .profile-stats {
   display: flex;
-  margin: -calc(36 * var(--rpx)) calc(32 * var(--rpx)) 0;
+  margin: calc(-36 * var(--rpx)) calc(32 * var(--rpx)) 0;
   position: relative;
   z-index: 3;
   padding: calc(32 * var(--rpx)) calc(16 * var(--rpx));

@@ -5,7 +5,7 @@
   display: block;
 }
 .art-body {
-  margin: -calc(60 * var(--rpx)) calc(32 * var(--rpx)) 0;
+  margin: calc(-60 * var(--rpx)) calc(32 * var(--rpx)) 0;
   position: relative;
   z-index: 2;
   padding: calc(40 * var(--rpx)) calc(36 * var(--rpx)) calc(48 * var(--rpx));

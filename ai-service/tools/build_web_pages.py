@@ -100,18 +100,45 @@ def build_tree(wxml: str):
 
 def css_convert(wxss: str) -> str:
     """WXSS → CSS：rpx 自适应、标签名替换、page → body 容器。"""
-    css = re.sub(r"(\d+(?:\.\d+)?)rpx", lambda m: f"calc({m.group(1)} * var(--rpx))", wxss)
-    css = re.sub(r"(?<![\w.\-#])view(?![\w-])", "div", css)
-    css = re.sub(r"(?<![\w.\-#])text(?![\w-])", "span", css)
-    css = re.sub(r"(?<![\w.\-#])image(?![\w-])", "img", css)
-    css = re.sub(r"(?<![\w.\-#])scroll-view(?![\w-])", "div", css)
-    css = re.sub(r"(^|\})\s*page\s*\{", lambda m: m.group(1) + "\n.coral-page{", css)
-    # 小程序里 img 默认是块，且默认 object-fit 类似 aspectFill
+    # ⚠️ 必须把**负号**一起吃进 calc：`right:-4rpx` 若转成 `-calc(4*var(--rpx))`
+    #    是非法 CSS，整条声明会被浏览器丢弃 —— 徽章位置、动画位移、负边距全都会失效
+    #    （实测 profile 编辑徽章因此跑到头像左侧并压住用户名，共 23 处负值 rpx）。
+    css = re.sub(r"(-?(?:\d+\.?\d*|\.\d+))rpx",
+                 lambda m: f"calc({m.group(1)} * var(--rpx))", wxss)
+
+    # 标签名替换**只能作用于选择器部分**：
+    # 若对整份 CSS 无差别替换，`-webkit-background-clip: text` 里的值 text 会被换成 span
+    # → 非法被丢弃 → "渐变文字"变成纯色块 + 文字透明不可见（实测首页 logo 就是这个问题）。
+    parts, buf, depth = [], [], 0
+    for ch in css:
+        if ch == "{":
+            parts.append(_tag_sel("".join(buf))); parts.append("{"); buf = []; depth += 1
+        elif ch == "}":
+            parts.append("".join(buf)); parts.append("}"); buf = []; depth = max(0, depth - 1)
+        else:
+            buf.append(ch)
+    parts.append("".join(buf))
+    css = "".join(parts)
+
+    # page 选择器 → .coral-page（HTML 里没有 page 元素；不改则 page{} 里的 15 个
+    # CSS 变量（--primary/--accent/…）全部失效，用变量写颜色/渐变的地方会整条作废，
+    # 例如首页"查看我的珊瑚"按钮的渐变背景消失、白字变成看不见。
+    # ⚠️ 必须用 re.M：规则前面常有注释行，`^` 不加 MULTILINE 匹配不到。
+    css = re.sub(r"(?m)(^|\})\s*page\s*\{", lambda m: (m.group(1) or "") + "\n.coral-page{", css)
     # 小程序里 <image> 默认是 inline-block（不是 block）：强行 display:block 会改变
     # 横滑卡片、图文混排的布局导致错位；这里只保证不溢出、基线对齐与小程序一致。
     # 图片的填充方式（aspectFill 等）由运行时的 mode → object-fit 映射负责。
     css += "\n.coral-page img{max-width:100%;vertical-align:middle;}\n"
     return css
+
+
+def _tag_sel(sel: str) -> str:
+    """只对选择器片段做小程序标签名 → HTML 标签名替换。"""
+    sel = re.sub(r"(?<![\w.\-#])view(?![\w-])", "div", sel)
+    sel = re.sub(r"(?<![\w.\-#])text(?![\w-])", "span", sel)
+    sel = re.sub(r"(?<![\w.\-#])image(?![\w-])", "img", sel)
+    sel = re.sub(r"(?<![\w.\-#])scroll-view(?![\w-])", "div", sel)
+    return sel
 
 
 def main():

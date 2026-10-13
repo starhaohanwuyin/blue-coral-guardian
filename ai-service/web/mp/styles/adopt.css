@@ -35,7 +35,7 @@
 }
 .va-ray {
   position: absolute;
-  top: -calc(20 * var(--rpx));
+  top: calc(-20 * var(--rpx));
   width: calc(90 * var(--rpx));
   height: calc(380 * var(--rpx));
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
@@ -105,7 +105,7 @@
 }
 @keyframes coralFloat {
   0%, 100% { transform: translateX(-50%) translateY(0) rotate(-2deg); }
-  50% { transform: translateX(-50%) translateY(-calc(14 * var(--rpx))) rotate(2deg); }
+  50% { transform: translateX(-50%) translateY(calc(-14 * var(--rpx))) rotate(2deg); }
 }
 .va-coral-main.bounce { animation: coralBounce 0.6s ease; }
 @keyframes coralBounce {

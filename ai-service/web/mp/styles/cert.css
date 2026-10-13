@@ -166,7 +166,7 @@
 .cert-card.virtual::before {
   content: '';
   position: absolute;
-  top: -calc(80 * var(--rpx)); right: -calc(80 * var(--rpx));
+  top: calc(-80 * var(--rpx)); right: calc(-80 * var(--rpx));
   width: calc(320 * var(--rpx)); height: calc(320 * var(--rpx));
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
@@ -174,7 +174,7 @@
 .cert-card.virtual::after {
   content: '';
   position: absolute;
-  bottom: -calc(100 * var(--rpx)); left: -calc(60 * var(--rpx));
+  bottom: calc(-100 * var(--rpx)); left: calc(-60 * var(--rpx));
   width: calc(360 * var(--rpx)); height: calc(360 * var(--rpx));
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
@@ -282,7 +282,7 @@
 }
 @keyframes certFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-calc(16 * var(--rpx))); }
+  50% { transform: translateY(calc(-16 * var(--rpx))); }
 }
 
 /* ================= 操作区 ================= */

@@ -28,7 +28,7 @@
 }
 
 .cd-card {
-  margin: -calc(50 * var(--rpx)) calc(32 * var(--rpx)) 0;
+  margin: calc(-50 * var(--rpx)) calc(32 * var(--rpx)) 0;
   position: relative;
   z-index: 2;
   padding: calc(36 * var(--rpx));

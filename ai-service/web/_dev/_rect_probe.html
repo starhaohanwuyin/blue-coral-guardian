@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>rect probe</title>
+<style>body{margin:0}iframe{width:480px;height:900px;border:1px solid #ccc}pre{font:11px/1.4 monospace;white-space:pre-wrap}</style>
+</head><body>
+<iframe id="fr" src="/"></iframe><pre id="out">…</pre>
+<script>
+  const q = new URLSearchParams(location.search);
+  const page = q.get('page') || 'profile';
+  const sels = (q.get('sel') || '.profile-avatar-wrap,.profile-avatar,.profile-avatar-edit,.profile-name').split(',');
+  const lines=[];const R=s=>{lines.push(s);document.getElementById('out').textContent=lines.join('\n');};
+  const fr=document.getElementById('fr');
+  setTimeout(function(){
+    fr.contentWindow.location.hash='#/'+page;
+    setTimeout(function(){
+      const d=fr.contentDocument, w=fr.contentWindow;
+      const host=d.getElementById('page-host');
+      R('页面 '+page+'  （iframe 宽 '+fr.clientWidth+'px，--rpx='+w.getComputedStyle(d.documentElement).getPropertyValue('--rpx')+'）');
+      sels.forEach(function(s){
+        const el=host.querySelector(s.trim());
+        if(!el){R('  '+s+' → 未找到');return;}
+        const r=el.getBoundingClientRect();
+        const cs=w.getComputedStyle(el);
+        R('  '+s.padEnd(26)+' x='+r.x.toFixed(1)+' y='+r.y.toFixed(1)+
+          ' w='+r.width.toFixed(1)+' h='+r.height.toFixed(1)+
+          '  bottom='+r.bottom.toFixed(1)+'  pos='+cs.position+
+          '  offsetParent='+(el.offsetParent?('.'+(el.offsetParent.className||el.offsetParent.tagName)):'null'));
+      });
+      // 找 offsetParent 的尺寸
+      const edit=host.querySelector('.profile-avatar-edit');
+      if(edit&&edit.offsetParent){
+        const op=edit.offsetParent.getBoundingClientRect();
+        R('  offsetParent 尺寸: w='+op.width.toFixed(1)+' h='+op.height.toFixed(1)+' top='+op.top.toFixed(1)+' bottom='+op.bottom.toFixed(1));
+        const cs=w.getComputedStyle(edit.offsetParent);
+        R('  offsetParent position='+cs.position+' class='+(edit.offsetParent.className||''));
+      }
+      R('DONE');
+    },2500);
+  },1500);
+</script></body></html>

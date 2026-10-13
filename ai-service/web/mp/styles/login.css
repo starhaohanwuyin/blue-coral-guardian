@@ -59,7 +59,7 @@
 .login-card {
   position: relative;
   z-index: 2;
-  margin: -calc(90 * var(--rpx)) calc(40 * var(--rpx)) 0;
+  margin: calc(-90 * var(--rpx)) calc(40 * var(--rpx)) 0;
   padding: calc(40 * var(--rpx)) calc(36 * var(--rpx));
 }
 
