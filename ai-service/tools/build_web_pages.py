@@ -1,3 +1,4 @@
+import argparse
 """把小程序静态资源转换成网页端运行时需要的产物。
 
 产物（输出到 coral_ml/web/mp/）：
@@ -111,6 +112,13 @@ def css_convert(wxss: str) -> str:
 
 
 def main():
+    global OUT                              # 允许 --out 指向别处（做一致性比对时用）
+    ap = argparse.ArgumentParser(description="把小程序页面构建成网页版运行时产物")
+    ap.add_argument("--out", default="", help="输出目录（默认 web/mp）")
+    args = ap.parse_args()
+    if args.out:
+        OUT = pathlib.Path(args.out).resolve()
+
     app = json.loads((BC / "app.json").read_text(encoding="utf-8"))
     pages = app.get("pages", [])
     (OUT / "templates").mkdir(parents=True, exist_ok=True)
@@ -158,8 +166,43 @@ def main():
     (OUT / "styles" / "app.css").write_text(css, encoding="utf-8")
     manifest["utils"] = [f.name for f in (BC / "utils").glob("*.js")]
     (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\n✅ 共 {len(manifest['pages'])} 页 → {OUT}")
+
+    # ⚠️ 关键一步：套用「外部图片 → 本地文件」映射。
+    #    否则每次重建都会把 utils/mock.js 里的图片地址还原成外部 CDN，
+    #    把 localize_images.py 做过的本地化覆盖掉（离线演示就会裂图）。
+    applied = apply_image_map(OUT)
+    print(f"✅ 共 {len(manifest['pages'])} 页 → {OUT}")
     print(f"   tabBar: {[i.get('text') for i in manifest['tabBar'].get('list', [])]}")
+    print(f"   图片本地化: 套用映射 {applied} 处（映射表 tools/image_map.json）")
+
+
+def apply_image_map(out_dir: pathlib.Path) -> int:
+    """按 tools/image_map.json 把构建产物里的外部图片 URL 换成本地路径。"""
+    map_file = pathlib.Path(__file__).resolve().parent / "image_map.json"
+    if not map_file.exists():
+        print("   [提示] 未找到 tools/image_map.json，跳过图片本地化（图片将指向外部 CDN）")
+        return 0
+    try:
+        mapping = json.loads(map_file.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"   [警告] image_map.json 解析失败：{e}")
+        return 0
+    n = 0
+    for p in list(out_dir.rglob("*.js")) + list(out_dir.rglob("*.json")) + list(out_dir.rglob("*.css")):
+        if "assets" in p.parts or p.name == "image_map.json":
+            continue
+        try:
+            t = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        o = t
+        for url, local in mapping.items():
+            if url in t:
+                t = t.replace(url, local)
+        if t != o:
+            p.write_text(t, encoding="utf-8")
+            n += 1
+    return n
 
 
 if __name__ == "__main__":

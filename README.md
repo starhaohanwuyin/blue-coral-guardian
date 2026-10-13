@@ -111,7 +111,7 @@ blue-coral-guardian/            ← 克隆下来的目录名
 | 礁区覆盖分割 | mIoU **0.5484**；星地对比 **39.71% vs 39.56%** | `reports/segmentation_miou_1024.json` |
 | 珊瑚属识别 | Top-1 **86.12%**（34 属，剔泄漏）| `reports/protocol_species_ip_test_clean.json` |
 | 白化状态 | 域内 **98.21%**；线上模型白化召回 **99.26%** | `reports/new_bleaching_bleaching_all_test_clean168.json` |
-| 跨域白化 | 太平洋岛屿 bleached **F1 0.838**；Koh Tao 湿季宏 F1 0.555；Arafura 0.398 | `reports/matrix_*_multidomain4.json` |
+| 跨域白化 | 太平洋岛屿 bleached **F1 0.838**；Koh Tao 湿季宏 F1 0.555；Arafura 0.398 | `reports/matrix_pacific_multidomain4.json`、`matrix_winter_multidomain4.json`、`matrix_external_multidomain4.json` |
 | 个体计数 | mAP@0.5 **0.4217**；总量偏差 **+2.3%** | `reports/yolo_coral_metrics.json` |
 | 41 年热压力 | 1985–2025 逐日 DHW/BAA；544 格点 | `data/noaa/climate_index.json` |
 | 投放时间窗 | 35 格点不建议投放 / 88 格点从未警报 / 421 需避开风险月 | `reports/deployment_windows.json` |

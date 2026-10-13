@@ -13,6 +13,7 @@
 """
 import argparse
 import hashlib
+import json
 import pathlib
 import re
 import sys
@@ -105,6 +106,16 @@ def main():
             f.write_text(new, encoding="utf-8")
             changed += 1
     print(f"\n下载成功 {ok} 张，失败 {bad} 张；改写文件 {changed} 个")
+    # 固化映射表：以后跑 build_web_pages.py（重建网页产物）会自动套用本表，
+    # 不会把本地化结果覆盖回外部 CDN（这是踩过的坑，见下）
+    map_file = pathlib.Path(__file__).resolve().parent / "image_map.json"
+    try:
+        old = json.loads(map_file.read_text(encoding="utf-8")) if map_file.exists() else {}
+    except Exception:
+        old = {}
+    old.update({u: r for u, r in urls.items() if r})
+    map_file.write_text(json.dumps(old, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"映射表已更新：{map_file.name}（{len(old)} 条）→ 以后重建会自动套用")
     if bad:
         print("⚠️ 有失败项：通常是网络/代理问题，挂上代理后重跑本脚本即可（已下载的会跳过）")
     print("提示：改写后刷新浏览器即可（图片变为 /mp/assets/img/… 本地文件）")
