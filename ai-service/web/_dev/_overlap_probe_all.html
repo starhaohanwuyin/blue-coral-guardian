@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>overlap probe all</title>
+<style>body{margin:0}iframe{width:420px;height:900px;border:1px solid #ccc;float:left}pre{font:11px/1.35 monospace;white-space:pre-wrap}</style>
+</head>
+<body>
+<iframe id="fr" src="/"></iframe>
+<pre id="out">…</pre>
+<script>
+  const PAGES = ['index','adopt','knowledge','ai','profile','login','knowledge-detail','all-species',
+                 'coral-detail','camera','article','shop','quiz','donate','cert','camp','aquarium',
+                 'badges','growth','my-adopt','about','agreement'];
+  const lines = [];
+  const R = (s) => { lines.push(s); document.getElementById('out').textContent = lines.join('\n'); };
+  const fr = document.getElementById('fr');
+  function rectOf(el){const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,r:r.right};}
+  function inter(a,b){const x=Math.max(0,Math.min(a.r,b.r)-Math.max(a.x,b.x));const y=Math.max(0,Math.min(a.b,b.b)-Math.max(a.y,b.y));return x*y;}
+
+  function measure(w, d, name, cb) {
+    const host = d.getElementById('page-host');
+    if (!host) return cb(null, 'no host');
+    const vis = Array.from(host.querySelectorAll('*')).filter(function (el) {
+      const r = el.getBoundingClientRect(), cs = w.getComputedStyle(el);
+      return r.width > 2 && r.height > 2 && cs.display !== 'none' && cs.visibility !== 'hidden';
+    });
+    // ① 重叠对：只报「文字压文字」——装饰性叠加（光晕/徽章/气泡）是设计意图，不算 bug
+    const isTextLeaf = function (el) {
+      return el.children.length === 0 && (el.textContent || '').trim().length > 0;
+    };
+    const bad = [];
+    for (let i = 0; i < vis.length; i++) for (let j = i + 1; j < vis.length; j++) {
+      const a = vis[i], b = vis[j];
+      if (a.contains(b) || b.contains(a)) continue;
+      if (!isTextLeaf(a) || !isTextLeaf(b)) continue;      // 只看文字叶子节点互压
+      const ra = rectOf(a), rb = rectOf(b), ov = inter(ra, rb);
+      if (ov <= 4) continue;
+      const small = Math.min(ra.w * ra.h, rb.w * rb.h);
+      if (ov / small < 0.15) continue;
+      bad.push((a.tagName + '.' + (a.className || '').toString().slice(0, 20)) + '"' + a.textContent.trim().slice(0, 10) + '"×' +
+               (b.tagName + '.' + (b.className || '').toString().slice(0, 20)) + '"' + b.textContent.trim().slice(0, 10) + '"');
+    }
+    // ② 图片被压缩/拉伸
+    const imgBad = [];
+    vis.filter(function (el) { return el.tagName === 'IMG'; }).forEach(function (im) {
+      const r = rectOf(im);
+      if (r.w < 8 || r.h < 8) return;                       // 极小图忽略
+      const fit = w.getComputedStyle(im).objectFit;
+      if (fit === 'fill' && im.naturalWidth) {              // 没映射 mode 的会被拉伸
+        const nat = im.naturalWidth / im.naturalHeight, box = r.w / r.h;
+        if (Math.abs(nat - box) / nat > 0.25) imgBad.push((im.className||'').slice(0,24) + ' 框比'+box.toFixed(2)+' 原比'+nat.toFixed(2));
+      }
+    });
+    cb({ n: vis.length, bad: bad, imgBad: imgBad }, null);
+  }
+
+  let i = 0;
+  function next() {
+    if (i >= PAGES.length) { R('\nDONE'); return; }
+    const name = PAGES[i++];
+    fr.contentWindow.location.hash = '#/' + name;
+    setTimeout(function () {
+      measure(fr.contentWindow, fr.contentDocument, name, function (res, err) {
+        if (err) { R(name.padEnd(18) + ' ❌ ' + err); return next(); }
+        const flag = (res.bad.length || res.imgBad.length) ? '❌' : '✅';
+        R(flag + ' ' + name.padEnd(18) + ' 元素' + String(res.n).padStart(4) +
+          '  重叠' + String(res.bad.length).padStart(3) + '  图片异常' + String(res.imgBad.length).padStart(3) +
+          (res.bad.length ? '  ' + res.bad.slice(0, 2).join(' | ') : '') +
+          (res.imgBad.length ? '  ' + res.imgBad.slice(0, 2).join(' | ') : ''));
+        next();
+      });
+    }, 1600);
+  }
+  setTimeout(function () {
+    // 等首屏加载完成
+    const t = setInterval(function () {
+      if (fr.contentDocument && fr.contentDocument.getElementById('page-host') &&
+          fr.contentDocument.getElementById('page-host').children.length) {
+        clearInterval(t); setTimeout(next, 800);
+      }
+    }, 300);
+  }, 800);
+</script>
+</body></html>

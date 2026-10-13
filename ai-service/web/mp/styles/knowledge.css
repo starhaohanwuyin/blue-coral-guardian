@@ -148,4 +148,4 @@
   overflow: hidden;
 }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}

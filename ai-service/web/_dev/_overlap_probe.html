@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>overlap probe</title>
+<style>body{margin:0}iframe{width:420px;height:900px;border:1px solid #ccc}pre{font:11px/1.4 monospace;white-space:pre-wrap}</style>
+</head>
+<body>
+<iframe id="fr" src="/"></iframe>
+<pre id="out">…</pre>
+<script>
+  // 几何重叠探测：在真实 App（iframe 同源）里量所有可见元素，找出不该重叠的元素对
+  const report = [];
+  const R = (s) => { report.push(s); document.getElementById('out').textContent = report.join('\n'); };
+  const fr = document.getElementById('fr');
+  const page = new URLSearchParams(location.search).get('page') || 'knowledge';
+
+  function rectOf(el) { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, b: r.bottom, r: r.right }; }
+  function inter(a, b) {
+    const x = Math.max(0, Math.min(a.r, b.r) - Math.max(a.x, b.x));
+    const y = Math.max(0, Math.min(a.b, b.b) - Math.max(a.y, b.y));
+    return x * y;
+  }
+
+  setTimeout(function () {
+    try {
+      const w = fr.contentWindow, d = fr.contentDocument;
+      // 切到目标页
+      w.location.hash = '#/' + page;
+      setTimeout(function () {
+        const host = d.getElementById('page-host');
+        const all = Array.from(host.querySelectorAll('*'));
+        const vis = all.filter(function (el) {
+          const r = el.getBoundingClientRect();
+          const cs = w.getComputedStyle(el);
+          return r.width > 2 && r.height > 2 && cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0';
+        });
+        R('页面: ' + page + '  可见元素: ' + vis.length);
+
+        // ① 图片是否被拉伸（aspectFill 丢失会导致比例失真）
+        R('\n--- <img> 尺寸与原始比例 ---');
+        vis.filter(function (el) { return el.tagName === 'IMG'; }).slice(0, 8).forEach(function (im) {
+          const r = rectOf(im);
+          const nat = im.naturalWidth && im.naturalHeight ? (im.naturalWidth / im.naturalHeight) : 0;
+          const box = r.h / r.w;
+          const fit = w.getComputedStyle(im).objectFit || '(默认 fill)';
+          R('  img ' + (im.className || '').slice(0, 28) + '  ' + Math.round(r.w) + 'x' + Math.round(r.h) +
+            '  object-fit=' + fit + (nat ? '  原图比 ' + nat.toFixed(2) + ' / 框比 ' + box.toFixed(2) : '') +
+            '  裁剪=' + (im.dataset.replaced || ''));
+        });
+
+        // ② 元素重叠检测（排除父子/祖先关系）
+        const bad = [];
+        for (let i = 0; i < vis.length; i++) {
+          for (let j = i + 1; j < vis.length; j++) {
+            const a = vis[i], b = vis[j];
+            if (a.contains(b) || b.contains(a)) continue;
+            const ra = rectOf(a), rb = rectOf(b);
+            const ov = inter(ra, rb);
+            if (ov <= 4) continue;
+            const small = Math.min(ra.w * ra.h, rb.w * rb.h);
+            if (ov / small < 0.15) continue;           // 轻微交叠忽略
+            bad.push({ a: a.tagName + '.' + (a.className || '').toString().slice(0, 26),
+                       b: b.tagName + '.' + (b.className || '').toString().slice(0, 26),
+                       ov: Math.round(ov), ratio: (ov / small).toFixed(2) });
+          }
+        }
+        bad.sort(function (x, y) { return y.ov - x.ov; });
+        R('\n--- 重叠元素对（交叠面积 > 较小元素 15%）共 ' + bad.length + ' 对 ---');
+        bad.slice(0, 14).forEach(function (p) {
+          R('  ' + p.ratio + '  ' + p.ov + 'px²  ' + p.a + '  ×  ' + p.b);
+        });
+        if (!bad.length) R('  ✅ 无异常重叠');
+        R('\nDONE');
+      }, 2500);
+    } catch (e) { R('ERROR: ' + e.message); }
+  }, 2500);
+</script>
+</body></html>

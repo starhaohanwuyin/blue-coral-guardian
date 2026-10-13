@@ -107,7 +107,10 @@ def css_convert(wxss: str) -> str:
     css = re.sub(r"(?<![\w.\-#])scroll-view(?![\w-])", "div", css)
     css = re.sub(r"(^|\})\s*page\s*\{", lambda m: m.group(1) + "\n.coral-page{", css)
     # 小程序里 img 默认是块，且默认 object-fit 类似 aspectFill
-    css += "\n.coral-page img{display:block;max-width:100%;}\n"
+    # 小程序里 <image> 默认是 inline-block（不是 block）：强行 display:block 会改变
+    # 横滑卡片、图文混排的布局导致错位；这里只保证不溢出、基线对齐与小程序一致。
+    # 图片的填充方式（aspectFill 等）由运行时的 mode → object-fit 映射负责。
+    css += "\n.coral-page img{max-width:100%;vertical-align:middle;}\n"
     return css
 
 

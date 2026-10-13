@@ -78,4 +78,4 @@
   padding: calc(32 * var(--rpx)) 0 calc(24 * var(--rpx));
 }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}

@@ -111,4 +111,4 @@
   box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
 }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}

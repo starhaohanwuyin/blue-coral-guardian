@@ -701,4 +701,4 @@
 
 .note-tip { margin-top: calc(16 * var(--rpx)); font-size: calc(24 * var(--rpx)); line-height: 1.6; color: #00695c; background: #e0f2f1; border-radius: calc(12 * var(--rpx)); padding: calc(16 * var(--rpx)) calc(20 * var(--rpx)); }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}

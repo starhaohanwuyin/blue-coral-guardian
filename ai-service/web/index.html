@@ -37,9 +37,13 @@
   #page-host { flex: 1; padding-bottom: 66px; overflow-x: hidden; }
   .coral-page { min-height: 100%; }
 
-  /* scroll-view / swiper：小程序里这两个组件自带滚动，转成 div 后由运行时补类名 */
+  /* scroll-view / swiper：小程序里这两个组件自带滚动，转成 div 后由运行时补类名。
+     ⚠️ scroll-x 容器**不能**用 display:flex：小程序的横滑是「white-space:nowrap +
+     子元素 display:inline-block（固定宽度）」，用 flex 会把固定宽度的卡片压缩到几十像素，
+     卡内 nowrap 文字溢出、与相邻卡片视觉重叠（实测珊瑚种类卡片被压到 53px 宽）。 */
   .mp-scroll { -webkit-overflow-scrolling: touch; }
-  .mp-scroll-x { overflow-x: auto; overflow-y: hidden; display: flex; }
+  .mp-scroll-x { overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
+  .mp-scroll-x > * { flex: none; }
   .mp-scroll-y { overflow-y: auto; overflow-x: hidden; }
   .mp-scroll::-webkit-scrollbar { display: none; }
   .mp-swiper { overflow-x: auto; display: flex; scroll-snap-type: x mandatory; }

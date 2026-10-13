@@ -98,4 +98,4 @@
 }
 .as-row-dist { font-size: calc(20 * var(--rpx)); color: var(--text3); margin-top: calc(8 * var(--rpx)); }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}

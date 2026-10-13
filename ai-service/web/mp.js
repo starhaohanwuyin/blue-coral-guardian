@@ -355,13 +355,23 @@
     } else if (tag === 'swiper-item') {
       extraCls = ' mp-swiper-item';
     }
+    let styleVal = '';        // 合并成单个 style 属性，避免重复属性相互覆盖
+    let imgModeStyle = '';    // 小程序的 <image mode> 必须映射成 object-fit，否则图片会拉伸变形
     for (const k of Object.keys(a)) {
-      if (k.startsWith('wx:') || k === 'mode') continue;
+      if (k.startsWith('wx:')) continue;
       const v = interp(a[k], scope);
+      if (k === 'mode' && tag === 'image') {
+        const m = String(v).toLowerCase();
+        if (m === 'aspectfill') imgModeStyle = 'object-fit:cover;';
+        else if (m === 'aspectfit') imgModeStyle = 'object-fit:contain;';
+        else if (m === 'widthfix') imgModeStyle = 'height:auto;object-fit:contain;';
+        else if (m === 'scaletofill') imgModeStyle = 'object-fit:fill;';
+        continue;
+      }
       if (EVT_ATTRS[k]) { attrs.push(`data-evt="${EVT_ATTRS[k]}:${v}"`); continue; }
       if (k === 'class') { attrs.push(`class="${esc(v)}${extraCls}"`); extraCls = ''; continue; }
-      if (k === 'style') { attrs.push(`style="${esc(v)}"`); continue; }
-      if (k === 'hidden') { if (truthy(v)) attrs.push('style="display:none"'); continue; }
+      if (k === 'style') { styleVal = v; continue; }
+      if (k === 'hidden') { if (truthy(v)) styleVal += ';display:none'; continue; }
       if (k === 'disabled') { if (truthy(v)) attrs.push('disabled'); continue; }
       if (k.startsWith('data-')) { attrs.push(`${k}="${esc(v)}"`); continue; }
       if (k === 'src') { attrs.push(`src="${esc(v)}"`); continue; }
@@ -378,6 +388,8 @@
           k === 'path' || k === 'version' || k === 'extra-data') { continue; }
       attrs.push(`data-${k}="${esc(v)}"`);
     }
+    const styleAll = [styleVal.replace(/^;/, ''), imgModeStyle].filter(Boolean).join(';');
+    if (styleAll) attrs.push(`style="${esc(styleAll)}"`);
     const voidTag = tag === 'image' || tag === 'input' || tag === 'br';
     if (extraCls) attrs.push(`class="${extraCls.trim()}"`);   // 没有 class 属性的 scroll-view/swiper
     if (voidTag) { out.push(`<${html} ${attrs.join(' ')}>`); return; }

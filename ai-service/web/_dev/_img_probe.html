@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>broken image probe</title>
+<style>body{margin:0}iframe{width:420px;height:900px;border:1px solid #ccc}pre{font:11px/1.35 monospace;white-space:pre-wrap}</style>
+</head><body>
+<iframe id="fr" src="/"></iframe><pre id="out">…</pre>
+<script>
+  const PAGES = ['index','knowledge','all-species','adopt','profile','aquarium','cert','camp','shop','my-adopt'];
+  const lines=[];const R=s=>{lines.push(s);document.getElementById('out').textContent=lines.join('\n');};
+  const fr=document.getElementById('fr');
+  let i=0;
+  function step(){
+    if(i>=PAGES.length){R('\nDONE');return;}
+    const name=PAGES[i++];
+    fr.contentWindow.location.hash='#/'+name;
+    setTimeout(function(){
+      const d=fr.contentDocument;
+      const host=d.getElementById('page-host');
+      const imgs=Array.from(host.querySelectorAll('img'));
+      const broken=imgs.filter(im=>im.complete && im.naturalWidth===0);
+      const pending=imgs.filter(im=>!im.complete);
+      const ph=d.querySelectorAll('.mp-img-ph').length;   // 已被兜底替换的占位块
+      const empty=[];
+      imgs.forEach(im=>{ if(!im.getAttribute('src')||im.getAttribute('src')==='null') empty.push(im.className); });
+      R((broken.length||ph||empty.length?'❌ ':'✅ ')+name.padEnd(16)+' 图片'+String(imgs.length).padStart(3)+
+        '  加载失败'+String(broken.length).padStart(2)+'  占位块'+String(ph).padStart(2)+
+        '  未完成'+String(pending.length).padStart(2)+'  空src'+String(empty.length).padStart(2)+
+        (broken.length?'  '+broken.slice(0,3).map(b=>(b.getAttribute('src')||'').slice(-28)).join(' | '):'')+
+        (empty.length?'  empty:'+empty.slice(0,3).join(','):''));
+      step();
+    },1700);
+  }
+  setTimeout(function(){
+    const t=setInterval(function(){
+      if(fr.contentDocument&&fr.contentDocument.getElementById('page-host')&&fr.contentDocument.getElementById('page-host').children.length){
+        clearInterval(t);setTimeout(step,900);
+      }
+    },300);
+  },800);
+</script></body></html>

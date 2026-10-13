@@ -116,4 +116,4 @@
 .ma-advice-btn::after { border: none; }
 .btn-hover { transform: scale(0.97); opacity: 0.9; }
 
-.coral-page img{display:block;max-width:100%;}
+.coral-page img{max-width:100%;vertical-align:middle;}
