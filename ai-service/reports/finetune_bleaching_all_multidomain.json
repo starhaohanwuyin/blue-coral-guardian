@@ -1,7 +1,7 @@
 {
   "task": "多域联合训练（原始域 + 印太域）—— 目标是域内不回退且跨域提升",
-  "init": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all\\best.pt",
-  "out": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_multidomain",
+  "init": "weights\\bleaching_all\\best.pt",
+  "out": "weights\\bleaching_all_multidomain",
   "classes": [
     "bleached",
     "dead",
@@ -16,7 +16,7 @@
     "max_per_domain": 4000,
     "val_limit": 1200,
     "init": "",
-    "out": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_multidomain"
+    "out": "weights\\bleaching_all_multidomain"
   },
   "dataCounts": {
     "orig": 14203,

@@ -6,7 +6,7 @@
   "missingImage": 0,
   "samplesWithoutThreeClass": 252,
   "model": {
-    "weights": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_koh_tao\\best.pt",
+    "weights": "weights\\bleaching_all_koh_tao\\best.pt",
     "backbone": "convnext_tiny",
     "classes": [
       "bleached",

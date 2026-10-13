@@ -12,7 +12,7 @@
   },
   "routingHitRate": 0.6848,
   "models": {
-    "orig": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all\\best.pt",
-    "indo": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_koh_tao_bb\\best.pt"
+    "orig": "weights\\bleaching_all\\best.pt",
+    "indo": "weights\\bleaching_all_koh_tao_bb\\best.pt"
   }
 }
