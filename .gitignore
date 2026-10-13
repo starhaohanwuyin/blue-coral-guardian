@@ -1,0 +1,38 @@
+# ---- 模型权重（体积大：每个 106MB，超过 GitHub 单文件 100MB 限制，用交付包/网盘分发）----
+weights/
+*.pt
+*.pth
+ai-service/weights/
+
+# ---- 大数据（NOAA 原始日数据 2.8GB、训练数据、下载缓存；只保留演示必需的 2 个 JSON）----
+ai-service/data/*
+!ai-service/data/noaa/
+ai-service/data/noaa/*
+!ai-service/data/noaa/climate_index.json
+!ai-service/data/noaa/site_profiles.json
+!ai-service/data/semporna_demo/
+data/raw/
+data/cache/
+*.csv
+
+# ---- 训练/评测产物 ----
+ai-service/runs/
+ai-service/delivery/
+delivery/
+delivery.zip
+*_backup.pt
+*_archive.pt
+
+# ---- 临时与系统 ----
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+~$*
+*.tmp
