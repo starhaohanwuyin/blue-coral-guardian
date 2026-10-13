@@ -7,14 +7,17 @@
 <p align="center">
   <img src="docs/images/demo_index.png" width="150" alt="首页">
   <img src="docs/images/demo_ai_setup.png" width="150" alt="AI 识别 · 上传照片与选择点位/年份">
-  <img src="docs/images/demo_ai.png" width="185" alt="AI 识别结果：覆盖率 67.8% / 白化 41% / 双模型共识提示">
   <img src="docs/images/demo_knowledge.png" width="150" alt="科普">
   <img src="docs/images/demo_species.png" width="150" alt="全部珊瑚种类">
 </p>
+<p align="center"><sub>首页 · AI 识别（上传与点位/年份）· 科普 · 全部珊瑚种类（网页版真实运行截图；小程序是同一套页面代码，共 22 页）</sub></p>
 
+<p align="center">
+  <img src="docs/images/demo_ai.png" width="330" alt="AI 识别真实结果：覆盖率 67.8% / 白化 41% / 双模型共识提示">
+</p>
 <p align="center"><sub>
-从左到右：首页 · AI 识别（上传与点位/年份）· <b>AI 识别真实结果</b>（覆盖率 67.8%、白化 41%、<b>双模型共识提示「建议人工复核」</b>）· 科普 · 全部珊瑚种类<br>
-（均为网页版真实运行截图；微信小程序是同一套页面代码，共 22 页）
+<b>AI 识别真实结果</b>：礁区覆盖 <b>67.8%</b>（活珊瑚 15.6% / 死亡 51.9% / 沙砾 31.1%）、整图白化 <b>41%</b>，<br>
+两个白化模型判定不一致时自动提示「<b>建议人工复核</b>」（共识弃权机制）
 </sub></p>
 
 ---
