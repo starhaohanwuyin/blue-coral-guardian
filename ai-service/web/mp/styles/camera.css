@@ -1,0 +1,107 @@
+/* ============ 实时海景页 ============ */
+.cam-view {
+  position: relative;
+  height: calc(700 * var(--rpx));
+  background: #0D47A1;
+  overflow: hidden;
+}
+.cam-img { width: 100%; height: 100%; }
+
+.cam-live {
+  position: absolute;
+  left: calc(24 * var(--rpx));
+  top: calc(24 * var(--rpx));
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--rpx));
+  padding: calc(8 * var(--rpx)) calc(20 * var(--rpx));
+  background: rgba(211, 47, 47, 0.85);
+  color: #fff;
+  font-size: calc(20 * var(--rpx));
+  font-weight: 700;
+  border-radius: calc(24 * var(--rpx));
+  letter-spacing: calc(2 * var(--rpx));
+}
+.cam-live-dot {
+  width: calc(14 * var(--rpx));
+  height: calc(14 * var(--rpx));
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.cam-location {
+  position: absolute;
+  left: calc(24 * var(--rpx));
+  bottom: calc(24 * var(--rpx));
+  color: #fff;
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+  text-shadow: 0 calc(2 * var(--rpx)) calc(8 * var(--rpx)) rgba(0, 0, 0, 0.6);
+}
+.cam-coord {
+  position: absolute;
+  right: calc(24 * var(--rpx));
+  bottom: calc(24 * var(--rpx));
+  color: rgba(255, 255, 255, 0.85);
+  font-size: calc(20 * var(--rpx));
+  font-family: monospace;
+  text-shadow: 0 calc(2 * var(--rpx)) calc(8 * var(--rpx)) rgba(0, 0, 0, 0.6);
+}
+
+.cam-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: bubbleUp linear infinite;
+}
+.cb-1 { left: 20%; bottom: calc(60 * var(--rpx)); width: calc(14 * var(--rpx)); height: calc(14 * var(--rpx)); animation-duration: 6s; }
+.cb-2 { left: 55%; bottom: calc(40 * var(--rpx)); width: calc(10 * var(--rpx)); height: calc(10 * var(--rpx)); animation-duration: 8s; animation-delay: 2s; }
+.cb-3 { left: 78%; bottom: calc(80 * var(--rpx)); width: calc(12 * var(--rpx)); height: calc(12 * var(--rpx)); animation-duration: 7s; animation-delay: 4s; }
+
+/* 指标 */
+.cam-metrics {
+  display: flex;
+  gap: calc(20 * var(--rpx));
+  padding: calc(32 * var(--rpx));
+}
+.cam-metric {
+  flex: 1;
+  padding: calc(28 * var(--rpx)) calc(16 * var(--rpx));
+  text-align: center;
+}
+.cam-metric-icon { font-size: calc(44 * var(--rpx)); }
+.cam-metric-label {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  font-weight: 600;
+  margin-top: calc(12 * var(--rpx));
+}
+
+/* 说明 */
+.cam-note {
+  margin: 0 calc(32 * var(--rpx)) calc(48 * var(--rpx));
+  padding: calc(32 * var(--rpx));
+}
+.cam-note-title {
+  font-size: calc(28 * var(--rpx));
+  font-weight: 700;
+}
+.cam-note-text {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.7;
+  margin-top: calc(14 * var(--rpx));
+}
+.cam-refresh {
+  margin-top: calc(24 * var(--rpx));
+  padding: calc(20 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  border: calc(3 * var(--rpx)) solid var(--primary);
+  color: var(--primary);
+  font-size: calc(26 * var(--rpx));
+  font-weight: 600;
+  text-align: center;
+}
+
+.coral-page img{display:block;max-width:100%;}

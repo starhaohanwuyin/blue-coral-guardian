@@ -1,0 +1,62 @@
+{
+  "model": "coralscapes-segformer-b2",
+  "tag": "base1024",
+  "use_enhance": false,
+  "rows": [
+    {
+      "level": "L0_clean",
+      "desc": "原始(iNat 条件)",
+      "n": 120,
+      "alive": 0.3946295172763512,
+      "bleached": 0.005744073439449518,
+      "dead": 0.014406807949107137,
+      "algae": 0.0763012737567784,
+      "substrate": 0.40918272074210654,
+      "coral_total": 0.41478039866490785
+    },
+    {
+      "level": "L1_near",
+      "desc": "近距(3m/沿岸)",
+      "n": 120,
+      "alive": 0.3740217677105321,
+      "bleached": 0.01357577114100755,
+      "dead": 0.0066968879973587645,
+      "algae": 0.046265400493409374,
+      "substrate": 0.46473557263979404,
+      "coral_total": 0.3942944268488984
+    },
+    {
+      "level": "L2_typical",
+      "desc": "典型潜水(8m/沿岸)",
+      "n": 120,
+      "alive": 0.36451108533341076,
+      "bleached": 0.018796220884604933,
+      "dead": 0.008713146858696633,
+      "algae": 0.008032634723439522,
+      "substrate": 0.5085201494649798,
+      "coral_total": 0.39202045307671235
+    },
+    {
+      "level": "L3_far",
+      "desc": "远距浑浊(15m)",
+      "n": 120,
+      "alive": 0.0,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.0,
+      "substrate": 0.9999998425680493,
+      "coral_total": 0.0
+    },
+    {
+      "level": "L4_harsh",
+      "desc": "恶劣(20m/浑浊/手抖)",
+      "n": 120,
+      "alive": 0.0,
+      "bleached": 0.0,
+      "dead": 0.0,
+      "algae": 0.0,
+      "substrate": 1.0,
+      "coral_total": 0.0
+    }
+  ]
+}

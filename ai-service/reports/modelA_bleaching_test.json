@@ -1,0 +1,38 @@
+{
+  "model": "coralscapes-segformer-b2",
+  "split": "test",
+  "n": 257,
+  "nBleached": 135,
+  "nHealthy": 122,
+  "metrics": {
+    "bleached": {
+      "auc": 0.4608,
+      "bleachedMean": 0.0209,
+      "healthyMean": 0.0044
+    },
+    "bleachShare": {
+      "auc": 0.4567,
+      "bleachedMean": 0.0491,
+      "healthyMean": 0.0231
+    },
+    "alive": {
+      "auc": 0.5729,
+      "bleachedMean": 0.3198,
+      "healthyMean": 0.2733
+    },
+    "coralTotal": {
+      "auc": 0.5722,
+      "bleachedMean": 0.3528,
+      "healthyMean": 0.3049
+    }
+  },
+  "bestThreshold": {
+    "th": 0.01,
+    "recall": 0.26666666666666666,
+    "precision": 0.7346938775510204,
+    "specificity": 0.8934426229508197,
+    "accuracy": 0.5642023346303502,
+    "j": 0.16010928961748627
+  },
+  "note": "用第三方 Roboflow 白化数据集验证 Model A 的白化检测能力；该数据集划分存在泄漏，故按图像自身标签统计"
+}

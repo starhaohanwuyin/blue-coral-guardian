@@ -1,0 +1,21 @@
+{
+  "path": "data/processed/bleaching_all",
+  "counts": {
+    "train/bleached": 6908,
+    "train/healthy": 7083,
+    "train/dead": 212,
+    "val/bleached": 632,
+    "val/healthy": 611,
+    "val/dead": 44,
+    "test/bleached": 527,
+    "test/healthy": 510,
+    "test/dead": 44
+  },
+  "junctions": 0,
+  "classes": [
+    "bleached",
+    "healthy",
+    "dead"
+  ],
+  "note": "旧集 + 新 Roboflow 集的合并；用 junction 嵌套避免复制"
+}

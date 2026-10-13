@@ -1,0 +1,36 @@
+{
+  "design": "固定地理隔离测试集（仙本那 1116 张）+ 轮换训练子集（珊瑚大三角分层抽样）",
+  "folds": [
+    {
+      "fold": 1,
+      "seed": 1,
+      "frac": 0.7,
+      "top1": 0.828853,
+      "macroF1": 0.794724,
+      "weights": "weights/species_ip_cv1"
+    },
+    {
+      "fold": 2,
+      "seed": 2,
+      "frac": 0.7,
+      "top1": 0.824373,
+      "macroF1": 0.806644,
+      "nTrain": null,
+      "weights": "weights/species_ip_cv2"
+    },
+    {
+      "fold": 3,
+      "seed": 3,
+      "frac": 0.7,
+      "top1": 0.820789,
+      "macroF1": 0.792104,
+      "nTrain": null,
+      "weights": "weights/species_ip_cv3"
+    }
+  ],
+  "mean": 0.8246716666666667,
+  "std": 0.003298881157133244,
+  "macroF1Mean": 0.797824,
+  "fullTrainTop1": 0.861213,
+  "note": "测试集不轮换，因为它是地理隔离留出集；本 CV 衡量训练集组成的影响"
+}

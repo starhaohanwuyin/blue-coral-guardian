@@ -1,0 +1,70 @@
+{
+  "task": "印太域（Arafura/Darwin）域自适应微调前后对比 —— 项目最大短板的量化改善",
+  "testSet": {
+    "name": "coral_image_external（Arafura 1,391 + Darwin 259 等）",
+    "samples": 2577,
+    "missingImage": 0,
+    "heldOut": true,
+    "note": "该测试集全程未参与训练（数据集原始设计即外部测试集），无泄漏"
+  },
+  "beforeModel": {
+    "weights": "weights/bleaching_all/best.pt（线上权重）",
+    "macroF1": 0.3223
+  },
+  "afterModel": {
+    "weights": "weights/bleaching_all_koh_tao/best.pt（本次微调产物）",
+    "macroF1": 0.4541,
+    "trainingData": "泰国 Koh Tao 干季 clipped 瓦片 12,809 张（标签映射 dead>bleached>healthy）",
+    "validation": "CCD test_set 1,500 张（固定种子抽样），最优宏F1 0.7215"
+  },
+  "macroF1": {
+    "before": 0.3223,
+    "after": 0.4541,
+    "delta": 0.1318,
+    "relative": "41%"
+  },
+  "perClass": {
+    "healthy": {
+      "beforeF1": 0.5192,
+      "afterF1": 0.4171,
+      "deltaF1": -0.1021,
+      "beforeRecall": 0.3897,
+      "afterRecall": 0.3709,
+      "beforePrecision": 0.7778,
+      "afterPrecision": 0.4763
+    },
+    "bleached": {
+      "beforeF1": 0.4401,
+      "afterF1": 0.3051,
+      "deltaF1": -0.135,
+      "beforeRecall": 0.7791,
+      "afterRecall": 0.2222,
+      "beforePrecision": 0.3067,
+      "afterPrecision": 0.4865
+    },
+    "dead": {
+      "beforeF1": 0.0077,
+      "afterF1": 0.6402,
+      "deltaF1": 0.6325,
+      "beforeRecall": 0.0039,
+      "afterRecall": 0.598,
+      "beforePrecision": 1.0,
+      "afterPrecision": 0.6889
+    }
+  },
+  "interpretation": [
+    "改善主要来自 dead 类：F1 0.008 → 0.640（召回 0.004 → 0.598）——原模型在该域几乎从不判死亡，这正是此前记录的失效模式，现已被修正",
+    "bleached 的 F1 下降（0.440 → 0.305）：原模型的 0.779 召回是**过度判白化**堆出来的（精确率仅 0.307）；微调后精确率升到 0.486 但召回降到 0.222 → **白化漏检增多**，是真实的权衡",
+    "healthy 略降（0.519 → 0.417）",
+    "结论：域差距**缩小但未消除**（宏 F1 0.45 仍远低于同域 0.91），且该训练域只有泰国湾一个海域，不能声称「整个印太域可用」"
+  ],
+  "reproduce": [
+    "python scripts/finetune_bleaching_indopacific.py --epochs 3 --workers 6 --val-limit 1500",
+    "python scripts/eval_bleaching_indopacific.py --source external --weights weights/bleaching_all_koh_tao/best.pt"
+  ],
+  "artifacts": {
+    "finetunedWeights": "weights/bleaching_all_koh_tao/best.pt（本地，weights/ 不入库）",
+    "finetuneLog": "reports/finetune_indopacific.log",
+    "finetuneReport": "reports/finetune_indopacific.json"
+  }
+}

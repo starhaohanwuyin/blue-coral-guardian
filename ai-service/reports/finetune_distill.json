@@ -1,0 +1,34 @@
+{
+  "method": "degradation-invariant self-distillation",
+  "n_images": 1200,
+  "crop": 384,
+  "batch": 6,
+  "train_levels": [
+    "L0_clean",
+    "L1_near",
+    "L2_typical",
+    "L2_typical",
+    "L3_far",
+    "L3_far",
+    "L4_harsh"
+  ],
+  "use_enhance": false,
+  "history": [
+    {
+      "epoch": 1,
+      "ce": 2.175100434422493,
+      "kl": 1.8179014624655248
+    },
+    {
+      "epoch": 2,
+      "ce": 1.5084268486499786,
+      "kl": 1.2393144999444485
+    },
+    {
+      "epoch": 3,
+      "ce": 1.2590357536077499,
+      "kl": 1.0551282393932342
+    }
+  ],
+  "total_seconds": 3005.8
+}

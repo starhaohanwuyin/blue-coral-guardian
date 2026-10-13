@@ -1,0 +1,335 @@
+{
+  "task": "印太域白化识别：量化短板 → 域自适应 → 白化加权 → 回归检查（2026-10-12）",
+  "summary": {
+    "结论1_域自适应有效": "印太外部集单标签宏F1 0.208 → 0.473（B）/0.483（C），湿季 0.272 → 0.531/0.545；主因是修好了「从不判死亡」（dead 召回 0.00 → 0.60）",
+    "结论2_白化加权改善白化": "C 相对 B：印太 bleached 召回 0.36→0.39、湿季 0.32→0.47；域内 CCD 验证 bleached F1 0.654→0.687",
+    "结论3_但域内严重退化": "同域内测试集（Kaggle 白化 257 张）bleached 召回：部署 97.04% → B 27.41% / C 93.10%（conf 0.6）；**故不可替换线上权重**",
+    "结论4_后验偏置无效": "在域内验证集上网格搜类别偏置仅 0.7297→0.7300，说明跨域漏检是域偏移而非类先验失衡，必须从训练侧解决",
+    "结论5_下一步": "多域联合训练（原始域数据 + Koh Tao 干季），并用「域内不回退 + 跨域提升」双指标选模型"
+  },
+  "metricDiscipline": {
+    "primary": "单标签宏平均 F1（多标签真值按优先级 dead>bleached>healthy 取单标签，与训练口径一致）",
+    "secondary": "多标签一对其余（ovr）为附带视角，数值不可与单标签混用",
+    "bugFixed": "本脚本单标签口径曾把混淆矩阵行列写反（精确率/召回率互换），于 2026-10-12 修正；ovr 口径不受影响（故此前发布的 ovr 数字仍成立）"
+  },
+  "matrix": {
+    "A_部署×external": {
+      "macroF1": 0.2079,
+      "accuracy": 0.2074,
+      "perClass": {
+        "bleached": {
+          "precision": 0.176,
+          "recall": 0.7882,
+          "f1": 0.2877,
+          "support": 288
+        },
+        "dead": {
+          "precision": 1.0,
+          "recall": 0.0039,
+          "f1": 0.0077,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.2601,
+          "recall": 0.4447,
+          "f1": 0.3282,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "B_域自适应×external": {
+      "macroF1": 0.4727,
+      "accuracy": 0.5505,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3333,
+          "recall": 0.3576,
+          "f1": 0.3451,
+          "support": 288
+        },
+        "dead": {
+          "precision": 0.8115,
+          "recall": 0.598,
+          "f1": 0.6886,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.2999,
+          "recall": 0.5356,
+          "f1": 0.3845,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "C_域自适应+白化加权×external": {
+      "macroF1": 0.4826,
+      "accuracy": 0.5625,
+      "perClass": {
+        "bleached": {
+          "precision": 0.2506,
+          "recall": 0.3854,
+          "f1": 0.3037,
+          "support": 288
+        },
+        "dead": {
+          "precision": 0.8376,
+          "recall": 0.6049,
+          "f1": 0.7025,
+          "support": 1296
+        },
+        "healthy": {
+          "precision": 0.3676,
+          "recall": 0.5528,
+          "f1": 0.4416,
+          "support": 407
+        }
+      },
+      "samples": 1991
+    },
+    "A_部署×winter": {
+      "macroF1": 0.2717,
+      "accuracy": 0.3365,
+      "perClass": {
+        "bleached": {
+          "precision": 0.2469,
+          "recall": 0.5146,
+          "f1": 0.3337,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.386,
+          "recall": 0.6388,
+          "f1": 0.4813,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    },
+    "B_域自适应×winter": {
+      "macroF1": 0.5312,
+      "accuracy": 0.5777,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3828,
+          "recall": 0.3248,
+          "f1": 0.3514,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.7254,
+          "recall": 0.5603,
+          "f1": 0.6323,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.5352,
+          "recall": 0.7087,
+          "f1": 0.6098,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    },
+    "C_域自适应+白化加权×winter": {
+      "macroF1": 0.5445,
+      "accuracy": 0.574,
+      "perClass": {
+        "bleached": {
+          "precision": 0.3266,
+          "recall": 0.469,
+          "f1": 0.385,
+          "support": 548
+        },
+        "dead": {
+          "precision": 0.7524,
+          "recall": 0.5667,
+          "f1": 0.6464,
+          "support": 1410
+        },
+        "healthy": {
+          "precision": 0.5779,
+          "recall": 0.6284,
+          "f1": 0.6021,
+          "support": 1246
+        }
+      },
+      "samples": 3204
+    }
+  },
+  "artifacts": {
+    "matrixReports": "reports/matrix_{external,winter}_{bleaching_all,koh_tao,koh_tao_bb}.json",
+    "finetuneReports": "reports/finetune_indopacific.json（B）与 reports/finetune_bb.log（C）",
+    "weights": [
+      "weights/bleaching_all_koh_tao/best.pt（B，本地）",
+      "weights/bleaching_all_koh_tao_bb/best.pt（C，本地）"
+    ],
+    "deployedUnchanged": "weights/bleaching_all/best.pt 全程未被覆盖"
+  },
+  "inDomainRegression": {
+    "testSet": "competition_data Kaggle 白化测试集（257 张，与部署模型同域）",
+    "bleachedRecallAtConf0.5": {
+      "A_部署": 0.9704,
+      "B_域自适应": 0.2741
+    },
+    "bleachedRecallAtConf0.6": {
+      "A_部署": 0.9924,
+      "B_域自适应": 0.9355,
+      "C_加权": 0.931
+    },
+    "bleachedF1AtConf0.6": {
+      "A_部署": 0.9767,
+      "B_域自适应": 0.5798,
+      "C_加权": 0.6693
+    },
+    "verdict": "两个微调模型在原域都退化（B 最严重）；C 比 B 好但仍低于部署模型 → 不部署"
+  },
+  "gcbd": {
+    "records": 34846,
+    "recordsInSempornaGrid": 954,
+    "yearsInGrid": {
+      "1998": 2,
+      "2004": 24,
+      "2007": 8,
+      "2008": 20,
+      "2009": 2,
+      "2010": 24,
+      "2011": 26,
+      "2012": 14,
+      "2013": 74,
+      "2014": 122,
+      "2015": 136,
+      "2016": 122,
+      "2017": 166,
+      "2018": 134,
+      "2019": 80
+    },
+    "hitVsThreshold4": [
+      2010,
+      2016,
+      2017,
+      2019
+    ],
+    "missVsThreshold4": [
+      1998,
+      2004,
+      2007,
+      2008,
+      2009,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2018
+    ],
+    "thresholdSweep": [
+      {
+        "threshold": 2,
+        "tp": 11,
+        "fp": 3,
+        "fn": 4,
+        "tn": 18,
+        "precision": 0.786,
+        "recall": 0.733
+      },
+      {
+        "threshold": 3,
+        "tp": 8,
+        "fp": 2,
+        "fn": 7,
+        "tn": 19,
+        "precision": 0.8,
+        "recall": 0.533
+      },
+      {
+        "threshold": 4,
+        "tp": 4,
+        "fp": 2,
+        "fn": 11,
+        "tn": 19,
+        "precision": 0.667,
+        "recall": 0.267
+      },
+      {
+        "threshold": 5,
+        "tp": 3,
+        "fp": 2,
+        "fn": 12,
+        "tn": 19,
+        "precision": 0.6,
+        "recall": 0.2
+      },
+      {
+        "threshold": 6,
+        "tp": 2,
+        "fp": 2,
+        "fn": 13,
+        "tn": 19,
+        "precision": 0.5,
+        "recall": 0.133
+      },
+      {
+        "threshold": 8,
+        "tp": 1,
+        "fp": 1,
+        "fn": 14,
+        "tn": 20,
+        "precision": 0.5,
+        "recall": 0.067
+      }
+    ],
+    "reading": "官方警戒线 DHW≥4 只覆盖 4/15 个有白化记录的年份；DHW≥2 时精确率 0.786、召回 0.733 → 本区域报告的白化多发生在低于官方阈值处（含轻度记录与报告偏差）"
+  },
+  "finetuneRuns": {
+    "B_koh_tao": {
+      "epochs": 2,
+      "bestValMacroF1": 0.7271,
+      "history": [
+        {
+          "epoch": 1,
+          "trainLoss": 0.4049,
+          "valMacroF1": 0.7172,
+          "valF1": {
+            "bleached": 0.6798,
+            "dead": 0.7796,
+            "healthy": 0.6924
+          }
+        },
+        {
+          "epoch": 2,
+          "trainLoss": 0.3365,
+          "valMacroF1": 0.7271,
+          "valF1": {
+            "bleached": 0.6872,
+            "dead": 0.7789,
+            "healthy": 0.7152
+          }
+        }
+      ]
+    },
+    "C_koh_tao_bb": {
+      "epochs": 2,
+      "bleachedBoost": 2.5,
+      "history": [
+        {
+          "epoch": 1,
+          "valMacroF1": 0.7172,
+          "bleachedF1": 0.68
+        },
+        {
+          "epoch": 2,
+          "valMacroF1": 0.7271,
+          "bleachedF1": 0.687
+        }
+      ]
+    }
+  }
+}

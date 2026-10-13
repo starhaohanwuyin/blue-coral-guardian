@@ -1,0 +1,31 @@
+true\pred,Acanthastrea,Acropora Cervicornis,Acropora Palmata,Alveopora,Blastomussa,Catalaphyllia jardinae,Caulastraea Furcata,Colpophyllia Natans,Cyphastrea,Dendrogyra cylindrus,Diadema Antillarum,Diploria Strigosa,Discosoma,Euphyllia,Euphyllia Divisa,Heliofungia actiniformis,Hydnophora,Leptoseris,Meandrina Meandrites,Millepora Alcicornis,Montastraea Cavernosa,Montipora,Palythoas Palythoa,Pocillopora meandrina,Porites,Rhodactis,Ricordea,Seriatopora,Siderastrea Siderea,Tunicates
+Acanthastrea,17,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Acropora Cervicornis,0,17,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0
+Acropora Palmata,0,0,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Alveopora,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+Blastomussa,0,0,0,0,16,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Catalaphyllia jardinae,0,0,0,0,0,17,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0
+Caulastraea Furcata,0,0,0,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Colpophyllia Natans,0,0,0,0,0,0,0,10,0,0,0,4,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0
+Cyphastrea,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+Dendrogyra cylindrus,0,0,0,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Diadema Antillarum,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Diploria Strigosa,0,0,0,0,0,0,0,5,0,0,0,11,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0
+Discosoma,0,0,0,0,0,0,0,0,0,0,0,0,13,0,0,0,0,0,0,0,0,1,0,0,0,6,0,0,0,0
+Euphyllia,0,0,0,0,0,0,0,0,0,0,0,0,1,9,2,5,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Euphyllia Divisa,0,0,0,0,0,0,0,0,0,0,0,0,0,2,18,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+Heliofungia actiniformis,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Hydnophora,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,2,0,0
+Leptoseris,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,1,0,0,0,0,1,1,1,0,0,0,0
+Meandrina Meandrites,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,16,0,3,0,0,0,0,0,0,0,1,0
+Millepora Alcicornis,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,21,0,0,0,0,0,0,0,0,0,0
+Montastraea Cavernosa,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,0,0,0,0,0,1,0,0,0
+Montipora,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,1,0,0,0,0
+Palythoas Palythoa,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,19,0,0,0,0,0,0,0
+Pocillopora meandrina,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,1,0,0,0,0,0
+Porites,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,0,0,0,0,0
+Rhodactis,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,13,1,0,0,0
+Ricordea,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,0,0,0
+Seriatopora,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,19,0,0
+Siderastrea Siderea,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,2,0,0,0,18,0
+Tunicates,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,21

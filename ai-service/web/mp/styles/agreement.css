@@ -1,0 +1,71 @@
+/* 协议页样式 */
+.doc-page {
+  min-height: 100vh;
+  background: #F5F9FF;
+  padding: calc(32 * var(--rpx)) calc(32 * var(--rpx)) calc(64 * var(--rpx));
+  box-sizing: border-box;
+}
+
+.doc-header {
+  text-align: center;
+  padding: calc(24 * var(--rpx)) 0 calc(36 * var(--rpx));
+}
+
+.doc-title {
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  color: #0F2A4A;
+  letter-spacing: calc(2 * var(--rpx));
+}
+
+.doc-update {
+  margin-top: calc(14 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  color: #8A97A8;
+}
+
+.doc-body {
+  background: #ffffff;
+  border-radius: calc(24 * var(--rpx));
+  padding: calc(40 * var(--rpx)) calc(36 * var(--rpx));
+  box-shadow: 0 calc(4 * var(--rpx)) calc(24 * var(--rpx)) rgba(15, 42, 74, 0.06);
+}
+
+.doc-section {
+  margin-bottom: calc(40 * var(--rpx));
+}
+
+.doc-section:last-child {
+  margin-bottom: 0;
+}
+
+.doc-h {
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  color: #1E88E5;
+  margin-bottom: calc(18 * var(--rpx));
+  padding-left: calc(16 * var(--rpx));
+  border-left: calc(6 * var(--rpx)) solid #4DD0E1;
+}
+
+.doc-p {
+  font-size: calc(27 * var(--rpx));
+  line-height: 1.85;
+  color: #3D4A5C;
+  margin-bottom: calc(14 * var(--rpx));
+  text-align: justify;
+}
+
+.doc-p:last-child {
+  margin-bottom: 0;
+}
+
+.doc-footer {
+  text-align: center;
+  margin-top: calc(48 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  color: #9AA5B4;
+  letter-spacing: calc(2 * var(--rpx));
+}
+
+.coral-page img{display:block;max-width:100%;}

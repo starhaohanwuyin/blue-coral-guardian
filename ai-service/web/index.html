@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#1E88E5" />
+<title>蓝珊 · 珊瑚卫士</title>
+<link rel="stylesheet" href="./mp/styles/app.css" />
+<style>
+  /* 小程序 rpx → 自适应：750rpx = 一个"手机宽度"；桌面端按 480px 封顶，像个大手机 */
+  :root { --rpx: calc(min(100vw, 480px) / 750); }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: #f5f7fa; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: #1f2d3d; -webkit-font-smoothing: antialiased;
+  }
+  #app {
+    max-width: 480px; margin: 0 auto; min-height: 100vh; background: #fff;
+    box-shadow: 0 0 24px rgba(0, 0, 0, .08); position: relative;
+    display: flex; flex-direction: column;
+  }
+  /* 顶部标题栏（替代小程序原生导航栏） */
+  #mp-header {
+    position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 8px;
+    height: 46px; padding: 0 10px; background: #fff; border-bottom: 1px solid #eef1f5;
+  }
+  #mp-header .back {
+    width: 32px; height: 32px; border-radius: 50%; border: 0; background: #f2f5f8;
+    font-size: 18px; line-height: 1; color: #33475b; cursor: pointer; flex: none;
+  }
+  #mp-header .ttl { font-size: 16px; font-weight: 600; flex: 1; text-align: center; }
+  #mp-header .right { width: 32px; flex: none; }
+  #mp-header a.lite { font-size: 12px; color: #1E88E5; text-decoration: none; flex: none; }
+
+  #page-host { flex: 1; padding-bottom: 66px; overflow-x: hidden; }
+  .coral-page { min-height: 100%; }
+
+  /* scroll-view / swiper：小程序里这两个组件自带滚动，转成 div 后由运行时补类名 */
+  .mp-scroll { -webkit-overflow-scrolling: touch; }
+  .mp-scroll-x { overflow-x: auto; overflow-y: hidden; display: flex; }
+  .mp-scroll-y { overflow-y: auto; overflow-x: hidden; }
+  .mp-scroll::-webkit-scrollbar { display: none; }
+  .mp-swiper { overflow-x: auto; display: flex; scroll-snap-type: x mandatory; }
+  .mp-swiper-item { flex: 0 0 100%; scroll-snap-align: start; }
+
+  /* tabBar（复刻小程序 custom-tab-bar） */
+  #mp-tabbar {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px; display: flex; background: rgba(255, 255, 255, .97);
+    border-top: 1px solid #eef1f5; z-index: 40;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  #mp-tabbar .tab-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 7px 0 6px; cursor: pointer;
+  }
+  #mp-tabbar .tab-label { font-size: 10px; color: #9AA5B4; line-height: 1; }
+  #mp-tabbar .tab-item.active .tab-label { color: #1E88E5; font-weight: 600; }
+
+  /* 弹层 */
+  #mp-toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.9);
+    background: rgba(0, 0, 0, .78); color: #fff; font-size: 14px; padding: 12px 18px;
+    border-radius: 10px; opacity: 0; pointer-events: none; transition: .18s; z-index: 100;
+    max-width: 70vw; text-align: center;
+  }
+  #mp-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  #mp-loading {
+    position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, .35); z-index: 99;
+  }
+  #mp-loading.show { display: flex; }
+  #mp-loading .box {
+    background: rgba(0, 0, 0, .78); color: #fff; padding: 16px 20px; border-radius: 12px;
+    font-size: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  #mp-loading .spin {
+    width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, .35);
+    border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #mp-modal {
+    position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, .4); z-index: 101; padding: 24px;
+  }
+  #mp-modal.show { display: flex; }
+  #mp-modal .box { background: #fff; border-radius: 14px; width: 100%; max-width: 320px; overflow: hidden; }
+  #mp-modal .m-title { font-weight: 600; text-align: center; padding: 18px 18px 6px; font-size: 16px; }
+  #mp-modal .m-content { padding: 0 18px 16px; font-size: 14px; color: #5a6b7b; white-space: pre-wrap; text-align: center; }
+  #mp-modal .m-actions { display: flex; border-top: 1px solid #eef1f5; }
+  #mp-modal .m-actions button {
+    flex: 1; padding: 13px; border: 0; background: #fff; font-size: 15px; cursor: pointer; color: #33475b;
+  }
+  #mp-modal .m-ok { color: #1E88E5; font-weight: 600; }
+  #mp-modal .m-no { border-right: 1px solid #eef1f5; }
+
+  #mp-boot {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: #fff; z-index: 200; flex-direction: column; gap: 12px; color: #6b7f8f;
+    font-size: 14px;
+  }
+  #mp-boot .spin {
+    width: 26px; height: 26px; border: 3px solid #e3eaf2; border-top-color: #1E88E5;
+    border-radius: 50%; animation: spin .8s linear infinite;
+  }
+  .mp-error { padding: 24px; color: #c62828; font-size: 14px; line-height: 1.7; }
+  /* 顶部右侧"轻量版"入口 */
+  #mp-header .lite { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="mp-header">
+    <button class="back" id="mp-back" title="返回">‹</button>
+    <div class="ttl" id="mp-title">蓝珊 · 珊瑚卫士</div>
+    <a class="lite" href="./lite.html" title="只用识别功能的轻量版">轻量版</a>
+  </header>
+
+  <main id="page-host"></main>
+
+  <nav id="mp-tabbar"></nav>
+</div>
+
+<div id="mp-toast"></div>
+<div id="mp-loading"><div class="box"><div class="spin"></div><span class="txt">加载中</span></div></div>
+<div id="mp-modal">
+  <div class="box">
+    <div class="m-title"></div>
+    <div class="m-content"></div>
+    <div class="m-actions"><button class="m-no">取消</button><button class="m-ok">确定</button></div>
+  </div>
+</div>
+<div id="mp-boot"><div class="spin"></div><div>正在加载小程序页面…</div></div>
+
+<script>
+  // 标题栏 + 返回按钮（运行时通过 window.dispatchEvent 通知）
+  (function () {
+    var t = document.getElementById('mp-title');
+    var back = document.getElementById('mp-back');
+    window.addEventListener('mp:title', function (e) { t.textContent = e.detail || '蓝珊 · 珊瑚卫士'; });
+    back.onclick = function () {
+      var R = window.MP_RUNTIME;
+      if (!R) return;
+      if (R.state.stack.length > 1) R.router.back(1);
+      else location.hash = '#/index';
+    };
+  })();
+</script>
+<script src="./mp.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{
+  "task": "bleaching_all",
+  "split": "test_ip",
+  "n": 176,
+  "classes": [
+    "bleached",
+    "dead",
+    "healthy"
+  ],
+  "prior": [
+    0.375,
+    0.25,
+    0.375
+  ],
+  "results": {
+    "A_argmax": {
+      "accuracy": 0.8295454545454546,
+      "perClass": {
+        "bleached": {
+          "n": 26,
+          "recall": 0.4231,
+          "precision": 0.4231
+        },
+        "healthy": {
+          "n": 150,
+          "recall": 0.9,
+          "precision": 0.9
+        }
+      },
+      "recall": {
+        "bleached": 0.4231,
+        "healthy": 0.9
+      },
+      "precision": {
+        "bleached": 0.4231,
+        "healthy": 0.9
+      }
+    },
+    "B_prior_corrected": {
+      "accuracy": 0.8863636363636364,
+      "perClass": {
+        "bleached": {
+          "n": 26,
+          "recall": 0.3462,
+          "precision": 0.75
+        },
+        "healthy": {
+          "n": 150,
+          "recall": 0.98,
+          "precision": 0.8963
+        }
+      },
+      "recall": {
+        "bleached": 0.3462,
+        "healthy": 0.98
+      },
+      "precision": {
+        "bleached": 0.75,
+        "healthy": 0.8963
+      }
+    },
+    "C_bleached_boost": {
+      "best_beta": 6.0,
+      "recall": 0.5769230769230769,
+      "precision": 0.2727272727272727,
+      "accuracy": 0.7102272727272727
+    }
+  }
+}

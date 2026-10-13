@@ -1,0 +1,50 @@
+{
+  "primaryMetric": "contrast",
+  "reason": "R/G 通道比非单调（后向散射雾化光饱和），对比度才是判别指标",
+  "thresholds": {
+    "good": {
+      "contrast": 0.0306,
+      "rgRatio": 0.1432
+    },
+    "warn": {
+      "contrast": 0.0243,
+      "rgRatio": 0.0955
+    }
+  },
+  "levelStats": {
+    "L0_clean": {
+      "rgRatio": 0.8412483333333334,
+      "contrast": 0.18885,
+      "saturation": 0.211915
+    },
+    "L1_near": {
+      "rgRatio": 0.3986516666666667,
+      "contrast": 0.098265,
+      "saturation": 0.27036
+    },
+    "L2_typical": {
+      "rgRatio": 0.3182183333333333,
+      "contrast": 0.043655,
+      "saturation": 0.29453833333333335
+    },
+    "L3_far": {
+      "rgRatio": 0.354865,
+      "contrast": 0.0048983333333333335,
+      "saturation": 0.298065
+    },
+    "L4_harsh": {
+      "rgRatio": 0.34809833333333334,
+      "contrast": 0.00498,
+      "saturation": 0.3020333333333333
+    }
+  },
+  "usableLevels": [
+    "L0_clean",
+    "L1_near",
+    "L2_typical"
+  ],
+  "unusableLevels": [
+    "L3_far",
+    "L4_harsh"
+  ]
+}

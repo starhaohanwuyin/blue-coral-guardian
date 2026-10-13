@@ -1,0 +1,2 @@
+﻿DONE
+{"status":"ok","device":"cuda","models":["species","bleaching"],"loaded":{"species":{"task":"species","classes":30,"imgSize":384,"temperature":0.8560910224914551,"valAcc":0.8589511513710022,"testTop1":0.857143,"tta":"none","metricSource":"tta_eval.json(mode=none)","threshold":0.99},"bleaching":{"task":"bleaching","classes":3,"imgSize":224,"temperature":0.8526936769485474,"valAcc":0.9417475461959839,"testTop1":0.924757,"tta":"quad","metricSource":"tta_eval.json(mode=quad)","threshold":0.995}}}

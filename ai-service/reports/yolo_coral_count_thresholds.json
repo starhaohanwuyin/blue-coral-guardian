@@ -1,0 +1,62 @@
+{
+  "task": "P3 counting confidence-threshold sweep",
+  "weights": "weights\\yolo_coral\\best.pt",
+  "valImages": 166,
+  "gtTotal": 4254,
+  "imgsz": 896,
+  "iou": 0.5,
+  "rows": [
+    {
+      "conf": 0.05,
+      "predTotal": 11161,
+      "bias": 1.6236,
+      "maePerImage": 41.7651,
+      "exactMatchRate": 0.0181
+    },
+    {
+      "conf": 0.1,
+      "predTotal": 7134,
+      "bias": 0.677,
+      "maePerImage": 19.0361,
+      "exactMatchRate": 0.0301
+    },
+    {
+      "conf": 0.15,
+      "predTotal": 5391,
+      "bias": 0.2673,
+      "maePerImage": 11.8976,
+      "exactMatchRate": 0.0422
+    },
+    {
+      "conf": 0.2,
+      "predTotal": 4350,
+      "bias": 0.0226,
+      "maePerImage": 9.4337,
+      "exactMatchRate": 0.0723
+    },
+    {
+      "conf": 0.25,
+      "predTotal": 3588,
+      "bias": -0.1566,
+      "maePerImage": 9.3976,
+      "exactMatchRate": 0.0723
+    },
+    {
+      "conf": 0.3,
+      "predTotal": 3056,
+      "bias": -0.2816,
+      "maePerImage": 10.5783,
+      "exactMatchRate": 0.0904
+    },
+    {
+      "conf": 0.4,
+      "predTotal": 2249,
+      "bias": -0.4713,
+      "maePerImage": 13.3313,
+      "exactMatchRate": 0.0723
+    }
+  ],
+  "recommendedConf": 0.2,
+  "recommendedBias": 0.0226,
+  "note": "mAP 与阈值无关，但计数与阈值强相关；推荐值 = |总量偏差| 最小者。真值为掩膜连通域（自动标注）。"
+}

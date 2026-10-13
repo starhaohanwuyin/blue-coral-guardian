@@ -1,0 +1,33 @@
+{
+  "task": "P3 counting inference-resolution sweep",
+  "weights": "weights\\yolo_coral\\best_640r0.pt",
+  "valImages": 166,
+  "rows": [
+    {
+      "imgsz": 640,
+      "mAP50": 0.386426,
+      "mAP50_95": 0.242128,
+      "precision": 0.465362,
+      "recall": 0.417254,
+      "valSeconds": 13.9
+    },
+    {
+      "imgsz": 896,
+      "mAP50": 0.403421,
+      "mAP50_95": 0.263716,
+      "precision": 0.453122,
+      "recall": 0.437706,
+      "valSeconds": 14.3
+    },
+    {
+      "imgsz": 1024,
+      "mAP50": 0.406067,
+      "mAP50_95": 0.266445,
+      "precision": 0.466546,
+      "recall": 0.427362,
+      "valSeconds": 17.0
+    }
+  ],
+  "bestImgsz": 1024,
+  "note": "同一权重只改推理长边。训练用的是 imgsz 640（方图 letterbox，2:1 图像有 50% 灰边），因此高分辨率推理可看作「训练分辨率 vs 测试分辨率」的差异度量。"
+}

@@ -1,0 +1,44 @@
+{
+  "model": "bleaching_new",
+  "classes": [
+    "Bleached",
+    "Healthy"
+  ],
+  "note": "二分类视角：dead 并入非白化",
+  "targets": {
+    "旧域 test": {
+      "n": 412,
+      "nBleached": 196,
+      "nHealthy": 194,
+      "nDead": 22,
+      "bleachedRecall": 0.8367,
+      "bleachedPrecision": 0.7489,
+      "binaryAccuracy": 0.7888
+    },
+    "印尼域 test_ip": {
+      "n": 176,
+      "nBleached": 26,
+      "nHealthy": 150,
+      "nDead": 0,
+      "bleachedRecall": 0.9615,
+      "bleachedPrecision": 0.1534,
+      "binaryAccuracy": 0.2102
+    },
+    "旧域IP test": {
+      "n": 412,
+      "nBleached": 196,
+      "nHealthy": 194,
+      "nDead": 22,
+      "bleachedRecall": 0.8367,
+      "bleachedPrecision": 0.7489,
+      "binaryAccuracy": 0.7888
+    },
+    "仙本那照片": {
+      "n": 180,
+      "meanP": 0.24309031594667532,
+      "medianP": 0.0699060708284378,
+      "fracAt50": 0.21666666666666667,
+      "fracAt90": 0.07777777777777778
+    }
+  }
+}

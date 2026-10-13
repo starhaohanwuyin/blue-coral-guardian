@@ -1,0 +1,62 @@
+{
+  "year": 2024,
+  "source": "NOAA CRW v3.1 5km (PacIOOS mirror)",
+  "fieldSource": "Reef Check Malaysia 2024 (DOI 10.5281/zenodo.15290515)",
+  "regionPeak": {
+    "dhw": 14.87,
+    "date": "2024-06-15",
+    "lat": 4.225,
+    "lon": 118.025,
+    "hotspotMax": 2.37,
+    "sstaMax": 2.42,
+    "baaMax": 4,
+    "baaMaxLabel": "白化警报二级"
+  },
+  "sites": [
+    {
+      "site": "Larapan Point 3",
+      "lat": 4.525,
+      "lon": 118.775,
+      "fieldDhw": 9.4,
+      "satDhwPeak": 4.73,
+      "satHotspotPeak": 1.35,
+      "satBaaPeak": 3,
+      "fieldBleachPct": 69.2,
+      "fieldMortalityPct": 15.4
+    },
+    {
+      "site": "Larapan SMEE 2",
+      "lat": 4.525,
+      "lon": 118.775,
+      "fieldDhw": 9.4,
+      "satDhwPeak": 4.73,
+      "satHotspotPeak": 1.35,
+      "satBaaPeak": 3,
+      "fieldBleachPct": 8.7,
+      "fieldMortalityPct": 4.4
+    },
+    {
+      "site": "Mabul Eel Garden",
+      "lat": 4.225,
+      "lon": 118.625,
+      "fieldDhw": 6.5,
+      "satDhwPeak": 6.48,
+      "satHotspotPeak": 1.51,
+      "satBaaPeak": 3,
+      "fieldBleachPct": 4.6,
+      "fieldMortalityPct": 27.3
+    },
+    {
+      "site": "Mabul Panglima",
+      "lat": 4.225,
+      "lon": 118.675,
+      "fieldDhw": 6.5,
+      "satDhwPeak": 5.46,
+      "satHotspotPeak": 1.49,
+      "satBaaPeak": 3,
+      "fieldBleachPct": 15.4,
+      "fieldMortalityPct": 26.9
+    }
+  ],
+  "note": "卫星格点 5km，与站位存在空间尺度差异；n=4 时相关性仅供方向参考"
+}

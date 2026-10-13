@@ -1,0 +1,99 @@
+/* ============ 积分商城页 ============ */
+.shop-points-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: calc(24 * var(--rpx)) calc(32 * var(--rpx));
+  padding: calc(32 * var(--rpx));
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #1565C0, #1E88E5);
+  color: #fff;
+  box-shadow: 0 calc(16 * var(--rpx)) calc(48 * var(--rpx)) rgba(21, 101, 192, 0.3);
+}
+.shop-points-left { display: flex; align-items: center; gap: calc(20 * var(--rpx)); }
+.shop-points-icon { font-size: calc(52 * var(--rpx)); }
+.shop-points-num { font-size: calc(48 * var(--rpx)); font-weight: 700; line-height: 1.1; }
+.shop-points-label { font-size: calc(22 * var(--rpx)); color: rgba(255, 255, 255, 0.6); }
+.shop-points-tip { font-size: calc(22 * var(--rpx)); color: rgba(255, 255, 255, 0.7); }
+
+.shop-tabs {
+  display: flex;
+  gap: calc(16 * var(--rpx));
+  padding: 0 calc(32 * var(--rpx)) calc(24 * var(--rpx));
+}
+.shop-tab {
+  flex: 1;
+  text-align: center;
+  padding: calc(18 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  background: var(--card);
+  color: var(--text2);
+  font-size: calc(28 * var(--rpx));
+  font-weight: 600;
+  border: calc(3 * var(--rpx)) solid transparent;
+  box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
+}
+.shop-tab.active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.06);
+}
+
+.shop-tip {
+  margin: 0 calc(32 * var(--rpx)) calc(24 * var(--rpx));
+  padding: calc(24 * var(--rpx)) calc(28 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: calc(24 * var(--rpx));
+  padding: calc(26 * var(--rpx)) calc(28 * var(--rpx));
+  margin: 0 calc(32 * var(--rpx)) calc(20 * var(--rpx));
+}
+.shop-item-icon {
+  font-size: calc(52 * var(--rpx));
+  width: calc(88 * var(--rpx));
+  height: calc(88 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.shop-item-info { flex: 1; min-width: 0; }
+.shop-item-name { font-size: calc(28 * var(--rpx)); font-weight: 600; }
+.shop-item-stock {
+  font-size: calc(22 * var(--rpx));
+  color: var(--coral);
+  font-weight: 600;
+  margin-left: calc(8 * var(--rpx));
+}
+.shop-item-desc {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(6 * var(--rpx));
+  line-height: 1.5;
+}
+.shop-buy-btn {
+  padding: calc(14 * var(--rpx)) calc(26 * var(--rpx));
+  border-radius: calc(28 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+.shop-buy-btn.feed {
+  background: linear-gradient(135deg, #FF7043, #FF8A65);
+  box-shadow: 0 calc(6 * var(--rpx)) calc(24 * var(--rpx)) rgba(255, 112, 67, 0.3);
+}
+.shop-buy-btn.culture {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 calc(6 * var(--rpx)) calc(24 * var(--rpx)) rgba(30, 136, 229, 0.3);
+}
+
+.coral-page img{display:block;max-width:100%;}

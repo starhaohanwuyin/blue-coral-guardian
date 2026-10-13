@@ -1,0 +1,47 @@
+/* ============ 科普详情页 ============ */
+.kd-hero {
+  width: 100%;
+  height: calc(420 * var(--rpx));
+  display: block;
+}
+.kd-body {
+  margin: -calc(60 * var(--rpx)) calc(32 * var(--rpx)) 0;
+  position: relative;
+  z-index: 2;
+  padding: calc(40 * var(--rpx)) calc(36 * var(--rpx));
+}
+.kd-title {
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  line-height: 1.4;
+}
+.kd-summary {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.7;
+  margin-top: calc(16 * var(--rpx));
+}
+.kd-divider {
+  height: calc(2 * var(--rpx));
+  background: var(--border);
+  margin: calc(32 * var(--rpx)) 0;
+}
+.kd-paragraph {
+  font-size: calc(28 * var(--rpx));
+  color: var(--text);
+  line-height: 1.9;
+  margin-bottom: calc(24 * var(--rpx));
+}
+.kd-actions { padding: calc(32 * var(--rpx)); }
+.kd-share-btn {
+  padding: calc(24 * var(--rpx));
+  border-radius: calc(28 * var(--rpx));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: calc(30 * var(--rpx));
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 calc(8 * var(--rpx)) calc(40 * var(--rpx)) rgba(30, 136, 229, 0.3);
+}
+
+.coral-page img{display:block;max-width:100%;}

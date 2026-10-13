@@ -1,0 +1,453 @@
+{
+  "task": "印太域（泰国 Koh Tao）珊瑚状况基线 —— 用于校准/补强项目最大短板",
+  "source": {
+    "repo": "https://github.com/XL-SHAO/CoralConditionDataset",
+    "license": "MIT",
+    "paper": [
+      "arXiv:2403.05930",
+      "10.1002/aqc.4241"
+    ],
+    "location": "Koh Tao, Thailand (Indo-Pacific)",
+    "note": "图像在 Google Drive（本次网络不可达，未下载）；本报告只用标签与调查元数据"
+  },
+  "labels": {
+    "0": "Background",
+    "1": "Healthy coral",
+    "2": "Compromised coral",
+    "3": "Dead coral",
+    "4": "Rubble",
+    "5": "Competition",
+    "6": "Disease",
+    "7": "Predation",
+    "8": "Physical issues"
+  },
+  "mapToProjectThreeClass": {
+    "1": "healthy",
+    "2": "bleached",
+    "3": "dead"
+  },
+  "subsets": {
+    "train_summer_2023": {
+      "tiles": 14557,
+      "perLabelCount": {
+        "Background": 716,
+        "Healthy coral": 10403,
+        "Compromised coral": 4006,
+        "Dead coral": 5524,
+        "Rubble": 1614,
+        "Competition": 1911,
+        "Disease": 1639,
+        "Predation": 482,
+        "Physical issues": 1709
+      },
+      "perLabelFrac": {
+        "Background": 0.0492,
+        "Healthy coral": 0.7146,
+        "Compromised coral": 0.2752,
+        "Dead coral": 0.3795,
+        "Rubble": 0.1109,
+        "Competition": 0.1313,
+        "Disease": 0.1126,
+        "Predation": 0.0331,
+        "Physical issues": 0.1174
+      },
+      "labelsPerTile": {
+        "1": 6036,
+        "2": 4934,
+        "3": 2488,
+        "4": 878,
+        "5": 203,
+        "6": 17,
+        "7": 1
+      }
+    },
+    "test_summer_2023": {
+      "tiles": 6240,
+      "perLabelCount": {
+        "Background": 314,
+        "Healthy coral": 4466,
+        "Compromised coral": 1715,
+        "Dead coral": 2421,
+        "Rubble": 720,
+        "Competition": 851,
+        "Disease": 678,
+        "Predation": 208,
+        "Physical issues": 744
+      },
+      "perLabelFrac": {
+        "Background": 0.0503,
+        "Healthy coral": 0.7157,
+        "Compromised coral": 0.2748,
+        "Dead coral": 0.388,
+        "Rubble": 0.1154,
+        "Competition": 0.1364,
+        "Disease": 0.1087,
+        "Predation": 0.0333,
+        "Physical issues": 0.1192
+      },
+      "labelsPerTile": {
+        "1": 2495,
+        "2": 2191,
+        "3": 1083,
+        "4": 372,
+        "5": 91,
+        "6": 8
+      }
+    },
+    "test_winter_2024": {
+      "tiles": 3456,
+      "perLabelCount": {
+        "Background": 85,
+        "Healthy coral": 2719,
+        "Compromised coral": 1082,
+        "Dead coral": 1410,
+        "Rubble": 386,
+        "Competition": 511,
+        "Disease": 201,
+        "Predation": 81,
+        "Physical issues": 477
+      },
+      "perLabelFrac": {
+        "Background": 0.0246,
+        "Healthy coral": 0.7867,
+        "Compromised coral": 0.3131,
+        "Dead coral": 0.408,
+        "Rubble": 0.1117,
+        "Competition": 0.1479,
+        "Disease": 0.0582,
+        "Predation": 0.0234,
+        "Physical issues": 0.138
+      },
+      "labelsPerTile": {
+        "1": 1272,
+        "2": 1205,
+        "3": 689,
+        "4": 248,
+        "5": 41,
+        "6": 1
+      }
+    }
+  },
+  "threeClassView": {
+    "train_summer_2023": {
+      "tiles": 14557,
+      "fracHealthy": 0.7146,
+      "fracCompromised": 0.2752,
+      "fracDead": 0.3795,
+      "tilesWithNoneOfThree": 1739,
+      "tilesWithHealthyAndDead": 4090,
+      "note": "多标签；三类占比不可相加"
+    },
+    "test_summer_2023": {
+      "tiles": 6240,
+      "fracHealthy": 0.7157,
+      "fracCompromised": 0.2748,
+      "fracDead": 0.388,
+      "tilesWithNoneOfThree": 725,
+      "tilesWithHealthyAndDead": 1789,
+      "note": "多标签；三类占比不可相加"
+    },
+    "test_winter_2024": {
+      "tiles": 3456,
+      "fracHealthy": 0.7867,
+      "fracCompromised": 0.3131,
+      "fracDead": 0.408,
+      "tilesWithNoneOfThree": 252,
+      "tilesWithHealthyAndDead": 1032,
+      "note": "多标签；三类占比不可相加"
+    }
+  },
+  "pairedSitesSummerVsWinter": [
+    {
+      "site": "ALK",
+      "summerTiles": 825,
+      "winterTiles": 449,
+      "delta": {
+        "Compromised coral": 0.071,
+        "Dead coral": 0.1933,
+        "Disease": 0.036,
+        "Healthy coral": 0.1916
+      }
+    },
+    {
+      "site": "CBK",
+      "summerTiles": 499,
+      "winterTiles": 1032,
+      "delta": {
+        "Compromised coral": 0.2542,
+        "Dead coral": 0.1651,
+        "Disease": 0.0533,
+        "Healthy coral": 0.2381
+      }
+    },
+    {
+      "site": "HWB",
+      "summerTiles": 1218,
+      "winterTiles": 370,
+      "delta": {
+        "Compromised coral": 0.3014,
+        "Dead coral": -0.0598,
+        "Disease": 0.0405,
+        "Healthy coral": -0.0746
+      }
+    },
+    {
+      "site": "SKI",
+      "summerTiles": 974,
+      "winterTiles": 847,
+      "delta": {
+        "Compromised coral": -0.2774,
+        "Dead coral": -0.4497,
+        "Disease": -0.2628,
+        "Healthy coral": 0.0394
+      }
+    },
+    {
+      "site": "TCB",
+      "summerTiles": 1125,
+      "winterTiles": 70,
+      "delta": {
+        "Compromised coral": -0.1294,
+        "Dead coral": -0.1466,
+        "Disease": 0.0,
+        "Healthy coral": -0.4322
+      }
+    }
+  ],
+  "summerVsWinter": {
+    "summer": {
+      "Background": 0.0503,
+      "Healthy coral": 0.7157,
+      "Compromised coral": 0.2748,
+      "Dead coral": 0.388,
+      "Rubble": 0.1154,
+      "Competition": 0.1364,
+      "Disease": 0.1087,
+      "Predation": 0.0333,
+      "Physical issues": 0.1192
+    },
+    "winter": {
+      "Background": 0.0246,
+      "Healthy coral": 0.7867,
+      "Compromised coral": 0.3131,
+      "Dead coral": 0.408,
+      "Rubble": 0.1117,
+      "Competition": 0.1479,
+      "Disease": 0.0582,
+      "Predation": 0.0234,
+      "Physical issues": 0.138
+    },
+    "delta": {
+      "Background": -0.0257,
+      "Healthy coral": 0.071,
+      "Compromised coral": 0.0383,
+      "Dead coral": 0.02,
+      "Rubble": -0.0037,
+      "Competition": 0.0115,
+      "Disease": -0.0505,
+      "Predation": -0.0099,
+      "Physical issues": 0.0188
+    },
+    "warning": "整体夏冬差异**混有站点组成差异**，只有 pairedSitesSummerVsWinter 才是配对结论"
+  },
+  "perSurvey": [
+    {
+      "site": "ALK",
+      "date": "20230927",
+      "tiles": 825,
+      "depth": "9.2m",
+      "temp": "27.7℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.3455,
+      "deadFrac": 0.3345,
+      "healthyFrac": 0.7527
+    },
+    {
+      "site": "ALK",
+      "date": "20240118",
+      "tiles": 449,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.4165,
+      "deadFrac": 0.5278,
+      "healthyFrac": 0.9443
+    },
+    {
+      "site": "AOM",
+      "date": "20230929",
+      "tiles": 180,
+      "depth": "21.3m",
+      "temp": "28.3℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.4667,
+      "deadFrac": 0.2389,
+      "healthyFrac": 0.65
+    },
+    {
+      "site": "CBK",
+      "date": "20230804",
+      "tiles": 499,
+      "depth": "0.3m",
+      "temp": "31.3℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.022,
+      "deadFrac": 0.4589,
+      "healthyFrac": 0.4489
+    },
+    {
+      "site": "CBK",
+      "date": "20240124",
+      "tiles": 338,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.3373,
+      "deadFrac": 0.6923,
+      "healthyFrac": 0.6775
+    },
+    {
+      "site": "CBK",
+      "date": "20240126",
+      "tiles": 694,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.2464,
+      "deadFrac": 0.5908,
+      "healthyFrac": 0.6916
+    },
+    {
+      "site": "HNM",
+      "date": "20230928",
+      "tiles": 1001,
+      "depth": "9.8m",
+      "temp": "27.5℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.2398,
+      "deadFrac": 0.4356,
+      "healthyFrac": 0.7532
+    },
+    {
+      "site": "HWB",
+      "date": "20230926",
+      "tiles": 1218,
+      "depth": "8.8m",
+      "temp": "27.6℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.3202,
+      "deadFrac": 0.5706,
+      "healthyFrac": 0.7989
+    },
+    {
+      "site": "HWB",
+      "date": "20240122",
+      "tiles": 370,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.6216,
+      "deadFrac": 0.5108,
+      "healthyFrac": 0.7243
+    },
+    {
+      "site": "SIN",
+      "date": "20240129",
+      "tiles": 688,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.4099,
+      "deadFrac": 0.4157,
+      "healthyFrac": 0.7994
+    },
+    {
+      "site": "SKI",
+      "date": "20230817",
+      "tiles": 974,
+      "depth": "18m",
+      "temp": "28.9℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.386,
+      "deadFrac": 0.5123,
+      "healthyFrac": 0.8532
+    },
+    {
+      "site": "SKI",
+      "date": "20240103",
+      "tiles": 812,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.1108,
+      "deadFrac": 0.0259,
+      "healthyFrac": 0.9052
+    },
+    {
+      "site": "SKI",
+      "date": "20240119",
+      "tiles": 35,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.0571,
+      "deadFrac": 0.9143,
+      "healthyFrac": 0.6
+    },
+    {
+      "site": "SWP",
+      "date": "20230919",
+      "tiles": 330,
+      "depth": "23.3m",
+      "temp": "28.6℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.2333,
+      "deadFrac": 0.1303,
+      "healthyFrac": 0.6273
+    },
+    {
+      "site": "TCB",
+      "date": "20230816",
+      "tiles": 1125,
+      "depth": "5m",
+      "temp": "31.6℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.2151,
+      "deadFrac": 0.1609,
+      "healthyFrac": 0.6036
+    },
+    {
+      "site": "TCB",
+      "date": "20240115",
+      "tiles": 70,
+      "depth": null,
+      "temp": null,
+      "camera": null,
+      "compromisedFrac": 0.0857,
+      "deadFrac": 0.0143,
+      "healthyFrac": 0.1714
+    },
+    {
+      "site": "TTB",
+      "date": "20230815",
+      "tiles": 88,
+      "depth": "15m",
+      "temp": "31.0℃",
+      "camera": "Olympus TG-6",
+      "compromisedFrac": 0.1136,
+      "deadFrac": 0.2159,
+      "healthyFrac": 0.6818
+    }
+  ],
+  "caveats": [
+    "瓦片级多标签（不是整图三分类）：与项目「整张图白化程度」口径不同，需聚合或按瓦片评",
+    "「Compromised coral」≈ 受损（含白化但不限于白化），映射到 bleedched 只是近似",
+    "图像未下载（Google Drive 本次不可达），因此**尚无模型在该域的实测指标**",
+    "站点在泰国湾（10.06N, 99.83E），不在项目 NOAA 网格（4.03–5.03N, 118.03–119.53E）内，因此不能直接用现有 41 年缓存做该站点的热压力关联"
+  ],
+  "nextSteps": [
+    "下载 coral_images.zip（Google Drive / gdown）→ 转成本项目数据格式",
+    "用项目三分类模型在该域评一次（预期会暴露跨域短板），再做 LoRA/域自适应微调",
+    "补齐该站点的 NOAA DHW（10.06N, 99.83E）以做「状况 × 热压力」的季节分析"
+  ]
+}

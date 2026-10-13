@@ -1,0 +1,106 @@
+{
+  "task": "多域联合训练（原始域 + 印太域）—— 目标是域内不回退且跨域提升",
+  "init": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all\\best.pt",
+  "out": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_multidomain",
+  "classes": [
+    "bleached",
+    "dead",
+    "healthy"
+  ],
+  "args": {
+    "epochs": 3,
+    "batch": 32,
+    "lr": 8e-05,
+    "workers": 6,
+    "orig_weight": 0.5,
+    "max_per_domain": 4000,
+    "val_limit": 1200,
+    "init": "",
+    "out": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_multidomain"
+  },
+  "dataCounts": {
+    "orig": 14203,
+    "indo": 12809
+  },
+  "selection": "score = 0.5 × 域内验证宏F1 + 0.5 × 印太验证宏F1",
+  "history": [
+    {
+      "epoch": 0,
+      "inDomainMacroF1": 0.9191,
+      "indoMacroF1": 0.2775,
+      "combined": 0.5983,
+      "inDomainF1": {
+        "bleached": 0.9302,
+        "dead": 0.8936,
+        "healthy": 0.9333
+      },
+      "indoF1": {
+        "bleached": 0.3609,
+        "dead": 0.0,
+        "healthy": 0.4716
+      }
+    },
+    {
+      "epoch": 1,
+      "trainLoss": 0.5254,
+      "inDomainMacroF1": 0.8786,
+      "indoMacroF1": 0.5801,
+      "combined": 0.7293,
+      "inDomainF1": {
+        "bleached": 0.9072,
+        "dead": 0.8,
+        "healthy": 0.9286
+      },
+      "indoF1": {
+        "bleached": 0.5096,
+        "dead": 0.7103,
+        "healthy": 0.5204
+      }
+    },
+    {
+      "epoch": 2,
+      "trainLoss": 0.4454,
+      "inDomainMacroF1": 0.8602,
+      "indoMacroF1": 0.5908,
+      "combined": 0.7255,
+      "inDomainF1": {
+        "bleached": 0.9013,
+        "dead": 0.7586,
+        "healthy": 0.9207
+      },
+      "indoF1": {
+        "bleached": 0.5306,
+        "dead": 0.6998,
+        "healthy": 0.5419
+      }
+    },
+    {
+      "epoch": 3,
+      "trainLoss": 0.4073,
+      "inDomainMacroF1": 0.9247,
+      "indoMacroF1": 0.585,
+      "combined": 0.7549,
+      "inDomainF1": {
+        "bleached": 0.92,
+        "dead": 0.9302,
+        "healthy": 0.9239
+      },
+      "indoF1": {
+        "bleached": 0.5104,
+        "dead": 0.6553,
+        "healthy": 0.5893
+      }
+    }
+  ],
+  "bestCombined": 0.7549,
+  "next": [
+    "python scripts/eval_bleaching_indopacific.py --source external --weights weights\\bleaching_all_multidomain/best.pt --out reports/matrix_external_multidomain.json",
+    "python scripts/eval_bleaching_indopacific.py --source winter --weights weights\\bleaching_all_multidomain/best.pt --out reports/matrix_winter_multidomain.json",
+    "python scripts/eval_new_bleaching.py --task bleaching_all --split test --weights weights\\bleaching_all_multidomain/best.pt   # 域内不回退检查"
+  ],
+  "caveats": [
+    "原始域与印太域混采，不能保证两域都最优；以综合指标选优",
+    "印太域只有泰国 Koh Tao 一个海域",
+    "原始域含历史项目的三分类数据与 Kaggle 二分类数据（无 dead）"
+  ]
+}

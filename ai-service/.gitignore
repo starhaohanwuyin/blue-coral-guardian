@@ -1,0 +1,60 @@
+# ==========================================================
+# coral_ml 路 Git 蹇界暐瑙勫垯
+# 鐩殑锛氬彧鎻愪氦銆屼唬鐮?+ 鏂囨。 + 缁撴灉鎶ュ憡銆嶏紝
+#       鎺掗櫎浣撶Н宸ㄥぇ鐨勬暟鎹泦涓庢ā鍨嬫潈閲嶏紙鍙噸鏂扮敓鎴愶級
+# ==========================================================
+
+# ---- 鏁版嵁闆嗭紙13.6 GB锛屼笉杩涗粨搴擄級----
+data/
+# 渚嬪锛氫繚鐣欏綊灞炶〃锛堜綋绉瀬灏忎笖鍚堣蹇呴渶锛?!data/inat_dataset/ATTRIBUTION.csv
+
+# ---- 妯″瀷鏉冮噸锛?.1 GB锛屽彲閲嶆柊璁粌锛?---
+weights/
+
+# ---- 璁粌涓棿浜х墿 ----
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+
+# ---- 鏃ュ織锛堜綋绉ぇ涓旀寜闇€鐢熸垚锛?---
+reports/*.log
+*.log
+
+# ---- Ultralytics 璁粌杩愯鐩綍锛堜腑闂翠骇鐗╋紱璁粌鏇茬嚎鍙﹀瓨 reports/*.csv锛?---
+runs/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# ---- 缂栬緫鍣?/ 绯荤粺 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# ---- 涓存椂鏂囦欢 ----
+*.tmp
+*.tmpdir/
+*.partial.json
+
+# ---- 娉ㄦ剰 ----
+# data/ 涓?weights/ 琚帓闄わ紝浣嗕互涓嬪唴瀹?*蹇呴』淇濈暀**锛?#   scripts/     鍏ㄩ儴璁粌涓庤瘎浼拌剼鏈?#   docs/        鏂规銆佹牳楠屻€佺瓟杈╄鐐圭瓑鏂囨。
+#   reports/*.json  缁撴灉 JSON锛堜綋绉瀬灏忥紝鏄姤鍛婄殑鍙拷婧潵婧愶級
+#   reports/鏈€缁堢粨鏋滄眹鎬?md
+#   dsh-skill/   DSH Agent 鎻掍欢
+#   NOTICE.md    璁稿彲璇佷笌鍚堣澹版槑
+# 备份/临时产物（不要提交）
+*.backup.json
+*.bak
+*.orig
+
+delivery/
+delivery.zip

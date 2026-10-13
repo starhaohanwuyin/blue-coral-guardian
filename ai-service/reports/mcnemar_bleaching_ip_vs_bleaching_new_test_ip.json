@@ -1,0 +1,24 @@
+{
+  "modelA": "bleaching_ip",
+  "modelB": "bleaching_new",
+  "split": "test_ip",
+  "n": 176,
+  "accA": 0.8522727272727273,
+  "accB": 0.21022727272727273,
+  "accDiff": -0.6420454545454546,
+  "accDiffCi95Cluster": [
+    -0.71875,
+    -0.5555555555555556
+  ],
+  "mcnemar": {
+    "b": 128,
+    "c": 15,
+    "n_discordant": 143,
+    "chi2": 87.7203,
+    "p_chi2": 0.0,
+    "p_exact": 0.0,
+    "significant_0.05": true,
+    "note": "p<0.05 表示两模型差异统计显著"
+  },
+  "note": "二分类口径（bleached vs 非白化）比较；CI 按观察聚类重采样"
+}

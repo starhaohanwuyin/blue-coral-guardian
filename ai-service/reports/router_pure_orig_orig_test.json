@@ -1,0 +1,19 @@
+{
+  "strategy": "pure_orig",
+  "source": "orig_test",
+  "trueDomain": "orig",
+  "samples": 412,
+  "routedToIndo": 0,
+  "routedToOrig": 412,
+  "macroF1": 0.9409,
+  "perClass": {
+    "bleached": 0.9399,
+    "dead": 0.9333,
+    "healthy": 0.9495
+  },
+  "routingHitRate": 1.0,
+  "models": {
+    "orig": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_multidomain4\\best.pt",
+    "indo": "D:\\大学作业\\广东海洋大学的珊瑚评测小程序\\coral_ml\\weights\\bleaching_all_koh_tao_bb\\best.pt"
+  }
+}

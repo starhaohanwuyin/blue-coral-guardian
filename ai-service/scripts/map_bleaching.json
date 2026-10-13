@@ -1,0 +1,8 @@
+{
+  "Bleached": "bleached",
+  "bleached_corals": "bleached",
+  "Unbleached": "healthy",
+  "healthy_corals": "healthy",
+  "Healthy": "healthy",
+  "Dead": "dead"
+}

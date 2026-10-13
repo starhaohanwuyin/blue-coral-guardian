@@ -1,0 +1,245 @@
+{
+  "task": "bleaching_ip",
+  "split": "test",
+  "weights": "weights/bleaching_ip/best.pt",
+  "temperature": 0.871719479560852,
+  "n_samples": 412,
+  "n_classes": 3,
+  "top1": 0.915049,
+  "top1Ci95": [
+    0.885922,
+    0.941748
+  ],
+  "macroF1": 0.886485,
+  "macroF1Ci95": [
+    0.835639,
+    0.927263
+  ],
+  "ece": 0.041625,
+  "reliabilityBins": [
+    {
+      "bin": "0.47-0.53",
+      "n": 7,
+      "avgConf": 0.5048,
+      "acc": 0.7143,
+      "gap": -0.2095
+    },
+    {
+      "bin": "0.53-0.60",
+      "n": 11,
+      "avgConf": 0.5711,
+      "acc": 0.2727,
+      "gap": 0.2983
+    },
+    {
+      "bin": "0.60-0.67",
+      "n": 5,
+      "avgConf": 0.6201,
+      "acc": 0.2,
+      "gap": 0.4201
+    },
+    {
+      "bin": "0.67-0.73",
+      "n": 8,
+      "avgConf": 0.6894,
+      "acc": 0.625,
+      "gap": 0.0644
+    },
+    {
+      "bin": "0.73-0.80",
+      "n": 11,
+      "avgConf": 0.7562,
+      "acc": 1.0,
+      "gap": -0.2438
+    },
+    {
+      "bin": "0.80-0.87",
+      "n": 17,
+      "avgConf": 0.8315,
+      "acc": 0.8235,
+      "gap": 0.008
+    },
+    {
+      "bin": "0.87-0.93",
+      "n": 23,
+      "avgConf": 0.9022,
+      "acc": 0.7826,
+      "gap": 0.1196
+    },
+    {
+      "bin": "0.93-1.00",
+      "n": 330,
+      "avgConf": 0.9825,
+      "acc": 0.9697,
+      "gap": 0.0128
+    }
+  ],
+  "coverageCurve": {
+    "byCoverage": [
+      {
+        "coverage": 0.5,
+        "threshold": 0.9835,
+        "accuracy": 0.995146,
+        "ci": [
+          0.995146,
+          0.985437,
+          1.0
+        ]
+      },
+      {
+        "coverage": 0.699,
+        "threshold": 0.9617,
+        "accuracy": 0.975694,
+        "ci": [
+          0.975694,
+          0.954861,
+          0.993056
+        ]
+      },
+      {
+        "coverage": 0.801,
+        "threshold": 0.9333,
+        "accuracy": 0.969697,
+        "ci": [
+          0.969697,
+          0.948485,
+          0.987879
+        ]
+      },
+      {
+        "coverage": 0.9005,
+        "threshold": 0.7755,
+        "accuracy": 0.951482,
+        "ci": [
+          0.951482,
+          0.927224,
+          0.973046
+        ]
+      },
+      {
+        "coverage": 0.949,
+        "threshold": 0.6296,
+        "accuracy": 0.943734,
+        "ci": [
+          0.943734,
+          0.920716,
+          0.964194
+        ]
+      },
+      {
+        "coverage": 1.0,
+        "threshold": 0.493,
+        "accuracy": 0.915049,
+        "ci": [
+          0.915049,
+          0.88835,
+          0.93932
+        ]
+      }
+    ],
+    "byTarget": [
+      {
+        "target": 0.99,
+        "coverage": 0.5243,
+        "threshold": 0.982,
+        "accuracy": 0.990741
+      },
+      {
+        "target": 0.995,
+        "coverage": 0.5218,
+        "threshold": 0.982,
+        "accuracy": 0.995349
+      },
+      {
+        "target": 0.999,
+        "coverage": 0.017,
+        "threshold": 0.9986,
+        "accuracy": 1.0
+      }
+    ]
+  },
+  "perClass": {
+    "bleached": {
+      "n": 196,
+      "precision": 0.901,
+      "recall": 0.9286,
+      "f1": 0.9146,
+      "acc": 0.9286,
+      "accCi": [
+        0.8929,
+        0.9643
+      ]
+    },
+    "dead": {
+      "n": 22,
+      "precision": 0.8182,
+      "recall": 0.8182,
+      "f1": 0.8182,
+      "acc": 0.8182,
+      "accCi": [
+        0.6364,
+        0.9545
+      ]
+    },
+    "healthy": {
+      "n": 194,
+      "precision": 0.9415,
+      "recall": 0.9124,
+      "f1": 0.9267,
+      "acc": 0.9124,
+      "accCi": [
+        0.8711,
+        0.9485
+      ]
+    }
+  },
+  "confusionTop": [
+    {
+      "count": 16,
+      "true": "healthy",
+      "pred": "bleached"
+    },
+    {
+      "count": 11,
+      "true": "bleached",
+      "pred": "healthy"
+    },
+    {
+      "count": 4,
+      "true": "dead",
+      "pred": "bleached"
+    },
+    {
+      "count": 3,
+      "true": "bleached",
+      "pred": "dead"
+    },
+    {
+      "count": 1,
+      "true": "healthy",
+      "pred": "dead"
+    }
+  ],
+  "confusionMatrix": [
+    [
+      182,
+      3,
+      11
+    ],
+    [
+      4,
+      18,
+      0
+    ],
+    [
+      16,
+      1,
+      177
+    ]
+  ],
+  "classOrder": [
+    "bleached",
+    "dead",
+    "healthy"
+  ]
+}

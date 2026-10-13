@@ -1,0 +1,121 @@
+/* ================= 关于我们页 ================= */
+.about-page {
+  padding: calc(40 * var(--rpx)) calc(32 * var(--rpx)) calc(60 * var(--rpx));
+}
+
+/* 品牌头 */
+.about-hero {
+  text-align: center;
+  padding: calc(40 * var(--rpx)) 0 calc(48 * var(--rpx));
+}
+.about-logo {
+  width: calc(140 * var(--rpx));
+  height: calc(140 * var(--rpx));
+  margin: 0 auto;
+  border-radius: calc(40 * var(--rpx));
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(0, 188, 212, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(72 * var(--rpx));
+  animation: floatSoft 3s ease-in-out infinite;
+}
+.about-name {
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  margin-top: calc(24 * var(--rpx));
+}
+.about-slogan {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(8 * var(--rpx));
+}
+
+/* 卡片 */
+.about-card {
+  padding: calc(32 * var(--rpx));
+  margin-bottom: calc(28 * var(--rpx));
+}
+.about-card-title {
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  margin-bottom: calc(20 * var(--rpx));
+}
+.about-intro {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: calc(24 * var(--rpx));
+}
+.about-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(20 * var(--rpx)) 0;
+  border-bottom: calc(2 * var(--rpx)) solid var(--border);
+  font-size: calc(26 * var(--rpx));
+}
+.about-row:last-child {
+  border-bottom: none;
+}
+.about-row .label {
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.about-row .value {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  margin-left: calc(24 * var(--rpx));
+  word-break: break-all;
+}
+
+/* 团队 */
+.about-team-intro {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: calc(24 * var(--rpx));
+}
+.about-member {
+  padding: calc(20 * var(--rpx)) 0;
+  border-bottom: calc(2 * var(--rpx)) solid var(--border);
+}
+.about-member:last-child {
+  border-bottom: none;
+}
+.about-member-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(8 * var(--rpx));
+}
+.about-member-name {
+  font-size: calc(28 * var(--rpx));
+  font-weight: 700;
+}
+.about-member-role {
+  font-size: calc(22 * var(--rpx));
+  color: var(--primary);
+  background: rgba(30, 136, 229, 0.08);
+  padding: calc(4 * var(--rpx)) calc(16 * var(--rpx));
+  border-radius: calc(12 * var(--rpx));
+}
+.about-member-desc {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* 底部 */
+.about-footer {
+  text-align: center;
+  padding: calc(24 * var(--rpx)) 0;
+}
+.about-footer-row {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  line-height: 1.8;
+}
+
+.coral-page img{display:block;max-width:100%;}
