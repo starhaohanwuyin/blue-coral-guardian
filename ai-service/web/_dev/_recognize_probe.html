@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>recognize probe</title></head>
+<body><main id="page-host"></main><nav id="mp-tabbar"></nav><pre id="out">…</pre>
+<script src="/mp.js"></script>
+<script>
+  // 用户视角端到端：走小程序自己的 api.recognize()（就是"AI识别"页用的那条链路）
+  const log=[];const say=s=>{log.push(typeof s==='string'?s:JSON.stringify(s));document.getElementById('out').textContent=log.join('\n');};
+  setTimeout(async function(){
+    try{
+      const R=window.MP_RUNTIME;
+      const api=R.require('/mp/utils/api.js');
+      const cfg=R.require('/mp/utils/config.js');
+      say('USE_REAL_AI = '+cfg.USE_REAL_AI+'   FALLBACK_TO_MOCK = '+cfg.FALLBACK_TO_MOCK);
+      const base=await api.resolveApiBase();
+      say('服务地址 = '+base);
+      // 取一张示例图当作 tempFilePath（网页端 uploadFile 支持 blob URL）
+      const blob=await fetch(base+'/sample?index=0&set=semporna').then(r=>r.blob());
+      const tmp=URL.createObjectURL(blob);
+      say('示例图 '+Math.round(blob.size/1024)+' KB');
+      const t0=Date.now();
+      const res=await api.recognize(tmp,{lat:4.4,lon:118.8},2024);
+      say('耗时 '+(Date.now()-t0)+' ms');
+      say('isDemo = '+res.isDemo+(res.demoReason?('   原因: '+String(res.demoReason).slice(0,90)):''));
+      say('覆盖率 活珊瑚 = '+(res.cover&&res.cover.alivePct));
+      say('白化结论 = '+(res.bleaching&&res.bleaching.labelCn));
+      say('珊瑚属 = '+(res.coralRegion&&res.coralRegion.top&&res.coralRegion.top[0]&&res.coralRegion.top[0].genus));
+      say('个体计数 = '+(res.coralCount&&res.coralCount.count));
+      say('热压力 = '+(res.climate&&res.climate.baaLabel));
+      say(res.isDemo ? '❌ 仍在降级成演示数据' : '✅ 走的是真实评估服务（无演示标记）');
+      say('DONE');
+    }catch(e){say('ERROR: '+e.message);}
+  },1000);
+</script></body></html>

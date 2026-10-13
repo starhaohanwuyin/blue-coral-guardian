@@ -17,26 +17,50 @@ module.exports = {
   USE_MOCK: true,
 
   /* ============ 礁区评估推理服务（AI 模块专用） ============
-   * 由 Python FastAPI 提供：coral_ml/scripts/serve_fusion.py
-   * 启动：cd coral_ml/scripts && python serve_fusion.py
+   * 由 Python FastAPI 提供：ai-service/scripts/serve_fusion.py
+   * 启动：cd ai-service/scripts && python serve_fusion.py --host 0.0.0.0 --port 8000
    * 一次请求返回「礁区覆盖率 + 主要珊瑚属 + 底栖类别明细」。
    * 开发期指向本机即可（开发者工具 urlCheck 已关闭）；
    * 真机/发布需换成 HTTPS 已备案域名。
    */
-  /* 评估服务地址（coral_ml/scripts/serve_fusion.py，监听 0.0.0.0:8000）
-   * ⚠️ 真机（手机预览/调试）里 `127.0.0.1` 指的是**手机自己**，永远连不到电脑，
-   *    表现就是识别页一直转圈且服务端日志里没有任何请求 —— 所以这里按运行环境自动选择。 */
-  CORAL_API: (function pickCoralApi() {
-    var DEVTOOLS = 'http://127.0.0.1:8000'
-    var LAN = 'http://10.0.250.15:8000'   // 电脑局域网 IP；换网络后需同步修改
+  /* 评估服务地址候选表（按顺序探测，第一个 /health 通的就是它）
+   *
+   * 为什么不再靠 platform 判断：新版微信开发者工具里 `wx.getDeviceInfo().platform`
+   * 返回的是 'windows'/'mac'（不再是 'devtools'），旧判断会把开发者工具误当成真机，
+   * 于是用了写死的局域网 IP → 连不上 → 页面降级成"演示数据"。
+   * 现在改为**运行时探测**：同源（网页版）→ 127.0.0.1（开发者工具）→ 局域网候选（真机）。
+   * 换网络/换电脑后不用改代码：真机若都探测失败，可在小程序里覆盖（见 API_BASE_KEY）。
+   */
+  CORAL_API_CANDIDATES: (function buildCandidates() {
+    var list = []
+    // ① 用户手动覆盖（存 storage，优先级最高）
     try {
-      var info = (typeof wx !== 'undefined' && wx.getDeviceInfo)
-        ? wx.getDeviceInfo()
-        : (typeof wx !== 'undefined' && wx.getSystemInfoSync ? wx.getSystemInfoSync() : null)
-      // 开发者工具模拟器的 platform 为 'devtools'；真机为 'ios' / 'android'
-      if (info && info.platform && info.platform !== 'devtools') return LAN
+      var saved = wx.getStorageSync && wx.getStorageSync('coral_api_base')
+      if (saved) list.push(String(saved).replace(/\/+$/, ''))
     } catch (e) {}
-    return DEVTOOLS
+    // ② 网页版：与页面同源（服务同时托管网页与接口，永远正确）
+    try {
+      if (typeof location !== 'undefined' && location.origin &&
+          location.origin.indexOf('http') === 0) {
+        list.push(location.origin)
+      }
+    } catch (e) {}
+    // ③ 开发者工具 / 本机浏览器
+    list.push('http://127.0.0.1:8000')
+    // ④ 真机：电脑局域网 IP 候选（换网络后把新 IP 加到这里，或在小程序里覆盖）
+    list.push('http://10.0.124.43:8000')   // 2026-10-13 本机 WLAN IP
+    list.push('http://10.0.250.15:8000')   // 旧 IP（保留兼容）
+    // 去重
+    var out = []
+    for (var i = 0; i < list.length; i++) if (list[i] && out.indexOf(list[i]) < 0) out.push(list[i])
+    return out
+  })(),
+
+  /* 兼容旧代码：给出"最可能正确"的那个（网页版=同源 / 开发者工具=127.0.0.1）。
+   * 真正的调用请走 utils/api.js 的 resolveApiBase()（会按候选表探测并缓存）。 */
+  CORAL_API: (function pickCoralApi() {
+    var c = module.exports.CORAL_API_CANDIDATES || []
+    return c[0] || 'http://127.0.0.1:8000'
   })(),
 
   // true  = 调用真实评估服务（需要 serve_fusion.py 在运行）

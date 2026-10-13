@@ -362,8 +362,62 @@ api.getAllSpecies = function () {
 
 /* ================= AI 礁区评估（覆盖率 + 珊瑚属） ================= */
 
+/* ============ 评估服务地址探测 ============
+ * 为什么不写死地址：新版微信开发者工具 `wx.getDeviceInfo().platform` 返回 'windows'/'mac'
+ * （不再是 'devtools'），靠它判断环境会把开发者工具误当真机，于是用了写死的局域网 IP → 连不上。
+ * 现在按 config.CORAL_API_CANDIDATES 顺序探测 /health，第一个通的即为服务地址，
+ * 并缓存到 storage（换网络后自动重新探测；也可手动覆盖 coral_api_base）。
+ */
+let API_BASE = ''
+let API_PROBE = null
+
+function probeHealth(base, timeout) {
+  return new Promise((resolve) => {
+    wx.request({
+      url: base + '/health',
+      method: 'GET',
+      timeout: timeout || 2500,
+      success(res) {
+        let ok = false
+        try {
+          const d = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+          ok = !!(d && d.status === 'ok')
+        } catch (e) {}
+        resolve(ok ? base : '')
+      },
+      fail() { resolve('') },
+    })
+  })
+}
+
+api.resolveApiBase = function () {
+  if (API_BASE) return Promise.resolve(API_BASE)
+  if (API_PROBE) return API_PROBE
+  const cands = (config.CORAL_API_CANDIDATES && config.CORAL_API_CANDIDATES.slice()) ||
+                [config.CORAL_API]
+  API_PROBE = new Promise((resolve) => {
+    let i = 0
+    const next = () => {
+      if (i >= cands.length) { resolve(''); return }
+      const base = cands[i++]
+      probeHealth(base).then((good) => {
+        if (good) {
+          API_BASE = good
+          try { wx.setStorageSync('coral_api_base', good) } catch (e) {}
+          console.log('[coral] 评估服务: ' + good)
+          resolve(good)
+        } else {
+          next()
+        }
+      })
+    }
+    next()
+  }).then((r) => { API_PROBE = null; return r })
+  return API_PROBE
+}
+
 /**
- * 真实评估服务调用（Python FastAPI: coral_ml/scripts/serve_fusion.py）
+ * 真实评估服务调用（Python FastAPI: ai-service/scripts/serve_fusion.py）
  * POST /analyze 一次返回：
  *   cover       活珊瑚/白化/死亡/藻类/沙砾 百分比 + 珊瑚总覆盖
  *   topClasses  主要底栖类别明细
@@ -377,39 +431,52 @@ function realAnalyze(filePath, site, year) {
     fd.lon = String(site.lon)
     if (year != null) fd.year = String(year)
   }
-  return new Promise((resolve, reject) => {
-    // ⚠️ 记录上传任务：`wx.uploadFile` 的 timeout 在部分基础库/开发者工具版本**不生效**，
-    //    当请求被域名校验拦下或网络黑洞时，success/fail 都不会回调，
-    //    页面就会永远停在「正在分析珊瑚影像…」。故由外层硬超时兜底并 abort。
-    pendingUploadTask = wx.uploadFile({
-      url: config.CORAL_API + '/analyze',
-      filePath,
-      name: 'file',
-      formData: fd,
-      timeout: config.AI_TIMEOUT || 30000,
-      header: {},
-      success(res) {
-        pendingUploadTask = null
-        if (res.statusCode !== 200) {
-          let detail = ''
-          try { detail = JSON.parse(res.data).detail || '' } catch (e) {}
-          reject(new Error(detail || ('识别服务异常(' + res.statusCode + ')')))
-          return
+  const cands = (config.CORAL_API_CANDIDATES || [config.CORAL_API])
+  return api.resolveApiBase().then((base) => {
+    if (!base) {
+      throw new Error('无法连接评估服务：已尝试 ' + cands.join('、')
+        + '，均无响应。/health 都不通说明服务没启动，或地址不对。'
+        + '请先启动：cd ai-service/scripts && python serve_fusion.py --host 0.0.0.0 --port 8000')
+    }
+    return new Promise((resolve, reject) => {
+      // ⚠️ 记录上传任务：`wx.uploadFile` 的 timeout 在部分基础库/开发者工具版本**不生效**，
+      //    当请求被域名校验拦下或网络黑洞时，success/fail 都不会回调，
+      //    页面就会永远停在「正在分析珊瑚影像…」。故由外层硬超时兜底并 abort。
+      pendingUploadTask = wx.uploadFile({
+        url: base + '/analyze',
+        filePath,
+        name: 'file',
+        formData: fd,
+        timeout: config.AI_TIMEOUT || 30000,
+        header: {},
+        success(res) {
+          pendingUploadTask = null
+          if (res.statusCode !== 200) {
+            let detail = ''
+            try { detail = JSON.parse(res.data).detail || '' } catch (e) {}
+            reject(new Error(detail || ('识别服务异常(' + res.statusCode + ')')))
+            return
+          }
+          try {
+            const body = JSON.parse(res.data)
+            if (body && body.success) resolve(body)
+            else reject(new Error((body && body.detail) || '识别失败'))
+          } catch (e) {
+            reject(new Error('识别结果解析失败'))
+          }
+        },
+        fail(err) {
+          pendingUploadTask = null
+          const msg = (err && err.errMsg) || ''
+          // 连接失败说明缓存的地址可能已失效（换了网络）→ 清掉，下次重新探测
+          API_BASE = ''
+          try { wx.removeStorageSync('coral_api_base') } catch (e) {}
+          reject(new Error('无法连接评估服务（' + base + '，' + msg + '）。'
+            + '已尝试：' + cands.join('、')
+            + '。请确认服务已启动：cd ai-service/scripts && python serve_fusion.py --host 0.0.0.0 --port 8000'
+            + '；开发者工具需勾选「不校验合法域名」'))
         }
-        try {
-          const body = JSON.parse(res.data)
-          if (body && body.success) resolve(body)
-          else reject(new Error((body && body.detail) || '识别失败'))
-        } catch (e) {
-          reject(new Error('识别结果解析失败'))
-        }
-      },
-      fail(err) {
-        pendingUploadTask = null
-        const msg = (err && err.errMsg) || ''
-        reject(new Error('无法连接评估服务（' + config.CORAL_API + '，' + msg + '）。'
-          + '请确认已启动 serve_fusion.py；开发者工具需勾选「不校验合法域名」'))
-      }
+      })
     })
   })
 }
@@ -515,10 +582,11 @@ api.recognize = function (filePath, site, year) {
           try { pendingUploadTask.abort() } catch (e) {}
           pendingUploadTask = null
         }
-        reject(new Error('识别请求超时未返回（' + config.CORAL_API + '）。排查顺序：'
-          + '①服务是否在跑（浏览器打开 /health）；'
+        reject(new Error('识别请求超时未返回（' + (API_BASE || config.CORAL_API) + '）。排查顺序：'
+          + '①服务是否在跑（浏览器打开 http://127.0.0.1:8000/health）；'
           + '②开发者工具「详情→本地设置」勾选「不校验合法域名」；'
-          + '③真机调试请把 CORAL_API 改为电脑局域网 IP（如 http://10.0.250.15:8000）'))
+          + '③真机调试：手机与电脑连同一 Wi-Fi，地址候选见 utils/config.js 的 CANDIDATES'
+          + '（也可用 wx.setStorageSync("coral_api_base", "http://电脑IP:8000") 手动指定）'))
       }, config.AI_HARD_TIMEOUT || 45000)
     })
     return Promise.race([realAnalyze(filePath, site, year), hard]).catch((e) => {

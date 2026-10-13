@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>api resolve probe</title></head>
+<body><main id="page-host"></main><nav id="mp-tabbar"></nav><pre id="out">…</pre>
+<script src="/mp.js"></script>
+<script>
+  const log=[];const say=s=>{log.push(typeof s==='string'?s:JSON.stringify(s));document.getElementById('out').textContent=log.join('\n');};
+  setTimeout(function(){
+    try{
+      const R=window.MP_RUNTIME;
+      say('origin = '+location.origin);
+      const cfg=R.require('/mp/utils/config.js');
+      say('候选表 = '+JSON.stringify(cfg.CORAL_API_CANDIDATES));
+      say('CORAL_API(兼容) = '+cfg.CORAL_API);
+      const api=R.require('/mp/utils/api.js');
+      say('resolveApiBase 存在: '+(typeof api.resolveApiBase==='function'));
+      api.resolveApiBase().then(function(base){
+        say('探测结果 = '+(base||'(全部失败)'));
+        say(base===location.origin ? '✅ 选中同源地址（网页版正确）' : (base ? '⚠️ 选中 '+base : '❌ 未解析到服务'));
+        say('DONE');
+      });
+    }catch(e){say('ERROR: '+e.message);}
+  },900);
+</script></body></html>

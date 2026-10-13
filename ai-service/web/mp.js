@@ -205,8 +205,11 @@
           fd.append(o.name || 'file', b, 'upload.jpg');
           return fetch(o.url, { method: 'POST', body: fd });
         }).then(async (r) => {
-          const data = await r.json().catch(() => ({}));
-          o.success && o.success({ statusCode: r.status, data });
+          // ⚠️ 微信的 wx.uploadFile 里 res.data 是**字符串**（不是对象）：
+          //    小程序侧普遍写 JSON.parse(res.data)。这里必须同样返回文本，
+          //    否则 JSON.parse(对象) 会抛 SyntaxError → 页面降级成"演示数据"（踩过）。
+          const text = await r.text();
+          o.success && o.success({ statusCode: r.status, data: text });
         }).catch((e) => o.fail && o.fail({ errMsg: String(e) }))
           .finally(() => o.complete && o.complete({}));
       }
