@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>shot driver</title>
+<style>html,body{margin:0;padding:0;background:#fff}iframe{position:fixed;inset:0;width:100%;height:100%;border:0}</style>
+</head><body>
+<iframe id="fr" src="/"></iframe>
+<script>
+  // 截图驱动：把 App 放进全屏 iframe，切到指定页；ai 页会自动注入示例图并跑真实识别，
+  // 然后滚动到结果区 —— 这样 README 里能放"带真实结果"的截图。
+  const q = new URLSearchParams(location.search);
+  const page = q.get('page') || 'index';
+  const scrollTo = q.get('scroll') || '';
+  const fr = document.getElementById('fr');
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  setTimeout(async function () {
+    try {
+      const w = fr.contentWindow;
+      w.location.hash = '#/' + page;
+      await wait(2600);
+      if (page === 'ai' && q.get('run') === '1') {
+        const R = w.MP_RUNTIME;
+        const inst = R.state.stack[R.state.stack.length - 1].inst;
+        const blob = await fetch('/sample?index=' + (q.get('idx') || '4') + '&set=semporna').then((r) => r.blob());
+        inst.setData({ imgPath: URL.createObjectURL(blob), state: 'preview' });
+        await wait(400);
+        if (inst.startAnalysis) inst.startAnalysis();
+        await wait(9000);                      // 等识别完成并渲染
+        const res = w.document.getElementById('results');
+        if (res) res.scrollIntoView();
+        await wait(600);
+      } else if (scrollTo) {
+        const el = w.document.querySelector(scrollTo);
+        if (el) el.scrollIntoView();
+        await wait(600);
+      }
+      document.title = 'READY';
+    } catch (e) {
+      document.title = 'ERR ' + e.message;
+    }
+  }, 1200);
+</script></body></html>

@@ -5,10 +5,17 @@
 > **微信小程序 + 网页版 + 算法服务，一个仓库跑通。**
 
 <p align="center">
-  <img src="docs/images/demo_index.png" width="240" alt="首页">
-  <img src="docs/images/demo_ai.png" width="240" alt="AI 识别">
-  <img src="docs/images/demo_knowledge.png" width="240" alt="科普">
+  <img src="docs/images/demo_index.png" width="150" alt="首页">
+  <img src="docs/images/demo_ai_setup.png" width="150" alt="AI 识别 · 上传照片与选择点位/年份">
+  <img src="docs/images/demo_ai.png" width="185" alt="AI 识别结果：覆盖率 67.8% / 白化 41% / 双模型共识提示">
+  <img src="docs/images/demo_knowledge.png" width="150" alt="科普">
+  <img src="docs/images/demo_species.png" width="150" alt="全部珊瑚种类">
 </p>
+
+<p align="center"><sub>
+从左到右：首页 · AI 识别（上传与点位/年份）· <b>AI 识别真实结果</b>（覆盖率 67.8%、白化 41%、<b>双模型共识提示「建议人工复核」</b>）· 科普 · 全部珊瑚种类<br>
+（均为网页版真实运行截图；微信小程序是同一套页面代码，共 22 页）
+</sub></p>
 
 ---
 
