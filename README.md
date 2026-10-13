@@ -78,7 +78,10 @@ python serve_fusion.py --host 0.0.0.0 --port 8000
 
 **Windows 一键版**：双击根目录的 `启动演示.bat`（自动检查权重 → 启动服务 → 打开浏览器）。
 
-**演示前自检**：`python ai-service/tools/selfcheck.py`
+**演示前自检**：`python ai-service/tools/selfcheck.py`（24 项：环境/权重/数据/网页资源/服务状态）
+
+> ✅ **已做过开箱验证**：全新克隆 → `download_weights.py` **2 分钟**取回 470 MB → 自检 **24/24** →
+> 仓库自带 e2e 回归 **24/24** → 网页版 22 页渲染无错误。全过程与证据见 [`开箱验证记录.md`](开箱验证记录.md)。
 
 ---
 
