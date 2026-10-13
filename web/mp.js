@@ -568,8 +568,34 @@
     }
     ensurePageStyle(inst.__name);
     bindEvents(host, inst);
+    fixImages(host);
     updateTabBar(inst.__name);
     emit('painted', inst);
+  }
+
+  /* 图片兜底：mock 数据里的配图放在外部 CDN（s.coze.cn / images.unsplash.com），
+     断网或没有代理时会裂成"破图"图标。这里统一替换成占位块，保证离线也好看。
+     （若已用 tools/localize_images.py 把图片下载到本地，则不会触发） */
+  function fixImages(host) {
+    host.querySelectorAll('img').forEach((im) => {
+      if (im.dataset.fallbackBound) return;
+      im.dataset.fallbackBound = '1';
+      im.addEventListener('error', () => {
+        if (im.dataset.replaced) return;
+        im.dataset.replaced = '1';
+        const ph = document.createElement('div');
+        ph.className = 'mp-img-ph';
+        ph.textContent = '🪸';
+        ph.style.cssText = 'display:flex;align-items:center;justify-content:center;' +
+          'background:linear-gradient(135deg,#e3f2fd,#b2dfdb);color:#00796b;font-size:20px;' +
+          'width:' + (im.clientWidth || im.getAttribute('width') || 100) + 'px;' +
+          'height:' + (im.clientHeight || im.getAttribute('height') || 80) + 'px;' +
+          'border-radius:8px;';
+        im.replaceWith(ph);
+      });
+      // 已经加载失败的（error 在绑定前就触发过）也补上
+      if (im.complete && im.naturalWidth === 0) im.dispatchEvent(new Event('error'));
+    });
   }
   const loadedStyle = Object.create(null);
   function ensurePageStyle(name) {

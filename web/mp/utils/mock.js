@@ -6,15 +6,15 @@
  */
 
 const IMG = {
-  coral1: 'https://s.coze.cn/image/fAxnZEmbNRA/',
-  coral2: 'https://s.coze.cn/image/hYssppc_-Qg/',
-  coral3: 'https://s.coze.cn/image/DuIWc5CXDwg/',
-  tech1: 'https://s.coze.cn/image/nQxFroDmA3o/',
-  tech2: 'https://s.coze.cn/image/qnp7mQdS-TI/',
-  tech3: 'https://s.coze.cn/image/Ozu5AlLQeaM/',
-  tech4: 'https://s.coze.cn/image/sk2faUzel3o/',
-  tech5: 'https://s.coze.cn/image/Iv_WEll27NE/',
-  camp: 'https://s.coze.cn/image/tuqN1lUToF8/'
+  coral1: '/mp/assets/img/bc257d2c5066896c.jpg',
+  coral2: '/mp/assets/img/a48810b79a3a3e61.jpg',
+  coral3: '/mp/assets/img/748dfe78516b3365.jpg',
+  tech1: '/mp/assets/img/016a5d6a6d21175c.jpg',
+  tech2: '/mp/assets/img/54d44d276e09fe7e.jpg',
+  tech3: '/mp/assets/img/4fe413d0e11d5f12.jpg',
+  tech4: '/mp/assets/img/e044b577c27bc08e.jpg',
+  tech5: '/mp/assets/img/79c24e8335d5c9c6.jpg',
+  camp: '/mp/assets/img/81dccd1c1e4ad40c.jpg'
 }
 
 /* ================= 首页 ================= */
@@ -54,11 +54,11 @@ const homeData = {
   ],
   teamIntro: '蓝珊科技汇聚了海洋生物、生态修复、AI技术等多领域专家，扎根南海十余年，致力于珊瑚礁生态保护与修复。',
   team: [
-    { name: '张教授', role: '首席科学家', desc: '珊瑚遗传育种方向，30年海洋生物研究经验', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face' },
-    { name: '李博士', role: 'AI技术总监', desc: '计算机视觉专家，主导AI水下监测系统开发', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=face' },
-    { name: '王工程师', role: '生态修复主管', desc: '负责南海珊瑚礁修复基地的运维与管理', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face' },
-    { name: '陈老师', role: '科普教育总监', desc: '策划执行368场科普讲座，受益25682人', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face' },
-    { name: '刘经理', role: '项目经理', desc: '统筹夏令营及珊瑚认养项目运营', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face' }
+    { name: '张教授', role: '首席科学家', desc: '珊瑚遗传育种方向，30年海洋生物研究经验', avatar: '/mp/assets/img/ba28e4d23e1b8e7f.jpg' },
+    { name: '李博士', role: 'AI技术总监', desc: '计算机视觉专家，主导AI水下监测系统开发', avatar: '/mp/assets/img/81250769831a511e.jpg' },
+    { name: '王工程师', role: '生态修复主管', desc: '负责南海珊瑚礁修复基地的运维与管理', avatar: '/mp/assets/img/6db587e1e482132b.jpg' },
+    { name: '陈老师', role: '科普教育总监', desc: '策划执行368场科普讲座，受益25682人', avatar: '/mp/assets/img/362b1244b42c1a7d.jpg' },
+    { name: '刘经理', role: '项目经理', desc: '统筹夏令营及珊瑚认养项目运营', avatar: '/mp/assets/img/f61b0c45bdae3477.jpg' }
   ],
   teamDetail: [
     { name: '张教授', role: '首席科学家', desc: '珊瑚遗传育种方向，30年海洋生物研究经验。主持国家自然科学基金重点项目5项，发表SCI论文60余篇，培育出珊瑚2号等4个高抗逆品系。' },
