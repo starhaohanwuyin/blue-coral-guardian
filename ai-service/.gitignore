@@ -28,7 +28,6 @@ data/yolo_coral/
 data/yolo_manual/
 data/degraded/
 data/semporna_photos/*.jpg
-!data/semporna_photos/178481688_38453.jpg
 !data/semporna_photos/19134925_14088.jpg
 !data/semporna_photos/196182754_17697.jpg
 !data/semporna_photos/256659186_30150.jpg
