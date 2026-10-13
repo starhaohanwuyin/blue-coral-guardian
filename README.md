@@ -61,8 +61,11 @@ cd blue-coral-guardian/ai-service
 # ① 安装依赖
 pip install -r requirements.txt
 
-# ② 下载模型权重（约 470 MB，来自本仓库 Release）
+# ② 准备模型权重（约 470 MB）——二选一：
+#    a) 从本仓库 Release 下载（推荐，需联网）
 python tools/download_weights.py
+#    b) 离线：从交付包/已有的 weights 目录拷贝
+# python tools/download_weights.py --from-dir D:\path\to\delivery\weights
 
 # ③ 启动服务（首次加载 4 个模型，等 40–90 秒）
 cd scripts

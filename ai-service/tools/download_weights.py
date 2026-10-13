@@ -5,12 +5,15 @@
 
 用法：
     cd ai-service
-    python tools/download_weights.py            # 下载缺失的权重
+    python tools/download_weights.py            # 从 GitHub Release 下载缺失的权重
     python tools/download_weights.py --check    # 只检查，不下载
     python tools/download_weights.py --force    # 重新下载
+    python tools/download_weights.py --from-dir D:\\path\\to\\去交付包\\weights
+                                                # 离线：直接从交付包/已有 weights 目录拷贝
 """
 import argparse
 import pathlib
+import shutil
 import sys
 import urllib.request
 import zipfile
@@ -42,11 +45,37 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--from-dir", default="", help="离线：从已有的 weights 目录（如交付包）拷贝")
     a = ap.parse_args()
 
     print("=" * 68)
-    print("  蓝珊·珊瑚卫士 —— 模型权重下载")
+    print("  蓝珊·珊瑚卫士 —— 模型权重准备")
     print("=" * 68)
+
+    # 离线模式：直接从本地 weights 目录拷贝（网络慢/无网时用）
+    if a.from_dir:
+        src = pathlib.Path(a.from_dir)
+        if not src.exists():
+            print(f"  ❌ 目录不存在：{src}")
+            return 1
+        print(f"  离线拷贝源：{src}\n")
+        for rel_src, rel_dst in [("segformer_coralscapes", "weights/segformer_coralscapes"),
+                                 ("species_ip", "weights/species_ip"),
+                                 ("bleaching_all", "weights/bleaching_all"),
+                                 ("bleaching_all_multidomain2", "weights/bleaching_all_multidomain2"),
+                                 ("yolo_coral", "weights/yolo_coral")]:
+            s, d = src / rel_src, ROOT / rel_dst
+            if not s.exists():
+                print(f"  ⚠️  源缺 {rel_src}")
+                continue
+            d.parent.mkdir(parents=True, exist_ok=True)
+            if d.exists():
+                shutil.rmtree(d)
+            shutil.copytree(s, d)
+            print(f"  ✅ {rel_dst}")
+        print("\n完成（离线拷贝）。运行 tools/selfcheck.py 复核。")
+        return 0
+
     missing = []
     for name, rel, kind in ASSETS:
         s = size_of(rel)
