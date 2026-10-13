@@ -17,10 +17,10 @@ import subprocess
 import time
 from pathlib import Path
 
-# ⚠️ 不硬编码主机绝对路径：按仓库结构推导（coral_ml 的同级目录 blue_coral），
+# ⚠️ 不硬编码主机绝对路径：按仓库结构推导（ai-service 的同级目录 miniprogram），
 #    可用环境变量 CORAL_MINIPROGRAM_DIR 覆盖。
 ROOT = Path(__file__).resolve().parent.parent
-BC = Path(os.environ.get("CORAL_MINIPROGRAM_DIR", str(ROOT.parent / "blue_coral")))
+BC = Path(os.environ.get("CORAL_MINIPROGRAM_DIR", str(ROOT.parent / "miniprogram")))
 CLI = os.environ.get("WECHAT_IDE_CLI",
                      r"C:\Program Files (x86)\Tencent\微信web开发者工具\wechatide.cmd")
 # ⚠️ token 不硬编码（避免凭证进仓库）：在开发者工具「设置 → 安全设置 → 服务端口」

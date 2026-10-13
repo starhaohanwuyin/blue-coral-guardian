@@ -1,29 +1,59 @@
-# ---- 模型权重（体积大：每个 106MB，超过 GitHub 单文件 100MB 限制，用交付包/网盘分发）----
+# ============================================================
+#  蓝珊·珊瑚卫士 —— Git 忽略规则
+#  原则：**代码 + 演示必需的小数据入库；权重与大数据不入库**
+# ============================================================
+
+# ---- 模型权重（单文件 106MB，超过 GitHub 100MB 限制；用 Release 附件分发）----
 weights/
 *.pt
 *.pth
-ai-service/weights/
-
-# ---- 大数据（NOAA 原始日数据 2.8GB、训练数据、下载缓存；只保留演示必需的 2 个 JSON）----
-ai-service/data/*
-!ai-service/data/noaa/
-ai-service/data/noaa/*
-!ai-service/data/noaa/climate_index.json
-!ai-service/data/noaa/site_profiles.json
-!ai-service/data/semporna_demo/
-data/raw/
-data/cache/
-*.csv
-
-# ---- 训练/评测产物 ----
-ai-service/runs/
-ai-service/delivery/
-delivery/
-delivery.zip
 *_backup.pt
 *_archive.pt
 
-# ---- 临时与系统 ----
+# ---- 交付包与训练产物 ----
+delivery/
+delivery.zip
+ai-service/runs/
+
+# ---- 大数据：NOAA 原始日数据（2.8GB，只保留演示所需的 2 个 JSON）----
+ai-service/data/noaa/*
+!ai-service/data/noaa/climate_index.json
+!ai-service/data/noaa/site_profiles.json
+
+# ---- 大数据：训练/评测集（只保留 e2e 与演示用的小样本）----
+ai-service/data/raw/
+ai-service/data/cache/
+ai-service/data/inat/
+ai-service/data/inat_dataset/
+ai-service/data/yolo_coral/
+ai-service/data/yolo_manual/
+ai-service/data/degraded/
+ai-service/data/semporna_photos/*.jpg
+!ai-service/data/semporna_photos/178481688_38453.jpg
+!ai-service/data/semporna_photos/19134925_14088.jpg
+!ai-service/data/semporna_photos/196182754_17697.jpg
+!ai-service/data/semporna_photos/256659186_30150.jpg
+!ai-service/data/semporna_photos/256864542_89167.jpg
+!ai-service/data/semporna_photos/258166706_53189.jpg
+!ai-service/data/semporna_photos/361935269_31960.jpg
+!ai-service/data/semporna_photos/41772405_45825.jpg
+!ai-service/data/semporna_photos/51691866_60253.jpg
+!ai-service/data/semporna_photos/70531002_51492.jpg
+!ai-service/data/semporna_photos/85056672_91402.jpg
+!ai-service/data/semporna_photos/89269550_48843.jpg
+
+# processed 下只保留白化检测演示样本（e2e 依赖 /sample?set=bleached）
+ai-service/data/processed/*
+!ai-service/data/processed/bleaching_ip/
+ai-service/data/processed/bleaching_ip/*
+!ai-service/data/processed/bleaching_ip/test_ip/
+ai-service/data/processed/bleaching_ip/test_ip/*
+!ai-service/data/processed/bleaching_ip/test_ip/bleached/
+!ai-service/data/processed/bleaching_ip/test_ip/healthy/
+
+# ---- 通用 ----
+data/raw/
+*.csv
 __pycache__/
 *.pyc
 *.pyo

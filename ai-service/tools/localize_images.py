@@ -4,11 +4,11 @@
 用法（在有网或挂代理的机器上跑一次即可）：
     python tools/localize_images.py            # 下载 + 改写网页副本
     python tools/localize_images.py --dry-run  # 只看会下载哪些
-    python tools/localize_images.py --also-mini # 连小程序源码(blue_coral)一起改写
+    python tools/localize_images.py --also-mini # 连小程序源码(miniprogram)一起改写
 
 说明：
   · 图片存到 coral_ml/web/mp/assets/img/<hash>.<ext>，URL 改成 /mp/assets/img/xxx
-  · 只改写 coral_ml/web/mp/ 下的副本；--also-mini 才会动 blue_coral 源码
+  · 只改写 ai-service/web/mp/ 下的副本；--also-mini 才会动 miniprogram 源码
   · 失败会如实列出（不会静默跳过），可重跑（已下载的跳过）
 """
 import argparse
@@ -21,7 +21,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 MP = WEB / "mp"
-BC = ROOT.parent / "blue_coral"
+BC = ROOT.parent / "miniprogram"
 ASSETS = MP / "assets" / "img"
 
 URL_RE = re.compile(r"https?://[^\s\"'`)]+")

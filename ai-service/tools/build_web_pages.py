@@ -17,7 +17,7 @@ import re
 
 import ast as _ast  # noqa: F401  (仅为提示：本文件不依赖 ast)
 sys_path = pathlib.Path(__file__).resolve()
-BC = sys_path.parent.parent.parent / "blue_coral"        # blue_coral 仓库
+BC = sys_path.parent.parent.parent / "miniprogram"       # 小程序源码（合并后的目录名）
 OUT = sys_path.parent.parent / "web" / "mp"              # coral_ml/web/mp
 
 TAG_MAP = {
