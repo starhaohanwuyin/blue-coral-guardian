@@ -342,11 +342,24 @@
     const html = TAGMAP[tag] || tag;
     const attrs = [];
     const a = node.a || {};
+    // scroll-view / swiper 没有对应的 HTML 标签，转成 div 时必须补上滚动能力，
+    // 否则横向内容会把整页撑宽（踩过：首页横向卡片把 480px 页面撑到 859px）
+    let extraCls = '';
+    if (tag === 'scroll-view') {
+      const sx = interp(a['scroll-x'] || '', scope), sy = interp(a['scroll-y'] || '', scope);
+      const horiz = truthy(sx) || sx === 'true';
+      const vert = truthy(sy) || sy === 'true';
+      extraCls = ' mp-scroll' + (vert && !horiz ? ' mp-scroll-y' : ' mp-scroll-x');
+    } else if (tag === 'swiper') {
+      extraCls = ' mp-swiper';
+    } else if (tag === 'swiper-item') {
+      extraCls = ' mp-swiper-item';
+    }
     for (const k of Object.keys(a)) {
       if (k.startsWith('wx:') || k === 'mode') continue;
       const v = interp(a[k], scope);
       if (EVT_ATTRS[k]) { attrs.push(`data-evt="${EVT_ATTRS[k]}:${v}"`); continue; }
-      if (k === 'class') { attrs.push(`class="${esc(v)}"`); continue; }
+      if (k === 'class') { attrs.push(`class="${esc(v)}${extraCls}"`); extraCls = ''; continue; }
       if (k === 'style') { attrs.push(`style="${esc(v)}"`); continue; }
       if (k === 'hidden') { if (truthy(v)) attrs.push('style="display:none"'); continue; }
       if (k === 'disabled') { if (truthy(v)) attrs.push('disabled'); continue; }
@@ -366,6 +379,7 @@
       attrs.push(`data-${k}="${esc(v)}"`);
     }
     const voidTag = tag === 'image' || tag === 'input' || tag === 'br';
+    if (extraCls) attrs.push(`class="${extraCls.trim()}"`);   // 没有 class 属性的 scroll-view/swiper
     if (voidTag) { out.push(`<${html} ${attrs.join(' ')}>`); return; }
     out.push(`<${html} ${attrs.join(' ')}>`);
     renderChildren(node, scope, inst, out);
@@ -712,7 +726,8 @@
         await go('/pages/' + h.name + '/' + h.name, h.q, TABS().includes(h.name) ? 'tab' : 'replace');
       }
     });
-    document.getElementById('mp-boot').style.display = 'none';
+    const bootEl = document.getElementById('mp-boot');
+    if (bootEl) bootEl.style.display = 'none';
   }
 
   window.MP_RUNTIME = { router, wx, boot, state, getApp, require, SRC, CACHE, pages };
