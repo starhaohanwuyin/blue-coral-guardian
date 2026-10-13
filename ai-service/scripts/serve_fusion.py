@@ -103,7 +103,58 @@ SEG_LOADED_DIR = None          # 实际加载的分割权重目录（供 /health
 BLEACH_LOADED = None
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 app = FastAPI(title="蓝珊 · 珊瑚礁智能评估服务", version="2.0")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# ---------------------------------------------------------------- 安全防护
+# 这个服务会跑 4 个模型（吃 GPU），**一旦暴露到公网就等于把算力借给别人**。
+# 本地/局域网演示无需任何配置；公开部署请至少设置 CORAL_API_TOKEN。
+#   ① CORS：默认只放行本机与局域网来源（公网来源需显式用 CORAL_CORS_ORIGINS 指定）
+#   ② Token：设置 CORAL_API_TOKEN 后，重接口需要 X-API-Token 或 ?token=
+#   ③ 限流：每 IP 每分钟最多 CORAL_RATE_LIMIT 次重接口（默认 120）
+_CORS_ENV = os.environ.get("CORAL_CORS_ORIGINS", "").strip()
+if _CORS_ENV:
+    _ALLOW_ORIGINS = [o.strip() for o in _CORS_ENV.split(",") if o.strip()]
+else:
+    _ALLOW_ORIGINS = []
+_PRIVATE_ORIGIN_RE = (r"https?://(?:localhost|127\.0\.0\.1|\[::1\]|"
+                      r"10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|"
+                      r"172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})(?::\d+)?")
+app.add_middleware(CORSMiddleware,
+                   allow_origins=_ALLOW_ORIGINS,
+                   allow_origin_regex=(None if _ALLOW_ORIGINS else _PRIVATE_ORIGIN_RE),
+                   allow_methods=["*"], allow_headers=["*"])
+
+# 重接口（会真正跑模型）：建议公开部署时加 Token
+HEAVY_PATHS = {"/analyze", "/analyze_base64", "/count", "/priority"}
+API_TOKEN = os.environ.get("CORAL_API_TOKEN", "").strip()
+RATE_LIMIT = int(os.environ.get("CORAL_RATE_LIMIT", "120"))   # 每 IP 每分钟
+_rate_hits = {}          # ip -> [时间戳]
+
+
+@app.middleware("http")
+async def _access_guard(request, call_next):
+    """访问防护：Token 校验 + 每 IP 限流（只作用于重接口）。"""
+    path = request.url.path
+    if path in HEAVY_PATHS:
+        if API_TOKEN:
+            tok = request.headers.get("x-api-token") or request.query_params.get("token")
+            if tok != API_TOKEN:
+                return JSONResponse(
+                    {"success": False, "detail": "需要 API Token：请求头 X-API-Token 或参数 ?token="},
+                    status_code=401)
+        if RATE_LIMIT > 0:
+            ip = (request.client.host if request.client else "?") or "?"
+            now = time.time()
+            hist = [t for t in _rate_hits.get(ip, []) if now - t < 60]
+            if len(hist) >= RATE_LIMIT:
+                return JSONResponse(
+                    {"success": False, "detail": f"请求过于频繁（每 IP 每分钟上限 {RATE_LIMIT} 次）"},
+                    status_code=429)
+            hist.append(now)
+            _rate_hits[ip] = hist
+            if len(_rate_hits) > 2000:            # 简单清理，避免无限增长
+                for k in [k for k, v in _rate_hits.items() if not v or now - v[-1] > 300]:
+                    _rate_hits.pop(k, None)
+    return await call_next(request)
 
 
 def load_models(prefer_degradinv=False):
