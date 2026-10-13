@@ -664,6 +664,22 @@ def priority(payload: dict):
     return JSONResponse(r)
 
 
+# ---------------------------------------------------------------- 网页版（H5）
+# 把 web/ 目录挂到根路径：同一个进程、同一个端口，手机与电脑浏览器打开
+#   http://<本机IP>:8000/  即可用完整服务（识别 + 环境 + 研判 + 中英报告）。
+# ⚠️ 必须放在**所有 API 路由之后**：Starlette 按注册顺序匹配，前面的 /analyze 等
+#    接口会优先命中，只有其它路径才落到静态文件。
+WEB_DIR = ROOT / "web"
+if WEB_DIR.exists():
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=str(WEB_DIR), html=True), name="web")
+    print(f"[网页版] 已挂载 {WEB_DIR}")
+    print("         本机访问: http://127.0.0.1:8000/")
+    print("         手机访问: http://<电脑局域网IP>:8000/  （需同一 Wi-Fi；摄像头需 HTTPS）")
+else:
+    print(f"[网页版] 未找到 {WEB_DIR}（只有 API，无网页界面）")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--host", default="0.0.0.0")
