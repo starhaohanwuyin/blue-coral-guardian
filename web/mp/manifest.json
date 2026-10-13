@@ -1,0 +1,157 @@
+{
+  "pages": [
+    {
+      "route": "pages/index/index",
+      "name": "index",
+      "title": ""
+    },
+    {
+      "route": "pages/adopt/adopt",
+      "name": "adopt",
+      "title": ""
+    },
+    {
+      "route": "pages/knowledge/knowledge",
+      "name": "knowledge",
+      "title": ""
+    },
+    {
+      "route": "pages/ai/ai",
+      "name": "ai",
+      "title": ""
+    },
+    {
+      "route": "pages/profile/profile",
+      "name": "profile",
+      "title": ""
+    },
+    {
+      "route": "pages/login/login",
+      "name": "login",
+      "title": "登录"
+    },
+    {
+      "route": "pages/knowledge-detail/knowledge-detail",
+      "name": "knowledge-detail",
+      "title": "科普详情"
+    },
+    {
+      "route": "pages/all-species/all-species",
+      "name": "all-species",
+      "title": "全部珊瑚种类"
+    },
+    {
+      "route": "pages/coral-detail/coral-detail",
+      "name": "coral-detail",
+      "title": "珊瑚详情"
+    },
+    {
+      "route": "pages/camera/camera",
+      "name": "camera",
+      "title": "实时海景"
+    },
+    {
+      "route": "pages/article/article",
+      "name": "article",
+      "title": "资讯详情"
+    },
+    {
+      "route": "pages/shop/shop",
+      "name": "shop",
+      "title": "积分商城"
+    },
+    {
+      "route": "pages/quiz/quiz",
+      "name": "quiz",
+      "title": "珊瑚知识问答"
+    },
+    {
+      "route": "pages/donate/donate",
+      "name": "donate",
+      "title": "公益捐赠"
+    },
+    {
+      "route": "pages/cert/cert",
+      "name": "cert",
+      "title": "认养证书"
+    },
+    {
+      "route": "pages/camp/camp",
+      "name": "camp",
+      "title": "珊瑚夏令营"
+    },
+    {
+      "route": "pages/aquarium/aquarium",
+      "name": "aquarium",
+      "title": "珊瑚水族箱"
+    },
+    {
+      "route": "pages/badges/badges",
+      "name": "badges",
+      "title": "我的勋章"
+    },
+    {
+      "route": "pages/growth/growth",
+      "name": "growth",
+      "title": "珊瑚成长档案"
+    },
+    {
+      "route": "pages/my-adopt/my-adopt",
+      "name": "my-adopt",
+      "title": "我的认养"
+    },
+    {
+      "route": "pages/about/about",
+      "name": "about",
+      "title": "关于我们"
+    },
+    {
+      "route": "pages/agreement/agreement",
+      "name": "agreement",
+      "title": "用户协议"
+    }
+  ],
+  "tabBar": {
+    "custom": true,
+    "color": "#9AA5B4",
+    "selectedColor": "#1E88E5",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/adopt/adopt",
+        "text": "认养"
+      },
+      {
+        "pagePath": "pages/knowledge/knowledge",
+        "text": "科普"
+      },
+      {
+        "pagePath": "pages/ai/ai",
+        "text": "AI识别"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarBackgroundColor": "#F5F9FF",
+    "navigationBarTitleText": "蓝珊",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F9FF",
+    "backgroundTextStyle": "light"
+  },
+  "utils": [
+    "api.js",
+    "config.js",
+    "mock.js",
+    "request.js",
+    "util.js"
+  ]
+}

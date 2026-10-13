@@ -1,0 +1,154 @@
+/* ================= 夏令营页 ================= */
+.camp-page {
+  padding: calc(32 * var(--rpx)) calc(32 * var(--rpx)) calc(60 * var(--rpx));
+}
+
+.camp-img {
+  width: 100%;
+  height: calc(320 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  margin-bottom: calc(32 * var(--rpx));
+  display: block;
+  background: var(--border);
+}
+
+/* 统计 */
+.camp-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: calc(20 * var(--rpx));
+  margin-bottom: calc(28 * var(--rpx));
+}
+.camp-stat-card {
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.08), rgba(0, 188, 212, 0.08));
+  border-radius: calc(24 * var(--rpx));
+  padding: calc(28 * var(--rpx)) calc(16 * var(--rpx));
+  text-align: center;
+}
+.camp-stat-card .num {
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  color: var(--primary);
+}
+.camp-stat-card .lbl {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(4 * var(--rpx));
+}
+
+.camp-desc {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: calc(28 * var(--rpx));
+}
+
+/* 城市 */
+.camp-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(16 * var(--rpx));
+  margin-bottom: calc(40 * var(--rpx));
+}
+.camp-city-tag {
+  padding: calc(12 * var(--rpx)) calc(28 * var(--rpx));
+  background: rgba(30, 136, 229, 0.08);
+  color: var(--primary);
+  border-radius: calc(40 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  font-weight: 500;
+}
+
+.camp-section-title {
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  padding: calc(8 * var(--rpx)) 0 calc(20 * var(--rpx));
+}
+
+/* 班型卡片 */
+.camp-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 * var(--rpx));
+}
+.camp-card {
+  background: var(--card);
+  border-radius: calc(28 * var(--rpx));
+  padding: calc(28 * var(--rpx));
+  border-left: calc(6 * var(--rpx)) solid var(--primary);
+  box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
+}
+.camp-card.accent { border-left-color: var(--accent); }
+.camp-card.coral { border-left-color: var(--coral); }
+
+.camp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: calc(12 * var(--rpx));
+}
+.camp-card-name {
+  font-size: calc(28 * var(--rpx));
+  font-weight: 700;
+}
+.camp-card-price {
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+}
+.camp-card-price.primary { color: var(--primary); }
+.camp-card-price.accent { color: var(--accent); }
+.camp-card-price.coral { color: var(--coral); }
+
+.camp-card-target {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  margin-bottom: calc(8 * var(--rpx));
+}
+.camp-card-content {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.6;
+}
+.camp-card-note {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(8 * var(--rpx));
+}
+.camp-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(12 * var(--rpx));
+  margin-top: calc(16 * var(--rpx));
+}
+.camp-card-tag {
+  padding: calc(4 * var(--rpx)) calc(16 * var(--rpx));
+  border-radius: calc(12 * var(--rpx));
+  font-size: calc(20 * var(--rpx));
+}
+.camp-card-tag.primary { background: rgba(30, 136, 229, 0.08); color: var(--primary); }
+.camp-card-tag.accent { background: rgba(0, 188, 212, 0.08); color: var(--accent); }
+.camp-card-tag.coral { background: rgba(255, 112, 67, 0.08); color: var(--coral); }
+
+/* 报名按钮 */
+.camp-apply-btn {
+  margin-top: calc(36 * var(--rpx));
+  width: 100%;
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border-radius: calc(24 * var(--rpx));
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  padding: calc(26 * var(--rpx)) 0;
+  box-shadow: 0 calc(8 * var(--rpx)) calc(40 * var(--rpx)) rgba(30, 136, 229, 0.3);
+}
+.camp-apply-btn::after { border: none; }
+.btn-hover { transform: scale(0.97); opacity: 0.9; }
+.camp-tip {
+  text-align: center;
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(20 * var(--rpx));
+}
+
+.coral-page img{display:block;max-width:100%;}

@@ -1,0 +1,165 @@
+/* ============ 知识问答页 ============ */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(28 * var(--rpx)) calc(40 * var(--rpx)) calc(16 * var(--rpx));
+}
+.quiz-progress-text { font-size: calc(26 * var(--rpx)); color: var(--text2); font-weight: 600; }
+.quiz-score { font-size: calc(26 * var(--rpx)); color: var(--primary); font-weight: 600; }
+
+.quiz-progress-bar {
+  height: calc(10 * var(--rpx));
+  margin: 0 calc(40 * var(--rpx));
+  background: var(--border);
+  border-radius: calc(5 * var(--rpx));
+  overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: calc(5 * var(--rpx));
+  transition: width 0.4s ease;
+}
+
+.quiz-card {
+  margin: calc(24 * var(--rpx)) calc(32 * var(--rpx));
+  padding: calc(36 * var(--rpx));
+}
+.quiz-question {
+  font-size: calc(32 * var(--rpx));
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.quiz-options { margin-top: calc(32 * var(--rpx)); }
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: calc(20 * var(--rpx));
+  padding: calc(26 * var(--rpx)) calc(28 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  border: calc(3 * var(--rpx)) solid var(--border);
+  background: var(--bg);
+  margin-bottom: calc(18 * var(--rpx));
+  transition: all 0.2s;
+}
+.quiz-option-letter {
+  width: calc(52 * var(--rpx));
+  height: calc(52 * var(--rpx));
+  border-radius: 50%;
+  background: #fff;
+  border: calc(3 * var(--rpx)) solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(26 * var(--rpx));
+  font-weight: 700;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+.quiz-option-text {
+  flex: 1;
+  font-size: calc(27 * var(--rpx));
+  color: var(--text);
+  line-height: 1.5;
+}
+.quiz-option.correct {
+  border-color: var(--green);
+  background: rgba(76, 175, 80, 0.08);
+}
+.quiz-option.correct .quiz-option-letter {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.quiz-option.wrong {
+  border-color: var(--coral);
+  background: rgba(255, 112, 67, 0.08);
+}
+.quiz-option.wrong .quiz-option-letter {
+  background: var(--coral);
+  border-color: var(--coral);
+  color: #fff;
+}
+
+.quiz-feedback {
+  margin-top: calc(8 * var(--rpx));
+  padding: calc(20 * var(--rpx)) calc(28 * var(--rpx));
+  border-radius: calc(20 * var(--rpx));
+  font-size: calc(24 * var(--rpx));
+  line-height: 1.6;
+}
+.quiz-feedback.good {
+  background: rgba(76, 175, 80, 0.08);
+  color: var(--green);
+}
+.quiz-feedback.bad {
+  background: rgba(255, 112, 67, 0.08);
+  color: var(--coral);
+}
+
+.quiz-next-btn {
+  margin-top: calc(28 * var(--rpx));
+  padding: calc(24 * var(--rpx));
+  border-radius: calc(28 * var(--rpx));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: calc(30 * var(--rpx));
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 calc(8 * var(--rpx)) calc(40 * var(--rpx)) rgba(30, 136, 229, 0.3);
+}
+
+/* 结果页 */
+.quiz-result {
+  margin: calc(60 * var(--rpx)) calc(32 * var(--rpx));
+  padding: calc(64 * var(--rpx)) calc(40 * var(--rpx));
+  text-align: center;
+}
+.quiz-result-icon {
+  font-size: calc(110 * var(--rpx));
+  animation: floatSoft 3s ease-in-out infinite;
+}
+.quiz-result-title {
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  margin-top: calc(24 * var(--rpx));
+}
+.quiz-result-score {
+  font-size: calc(72 * var(--rpx));
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: calc(16 * var(--rpx));
+}
+.quiz-result-desc {
+  font-size: calc(26 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.7;
+  margin-top: calc(20 * var(--rpx));
+}
+.quiz-result-actions {
+  display: flex;
+  gap: calc(20 * var(--rpx));
+  margin-top: calc(48 * var(--rpx));
+}
+.quiz-again-btn {
+  flex: 1;
+  padding: calc(22 * var(--rpx));
+  border-radius: calc(26 * var(--rpx));
+  border: calc(3 * var(--rpx)) solid var(--primary);
+  color: var(--primary);
+  font-size: calc(28 * var(--rpx));
+  font-weight: 600;
+}
+.quiz-learn-btn {
+  flex: 1;
+  padding: calc(22 * var(--rpx));
+  border-radius: calc(26 * var(--rpx));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: calc(28 * var(--rpx));
+  font-weight: 600;
+}
+
+.coral-page img{display:block;max-width:100%;}

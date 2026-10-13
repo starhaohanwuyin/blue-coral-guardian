@@ -1,0 +1,119 @@
+/* ================= 我的认养页 ================= */
+.ma-page {
+  padding: calc(32 * var(--rpx)) calc(32 * var(--rpx)) calc(60 * var(--rpx));
+}
+
+/* 认养卡 */
+.my-adopt-card {
+  background: var(--card);
+  border-radius: calc(28 * var(--rpx));
+  overflow: hidden;
+  box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
+  margin-bottom: calc(24 * var(--rpx));
+  display: flex;
+  gap: calc(28 * var(--rpx));
+  padding: calc(28 * var(--rpx));
+}
+.my-adopt-img {
+  width: calc(160 * var(--rpx));
+  height: calc(160 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  background: var(--border);
+  flex-shrink: 0;
+}
+.my-adopt-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.ma-name {
+  font-size: calc(28 * var(--rpx));
+  font-weight: 700;
+  margin-bottom: calc(4 * var(--rpx));
+}
+.ma-sub {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-bottom: calc(12 * var(--rpx));
+}
+.ma-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: calc(16 * var(--rpx));
+  margin-bottom: calc(8 * var(--rpx));
+}
+.ma-progress-wrap .progress-bar {
+  flex: 1;
+  height: calc(12 * var(--rpx));
+}
+.ma-progress-pct {
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+  color: var(--primary);
+  min-width: calc(72 * var(--rpx));
+  text-align: right;
+}
+.ma-carbon {
+  font-size: calc(22 * var(--rpx));
+  color: var(--green);
+  margin-bottom: calc(12 * var(--rpx));
+}
+.ma-detail-btn {
+  align-self: flex-start;
+  padding: calc(10 * var(--rpx)) calc(28 * var(--rpx));
+  border: none;
+  border-radius: calc(16 * var(--rpx));
+  background: rgba(30, 136, 229, 0.1);
+  color: var(--primary);
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+.ma-detail-btn::after { border: none; }
+
+/* AI 建议 */
+.ma-advice-card {
+  background: rgba(76, 175, 80, 0.04);
+  border-radius: calc(28 * var(--rpx));
+  padding: calc(28 * var(--rpx));
+  margin-top: calc(8 * var(--rpx));
+}
+.ma-advice-title {
+  font-size: calc(28 * var(--rpx));
+  font-weight: 700;
+  margin-bottom: calc(20 * var(--rpx));
+}
+.ma-advice-body {
+  font-size: calc(24 * var(--rpx));
+  color: var(--text2);
+  line-height: 1.8;
+}
+.ma-advice-item {
+  margin-bottom: calc(12 * var(--rpx));
+}
+.ma-advice-item:last-child {
+  margin-bottom: 0;
+}
+.ma-bold {
+  font-weight: 700;
+  color: var(--text);
+}
+.ma-advice-btn {
+  width: 100%;
+  margin-top: calc(24 * var(--rpx));
+  padding: calc(20 * var(--rpx)) 0;
+  border: calc(3 * var(--rpx)) solid var(--primary);
+  border-radius: calc(20 * var(--rpx));
+  background: transparent;
+  color: var(--primary);
+  font-size: calc(26 * var(--rpx));
+  font-weight: 600;
+  line-height: 1.2;
+}
+.ma-advice-btn::after { border: none; }
+.btn-hover { transform: scale(0.97); opacity: 0.9; }
+
+.coral-page img{display:block;max-width:100%;}

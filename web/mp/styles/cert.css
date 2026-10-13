@@ -1,0 +1,334 @@
+/* ================= 证书页 ================= */
+.cert-page {
+  min-height: 100vh;
+  padding: calc(48 * var(--rpx)) calc(40 * var(--rpx)) calc(60 * var(--rpx));
+  box-sizing: border-box;
+}
+.cert-page.entity {
+  background: linear-gradient(180deg, #101A2E 0%, #0B1120 100%);
+}
+.cert-page.virtual {
+  background: linear-gradient(180deg, #062E33 0%, #04222A 100%);
+}
+
+/* 卡片入场动画（还原 modal 弹出） */
+.cert-card {
+  position: relative;
+  overflow: hidden;
+  animation: certIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  box-shadow: 0 calc(40 * var(--rpx)) calc(120 * var(--rpx)) rgba(0, 0, 0, 0.45);
+}
+@keyframes certIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ================= 实体证书（金色 premium） ================= */
+.cert-card.entity {
+  background: linear-gradient(145deg, #FFFEF5 0%, #FFF9E6 50%, #FFFEF5 100%);
+  border-radius: calc(8 * var(--rpx));
+}
+.cert-outer-border {
+  position: absolute;
+  top: calc(16 * var(--rpx)); left: calc(16 * var(--rpx)); right: calc(16 * var(--rpx)); bottom: calc(16 * var(--rpx));
+  border: calc(4 * var(--rpx)) solid #C8A84E;
+  border-radius: calc(4 * var(--rpx));
+  pointer-events: none;
+}
+.cert-inner-border {
+  position: absolute;
+  top: calc(28 * var(--rpx)); left: calc(28 * var(--rpx)); right: calc(28 * var(--rpx)); bottom: calc(28 * var(--rpx));
+  border: calc(2 * var(--rpx)) solid #D4AF37;
+  pointer-events: none;
+}
+.cert-corner {
+  position: absolute;
+  width: calc(48 * var(--rpx)); height: calc(48 * var(--rpx));
+  border: calc(4 * var(--rpx)) solid #C8A84E;
+  pointer-events: none;
+}
+.cert-corner.tl { top: calc(36 * var(--rpx)); left: calc(36 * var(--rpx)); border-right: none; border-bottom: none; }
+.cert-corner.tr { top: calc(36 * var(--rpx)); right: calc(36 * var(--rpx)); border-left: none; border-bottom: none; }
+.cert-corner.bl { bottom: calc(36 * var(--rpx)); left: calc(36 * var(--rpx)); border-right: none; border-top: none; }
+.cert-corner.br { bottom: calc(36 * var(--rpx)); right: calc(36 * var(--rpx)); border-left: none; border-top: none; }
+
+.cert-content {
+  padding: calc(72 * var(--rpx)) calc(56 * var(--rpx)) calc(64 * var(--rpx));
+  position: relative;
+  z-index: 2;
+}
+.cert-top-label {
+  text-align: center;
+  font-size: calc(20 * var(--rpx));
+  letter-spacing: calc(8 * var(--rpx));
+  color: #C8A84E;
+  text-transform: uppercase;
+  margin-bottom: calc(8 * var(--rpx));
+  font-weight: 600;
+}
+.cert-main-title {
+  text-align: center;
+  font-size: calc(44 * var(--rpx));
+  font-weight: 700;
+  color: #1A2138;
+  margin-bottom: calc(8 * var(--rpx));
+  font-family: Georgia, 'Songti SC', serif;
+}
+.cert-sub-title {
+  text-align: center;
+  font-size: calc(24 * var(--rpx));
+  color: #8B7D3C;
+  letter-spacing: calc(4 * var(--rpx));
+  margin-bottom: calc(40 * var(--rpx));
+}
+.cert-coral-circle {
+  width: calc(160 * var(--rpx));
+  height: calc(160 * var(--rpx));
+  border-radius: 50%;
+  margin: 0 auto calc(32 * var(--rpx));
+  border: calc(6 * var(--rpx)) solid #D4AF37;
+  overflow: hidden;
+  box-shadow: 0 calc(8 * var(--rpx)) calc(24 * var(--rpx)) rgba(200, 168, 78, 0.3);
+  display: block;
+  background: #FFF3D6;
+}
+.cert-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(14 * var(--rpx)) 0;
+  border-bottom: calc(2 * var(--rpx)) solid rgba(200, 168, 78, 0.15);
+}
+.cert-field-row .label {
+  font-size: calc(24 * var(--rpx));
+  color: #8B7D3C;
+  flex-shrink: 0;
+}
+.cert-field-row .value {
+  font-size: calc(26 * var(--rpx));
+  color: #1A2138;
+  font-weight: 600;
+  text-align: right;
+  margin-left: calc(24 * var(--rpx));
+  word-break: break-all;
+}
+.cert-seal {
+  text-align: center;
+  margin-top: calc(40 * var(--rpx));
+}
+.cert-seal-stamp {
+  width: calc(128 * var(--rpx));
+  height: calc(128 * var(--rpx));
+  border-radius: 50%;
+  border: calc(6 * var(--rpx)) solid #C41E3A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto calc(16 * var(--rpx));
+  position: relative;
+}
+.cert-seal-stamp::before {
+  content: '';
+  position: absolute;
+  width: calc(108 * var(--rpx));
+  height: calc(108 * var(--rpx));
+  border-radius: 50%;
+  border: calc(2 * var(--rpx)) solid #C41E3A;
+}
+.cert-seal-text {
+  font-size: calc(20 * var(--rpx));
+  color: #C41E3A;
+  font-weight: 700;
+  letter-spacing: calc(2 * var(--rpx));
+  line-height: 1.5;
+  text-align: center;
+}
+.cert-seal-text .seal-br {
+  display: block;
+}
+.cert-org-name {
+  font-size: calc(24 * var(--rpx));
+  color: #5A6578;
+  margin-top: calc(16 * var(--rpx));
+}
+.cert-date-line {
+  font-size: calc(22 * var(--rpx));
+  color: #8B7D3C;
+  margin-top: calc(8 * var(--rpx));
+}
+
+/* ================= 虚拟证书（青色版式） ================= */
+.cert-card.virtual {
+  background: linear-gradient(145deg, #E0F7FA 0%, #B2EBF2 30%, #80DEEA 60%, #4DD0E1 100%);
+  border-radius: calc(40 * var(--rpx));
+  padding: calc(56 * var(--rpx)) calc(44 * var(--rpx));
+}
+.cert-card.virtual::before {
+  content: '';
+  position: absolute;
+  top: -calc(80 * var(--rpx)); right: -calc(80 * var(--rpx));
+  width: calc(320 * var(--rpx)); height: calc(320 * var(--rpx));
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+.cert-card.virtual::after {
+  content: '';
+  position: absolute;
+  bottom: -calc(100 * var(--rpx)); left: -calc(60 * var(--rpx));
+  width: calc(360 * var(--rpx)); height: calc(360 * var(--rpx));
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+.v-border {
+  position: absolute;
+  top: calc(20 * var(--rpx)); left: calc(20 * var(--rpx)); right: calc(20 * var(--rpx)); bottom: calc(20 * var(--rpx));
+  border: calc(3 * var(--rpx)) solid rgba(255, 255, 255, 0.4);
+  border-radius: calc(28 * var(--rpx));
+  pointer-events: none;
+}
+.v-top-label {
+  text-align: center;
+  color: rgba(0, 77, 64, 0.5);
+  font-size: calc(20 * var(--rpx));
+  letter-spacing: calc(6 * var(--rpx));
+  text-transform: uppercase;
+  margin-bottom: calc(8 * var(--rpx));
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
+}
+.v-main-title {
+  text-align: center;
+  color: #004D40;
+  font-size: calc(40 * var(--rpx));
+  font-weight: 700;
+  margin-bottom: calc(8 * var(--rpx));
+  position: relative;
+  z-index: 2;
+}
+.v-sub-title {
+  text-align: center;
+  font-size: calc(22 * var(--rpx));
+  color: #00695C;
+  letter-spacing: calc(2 * var(--rpx));
+  margin-bottom: calc(32 * var(--rpx));
+  position: relative;
+  z-index: 2;
+}
+.v-coral-icon {
+  width: calc(144 * var(--rpx));
+  height: calc(144 * var(--rpx));
+  border-radius: 50%;
+  margin: 0 auto calc(28 * var(--rpx));
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(72 * var(--rpx));
+  border: calc(4 * var(--rpx)) solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 2;
+}
+.v-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(14 * var(--rpx)) 0;
+  border-bottom: calc(2 * var(--rpx)) solid rgba(0, 77, 64, 0.08);
+  position: relative;
+  z-index: 2;
+}
+.v-field .label {
+  font-size: calc(24 * var(--rpx));
+  color: #00695C;
+  flex-shrink: 0;
+}
+.v-field .value {
+  font-size: calc(26 * var(--rpx));
+  color: #004D40;
+  font-weight: 600;
+  text-align: right;
+  margin-left: calc(24 * var(--rpx));
+  word-break: break-all;
+}
+.v-seal {
+  text-align: center;
+  margin-top: calc(32 * var(--rpx));
+  position: relative;
+  z-index: 2;
+}
+.v-seal-icon {
+  font-size: calc(72 * var(--rpx));
+  margin-bottom: calc(12 * var(--rpx));
+}
+.v-org {
+  font-size: calc(22 * var(--rpx));
+  color: #00695C;
+}
+
+/* ================= 加载骨架 ================= */
+.cert-loading {
+  padding: calc(200 * var(--rpx)) 0;
+  text-align: center;
+}
+.cert-loading-icon {
+  font-size: calc(80 * var(--rpx));
+  animation: certFloat 2s ease-in-out infinite;
+}
+.cert-loading-text {
+  margin-top: calc(24 * var(--rpx));
+  font-size: calc(26 * var(--rpx));
+  color: rgba(255, 255, 255, 0.4);
+}
+@keyframes certFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-calc(16 * var(--rpx))); }
+}
+
+/* ================= 操作区 ================= */
+.cert-actions {
+  margin-top: calc(48 * var(--rpx));
+}
+.save-btn {
+  width: 100%;
+  padding: calc(26 * var(--rpx)) 0;
+  border: none;
+  border-radius: calc(24 * var(--rpx));
+  color: #fff;
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  line-height: 1.2;
+}
+.save-btn::after {
+  border: none;
+}
+.save-btn.entity {
+  background: linear-gradient(135deg, #C8A84E, #D4AF37);
+  box-shadow: 0 calc(8 * var(--rpx)) calc(32 * var(--rpx)) rgba(200, 168, 78, 0.4);
+}
+.save-btn.virtual {
+  background: linear-gradient(135deg, #00ACC1, #26C6DA);
+  box-shadow: 0 calc(8 * var(--rpx)) calc(32 * var(--rpx)) rgba(0, 188, 212, 0.4);
+}
+.btn-hover {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+.cert-tip {
+  text-align: center;
+  font-size: calc(22 * var(--rpx));
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: calc(24 * var(--rpx));
+  line-height: 1.6;
+}
+
+/* ================= 导出画布（屏幕外） ================= */
+.cert-canvas {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 375px;
+  height: 500px;
+}
+
+.coral-page img{display:block;max-width:100%;}
