@@ -155,16 +155,6 @@ const homeData = {
         '【意义】',
         '• 耐热子代是「气候韧性」在种源层面的落点：白化阈值更高，灾后恢复更快'
       ] },
-    { id: 3, title: '2026年暑期夏令营招募启动！8城43班次等你来', date: '2026-06-20', tag: '活动招募',
-      img: IMG.wxEdu, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian#readme',
-      urlName: '项目说明 · 科普与夏令营',
-      paragraphs: [
-        '2026 年暑期珊瑚夏令营开始招募，共 8 个城市、43 个班次。',
-        '【课程内容】',
-        '• 亲手种植珊瑚、水下观察、水质检测三门实践课',
-        '• 科普讲座：珊瑚为什么会白化、气候变暖对礁区意味着什么',
-        '• 每位营员会拿到自己种的珊瑚编号，后续可在小程序里追踪生长'
-      ] },
     { id: 4, title: 'AI水下监测年报：累计识别珊瑚20万+株，效率提升50倍', date: '2026-06-05', tag: '技术报告',
       img: IMG.wxSurvey, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/tree/main/ai-service',
       urlName: '项目开源仓库 · AI 服务（监测技术）',
@@ -1023,7 +1013,6 @@ const EN = {
   articles: {
     1: ['Xuwen coral reef reserve science base: growing up ocean-minded', 'Outreach'],
     2: ['Coral No.2 released: fertilisation >95%, survival 98%', 'Technology'],
-    3: ['2026 summer coral camps: 43 sessions across 8 cities', 'Recruiting'],
     4: ['AI survey annual report: 200,000+ corals identified, 50× faster', 'Report'],
     5: ['What does coral “climate resilience” actually mean?', 'Resilience'],
     6: ['Reading marine heat stress: DHW and bleaching alerts', 'Resilience'],
