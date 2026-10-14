@@ -12,16 +12,9 @@
     <view class="login-slogan">{{t.pnh1aau}}</view>
   </view>
 
-  <!-- 表单卡 -->
+  <!-- 表单卡（演示环境：只保留账号密码登录，不做微信一键登录/绑定） -->
   <view class="login-card card">
-    <!-- Tab 切换 -->
-    <view class="login-tabs">
-      <view class="login-tab {{mode === 'account' ? 'active' : ''}}" bindtap="switchMode" data-mode="account">{{t.p1nd6e8y}}</view>
-      <view class="login-tab {{mode === 'wechat' ? 'active' : ''}}" bindtap="switchMode" data-mode="wechat">{{t.pu98dxo}}</view>
-    </view>
-
-    <!-- 账号密码登录 -->
-    <block wx:if="{{mode === 'account' && !bindMode}}">
+    <block wx:if="{{!bindMode}}">
       <view class="form-item">
         <view class="form-icon">👤</view>
         <input class="form-input" placeholder="{{t.p1ud8z90}}" value="{{username}}" bindinput="onInput" data-field="username" />
@@ -31,34 +24,7 @@
         <input class="form-input" placeholder="{{t.p1aph6eg}}" password value="{{password}}" bindinput="onInput" data-field="password" />
       </view>
       <view class="login-btn" hover-class="btn-hover" bindtap="onAccountLogin">{{t.pwsofpa}}</view>
-      <view class="login-tip">{{t.p1krt8wl}}</view>
-    </block>
-
-    <!-- 微信一键登录 -->
-    <block wx:if="{{mode === 'wechat' && !bindMode}}">
-      <view class="wx-login-area">
-        <view class="wx-icon-wrap">💬</view>
-        <view class="wx-desc">{{t.p4j7qu1}}</view>
-        <view class="login-btn wx-btn" hover-class="btn-hover" bindtap="onWxLogin">{{t.p1dfxxn6}}</view>
-        <view class="login-tip">{{t.p16baepy}}</view>
-      </view>
-    </block>
-
-    <!-- 绑定官网账号（微信未绑定时显示） -->
-    <block wx:if="{{bindMode}}">
-      <view class="bind-title">{{t.plec4ea}}</view>
-      <view class="bind-desc">{{t.pq0h8ri}}</view>
-      <view class="form-item">
-        <view class="form-icon">👤</view>
-        <input class="form-input" placeholder="{{t.p1ud8z90}}" value="{{username}}" bindinput="onInput" data-field="username" />
-      </view>
-      <view class="form-item">
-        <view class="form-icon">🔒</view>
-        <input class="form-input" placeholder="{{t.p1aph6eg}}" password value="{{password}}" bindinput="onInput" data-field="password" />
-      </view>
-      <view class="login-btn" hover-class="btn-hover" bindtap="onBindSubmit">{{t.pnou1b4}}</view>
-      <view class="bind-cancel" bindtap="cancelBind">{{t.p13hri1n}}</view>
-      <view class="login-tip">{{t.p13ohhdq}}</view>
+      <view class="login-tip">{{t.p1cnhicz}}</view>
     </block>
   </view>
 

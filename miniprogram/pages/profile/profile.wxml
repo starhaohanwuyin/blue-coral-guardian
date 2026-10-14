@@ -55,6 +55,14 @@
           </view>
           <text class="menu-arrow">›</text>
         </button>
+        <view wx:elif="{{item.clear}}" class="menu-item" hover-class="menu-hover" bindtap="onClearDemo">
+          <view class="menu-icon" style="background: {{item.bg}};">{{item.icon}}</view>
+          <view class="menu-item-text">
+            <view class="menu-label">{{item.label}}</view>
+            <view class="menu-desc">{{item.desc}}</view>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
         <view wx:else class="menu-item" hover-class="menu-hover" bindtap="onMenuTap" data-url="{{item.url}}">
           <view class="menu-icon" style="background: {{item.bg}};">{{item.icon}}</view>
           <view class="menu-item-text">

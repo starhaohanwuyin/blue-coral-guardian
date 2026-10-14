@@ -25,9 +25,8 @@ Page(pageI18n.wrap({
   },
 
   onLoad(options) {
-    if (options && options.mode === 'wechat') {
-      this.setData({ mode: 'wechat' })
-    }
+    // 演示版只保留账号密码登录（微信一键登录/绑定已移除），这里强制回到账号模式
+    this.setData({ mode: 'account' })
   },
 
   switchMode(e) {

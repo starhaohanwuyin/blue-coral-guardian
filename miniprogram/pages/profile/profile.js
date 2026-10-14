@@ -4,6 +4,7 @@
  */
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
+const mock = require('../../utils/mock.js')
 const app = getApp()
 
 const pageI18n = require('../../utils/page-i18n.js')
@@ -35,7 +36,8 @@ Page(pageI18n.wrap({
         title: '更多',
         items: [
           { icon: '💬', bg: 'linear-gradient(135deg,rgba(156,39,176,0.12),rgba(186,104,200,0.08))', label: '联系客服', desc: '在线咨询 · 工作日 9:00-18:00', contact: true },
-          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '蓝珊科技 · 守护海洋珊瑚', url: '/pages/about/about' }
+          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '蓝珊科技 · 守护海洋珊瑚', url: '/pages/about/about' },
+          { icon: '🧹', bg: 'linear-gradient(135deg,rgba(255,112,67,0.12),rgba(255,138,101,0.08))', label: '清除演示数据', desc: '清空本机积分 / 虚拟珊瑚 / 任务 / 评论记录', clear: true }
         ]
       }
     ]
@@ -110,18 +112,33 @@ Page(pageI18n.wrap({
   onLogout() {
     wx.showModal({
       title: '退出登录',
-      content: '退出后本机 demo 数据（积分、虚拟珊瑚、任务记录）会一并清空，确定退出？',
+      content: '退出后仅清除登录状态，本机演示数据会保留（需要清空请用「清除演示数据」）',
       confirmColor: '#FF7043',
       success: (res) => {
         if (!res.confirm) return
         api.logout().then(() => {
           app.logout()
-          // 数据也一起清掉：否则退出后页面还挂着旧积分/认养记录，看着像"没退干净"
-          this.setData({ user: null, comments: [], commentText: '' })
+          this.setData({ user: null })
           this.refreshUser()
-          this.loadComments()
-          util.toast('已退出登录，数据已清空')
+          util.toast('已退出登录')
         })
+      }
+    })
+  },
+
+  /* 清除演示数据：把本机 mock 数据清空（积分/虚拟珊瑚/任务/订单/评论） */
+  onClearDemo() {
+    wx.showModal({
+      title: '清除演示数据',
+      content: '将清空本机的积分、虚拟珊瑚、任务与评论记录（不可恢复），确定继续？',
+      confirmColor: '#FF7043',
+      success: (res) => {
+        if (!res.confirm) return
+        mock.clearDemoData()
+        this.setData({ comments: [], commentText: '' })
+        this.refreshUser()
+        this.loadComments()
+        util.toast('演示数据已清空')
       }
     })
   },
