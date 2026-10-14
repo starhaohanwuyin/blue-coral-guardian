@@ -64,6 +64,15 @@
   color: var(--text);
   line-height: 1.5;
 }
+/* 对勾 / 叉号（答完出现） */
+.quiz-option-mark {
+  flex-shrink: 0;
+  font-size: calc(34 * var(--rpx));
+  font-weight: 700;
+  line-height: 1;
+}
+.quiz-option-mark.ok { color: var(--green); }
+.quiz-option-mark.no { color: var(--coral); }
 .quiz-option.correct {
   border-color: var(--green);
   background: rgba(76, 175, 80, 0.08);

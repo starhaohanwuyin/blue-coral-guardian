@@ -22,6 +22,9 @@
         >
           <text class="quiz-option-letter">{{['A', 'B', 'C', 'D'][i]}}</text>
           <text class="quiz-option-text">{{item}}</text>
+          <!-- 答完立刻给对勾 / 叉号：正确项永远打勾，选错的那项打叉 -->
+          <text wx:if="{{answered && i === questions[index].answer}}" class="quiz-option-mark ok">✓</text>
+          <text wx:if="{{answered && i === selected && i !== questions[index].answer}}" class="quiz-option-mark no">✗</text>
         </view>
       </view>
 
