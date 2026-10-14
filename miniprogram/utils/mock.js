@@ -18,6 +18,8 @@ const IMG = {
      引用 /assets/img/xxx.jpg 两端都能解析） */
   camp: '/assets/img/camp_summer.jpg',
   basePrint: '/assets/img/base_3dprint.jpg',
+  field: '/assets/img/field.jpg',            // 野外修复作业实拍
+  coralNo2: '/assets/img/coral_no2.jpg',     // 珊瑚2号实拍
   wxRestore: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/FKNMS_-_coral_nursery_%2827367671414%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
   wxEdu: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Biscayne_National_Park_V-snorkel_entry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
   wxSurvey: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
@@ -304,14 +306,15 @@ const homeData = {
       ] }
   ],
   news: [
-    { id: 1, title: '深圳大鹏湾修复区珊瑚覆盖率达50%以上', date: '2026-07-10', tag: '生态修复', img: IMG.coral1,
+    { id: 1, title: '仙本那核心礁区珊瑚监测最新动态', date: '2026-07-10', tag: '生态监测', img: IMG.field,
       paragraphs: [
-        '最新一轮监测显示，修复区活珊瑚覆盖率稳定在 50% 以上，连续三个季度未见明显回落。',
-        '同期白化个体比例处于低位（＜3%），与 NOAA 热压力等级「无警戒」一致。',
+        '仙本那核心礁区（4.4°N, 118.8°E）最新一轮 AI 水下识别显示：活珊瑚覆盖率 39.71%，与 Reef Check Malaysia 2024 实地调查的区域平均（39.56%）仅差 0.15 个百分点。',
+        '同期 NOAA 5km 热压力档案显示：2024 年 DHW 峰值 5.42，官方白化预警等级为「警报一级」，属于近 41 年里 3 个达到白化警戒的年份之一。',
         '【后续安排】',
-        '• 继续按季度做 AI 水下识别监测，跟踪覆盖率与白化比例的长期趋势'
+        '• 继续按季度做 AI 水下识别监测，跟踪覆盖率与白化比例的长期趋势',
+        '• 把 NOAA 热压力档案纳入投放窗口决策，优先选择热压力更低的月份作业'
       ] },
-    { id: 2, title: '珊瑚2号杂交品系进入海区规模培育测试', date: '2026-06-28', tag: '技术突破', img: IMG.tech5,
+    { id: 2, title: '珊瑚2号杂交品系进入海区规模培育测试', date: '2026-06-28', tag: '技术突破', img: IMG.coralNo2,
       paragraphs: [
         '珊瑚2号（LT 品系）杂交子代完成陆基培育阶段，进入海区规模培育测试。',
         '该品系在实验室高温（+1℃）与酸化（pH↓1.18）胁迫下成活率达 98%，海区表现是本轮测试重点。',
@@ -324,6 +327,23 @@ const homeData = {
         '夏令营累计覆盖 8 个城市、参与学生 1473 人。',
         '【每期都会讲的一句话】',
         '• 「珊瑚白化不等于死亡」：理解机制，才知道为什么要减碳与修复同时做'
+      ] },
+    { id: 4, title: '仙本那海水热压力速览：41 年档案与 2024 年峰值', date: '2026-07-05', tag: '气候韧性', img: IMG.tech4,
+      paragraphs: [
+        '仙本那点位（4.4°N, 118.8°E）的 NOAA CRW 5km 档案覆盖 1985–2025 共 41 年，逐年记录 HotSpot、DHW 与官方白化预警等级（BAA）。',
+        '2024 年 DHW 峰值 5.42，全年有 58 天达到 DHW≥4，是该点位 41 年里最热的 3 年之一，官方等级为「白化警报一级」。',
+        '【怎么读这些数字】',
+        '• HotSpot 是瞬时海温异常（当下比常年高多少℃），DHW 是 12 周滚动累积，BAA 是官方结论等级',
+        '• 触发白化的门槛是「比夏季最高月均温高 1℃ 并持续数周」，所以看累积量比只看单日峰值更有意义',
+        '• 5km 格点只回答「哪片海」，回答不了「哪个礁」——礁级判断仍要靠水下识别'
+      ] },
+    { id: 5, title: '仙本那的季风窗口：热压力什么时候回落', date: '2026-06-30', tag: '修复决策', img: IMG.field,
+      paragraphs: [
+        '仙本那属热带季风气候，11–2 月东北季风期的海况与热压力通常相对缓和，是投放种苗的优先窗口。',
+        '把 NOAA 逐日 DHW 档案与投放计划对齐后，本项目的做法是：优先在热压力回落窗口投放，避开 DHW 爬升期。',
+        '【为什么重要】',
+        '• 种苗最脆弱的是投放后 4–8 周，这段时间撞上热浪，成活率会明显下降',
+        '• 耐热品系（珊瑚2号 LT 品系）能抬高阈值，但改变不了「投放时点撞上热浪」带来的损失'
       ] }
   ]
 }
@@ -397,7 +417,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 4, category: 'tech', title: '珊瑚礁修复实践', img: IMG.tech5,
+    id: 4, category: 'tech', title: '珊瑚礁修复实践', img: IMG.field,
     summary: '从种苗繁育到野外定植，蓝珊科技的全链条修复之路',
     paragraphs: [
       '蓝珊科技团队成立于2024年4月，拟于2026年12月正式注册成立广东蓝珊科技有限公司，深耕珊瑚礁生态修复领域。',
@@ -1009,9 +1029,11 @@ const EN = {
   },
   /* 动态：key = 动态 id（对应 homeData.news[].id） */
   news: {
-    1: ['Live coral cover above 50% at the Dapeng Bay restoration site', 'Restoration'],
+    1: ['Semporna core reef: latest coral monitoring', 'Monitoring'],
     2: ['Coral No.2 hybrid enters large-scale sea-nursery trials', 'Technology'],
-    3: ['43rd youth coral camp wraps up', 'Education']
+    3: ['43rd youth coral camp wraps up', 'Education'],
+    4: ['Semporna heat stress at a glance: a 41-year record and the 2024 peak', 'Resilience'],
+    5: ['Semporna seasonal window: when heat stress eases', 'Restoration planning']
   }
   ,
   /* ---- 科普页：分类名（key = 分类 key） ---- */
