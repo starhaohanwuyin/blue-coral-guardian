@@ -1085,7 +1085,9 @@ const EN = {
       growth: 'Fast: branches extend about 3–10 cm per year',
       symb: 'Strongly symbiotic with zooxanthellae; about 80–90% of its energy comes from their photosynthesis',
       mates: 'Reef fish, shrimps and crabs, brittle stars, boring sponges and worms',
-      threat: 'Bleaching in marine heatwaves; storm breakage; sediment and nutrient loading; collection for the aquarium trade'
+      threat: 'Bleaching in marine heatwaves; storm breakage; sediment and nutrient loading; collection for the aquarium trade',
+      feed: 'Mainly powered by its zooxanthellae (about 80–90% of its energy); tentacles also catch plankton and organic particles, most actively after dark',
+      pop: 'Widespread and often dominant on reefs, but numbers swing with heatwaves and storms; most species lack global assessments and local declines follow collection and habitat loss'
     },
     M: {
       form: 'Massive / boulder',
@@ -1094,7 +1096,31 @@ const EN = {
       growth: 'Slow: about 0.5–2 cm per year, colonies may live for centuries',
       symb: 'Stable zooxanthellae symbiosis; slow calcification but the biggest contributor to reef framework',
       mates: 'Boring sponges and polychaetes, reef fish, shrimps and crabs, epiphytic algae',
-      threat: 'Slow recovery after bleaching; acidification slows calcification; anchor and trampling damage; sediment burial'
+      threat: 'Slow recovery after bleaching; acidification slows calcification; anchor and trampling damage; sediment burial',
+      feed: 'Zooxanthellae supply most of its energy; at night it extends tentacles and mucus to capture plankton and organic detritus',
+      pop: 'Long-lived and massive, so recovery after damage is very slow; local declines near shore from sediment and pollution, and it is highly sensitive to ocean warming'
+    },
+    P: {
+      form: 'Plate / table',
+      size: 'Plates 20–80 cm across, often stacked in layers',
+      depth: '2–25 m, often on slightly turbid reef slopes and lagoons',
+      growth: 'Moderate: edges extend about 1–4 cm per year',
+      symb: 'Zooxanthellae symbiosis; the single-sided plate improves light use',
+      mates: 'Reef fish, crustaceans and gastropods; the shaded underside shelters juvenile fish',
+      threat: 'Bleaching in heatwaves; sediment covering the lit surface; physical damage from waves and currents',
+      feed: 'Mostly zooxanthellae-powered; tentacles on the upper surface and plate edge catch plankton, while shaded undersides rely more on heterotrophy',
+      pop: 'Common on lit reef slopes, but plates are fragile in storms and sediment and bleaching can strip whole plates, so numbers track heatwave events'
+    },
+    F: {
+      form: 'Foliose / thin plate',
+      size: 'Blades 15–50 cm across, a few millimetres to 1 cm thick',
+      depth: '1–30 m, also on dim slopes and cave mouths',
+      growth: 'Moderate: about 1–5 cm per year',
+      symb: 'Zooxanthellae symbiosis; the thin blade suits light capture in dim habitats',
+      mates: 'Reef-slope fish, shrimps and crabs, and cryptic invertebrates',
+      threat: 'The most sensitive to bleaching and sediment; acidification makes blades brittle; easy to snap on contact',
+      feed: 'Mainly zooxanthellae-driven; the thin blade improves light capture in dim habitats and also traps plankton and suspended particles',
+      pop: 'Restricted to dim reef slopes and cave mouths; the most sensitive to bleaching and sediment, with clear local declines'
     },
     U: {
       form: 'Solitary / free-living',
@@ -1103,7 +1129,9 @@ const EN = {
       growth: 'Slow: about 0.5–2 cm per year',
       symb: 'Symbiotic with zooxanthellae; adults are free-living and can right themselves after being flipped',
       mates: 'Sand-dwelling invertebrates, commensal crabs and snails; juveniles settle on rock',
-      threat: 'Bleaching; burial by sediment; collection and trampling; free-living individuals can be overturned by waves'
+      threat: 'Bleaching; burial by sediment; collection and trampling; free-living individuals can be overturned by waves',
+      feed: 'Inflates by day to feed its zooxanthellae; at night it extends tentacles to take plankton and settling organic particles',
+      pop: 'Numerous on reef flats and sand, but easily overturned by waves and collected; the family Fungiidae is listed in CITES Appendix II'
     },
     S: {
       form: 'Soft / fleshy',
@@ -1112,7 +1140,9 @@ const EN = {
       growth: 'Fairly fast: 10–60 mm per year (flow and nutrients matter)',
       symb: 'Mostly symbiotic with zooxanthellae; some groups (e.g. Dendronephthya) have none and feed on plankton',
       mates: 'Small fish, shrimps and crabs, anemonefish and commensal crustaceans',
-      threat: 'Heat and turbidity stress; collection pressure; physical tearing'
+      threat: 'Heat and turbidity stress; collection pressure; physical tearing',
+      feed: 'Mostly zooxanthellae-powered, with extended polyps filtering plankton and dissolved organics; species without symbionts are fully heterotrophic',
+      pop: 'Grows fast and can cover large areas, but needs stable water quality; turbidity and nutrients shrink colonies and popular species are heavily collected'
     },
     G: {
       form: 'Fan / whip',
@@ -1121,7 +1151,9 @@ const EN = {
       growth: 'Moderate: about 1–5 cm per year (flow and food supply)',
       symb: 'Mostly heterotrophic filter feeding, not dependent on zooxanthellae; a few species are symbiotic',
       mates: 'Nursery habitat and perches for fish, brittle stars and commensal shrimps',
-      threat: 'Breakage by trawls and anchor chains; sediment clogging; harvest for curios'
+      threat: 'Breakage by trawls and anchor chains; sediment clogging; harvest for curios',
+      feed: 'Mostly heterotrophic filter feeding: eight-tentacled polyps intercept plankton and organic particles; many species do not rely on zooxanthellae',
+      pop: 'Common in strong currents, but slow-growing and slow to recover once broken; some species are assessed as vulnerable'
     },
     H: {
       form: 'Hydrocoral',
@@ -1130,16 +1162,20 @@ const EN = {
       growth: 'Fairly fast: blades extend about 2–10 cm per year',
       symb: 'Symbiotic with zooxanthellae inside the hydroid — the main reef-building hydrozoan',
       mates: 'Reef fish, shrimps and crabs; its nematocysts sting divers',
-      threat: 'Bleaches in heatwaves too; storm breakage; sediment; damage caused by sting reactions'
+      threat: 'Bleaches in heatwaves too; storm breakage; sediment; damage caused by sting reactions',
+      feed: 'Hydroid tentacles capture plankton while zooxanthellae inside the tissue also supply energy; nematocysts serve both feeding and defence',
+      pop: 'Widespread with high local cover, and it bleaches in heatwaves too; its brittle skeleton means clear losses after storms'
     }
   },
   catalogColors: {
-    B: 'Mainly olive-yellow to brown, branch tips often paler',
-    M: 'Mainly tan to brown-orange, darker in shaded parts',
-    U: 'Mainly bright yellow to cream, darker inside the furrows',
-    S: 'Mainly pink-purple to cream, soft and translucent',
-    G: 'Mainly scarlet to orange-yellow, fan-shaped and netted',
-    H: 'Mainly cream to yellowish brown'
+    B: 'Polyp tissue: pale yellow to cream. With zooxanthellae: olive-yellow, tan to brown, branch tips paler in strong light. Bleached: bone white overall, tips first',
+    M: 'Polyp tissue: cream to pale brown. With zooxanthellae: tan to brown-orange, darker deep in the grooves. Bleached: grooves fade first, then the whole colony turns white and the pattern stands out',
+    P: 'Polyp tissue: pale yellow. With zooxanthellae: tan, plate edges paler and undersides darker. Bleached: whitens from the edge inwards to a translucent bone colour',
+    F: 'Polyp tissue: translucent cream. With zooxanthellae: tan to pale brown. Bleached: the thin blade turns white, leaving bare skeleton',
+    U: 'Polyp tissue: cream. With zooxanthellae: bright yellow to cream, darker in the furrows. Bleached: white overall, furrow outlines still visible',
+    S: 'Polyp tissue: milky white. With zooxanthellae and its own pigments: pink-purple, cream, flesh tones, soft and translucent. Bleached: dull grey-white and limp',
+    G: 'Polyp tissue: scarlet to orange-yellow (colour mostly from its own pigments, little from zooxanthellae). Bleached: pigment lost, grey-white with the netted skeleton exposed',
+    H: 'Polyp tissue: cream. With zooxanthellae: yellowish brown to pale tan with pale growth tips. Bleached: turns bone white'
   },
   /* 每条：英文名 + 英文描述（描述同时用作「群落形态」与「辨识特征」） */
   catalogSpecies: {

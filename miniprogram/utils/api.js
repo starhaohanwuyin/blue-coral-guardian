@@ -421,7 +421,9 @@ function mapSpecies(it) {
     growthRate: it.growthRate || '',
     symbiosis: it.symbiosis || '',
     companions: it.companions || '',
+    feeding: it.feeding || '',
     threats: it.threats || '',
+    population: it.population || '',
     form: it.form || '',
     formCn: it.formCn || ''
   }

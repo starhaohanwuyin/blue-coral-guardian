@@ -100,8 +100,10 @@ const DICT = {
   'f.growth': { zh: '生长速度', en: 'Growth rate' },
   'f.symbiosis': { zh: '与虫黄藻共生特点', en: 'Zooxanthellae symbiosis' },
   'f.companions': { zh: '伴生生物', en: 'Associated organisms' },
+  'f.feeding': { zh: '捕食方式', en: 'Feeding' },
   'f.bleaching': { zh: '白化敏感程度', en: 'Bleaching sensitivity' },
   'f.threats': { zh: '主要致危因素', en: 'Main threats' },
+  'f.population': { zh: '野外种群现状', en: 'Wild population status' },
 
   /* 底部 tabBar（小程序用 custom-tab-bar；网页版在 web/mp.js 里按同一个表翻译） */
   'tab.home': { zh: '首页', en: 'Home' },
@@ -249,7 +251,8 @@ function coralDetailSections(it) {
         [t('f.tempSal'), en ? (e.catalogTempSal || src.tempSal) : src.tempSal],
         [t('f.growth'), en ? (form.growth || src.growthRate) : src.growthRate],
         [t('f.symbiosis'), en ? (form.symb || src.symbiosis) : src.symbiosis],
-        [t('f.companions'), en ? (form.mates || src.companions) : src.companions]
+        [t('f.companions'), en ? (form.mates || src.companions) : src.companions],
+        [t('f.feeding'), en ? (form.feed || src.feeding) : src.feeding]
       ])
     },
     {
@@ -258,7 +261,8 @@ function coralDetailSections(it) {
       rows: rows([
         [t('f.bleaching'),
           riskLabel(src) + (src.bleachingRisk ? (en ? ' ' : '') + t('detail.bleachScale') : '')],
-        [t('f.threats'), en ? (form.threat || src.threats) : src.threats]
+        [t('f.threats'), en ? (form.threat || src.threats) : src.threats],
+        [t('f.population'), en ? (form.pop || src.population) : src.population]
       ])
     }
   ]

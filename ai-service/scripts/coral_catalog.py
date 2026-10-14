@@ -42,7 +42,7 @@ FIELDS = ["id", "name", "latin", "genus", "genusCn", "family", "level", "group",
           # 详情页字段（四大板块）
           "form", "formCn", "alias", "taxonomy", "protection", "protectionNote",
           "colonyForm", "sizeCm", "colorDesc", "idFeature", "depthM", "tempSal",
-          "growthRate", "symbiosis", "companions", "threats",
+          "growthRate", "symbiosis", "companions", "feeding", "threats", "population",
           # 配图：imgUrl = 实拍照片链接（可选）；hue 用于自动生成示意图
           "hue", "imgUrl", "imageNote"]
 
@@ -79,7 +79,9 @@ ALIAS = {
     "growthrate": "growthRate", "生长速度": "growthRate",
     "symbiosis": "symbiosis", "共生特点": "symbiosis", "虫黄藻共生": "symbiosis",
     "companions": "companions", "伴生生物": "companions",
+    "feeding": "feeding", "捕食方式": "feeding", "摄食方式": "feeding", "食性": "feeding",
     "threats": "threats", "致危因素": "threats", "主要威胁": "threats",
+    "population": "population", "野外种群现状": "population", "种群现状": "population",
     "hue": "hue",
 }
 
@@ -158,7 +160,9 @@ CREATE TABLE IF NOT EXISTS corals (
   growthRate    TEXT DEFAULT '',
   symbiosis     TEXT DEFAULT '',
   companions    TEXT DEFAULT '',
+  feeding       TEXT DEFAULT '',
   threats       TEXT DEFAULT '',
+  population    TEXT DEFAULT '',
   hue           INTEGER DEFAULT 0,
   imgUrl        TEXT DEFAULT '',
   imageNote     TEXT DEFAULT '',
@@ -171,7 +175,7 @@ COLS = ["id", "name", "latin", "genus", "genusCn", "family", "level", "group",
         "seq",
         "form", "formCn", "alias", "taxonomy", "protection", "protectionNote",
         "colonyForm", "sizeCm", "colorDesc", "idFeature", "depthM", "tempSal",
-        "growthRate", "symbiosis", "companions", "threats",
+        "growthRate", "symbiosis", "companions", "feeding", "threats", "population",
         "hue", "imgUrl", "imageNote"]
 INT_COLS = {"reefBuilding", "aiGenus", "featured", "hue", "seq"}
 _ENSURED = False
@@ -252,6 +256,52 @@ def seed_import(overwrite=False):
         conn.close()
 
 
+# 后加的详情页字段：库里为空时按 id 用种子补上（已有内容不动，覆盖不到用户自己维护的数据）
+BACKFILL_FIELDS = ("colorDesc", "feeding", "population")
+# 早期自动生成的占位别名（“…（俗称）”“…（中文名）”），视为空，允许被种子里的正式别名覆盖
+ALIAS_PLACEHOLDER = ("（俗称）", "（中文名）", "（网络资料）", "（网上资料）")
+
+
+def backfill_from_seed(fields=BACKFILL_FIELDS):
+    """用种子补齐库中为空的详情字段；别名里的占位文案一并换成种子里的正式别名（可为空）。
+
+    返回补写的字段个数。
+    """
+    if not SEED_PATH.exists():
+        return 0
+    try:
+        data = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    except Exception:                                          # noqa: BLE001
+        return 0
+    items = data.get("items") if isinstance(data, dict) else data
+    like = " OR ".join(f'"alias" LIKE \'%{s}\'' for s in ALIAS_PLACEHOLDER)
+    conn = connect()
+    conn.execute(DDL)
+    n = 0
+    try:
+        for raw in items or []:
+            it = normalize(raw)
+            if not it["id"]:
+                continue
+            # 别名特殊处理：空值/占位值都换成种子里的值（种子为空则清掉占位）
+            n += conn.execute(
+                f'UPDATE corals SET "alias"=? WHERE id=? AND '
+                f'("alias" IS NULL OR "alias"=\'\' OR {like})',
+                (str(it.get("alias") or ""), it["id"])).rowcount
+            for f in fields:
+                v = it.get(f)
+                if not v:
+                    continue
+                n += conn.execute(
+                    f'UPDATE corals SET "{f}"=? '
+                    f'WHERE id=? AND ("{f}" IS NULL OR "{f}"=\'\')',
+                    (v, it["id"])).rowcount
+        conn.commit()
+    finally:
+        conn.close()
+    return n
+
+
 def init(reload=False, verbose=False):
     """建库建表；空库自动灌种子。返回统计。"""
     global _ENSURED
@@ -282,6 +332,10 @@ def init(reload=False, verbose=False):
         if verbose:
             print(f"[图鉴] 补齐详情字段：更新 {refill['updated']} 条"
                   f"（未覆盖你自己改过的条目）")
+    # 后加的字段（捕食方式 / 野外种群现状 / 外观颜色）同样按需补空
+    filled = backfill_from_seed()
+    if filled and verbose:
+        print(f"[图鉴] 补齐后加字段（捕食方式 / 野外种群现状 / 外观颜色）：{filled} 处")
     _ENSURED = True
     return seeded
 
@@ -471,11 +525,14 @@ def main():
     ap = argparse.ArgumentParser(description="珊瑚图鉴数据库（SQLite）管理")
     ap.add_argument("--stats", action="store_true", help="打印统计")
     ap.add_argument("--reload", action="store_true", help="用种子补齐/刷新（不覆盖用户改过的）")
+    ap.add_argument("--backfill", action="store_true", help="用种子补齐库中为空的详情字段")
     ap.add_argument("--import", dest="import_file", default="", help="导入 JSON/CSV/TSV")
     ap.add_argument("--export", dest="export_file", default="", help="导出全部为 JSON")
     ap.add_argument("--no-overwrite", action="store_true", help="导入时只补缺失项")
     args = ap.parse_args()
     init(reload=args.reload, verbose=True)
+    if args.backfill:
+        print("已用种子补齐空字段 " + str(backfill_from_seed()) + " 处")
     if args.import_file:
         p = pathlib.Path(args.import_file)
         res = import_upload(p.name, p.read_bytes(), overwrite=not args.no_overwrite)
