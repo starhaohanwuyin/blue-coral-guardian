@@ -15,6 +15,7 @@ import argparse
 import json
 import pathlib
 import re
+import time
 
 import ast as _ast  # noqa: F401  (仅为提示：本文件不依赖 ast)
 sys_path = pathlib.Path(__file__).resolve()
@@ -201,9 +202,35 @@ def main():
     #    否则每次重建都会把 utils/mock.js 里的图片地址还原成外部 CDN，
     #    把 localize_images.py 做过的本地化覆盖掉（离线演示就会裂图）。
     applied = apply_image_map(OUT)
+    stamp = stamp_index_cache_buster(OUT)
     print(f"✅ 共 {len(manifest['pages'])} 页 → {OUT}")
     print(f"   tabBar: {[i.get('text') for i in manifest['tabBar'].get('list', [])]}")
     print(f"   图片本地化: 套用映射 {applied} 处（映射表 tools/image_map.json）")
+    if stamp:
+        print(f"   缓存版本号: index.html 的 ?v={stamp}（运行时的 /mp/** 请求都会带上它）")
+
+
+def stamp_index_cache_buster(out_dir: pathlib.Path) -> str:
+    """把 web/index.html 里 mp.js / app.css 的 ?v= 换成新的构建戳。
+
+    为什么需要：运行时代码、模板、样式以前都是裸 URL，浏览器启发式缓存会长期给旧文件，
+    表现为「代码改了、页面上还是旧的」。mp.js 会读这个版本号并拼到所有 /mp/** 请求上，
+    于是版本号一变，整套前端立刻重新抓取（普通刷新即可，不必清缓存）。
+    只有输出到默认的 web/ 时才动 index.html（--out 到临时目录做比对时不碰）。
+    """
+    index = out_dir.parent / "index.html"
+    if not index.exists():
+        return ""
+    pattern = re.compile(r'(\./[^"\']*\.(?:js|css)\?v=)[^"\']*')
+    try:
+        text = index.read_text(encoding="utf-8")
+    except Exception:                                          # noqa: BLE001
+        return ""
+    if not pattern.search(text):
+        return ""
+    stamp = format(int(time.time()), "x")[-6:]
+    index.write_text(pattern.sub(lambda m: m.group(1) + stamp, text), encoding="utf-8")
+    return stamp
 
 
 def apply_image_map(out_dir: pathlib.Path) -> int:

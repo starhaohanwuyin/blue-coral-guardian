@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#1E88E5" />
 <title>蓝珊 · 珊瑚卫士</title>
-<link rel="stylesheet" href="./mp/styles/app.css" />
+<!-- ⚠️ 这里的 ?v= 是缓存穿透版本号：mp.js 会把它拼到所有 /mp/** 请求上，
+     普通刷新即可拿到新代码（不用清浏览器缓存）。由 tools/build_web_pages.py 每次构建自动更新。 -->
+<link rel="stylesheet" href="./mp/styles/app.css?v=cf7bef" />
 <style>
   /* 小程序 rpx → 自适应：750rpx = 一个"手机宽度"；桌面端按 480px 封顶，像个大手机 */
   :root { --rpx: calc(min(100vw, 480px) / 750); }
@@ -152,6 +154,6 @@
     };
   })();
 </script>
-<script src="./mp.js"></script>
+<script src="./mp.js?v=cf7bef"></script>
 </body>
 </html>

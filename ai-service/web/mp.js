@@ -12,6 +12,22 @@
 (function () {
   'use strict';
 
+  /* 版本参数（缓存穿透）-------------------------------------------------------
+   * 为什么需要：运行时代码/模板/样式以前用裸 URL 抓取（/mp/pages/x/x.js），
+   * 浏览器（Edge/Chrome 的启发式缓存）会长期缓存旧文件且不回头校验 → 出现
+   * 「代码改了、页面却还是旧的」（详情页打不开、文案不更新都栽在这里）。
+   * 现在从自己的 <script src="…/mp.js?v=xxx"> 上取版本号，拼到所有运行时请求上：
+   * index.html 里 v 一变，整套 /mp/** 立刻全部重新抓取，普通刷新即可（不用清缓存）。
+   * v 的值由 tools/build_web_pages.py 每次构建自动更新。 */
+  const VER = (function () {
+    try {
+      const s = document.currentScript;
+      const m = s && s.src && s.src.match(/[?&]v=([^&]+)/);
+      return m ? m[1] : '';
+    } catch (e) { return ''; }
+  })();
+  const VQ = VER ? ('?v=' + encodeURIComponent(VER)) : '';
+
   const MP = '/mp/';                       // 运行时代码根（由 serve_fusion 静态托管）
   const SRC = Object.create(null);         // 路径 -> 源码文本（先抓取，再同步 require）
   const CACHE = Object.create(null);       // 路径 -> module.exports
@@ -61,7 +77,7 @@
   async function preload(paths) {
     await Promise.all(paths.map(async (p) => {
       if (SRC[p] != null) return;
-      const r = await fetch(p);
+      const r = await fetch(p + VQ);
       if (!r.ok) throw new Error('抓取失败 ' + p + ' HTTP ' + r.status);
       SRC[p] = await r.text();
     }));
@@ -633,7 +649,7 @@
     if (loadedStyle[name]) return;
     loadedStyle[name] = true;
     const l = document.createElement('link');
-    l.rel = 'stylesheet'; l.href = MP + 'styles/' + name + '.css';
+    l.rel = 'stylesheet'; l.href = MP + 'styles/' + name + '.css' + VQ;
     document.head.appendChild(l);
   }
 
@@ -741,7 +757,7 @@
     const p = MP + 'pages/' + name + '/' + name + '.js';
     await preload([p]);
     if (!TEMPLATES[name]) {
-      const t = await fetch(MP + 'templates/' + name + '.json').then((r) => r.json());
+      const t = await fetch(MP + 'templates/' + name + '.json' + VQ).then((r) => r.json());
       TEMPLATES[name] = t;
     }
     currentDef = { __name: name };
@@ -765,7 +781,7 @@
   }
 
   async function boot() {
-    state.manifest = await fetch(MP + 'manifest.json').then((r) => r.json());
+    state.manifest = await fetch(MP + 'manifest.json' + VQ).then((r) => r.json());
     // 预加载 app.js + 全部 utils（页面里 require 是同步的，必须先有源码）
     const appJs = MP + 'app.js';
     const utils = state.manifest.utils.map((f) => MP + 'utils/' + f);
@@ -776,7 +792,7 @@
     if (appInstance && appInstance.onShow) appInstance.onShow({});
     // 预抓所有页面模板（体积很小）
     await Promise.all(state.manifest.pages.map(async (p) => {
-      const t = await fetch(MP + 'templates/' + p.name + '.json').then((r) => r.json());
+      const t = await fetch(MP + 'templates/' + p.name + '.json' + VQ).then((r) => r.json());
       TEMPLATES[p.name] = t;
     }));
     // 首次路由（支持 #/xxx?id=1 直达与刷新）

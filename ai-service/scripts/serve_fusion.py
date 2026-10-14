@@ -848,7 +848,10 @@ def corals_get(item_id: str):
     item = _catalog_or_503().get_item(item_id)
     if not item:
         raise HTTPException(404, f"没有这个条目：{item_id}")
-    return JSONResponse({"ok": True, "item": item})
+    # 同时给出 items/total：老版本网页端/小程序端的成功判定只看 {items,total}，
+    # 少了这两个键会把单条请求误判成失败（表现为点进种类看不到详情、被退回上一页）。
+    # 多带两个键对视图与后台都无副作用。
+    return JSONResponse({"ok": True, "item": item, "items": [item], "total": 1})
 
 
 @app.put("/corals/{item_id}")
