@@ -173,3 +173,147 @@
 | 伞状软珊瑚（Xenia umbellata） | species_xenia-umbellata.jpg | CC BY-SA 4.0 | Diego Delso | https://commons.wikimedia.org/wiki/File:Coral_pulsante_%28Xenia_umbellata%29%2C_Ras_Katy%2C_Sharm_el-Sheij%2C_Egipto%2C_2022-03-26%2C_DD_96.jpg |
 | 海扇柳珊瑚（Gorgonia ventalina） | species_gorgonia-ventalina.jpg | CC BY 2.0 | James St. John | https://commons.wikimedia.org/wiki/File:File%3AGorgonia_ventalina%2C_French_Bay.jpg |
 | 粗叶珊瑚（Trachyphyllia geoffroyi） | species_trachyphyllia-geoffroyi.jpg | CC BY-SA 4.0 | Diego Delso | https://commons.wikimedia.org/wiki/File:Coral_%28Trachyphyllia_geoffroyi%29%2C_Anilao%2C_Filipinas%2C_2023-08-21%2C_DD_147.jpg |
+
+## 图片来源与致谢（联网扩充的珊瑚种类，第三批 / iNaturalist）
+
+> 每条照片取自该物种在 iNaturalist 的分类单元代表照片，与条目一一对应；仅收录 CC / CC0 授权。
+
+| 物种 | 学名 | 文件 | 许可 | 作者/来源 | 分类单元页 |
+|---|---|---|---|---|---|
+| Acanthastrea pachysepta | Acanthastrea pachysepta | species_acanthastrea-pachysepta.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/519989 |
+| Acanthastrea rotundoflora | Acanthastrea rotundoflora | species_acanthastrea-rotundoflora.jpg | cc-by-nc | (c) New Heaven Reef Conservation Program, some rights reserved (CC BY-NC), uploaded by New Heaven Reef Conservation Program | https://www.inaturalist.org/taxa/503609 |
+| Acanthastrea brevis | Acanthastrea brevis | species_acanthastrea-brevis.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/503615 |
+| 掌状鹿角珊瑚 | Acropora palmata | species_acropora-palmata.jpg | cc-by | (c) Ryan McMinds, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/93312 |
+| 芽生鹿角珊瑚 | Acropora gemmifera | species_acropora-gemmifera.jpg | cc-by-nc | (c) Rachel Andres-Beck, some rights reserved (CC BY-NC), uploaded by Rachel Andres-Beck | https://www.inaturalist.org/taxa/93260 |
+| 美麗軸孔珊瑚 | Acropora muricata | species_acropora-muricata.jpg | cc-by | (c) Ryan McMinds, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/368558 |
+| 單獨軸孔珊瑚 | Acropora solitaryensis | species_acropora-solitaryensis.jpg | cc-by-nc | (c) hokoonwong, some rights reserved (CC BY-NC), uploaded by hokoonwong | https://www.inaturalist.org/taxa/93351 |
+| 蒿状鹿角珊瑚 | Acropora abrotanoides | species_acropora-abrotanoides.jpg | cc-by-nc | (c) krkzv, some rights reserved (CC BY-NC), uploaded by krkzv | https://www.inaturalist.org/taxa/93216 |
+| 亨氏鹿角珊瑚 | Acropora hemprichii | species_acropora-hemprichii.jpg | cc-by-nc | (c) Claudia Pogoreutz, some rights reserved (CC BY-NC), uploaded by Claudia Pogoreutz | https://www.inaturalist.org/taxa/93268 |
+| 格纹鹿角珊瑚 | Acropora clathrata | species_acropora-clathrata.jpg | cc-by-nc | (c) CORDENOS Thierry, some rights reserved (CC BY-NC), uploaded by CORDENOS Thierry | https://www.inaturalist.org/taxa/93236 |
+| 多育鹿角珊瑚 | Acropora prolifera | species_acropora-prolifera.jpg | cc-by-nc | (c) Donají Graham, some rights reserved (CC BY-NC), uploaded by Donají Graham | https://www.inaturalist.org/taxa/212460 |
+| 粗壮鹿角珊瑚 | Acropora robusta | species_acropora-robusta.jpg | cc-by-nc-nd | (c) Blogie Robillo, some rights reserved (CC BY-NC-ND), uploaded by Blogie Robillo | https://www.inaturalist.org/taxa/93335 |
+| 球头鹿角珊瑚 | Acropora globiceps | species_acropora-globiceps.jpg | cc-by-nc | (c) Leona Kustra, some rights reserved (CC BY-NC), uploaded by Leona Kustra | https://www.inaturalist.org/taxa/93262 |
+| Acropora spathulata | Acropora spathulata | species_acropora-spathulata.jpg | cc-by-nc | (c) Peter, some rights reserved (CC BY-NC), uploaded by Peter | https://www.inaturalist.org/taxa/93352 |
+| 秀丽鹿角珊瑚 | Acropora pulchra | species_acropora-pulchra.jpg | cc-by-nc-sa | (c) Ashton Williams, some rights reserved (CC BY-NC-SA), uploaded by Ashton Williams | https://www.inaturalist.org/taxa/93331 |
+| 维纳斯鹿角珊瑚 | Acropora cytherea | species_acropora-cytherea.jpg | cc-by-nc | (c) Jacopo Cristoni, some rights reserved (CC BY-NC), uploaded by Jacopo Cristoni | https://www.inaturalist.org/taxa/93240 |
+| 匍匐鹿角珊瑚 | Acropora sarmentosa | species_acropora-sarmentosa.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/93343 |
+| 多口鹿角珊瑚 | Acropora polystoma | species_acropora-polystoma.jpg | cc-by-sa | (c) Ewout Knoester, some rights reserved (CC BY-SA), uploaded by Ewout Knoester | https://www.inaturalist.org/taxa/93327 |
+| Acropora kenti | Acropora kenti | species_acropora-kenti.jpg | cc-by-nc-sa | (c) Matthew Connors, some rights reserved (CC BY-NC-SA), uploaded by Matthew Connors | https://www.inaturalist.org/taxa/1640061 |
+| Acropora valenciennesi | Acropora valenciennesi | species_acropora-valenciennesi.jpg | cc-by-nc | (c) Jens Sommer-Knudsen, some rights reserved (CC BY-NC), uploaded by Jens Sommer-Knudsen | https://www.inaturalist.org/taxa/93373 |
+| 刺鹿角珊瑚 | Acropora echinata | species_acropora-echinata.jpg | cc-by-nc | (c) Ingo Rogalla, some rights reserved (CC BY-NC), uploaded by Ingo Rogalla | https://www.inaturalist.org/taxa/93248 |
+| 绳状鹿角珊瑚 | Acropora loripes | species_acropora-loripes.jpg | cc-by-nc | (c) Albert Kang, some rights reserved (CC BY-NC), uploaded by Albert Kang | https://www.inaturalist.org/taxa/93290 |
+| 叉开鹿角珊瑚 | Acropora divaricata | species_acropora-divaricata.jpg | cc-by-nc | (c) martyhing, some rights reserved (CC BY-NC), uploaded by martyhing | https://www.inaturalist.org/taxa/93245 |
+| 中间鹿角珊瑚 | Acropora intermedia | species_acropora-intermedia.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/205265 |
+| 长杯鹿角珊瑚 | Acropora longicyathus | species_acropora-longicyathus.jpg | cc-by-nc | (c) Mark Rosenstein, some rights reserved (CC BY-NC), uploaded by Mark Rosenstein | https://www.inaturalist.org/taxa/93289 |
+| Acropora bifaria | Acropora bifaria | species_acropora-bifaria.jpg | cc-by-nc | (c) caleidoskopable, some rights reserved (CC BY-NC), uploaded by caleidoskopable | https://www.inaturalist.org/taxa/1640059 |
+| 颗粒鹿角珊瑚 | Acropora granulosa | species_acropora-granulosa.jpg | cc-by-nc-sa | (c) Ashton Williams, some rights reserved (CC BY-NC-SA), uploaded by Ashton Williams | https://www.inaturalist.org/taxa/93265 |
+| Acropora hoeksemai | Acropora hoeksemai | species_acropora-hoeksemai.jpg | cc-by-nc | (c) Nicolas Lagière, some rights reserved (CC BY-NC), uploaded by Nicolas Lagière | https://www.inaturalist.org/taxa/93269 |
+| 严峻鹿角珊瑚 | Acropora austera | species_acropora-austera.jpg | cc-by-nc | (c) juju98, some rights reserved (CC BY-NC), uploaded by juju98 | https://www.inaturalist.org/taxa/93224 |
+| 卡罗琳鹿角珊瑚 | Acropora caroliniana | species_acropora-caroliniana.jpg | cc-by-nc | (c) Amy Groundwater, some rights reserved (CC BY-NC), uploaded by Amy Groundwater | https://www.inaturalist.org/taxa/93232 |
+| 杨氏鹿角珊瑚 | Acropora yongei | species_acropora-yongei.jpg | cc-by-nc-sa | (c) Cheryl Gilbert, some rights reserved (CC BY-NC-SA), uploaded by Cheryl Gilbert | https://www.inaturalist.org/taxa/93383 |
+| 宽星鹿角珊瑚 | Acropora latistella | species_acropora-latistella.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/93284 |
+| 三毛亞軸孔珊瑚 | Acropora samoensis | species_acropora-samoensis.jpg | cc-by | (c) botanygirl, some rights reserved (CC BY), uploaded by botanygirl | https://www.inaturalist.org/taxa/93342 |
+| Acropora eurystoma | Acropora eurystoma | species_acropora-eurystoma.jpg | cc-by-nc | (c) martind, some rights reserved (CC BY-NC), uploaded by martind | https://www.inaturalist.org/taxa/1425450 |
+| 多刺鹿角珊瑚 | Acropora horrida | species_acropora-horrida.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/93270 |
+| 叉角軸孔珊瑚 | Acropora anthocercis | species_acropora-anthocercis.jpg | cc-by-nc | (c) David Obura，保留部分权利（CC BY-NC）, 由 David Obura 上传 | https://www.inaturalist.org/taxa/93220 |
+| Acropora pharaonis | Acropora pharaonis | species_acropora-pharaonis.jpg | cc-by-nc | (c) Luis P. B., some rights reserved (CC BY-NC), uploaded by Luis P. B. | https://www.inaturalist.org/taxa/93321 |
+| Acropora palmerae | Acropora palmerae | species_acropora-palmerae.jpg | cc-by-nc-sa | (c) Ashton Williams, some rights reserved (CC BY-NC-SA), uploaded by Ashton Williams | https://www.inaturalist.org/taxa/93313 |
+| Acropora microphthalma | Acropora microphthalma | species_acropora-microphthalma.jpg | cc-by-sa | (c) Ewout Knoester, some rights reserved (CC BY-SA), uploaded by Ewout Knoester | https://www.inaturalist.org/taxa/93298 |
+| 多恩鹿角珊瑚 | Acropora donei | species_acropora-donei.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/93246 |
+| Acropora desalwii | Acropora desalwii | species_acropora-desalwii.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/93243 |
+| 近无毛鹿角珊瑚 | Acropora subglabra | species_acropora-subglabra.jpg | cc-by | (c) luluchouette, some rights reserved (CC BY), uploaded by luluchouette | https://www.inaturalist.org/taxa/93358 |
+| 矮小鹿角珊瑚 | Acropora nana | species_acropora-nana.jpg | cc-by | (c) 
+Kerryn Johns, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/93304 |
+| Acropora pichoni | Acropora pichoni | species_acropora-pichoni.jpg | cc-by-nc | (c) uwkwaj, some rights reserved (CC BY-NC), uploaded by uwkwaj | https://www.inaturalist.org/taxa/93322 |
+| Acropora verweyi | Acropora verweyi | species_acropora-verweyi.jpg | cc-by-nc | (c) nmi_fishguy, some rights reserved (CC BY-NC), uploaded by nmi_fishguy | https://www.inaturalist.org/taxa/93379 |
+| Acropora arabensis | Acropora arabensis | species_acropora-arabensis.jpg | cc-by-nc | (c) Ingo Rogalla, some rights reserved (CC BY-NC), uploaded by Ingo Rogalla | https://www.inaturalist.org/taxa/93222 |
+| 乳头鹿角珊瑚 | Acropora papillare | species_acropora-papillare.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93315 |
+| Acropora uogi | Acropora uogi | species_acropora-uogi.jpg | cc-by-nc | (c) Natalie Scott, some rights reserved (CC BY-NC), uploaded by Natalie Scott | https://www.inaturalist.org/taxa/1640068 |
+| 卷柏鹿角珊瑚 | Acropora selago | species_acropora-selago.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/93348 |
+| Acropora elegans | Acropora elegans | species_acropora-elegans.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93250 |
+| 大型鹿角珊瑚 | Acropora grandis | species_acropora-grandis.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/93264 |
+| 洛坎鹿角珊瑚 | Acropora lokani | species_acropora-lokani.jpg | cc-by-nc | (c) Gita Alisa, some rights reserved (CC BY-NC), uploaded by Gita Alisa | https://www.inaturalist.org/taxa/93288 |
+| Acropora squarrosa | Acropora squarrosa | species_acropora-squarrosa.jpg | cc-by-nc | (c) Ingo Rogalla, some rights reserved (CC BY-NC), uploaded by Ingo Rogalla | https://www.inaturalist.org/taxa/93355 |
+| Acropora downingi | Acropora downingi | species_acropora-downingi.jpg | cc-by-nc-sa | (c) Tamsin Carlisle, some rights reserved (CC BY-NC-SA), uploaded by Tamsin Carlisle | https://www.inaturalist.org/taxa/93247 |
+| 灰绿鹿角珊瑚 | Acropora glauca | species_acropora-glauca.jpg | cc-by-nc | (c) Sol Yoder, some rights reserved (CC BY-NC), uploaded by Sol Yoder | https://www.inaturalist.org/taxa/93261 |
+| Acropora striata | Acropora striata | species_acropora-striata.jpg | cc-by-nc | (c) Gita Alisa, some rights reserved (CC BY-NC), uploaded by Gita Alisa | https://www.inaturalist.org/taxa/93357 |
+| Acropora jacquelineae | Acropora jacquelineae | species_acropora-jacquelineae.jpg | cc-by-nc-nd | (c) Blogie Robillo, some rights reserved (CC BY-NC-ND), uploaded by Blogie Robillo | https://www.inaturalist.org/taxa/93277 |
+| 阿布罗柳斯鹿角珊瑚 | Acropora abrolhosensis | species_acropora-abrolhosensis.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93215 |
+| Acropora branchi | Acropora branchi | species_acropora-branchi.jpg | cc-by-nc | (c) brentch, some rights reserved (CC BY-NC) | https://www.inaturalist.org/taxa/93228 |
+| Acropora macrostoma | Acropora macrostoma | species_acropora-macrostoma.jpg | cc-by-nc | (c) Lisa_James, some rights reserved (CC BY-NC), uploaded by Lisa_James | https://www.inaturalist.org/taxa/1640060 |
+| Acropora tenuissima | Acropora tenuissima | species_acropora-tenuissima.jpg | cc-by | (c) Tim, some rights reserved (CC BY), uploaded by Tim | https://www.inaturalist.org/taxa/1640064 |
+| Acropora awi | Acropora awi | species_acropora-awi.jpg | cc-by-nc | (c) Ryan Yue Wah Chan, some rights reserved (CC BY-NC), uploaded by Ryan Yue Wah Chan | https://www.inaturalist.org/taxa/93225 |
+| 穗状鹿角珊瑚 | Acropora spicifera | species_acropora-spicifera.jpg | cc-by-nc | (c) Febrianne S, some rights reserved (CC BY-NC), uploaded by Febrianne S | https://www.inaturalist.org/taxa/93354 |
+| Acropora indonesia | Acropora indonesia | species_acropora-indonesia.jpg | cc-by-nc | (c) Nicolas Lagière, some rights reserved (CC BY-NC), uploaded by Nicolas Lagière | https://www.inaturalist.org/taxa/93273 |
+| 蓟鹿角珊瑚 | Acropora carduus | species_acropora-carduus.jpg | cc-by-nc | (c) matalaut, some rights reserved (CC BY-NC), uploaded by matalaut | https://www.inaturalist.org/taxa/93231 |
+| Acropora kirstyae | Acropora kirstyae | species_acropora-kirstyae.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/93281 |
+| 显著鹿角珊瑚 | Acropora insignis | species_acropora-insignis.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/93275 |
+| Acropora tumida | Acropora tumida | species_acropora-tumida.jpg | cc-by-nc | (c) even928, some rights reserved (CC BY-NC) | https://www.inaturalist.org/taxa/93370 |
+| 埃氏鹿角珊瑚 | Acropora elseyi | species_acropora-elseyi.jpg | cc-by-nc-sa | (c) Matthew Connors, some rights reserved (CC BY-NC-SA), uploaded by Matthew Connors | https://www.inaturalist.org/taxa/93252 |
+| Acropora rudis | Acropora rudis | species_acropora-rudis.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93339 |
+| Acropora appressa | Acropora appressa | species_acropora-appressa.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/93221 |
+| Acropora nyinggulu | Acropora nyinggulu | species_acropora-nyinggulu.jpg | cc-by-nc | (c) Tim Karnasuta, some rights reserved (CC BY-NC), uploaded by Tim Karnasuta | https://www.inaturalist.org/taxa/1640070 |
+| 渐尖鹿角珊瑚 | Acropora acuminata | species_acropora-acuminata.jpg | cc-by | (c) 
+Kate Osborne, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/93218 |
+| Acropora tersa | Acropora tersa | species_acropora-tersa.jpg | cc-by-nc | (c) RikeF, some rights reserved (CC BY-NC), uploaded by RikeF | https://www.inaturalist.org/taxa/1640069 |
+| Acropora subulata | Acropora subulata | species_acropora-subulata.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93359 |
+| Acropora chesterfieldensis | Acropora chesterfieldensis | species_acropora-chesterfieldensis.jpg | cc-by-nc | (c) Tilali, some rights reserved (CC BY-NC), uploaded by Tilali | https://www.inaturalist.org/taxa/93235 |
+| Acropora multiacuta | Acropora multiacuta | species_acropora-multiacuta.jpg | cc-by-nc | (c) Alvin Chelliah, some rights reserved (CC BY-NC), uploaded by Alvin Chelliah | https://www.inaturalist.org/taxa/93303 |
+| Acropora kosurini | Acropora kosurini | species_acropora-kosurini.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93282 |
+| Acropora halmaherae | Acropora halmaherae | species_acropora-halmaherae.jpg | cc-by-nc | (c) nabayu5, some rights reserved (CC BY-NC) | https://www.inaturalist.org/taxa/93267 |
+| Acropora natalensis | Acropora natalensis | species_acropora-natalensis.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/93306 |
+| Acropora willisae | Acropora willisae | species_acropora-willisae.jpg | cc-by-nc | (c) Gita Alisa, some rights reserved (CC BY-NC), uploaded by Gita Alisa | https://www.inaturalist.org/taxa/93382 |
+| Acropora suharsonoi | Acropora suharsonoi | species_acropora-suharsonoi.jpg | cc-by-nc | (c) Gita Alisa, some rights reserved (CC BY-NC), uploaded by Gita Alisa | https://www.inaturalist.org/taxa/93360 |
+| Acropora tortuosa | Acropora tortuosa | species_acropora-tortuosa.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/93369 |
+| Acropora exquisita | Acropora exquisita | species_acropora-exquisita.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93253 |
+| Acropora harriottae | Acropora harriottae | species_acropora-harriottae.jpg | cc-by-nc | (c) Euan Thomas, some rights reserved (CC BY-NC), uploaded by Euan Thomas | https://www.inaturalist.org/taxa/1640072 |
+| Acropora kalindae | Acropora kalindae | species_acropora-kalindae.jpg | cc-by-nc | (c) danewattle, some rights reserved (CC BY-NC) | https://www.inaturalist.org/taxa/1640071 |
+| Acropora squamata | Acropora squamata | species_acropora-squamata.jpg | cc-by-nc | (c) Febrianne S, some rights reserved (CC BY-NC), uploaded by Febrianne S | https://www.inaturalist.org/taxa/1650297 |
+| Acropora lovelli | Acropora lovelli | species_acropora-lovelli.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/93291 |
+| 厚实梳石芝珊瑚 | Ctenactis crassa | species_ctenactis-crassa.jpg | cc-by-nc | (c) 107120830535687523870, some rights reserved (CC BY-NC), uploaded by 107120830535687523870 | https://www.inaturalist.org/taxa/98737 |
+| Ctenactis albitentaculata | Ctenactis albitentaculata | species_ctenactis-albitentaculata.jpg | cc-by-nc-nd | (c) Blogie Robillo, some rights reserved (CC BY-NC-ND), uploaded by Blogie Robillo | https://www.inaturalist.org/taxa/98736 |
+| Diploria labyrinthiformis | Diploria labyrinthiformis | species_diploria-labyrinthiformis.jpg | cc-by-nc-sa | (c) Steven Severinghaus, some rights reserved (CC BY-NC-SA) | https://www.inaturalist.org/taxa/504638 |
+| Dipsastraea laxa | Dipsastraea laxa | species_dipsastraea-laxa.jpg | cc-by-nc | (c) Rafi Amar, some rights reserved (CC BY-NC), uploaded by Rafi Amar | https://www.inaturalist.org/taxa/662531 |
+| Dipsastraea lizardensis | Dipsastraea lizardensis | species_dipsastraea-lizardensis.jpg | cc-by-nc | (c) Giverny, some rights reserved (CC BY-NC), uploaded by Giverny | https://www.inaturalist.org/taxa/712353 |
+| Dipsastraea matthaii | Dipsastraea matthaii | species_dipsastraea-matthaii.jpg | cc-by-nc | (c) David Spencer Muirhead, some rights reserved (CC BY-NC), uploaded by David Spencer Muirhead | https://www.inaturalist.org/taxa/503522 |
+| Dipsastraea pallida | Dipsastraea pallida | species_dipsastraea-pallida.jpg | cc-by-nc-nd | (c) Blogie Robillo, some rights reserved (CC BY-NC-ND), uploaded by Blogie Robillo | https://www.inaturalist.org/taxa/472803 |
+| Dipsastraea lacuna | Dipsastraea lacuna | species_dipsastraea-lacuna.jpg | cc-by-nc | (c) Denis Makhnovsky, some rights reserved (CC BY-NC), uploaded by Denis Makhnovsky | https://www.inaturalist.org/taxa/503806 |
+| 奇异双星珊瑚 | Dipsastraea mirabilis | species_dipsastraea-mirabilis.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/1437073 |
+| Dipsastraea laddi | Dipsastraea laddi | species_dipsastraea-laddi.jpg | cc-by-nc-nd | (c) diverosa, some rights reserved (CC BY-NC-ND) | https://www.inaturalist.org/taxa/503812 |
+| Dipsastraea faviaformis | Dipsastraea faviaformis | species_dipsastraea-faviaformis.jpg | cc-by-nc | (c) Albert Kang, some rights reserved (CC BY-NC), uploaded by Albert Kang | https://www.inaturalist.org/taxa/519971 |
+| Dipsastraea truncata | Dipsastraea truncata | species_dipsastraea-truncata.jpg | cc-by-nc | (c) Isabella Fenstermaker, some rights reserved (CC BY-NC), uploaded by Isabella Fenstermaker | https://www.inaturalist.org/taxa/732813 |
+| 多刺刺孔珊瑚 | Echinopora horrida | species_echinopora-horrida.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/503561 |
+| Echinopora hirsutissima | Echinopora hirsutissima | species_echinopora-hirsutissima.jpg | cc-by-nc | (c) Hamadi Mwamlavya, some rights reserved (CC BY-NC), uploaded by Hamadi Mwamlavya | https://www.inaturalist.org/taxa/503560 |
+| 芽棘孔珊瑚（寶石刺孔珊瑚） | Echinopora gemmacea | species_echinopora-gemmacea.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/503568 |
+| Echinopora forskaliana | Echinopora forskaliana | species_echinopora-forskaliana.jpg | cc-by | (c) Tom Heijnen, some rights reserved (CC BY), uploaded by Tom Heijnen | https://www.inaturalist.org/taxa/503565 |
+| 太平洋棘孔珊瑚 | Echinopora pacificus | species_echinopora-pacificus.jpg | cc-by-nc-sa | (c) Ashton Williams, some rights reserved (CC BY-NC-SA), uploaded by Ashton Williams | https://www.inaturalist.org/taxa/503563 |
+| Echinopora mammiformis | Echinopora mammiformis | species_echinopora-mammiformis.jpg | cc-by | (c) Ryan McMinds, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/503566 |
+| Echinopora fruticulosa | Echinopora fruticulosa | species_echinopora-fruticulosa.jpg | cc-by-nc | (c) Claudia Pogoreutz, some rights reserved (CC BY-NC), uploaded by Claudia Pogoreutz | https://www.inaturalist.org/taxa/503555 |
+| Echinopora taylorae | Echinopora taylorae | species_echinopora-taylorae.jpg | cc-by-nc-nd | (c) sea-kangaroo, some rights reserved (CC BY-NC-ND), uploaded by sea-kangaroo | https://www.inaturalist.org/taxa/503564 |
+| Euphyllia fimbriata | Euphyllia fimbriata | species_euphyllia-fimbriata.jpg | cc-by-nc-sa | (c) Lucas Thompson, some rights reserved (CC BY-NC-SA) | https://www.inaturalist.org/taxa/472802 |
+| Favites vasta | Favites vasta | species_favites-vasta.jpg | cc-by-nc | (c) Krylenko VV, some rights reserved (CC BY-NC), uploaded by Krylenko VV | https://www.inaturalist.org/taxa/503660 |
+| Favites rotundata | Favites rotundata | species_favites-rotundata.jpg | cc-by-nc | (c) Febrianne S, some rights reserved (CC BY-NC), uploaded by Febrianne S | https://www.inaturalist.org/taxa/705795 |
+| Favites magnistellata | Favites magnistellata | species_favites-magnistellata.jpg | cc-by | (c) Ryan McMinds, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/503662 |
+| Favites valenciennesi | Favites valenciennesi | species_favites-valenciennesi.jpg | cc-by-nc | (c) saraptor, certains droits réservés (CC BY-NC) | https://www.inaturalist.org/taxa/503663 |
+| Favites flexuosa | Favites flexuosa | species_favites-flexuosa.jpg | cc-by-nc-sa | (c) J. Martin Crossley, some rights reserved (CC BY-NC-SA), uploaded by J. Martin Crossley | https://www.inaturalist.org/taxa/503668 |
+| Favites colemani | Favites colemani | species_favites-colemani.jpg | cc-by-nc | (c) krkzv, some rights reserved (CC BY-NC), uploaded by krkzv | https://www.inaturalist.org/taxa/503661 |
+| Favites stylifera | Favites stylifera | species_favites-stylifera.jpg | cc-by-nc | (c) Juan José Areso, some rights reserved (CC BY-NC), uploaded by Juan José Areso | https://www.inaturalist.org/taxa/503653 |
+| Favites complanata | Favites complanata | species_favites-complanata.jpg | cc-by-nc | (c) David Obura, some rights reserved (CC BY-NC), uploaded by David Obura | https://www.inaturalist.org/taxa/503666 |
+| 粗糙盔形珊瑚 | Galaxea horrescens | species_galaxea-horrescens.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/503686 |
+| Galaxea longisepta | Galaxea longisepta | species_galaxea-longisepta.jpg | cc-by-nc | (c) Damien Brouste, some rights reserved (CC BY-NC), uploaded by Damien Brouste | https://www.inaturalist.org/taxa/503692 |
+| Galaxea paucisepta | Galaxea paucisepta | species_galaxea-paucisepta.jpg | cc-by-nc | (c) Silki Anisa Hidayat, some rights reserved (CC BY-NC), uploaded by Silki Anisa Hidayat | https://www.inaturalist.org/taxa/503685 |
+| Galaxea cryptoramosa | Galaxea cryptoramosa | species_galaxea-cryptoramosa.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/503690 |
+| Goniastrea stelligera | Goniastrea stelligera | species_goniastrea-stelligera.jpg | cc-by-nc | (c) Rino, some rights reserved (CC BY-NC), uploaded by Rino | https://www.inaturalist.org/taxa/503631 |
+| Goniastrea minuta | Goniastrea minuta | species_goniastrea-minuta.jpg | cc-by | (c) Lin Scott, some rights reserved (CC BY), uploaded by Lin Scott | https://www.inaturalist.org/taxa/503625 |
+| Goniastrea thecata | Goniastrea thecata | species_goniastrea-thecata.jpg | cc-by-nc | (c) Denis Makhnovsky, some rights reserved (CC BY-NC), uploaded by Denis Makhnovsky | https://www.inaturalist.org/taxa/503628 |
+| 艾氏角星珊瑚 | Goniastrea edwardsi | species_goniastrea-edwardsi.jpg | cc-by-nc-sa | (c) Ashton Williams, some rights reserved (CC BY-NC-SA), uploaded by Ashton Williams | https://www.inaturalist.org/taxa/503642 |
+| Goniastrea favulus | Goniastrea favulus | species_goniastrea-favulus.jpg | cc-by-nc | (c) Andy Pearce 🕊, some rights reserved (CC BY-NC), uploaded by Andy Pearce 🕊 | https://www.inaturalist.org/taxa/503632 |
+| Goniopora fruticosa | Goniopora fruticosa | species_goniopora-fruticosa.jpg | cc-by-nc | (c) Anne Hoggett, some rights reserved (CC BY-NC), uploaded by Anne Hoggett | https://www.inaturalist.org/taxa/101735 |
+| Goniopora tenuidens | Goniopora tenuidens | species_goniopora-tenuidens.jpg | cc-by-nc | (c) Tony Strazzari, some rights reserved (CC BY-NC), uploaded by Tony Strazzari | https://www.inaturalist.org/taxa/101751 |
+| Goniopora pedunculata | Goniopora pedunculata | species_goniopora-pedunculata.jpg | cc-by-nc | (c) Febrianne S, some rights reserved (CC BY-NC), uploaded by Febrianne S | https://www.inaturalist.org/taxa/1584608 |
+| Goniopora djiboutiensis | Goniopora djiboutiensis | species_goniopora-djiboutiensis.jpg | cc-by-sa | (c) Nhobgood, some rights reserved (CC BY-SA) | https://www.inaturalist.org/taxa/101733 |
+| Goniopora palmensis | Goniopora palmensis | species_goniopora-palmensis.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101739 |
+| 纤细角孔珊瑚 | Goniopora tenella | species_goniopora-tenella.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101750 |
+| Goniopora pandoraensis | Goniopora pandoraensis | species_goniopora-pandoraensis.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101740 |
+| Goniopora burgosi | Goniopora burgosi | species_goniopora-burgosi.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101729 |
+| Goniopora pendulus | Goniopora pendulus | species_goniopora-pendulus.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101742 |

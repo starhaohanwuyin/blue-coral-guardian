@@ -942,7 +942,8 @@ const EN = {
   brand: 'LanShan',
   slogan: 'Guard the ocean corals · tracking marine heat stress',
   /* 顺序与 homeData.stats 一致 */
-  stats: ['Corals adopted', 'Reef cover restored', 'Recognisable genera', 'Years of climate data'],
+  // 每个标签拆成两行（\n）：英文比中文长，单行会把数字挤变形
+  stats: ['Corals\nadopted', 'Reef cover\nrestored', 'Recognisable\ngenera', 'Years of\nclimate data'],
   carbon: 'Reefs fix about 225 t of calcium carbonate a year — roughly 100 t of CO₂ locked away.',
   climate: {
     title: 'Climate & corals',

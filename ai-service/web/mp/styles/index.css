@@ -161,6 +161,8 @@
   font-size: calc(18 * var(--rpx));          /* 跟着收两号：22 → 20 → 18 */
   color: var(--text3);
   margin-top: calc(4 * var(--rpx));
+  white-space: pre-line;     /* 让英文标签里的 \n 真正换行（英文拆两行，避免挤在一起） */
+  line-height: 1.25;
 }
 
 /* 碳汇贡献卡 */

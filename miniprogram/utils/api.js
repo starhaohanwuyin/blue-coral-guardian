@@ -358,7 +358,8 @@ api.getKnowledgeDetail = function (id) {
 api.getAllSpecies = function () {
   // 兼容旧调用：热门（精选）+ 第一页全部
   return api.getHotSpecies().then((hot) =>
-    api.getCoralCatalog({ limit: 60 }).then((page) => ({
+    // limit 要大于图鉴条目总数，否则「全部珊瑚种类」会被人为截断（曾只有 60 条）
+    api.getCoralCatalog({ limit: 500 }).then((page) => ({
       hot,
       all: page.items,
       total: page.total,
