@@ -118,14 +118,21 @@ page {
   background-clip: text;
   color: transparent;
 }
-/* 品牌名下方一行英文名（Reef-Blue） */
-.custom-header-row .logo-wrap { display: flex; flex-direction: column; }
+/* 品牌区：🪸 在左，右侧两行（中文名 + Reef-Blue）左对齐 */
+.custom-header-row .logo-wrap { display: flex; align-items: center; }
+.custom-header-row .logo-emoji { font-size: 48rpx; line-height: 1; margin-right: 10rpx; }
+.custom-header-row .logo-texts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;      /* 蓝珊 与 Reef-Blue 左对齐 */
+}
+.custom-header-row .logo-wrap .logo { font-size: 42rpx; line-height: 1.1; }   /* 中文名再大一点 */
 .custom-header-row .logo-sub {
   font-size: 20rpx;
   color: var(--text3);
   letter-spacing: 0.06em;
-  margin-top: 2rpx;
   line-height: 1.1;
+  margin-top: 2rpx;
 }
 .custom-header-row .sub { font-size: 24rpx; color: var(--text3); }
 

@@ -3,9 +3,13 @@
   <!-- 自定义导航头 -->
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">
+      <!-- 品牌：🪸 在左、右侧「蓝珊 / Reef-Blue」两行左对齐 -->
       <view class="logo-wrap">
-        <view class="logo">🪸 {{t.brand}}</view>
-        <view class="logo-sub">Reef-Blue</view>
+        <view class="logo-emoji">🪸</view>
+        <view class="logo-texts">
+          <view class="logo">{{t.brand}}</view>
+          <view class="logo-sub">Reef-Blue</view>
+        </view>
       </view>
       <view class="sub">{{t.slogan}}</view>
       <!-- 全中文模式：不显示中英切换按钮（要恢复就把下一行取消注释，并清空 utils/i18n.js 的 FORCE_LANG） -->
