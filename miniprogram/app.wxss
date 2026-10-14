@@ -120,7 +120,7 @@ page {
 }
 /* 品牌区：🪸 在左，右侧两行（中文名 + Reef-Blue）左对齐 */
 .custom-header-row .logo-wrap { display: flex; align-items: center; }
-.custom-header-row .logo-emoji { font-size: 48rpx; line-height: 1; margin-right: 10rpx; }
+.custom-header-row .logo-emoji { font-size: 56rpx; line-height: 1; margin-right: 10rpx; }
 .custom-header-row .logo-texts {
   display: flex;
   flex-direction: column;
