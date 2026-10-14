@@ -4,7 +4,7 @@
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">
       <view class="logo">🪸 珊瑚认养</view>
-      <view class="sub">认养一株珊瑚，见证它在南海的成长</view>
+      <view class="sub">认养一株珊瑚，见证它在海洋的成长</view>
     </view>
   </view>
 
@@ -20,9 +20,9 @@
     <view class="virtual-ocean">
       <view class="va-ray va-ray-1"></view>
       <view class="va-ray va-ray-2"></view>
-      <view class="va-fish va-fish-1">🐠</view>
+      <view class="va-fish va-fish-1">🐟</view>
       <view class="va-fish va-fish-2 reverse">🐟</view>
-      <view class="va-fish va-fish-3">🐠</view>
+      <view class="va-fish va-fish-3">🐡</view>
       <view class="va-kelp kelp-1"></view>
       <view class="va-kelp kelp-2"></view>
       <view class="va-kelp kelp-3"></view>
@@ -117,7 +117,7 @@
   <block wx:if="{{type === 1}}">
     <!-- Hero -->
     <view class="adopt-hero">
-      <view class="ah-fish ah-fish-1">🐠</view>
+      <view class="ah-fish ah-fish-1">🐟</view>
       <view class="ah-fish ah-fish-2 reverse">🐟</view>
       <view class="ah-bubble ab-1"></view>
       <view class="ah-bubble ab-2"></view>
@@ -126,7 +126,7 @@
       <view class="ah-sand"></view>
       <view class="adopt-hero-overlay">
         <view class="adopt-hero-title">🌊 守护珊瑚 守护海洋</view>
-        <view class="adopt-hero-sub">认养一株珊瑚，见证它在南海的成长</view>
+        <view class="adopt-hero-sub">认养一株珊瑚，见证它在海洋的成长</view>
       </view>
     </view>
 

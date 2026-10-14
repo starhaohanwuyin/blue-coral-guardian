@@ -8,6 +8,7 @@
     "pages/login/login",
     "pages/knowledge-detail/knowledge-detail",
     "pages/all-species/all-species",
+    "pages/coral-species/coral-species",
     "pages/coral-detail/coral-detail",
     "pages/camera/camera",
     "pages/article/article",

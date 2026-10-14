@@ -4,7 +4,7 @@
   <view class="dn-hero">
     <view class="dn-hero-icon">💚</view>
     <view class="dn-hero-title">珊瑚保护公益捐赠</view>
-    <view class="dn-hero-sub">您的每一份捐赠都将用于南海珊瑚礁的生态保护与修复，帮助我们培育更多抗逆珊瑚种苗。</view>
+    <view class="dn-hero-sub">您的每一份捐赠都将用于海洋珊瑚礁的生态保护与修复，帮助我们培育更多抗逆珊瑚种苗。</view>
   </view>
 
   <!-- 金额选择 -->

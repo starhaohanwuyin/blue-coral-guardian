@@ -5,11 +5,11 @@
     <view class="login-bubble lb-1"></view>
     <view class="login-bubble lb-2"></view>
     <view class="login-bubble lb-3"></view>
-    <view class="login-fish lf-1">🐠</view>
+    <view class="login-fish lf-1">🐟</view>
     <view class="login-fish lf-2 reverse">🐟</view>
     <view class="login-logo">🪸</view>
     <view class="login-brand">蓝珊</view>
-    <view class="login-slogan">守护南海珊瑚 · 数据与官网实时同步</view>
+    <view class="login-slogan">守护海洋珊瑚 · 数据与官网实时同步</view>
   </view>
 
   <!-- 表单卡 -->

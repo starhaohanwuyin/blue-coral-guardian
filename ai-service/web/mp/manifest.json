@@ -41,6 +41,11 @@
       "title": "全部珊瑚种类"
     },
     {
+      "route": "pages/coral-species/coral-species",
+      "name": "coral-species",
+      "title": "珊瑚种类详情"
+    },
+    {
       "route": "pages/coral-detail/coral-detail",
       "name": "coral-detail",
       "title": "珊瑚详情"
@@ -150,6 +155,7 @@
   "utils": [
     "api.js",
     "config.js",
+    "i18n.js",
     "mock.js",
     "request.js",
     "util.js"

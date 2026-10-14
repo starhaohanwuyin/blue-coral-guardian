@@ -142,13 +142,20 @@ page {
   0%, 100% { transform: rotate(3deg); }
   50% { transform: rotate(-3deg); }
 }
+/* 鱼群游动：方向 + 朝向必须配套，否则就是「倒着游」。
+   🐟 和 🐡 的头在 Windows(Segoe UI Emoji) 与 iOS 上**都朝左**，所以：
+     · 向右游（.swim）  = 先水平镜像 scaleX(-1)，再向右平移
+     · 向左游（.swimR / .reverse）= 不镜像，直接向左平移
+   ⚠️ 别用 🐠：它头朝左还是朝右随平台变（Windows 朝左、iOS 朝右），
+      一套 CSS 摆不平，会再次出现「有的鱼倒着游」。
+   ⚠️ 因此凡是用 .swim 的元素都必须是「头朝左」的 emoji（🐟 / 🐡）。 */
 @keyframes swim {
-  0% { transform: translateX(-80rpx); }
-  100% { transform: translateX(750rpx); }
+  0% { transform: translateX(-80rpx) scaleX(-1); }
+  100% { transform: translateX(750rpx) scaleX(-1); }
 }
 @keyframes swimR {
-  0% { transform: translateX(750rpx) scaleX(-1); }
-  100% { transform: translateX(-80rpx) scaleX(-1); }
+  0% { transform: translateX(750rpx); }
+  100% { transform: translateX(-80rpx); }
 }
 @keyframes bubbleUp {
   0% { transform: translateY(0) scale(1); opacity: 0.6; }

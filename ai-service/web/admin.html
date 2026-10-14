@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>珊瑚图鉴数据后台 · 蓝珊</title>
+<style>
+  :root { --primary:#1E88E5; --accent:#00BCD4; --coral:#FF7043; --bg:#f5f7fa;
+          --card:#fff; --text:#1A2138; --text2:#5A6578; --text3:#9AA5B4; --border:#E8EDF5; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  header { background:linear-gradient(135deg,#0D47A1,#1E88E5); color:#fff; padding:18px 22px; }
+  header h1 { margin:0; font-size:19px; font-weight:600; }
+  header p { margin:6px 0 0; font-size:13px; opacity:.9; }
+  main { max-width:1080px; margin:0 auto; padding:18px 16px 60px; }
+  .card { background:var(--card); border-radius:14px; box-shadow:0 4px 24px rgba(30,136,229,.07);
+          padding:18px; margin-bottom:16px; }
+  h2 { font-size:15px; margin:0 0 12px; }
+  .stats { display:flex; gap:12px; flex-wrap:wrap; }
+  .stat { flex:1 1 120px; background:var(--card); border-radius:14px; padding:14px 16px;
+          box-shadow:0 4px 24px rgba(30,136,229,.07); }
+  .stat b { display:block; font-size:24px; color:var(--primary); }
+  .stat span { font-size:12px; color:var(--text3); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button { border:0; border-radius:10px; padding:9px 16px; font-size:14px; cursor:pointer;
+           background:var(--primary); color:#fff; }
+  button.ghost { background:#eef4fb; color:var(--primary); }
+  button.danger { background:#fdeceb; color:#c62828; padding:5px 10px; font-size:12px; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  input, select, textarea { border:1px solid var(--border); border-radius:10px; padding:8px 10px;
+           font-size:14px; font-family:inherit; color:var(--text); background:#fff; }
+  input:focus, select:focus, textarea:focus { outline:2px solid rgba(30,136,229,.25); border-color:var(--primary); }
+  label.f { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--text3); }
+  .grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  .drop { border:2px dashed #cfe0f3; border-radius:12px; padding:22px; text-align:center;
+          color:var(--text2); font-size:13px; cursor:pointer; background:#fbfdff; }
+  .drop.over { border-color:var(--primary); background:#f2f8ff; }
+  .msg { font-size:13px; margin-top:10px; white-space:pre-wrap; }
+  .msg.ok { color:#2e7d32; } .msg.err { color:#c62828; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th { color:var(--text3); font-weight:500; white-space:nowrap; }
+  .latin { color:var(--text3); font-style:italic; }
+  .tag { display:inline-block; background:#eef4fb; color:var(--primary); border-radius:8px;
+         padding:1px 7px; font-size:11px; margin-right:4px; }
+  .muted { color:var(--text3); font-size:12px; }
+  details summary { cursor:pointer; font-size:14px; color:var(--primary); }
+  details { font-size:13px; color:var(--text2); line-height:1.7; }
+  code { background:#f2f5f8; padding:1px 5px; border-radius:5px; font-size:12px; }
+  .pager { display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🪸 珊瑚图鉴数据后台</h1>
+  <p>给科普页供数据的 SQLite 图鉴库 · <span id="apiBase"></span></p>
+</header>
+
+<main>
+  <div class="stats" id="stats"></div>
+
+  <div class="card">
+    <h2>1 · 批量上传（推荐）</h2>
+    <div class="row" style="margin-bottom:10px">
+      <button class="ghost" id="tmplCsv">下载 CSV 模板</button>
+      <a href="/corals/export" download="coral_species_export.json"><button class="ghost">导出全部 JSON</button></a>
+      <label class="muted" style="display:flex;align-items:center;gap:6px">
+        <input type="checkbox" id="overwrite" checked style="width:auto"> 覆盖同 id 条目（不勾=只补新条目）
+      </label>
+    </div>
+    <div class="drop" id="drop">点这里选文件，或把 .json / .csv / .tsv 拖进来<br>
+      <span class="muted">表头中英文都认：中文名,拉丁名,属,科,级别,类群,分布,描述,白化敏感度,造礁,精选,标签</span>
+    </div>
+    <input type="file" id="file" accept=".json,.csv,.tsv" hidden />
+    <div class="msg" id="uploadMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · 单条新增 / 覆盖</h2>
+    <div class="grid3">
+      <label class="f">中文名 *<input id="f_name" placeholder="如：强壮鹿角珊瑚"></label>
+      <label class="f">拉丁名<input id="f_latin" placeholder="如：Acropora valida"></label>
+      <label class="f">属（拉丁）<input id="f_genus" placeholder="Acropora"></label>
+      <label class="f">科<input id="f_family" placeholder="鹿角珊瑚科 Acroporidae"></label>
+      <label class="f">分布<input id="f_dist" placeholder="印度-太平洋"></label>
+      <label class="f">白化敏感度
+        <select id="f_risk"><option value="">未填</option><option>高</option><option>中</option><option>低</option></select>
+      </label>
+      <label class="f">类群
+        <select id="f_group"><option value="">未填</option><option>造礁石珊瑚</option>
+        <option>非造礁石珊瑚</option><option>软珊瑚</option><option>水螅珊瑚</option><option>柳珊瑚</option></select>
+      </label>
+      <label class="f">配图键（可选）<input id="f_imgKey" placeholder="coral1 / tech1 …"></label>
+      <label class="f">图片URL（照片地址，可空）<input id="f_imgUrl" placeholder="留空则用「配图键」对应的实物图"></label>
+      <label class="f">标签（逗号分隔）<input id="f_tags" placeholder="南海,耐热"></label>
+    </div>
+    <label class="f" style="margin-top:12px">描述
+      <textarea id="f_desc" rows="3" placeholder="形态、生态位、耐热性等"></textarea></label>
+    <div class="row" style="margin-top:12px">
+      <label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="f_reef" checked style="width:auto"> 造礁</label>
+      <label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="f_featured" style="width:auto"> 设为精选（首页/科普页横滑展示）</label>
+      <button id="addBtn">保存条目</button>
+      <span class="msg" id="addMsg"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3 · 图鉴列表</h2>
+    <div class="row" style="margin-bottom:12px">
+      <input id="q" placeholder="搜索：中文名 / 拉丁名 / 属 / 描述" style="flex:1 1 240px">
+      <select id="genus"><option value="">全部属</option></select>
+      <select id="featuredOnly"><option value="">全部</option><option value="1">只看精选</option></select>
+      <button id="searchBtn">查询</button>
+    </div>
+    <div style="overflow-x:auto"><table id="tbl">
+      <thead><tr><th>中文名</th><th>拉丁名</th><th>属</th><th>级别</th><th>分布</th><th>白化</th><th>精选</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="pager">
+      <span class="muted" id="pageInfo"></span>
+      <button class="ghost" id="prev">上一页</button>
+      <button class="ghost" id="next">下一页</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>使用说明 / 常见问题</summary>
+      <p>· 数据存在 <code>ai-service/data/corals/corals.db</code>（SQLite，单文件，直接备份即可）。<br>
+         · 种子数据在 <code>data/corals/coral_species.json</code>，由 <code>python tools/gen_coral_catalog.py</code> 生成。<br>
+         · 页面（网页版/小程序）通过 <code>GET /corals</code> 读库，所以上传后刷新页面即可看到新条目。<br>
+         · 「精选」决定科普页顶部横滑展示的那几条（当前 6 条）。<br>
+         · 配图两种来源：「配图」= 内置实物图键（coral1…tech5）；「图片URL」= 你自己的照片地址，填了优先用。<br>
+         · 服务端配了 <code>CORAL_API_TOKEN</code> 时，上传/修改/删除需要 Token（存本机浏览器里）。<br>
+         · 想批量替换成权威数据：点「导出全部 JSON」→ 用脚本改 → 再上传回来（勾选「覆盖同 id 条目」）。</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>访问令牌（服务端配了 Token 才需要）</h2>
+    <div class="row">
+      <input id="token" placeholder="X-API-Token" style="flex:1 1 260px">
+      <button class="ghost" id="saveToken">保存到本机浏览器</button>
+      <span class="msg ok" id="tokenMsg"></span>
+    </div>
+  </div>
+</main>
+
+<script>
+  var API = location.origin;
+  var PAGE = 40, OFFSET = 0, TOTAL = 0;
+  document.getElementById('apiBase').textContent = API;
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Token ---------- */
+  var TOKEN_KEY = 'coral_admin_token';
+  $('token').value = localStorage.getItem(TOKEN_KEY) || '';
+  $('saveToken').onclick = function () {
+    localStorage.setItem(TOKEN_KEY, $('token').value.trim());
+    $('tokenMsg').textContent = '已保存';
+    setTimeout(function () { $('tokenMsg').textContent = ''; }, 1500);
+  };
+  function headers(json) {
+    var h = {};
+    var t = ($('token').value || '').trim();
+    if (t) h['X-API-Token'] = t;
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+  }
+  function api(method, path, body, isForm) {
+    var opt = { method: method, headers: headers(!isForm && body) };
+    if (body && !isForm) opt.body = JSON.stringify(body);
+    if (body && isForm) opt.body = body;
+    return fetch(API + path, opt).then(function (r) {
+      return r.text().then(function (txt) {
+        var d; try { d = JSON.parse(txt); } catch (e) { d = { detail: txt.slice(0, 200) }; }
+        if (!r.ok) throw new Error((d && (d.detail || d.message)) || ('HTTP ' + r.status));
+        return d;
+      });
+    });
+  }
+
+  /* ---------- 统计 ---------- */
+  function loadStats() {
+    return api('GET', '/corals/stats').then(function (s) {
+      var box = [
+        ['条目总数', s.total], ['属', s.genera], ['科', s.families],
+        ['AI 可识别属', s.aiGenera], ['精选', s.featured]
+      ].map(function (kv) {
+        return '<div class="stat"><b>' + kv[1] + '</b><span>' + kv[0] + '</span></div>';
+      }).join('');
+      $('stats').innerHTML = box;
+      var sel = $('genus');
+      var cur = sel.value;
+      sel.innerHTML = '<option value="">全部属（' + s.genera + '）</option>' +
+        s.generaList.map(function (g) {
+          return '<option value="' + g.genus + '">' + (g.genusCn || g.genus) +
+            ' ' + g.genus + '（' + g.count + '）</option>';
+        }).join('');
+      sel.value = cur;
+      return s;
+    });
+  }
+
+  /* ---------- 列表 ---------- */
+  function loadList() {
+    var qs = '?limit=' + PAGE + '&offset=' + OFFSET +
+      '&q=' + encodeURIComponent($('q').value.trim()) +
+      '&genus=' + encodeURIComponent($('genus').value);
+    if ($('featuredOnly').value) qs += '&featured=true';
+    return api('GET', '/corals' + qs).then(function (d) {
+      TOTAL = d.total;
+      var rows = d.items.map(function (it) {
+        return '<tr>' +
+          '<td><b>' + it.name + '</b>' + (it.featured ? ' <span class="tag">精选</span>' : '') +
+            (it.tags && it.tags.length ? '<br><span class="muted">' + it.tags.join(' · ') + '</span>' : '') + '</td>' +
+          '<td class="latin">' + (it.latin || '') + '</td>' +
+          '<td>' + (it.genusCn || it.genus || '') + '</td>' +
+          '<td>' + (it.level === 'genus' ? '属' : '种') + '</td>' +
+          '<td>' + (it.dist || '') + '</td>' +
+          '<td>' + (it.bleachingRisk || '') + '</td>' +
+          '<td>' + (it.featured ? '✓' : '') + '</td>' +
+          '<td><button class="danger" data-del="' + it.id + '">删除</button></td>' +
+          '</tr>';
+      }).join('');
+      $('tbl').querySelector('tbody').innerHTML =
+        rows || '<tr><td colspan="8" class="muted">没有匹配的条目</td></tr>';
+      $('pageInfo').textContent = '共 ' + TOTAL + ' 条 · 第 ' + (Math.floor(OFFSET / PAGE) + 1) +
+        ' / ' + Math.max(1, Math.ceil(TOTAL / PAGE)) + ' 页';
+      $('prev').disabled = OFFSET <= 0;
+      $('next').disabled = OFFSET + PAGE >= TOTAL;
+    });
+  }
+  $('tbl').addEventListener('click', function (e) {
+    var id = e.target.getAttribute && e.target.getAttribute('data-del');
+    if (!id) return;
+    if (!confirm('确定删除这条吗？\n' + id)) return;
+    api('DELETE', '/corals/' + encodeURIComponent(id)).then(function () {
+      return loadStats().then(loadList);
+    }).catch(function (err) { alert('删除失败：' + err.message); });
+  });
+  $('searchBtn').onclick = function () { OFFSET = 0; loadList().catch(function (e) { alert(e.message); }); };
+  $('q').onkeydown = function (e) { if (e.key === 'Enter') $('searchBtn').onclick(); };
+  $('genus').onchange = $('featuredOnly').onchange = $('searchBtn').onclick;
+  $('prev').onclick = function () { OFFSET = Math.max(0, OFFSET - PAGE); loadList(); };
+  $('next').onclick = function () { OFFSET += PAGE; loadList(); };
+
+  /* ---------- 上传 ---------- */
+  function show(id, text, ok) {
+    var el = $(id);
+    el.textContent = text;
+    el.className = 'msg ' + (ok ? 'ok' : 'err');
+  }
+  function doUpload(file) {
+    if (!file) return;
+    var fd = new FormData();
+    fd.append('file', file, file.name);
+    show('uploadMsg', '上传中…', true);
+    api('POST', '/corals/import?overwrite=' + ($('overwrite').checked ? 'true' : 'false'),
+        fd, true).then(function (r) {
+      var line = '✅ 解析 ' + r.total + ' 条：新增 ' + r.added + '，更新 ' + r.updated +
+        '，跳过 ' + r.skipped;
+      if (r.errors && r.errors.length) line += '\n⚠️ ' + r.errors.slice(0, 8).join('\n⚠️ ');
+      show('uploadMsg', line, true);
+      return loadStats().then(loadList);
+    }).catch(function (e) { show('uploadMsg', '❌ ' + e.message, false); });
+  }
+  $('drop').onclick = function () { $('file').click(); };
+  $('file').onchange = function () { doUpload(this.files[0]); this.value = ''; };
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    $('drop').addEventListener(ev, function (e) { e.preventDefault(); $('drop').classList.add('over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    $('drop').addEventListener(ev, function (e) { e.preventDefault(); $('drop').classList.remove('over'); });
+  });
+  $('drop').addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files[0]) doUpload(e.dataTransfer.files[0]);
+  });
+
+  /* CSV 模板 */
+  var CSV_HEAD = '中文名,拉丁名,属,属中文名,科,级别,类群,分布,描述,白化敏感度,造礁,AI可识别,精选,' +
+    '图片URL,别名,保护等级,群落形态,成体尺寸,外观颜色,辨识特征,栖息水深,水温盐度,生长速度,共生特点,伴生生物,致危因素,标签,来源';
+  var CSV_DEMO = '示例珊瑚,Exemplum corallium,Exemplum,示例属,示例科,species,造礁石珊瑚,印度-太平洋,' +
+    '这是一条示例描述,中,是,否,否,,示例珊瑚（俗称）,CITES 附录 II,块状群体,直径 30–60 cm,棕黄色,' +
+    '表面沟纹清晰,3–20 m,23–29℃ / 34–36‰,1–2 cm/年,与虫黄藻共生,礁区鱼类与虾蟹,海水升温白化,南海耐热,手工录入';
+  $('tmplCsv').onclick = function () {
+    var blob = new Blob(['\ufeff' + CSV_HEAD + '\n' + CSV_DEMO + '\n'],
+                        { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '珊瑚图鉴_上传模板.csv';
+    a.click();
+  };
+
+  /* ---------- 单条新增 ---------- */
+  $('addBtn').onclick = function () {
+    var body = {
+      '中文名': $('f_name').value.trim(),
+      '拉丁名': $('f_latin').value.trim(),
+      '属': $('f_genus').value.trim(),
+      '科': $('f_family').value.trim(),
+      '分布': $('f_dist').value.trim(),
+      '描述': $('f_desc').value.trim(),
+      '白化敏感度': $('f_risk').value,
+      '类群': $('f_group').value,
+      '配图': $('f_imgKey').value.trim(),
+      '图片URL': $('f_imgUrl').value.trim(),
+      '标签': $('f_tags').value.trim(),
+      '造礁': $('f_reef').checked,
+      '精选': $('f_featured').checked
+    };
+    if (!body['中文名']) { show('addMsg', '中文名必填', false); return; }
+    api('POST', '/corals', body).then(function (r) {
+      show('addMsg', (r.created ? '已新增：' : '已覆盖：') + r.item.id, true);
+      ['f_name', 'f_latin', 'f_genus', 'f_family', 'f_dist', 'f_desc', 'f_imgKey', 'f_imgUrl', 'f_tags']
+        .forEach(function (k) { $(k).value = ''; });
+      return loadStats().then(loadList);
+    }).catch(function (e) { show('addMsg', '❌ ' + e.message, false); });
+  };
+
+  /* ---------- 启动 ---------- */
+  loadStats().then(loadList).catch(function (e) {
+    show('uploadMsg', '❌ 读不到图鉴接口：' + e.message +
+      '\n请确认服务已启动（python serve_fusion.py），并且是通过 http://127.0.0.1:8000/admin.html 打开本页。', false);
+  });
+</script>
+</body>
+</html>

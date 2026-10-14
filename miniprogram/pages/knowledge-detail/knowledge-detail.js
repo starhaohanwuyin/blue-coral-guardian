@@ -25,6 +25,16 @@ Page({
     wx.navigateTo({ url: '/pages/quiz/quiz' })
   },
 
+  onOpenLink() {
+    const it = this.data.item || {}
+    util.openLink(it.link, '延伸阅读链接已复制，可粘贴到微信或浏览器打开')
+  },
+
+  onCopyLink() {
+    const it = this.data.item || {}
+    if (it.link) util.copyText(it.link, '延伸阅读链接已复制')
+  },
+
   onShareAppMessage() {
     const item = this.data.item || {}
     return {

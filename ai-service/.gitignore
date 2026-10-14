@@ -51,6 +51,11 @@ data/processed/bleaching_ip/test_ip/*
 
 # ---- 其他大文件与产物 ----
 *.csv
+# 珊瑚图鉴数据库（运行时生成；种子数据 data/corals/coral_species.json 入库）
+data/corals/*.db
+data/corals/*.db-wal
+data/corals/*.db-shm
+data/corals/uploads/
 runs/
 reports/*.log
 *.log

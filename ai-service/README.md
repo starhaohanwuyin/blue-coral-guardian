@@ -89,6 +89,26 @@ python scripts/segment_coral.py --image /path/to/coral.jpg --json
 | **`POST /count`** | **只做珊瑚个体计数**（P3 附加；不跑分割/分类，可选 `conf`/`iou`）|
 | **`GET /climate/profile?lat=&lon=`** | **投放时间窗档案**：往年白化预警记录 → 建议避开月份 / 稳定性判定（网格外返回 `ok=false`）|
 | `GET /sample?set=semporna&index=0` | 样例图（`semporna` / `bleached` / `healthy`），供无图时演示 |
+| **`GET /corals`** | **珊瑚图鉴列表**（SQLite 图鉴库；`q=` 搜索、`genus=` 属筛选、`limit/offset` 分页）|
+| `GET /corals/stats` | 图鉴统计（总数 / 属数 / 科数 / 属清单）|
+| `GET /corals/{id}` | 单条详情（基础档案 / 形态识别 / 生物习性 / 生存威胁 四大板块字段）|
+| `POST /corals` · `PUT /corals/{id}` · `DELETE /corals/{id}` | 图鉴增改删（单条）|
+| `POST /corals/import` | **批量上传**（JSON / CSV / TSV，表头中英文都认）|
+| **`GET /admin.html`** | **珊瑚图鉴数据后台**：上传、搜索、删除、导出，手机/电脑浏览器都能开 |
+
+### 珊瑚图鉴数据库（科普页的「珊瑚种类」）
+
+科普页与「全部种类」页的种类数据**不是写死在代码里的**，而是读 SQLite 图鉴库：
+
+```
+tools/gen_coral_catalog.py   →  data/corals/coral_species.json   种子数据（原版精编 12 条，入 git）
+                             →  data/corals/corals.db            首次启动自动建库并灌种子（不入 git）
+/admin.html 上传 或 POST /corals/import  → 即写即生效，页面刷新就能看到
+小程序 / 网页版 GET /corals              ← 连不上服务时自动退回本地 24 条演示数据
+```
+
+要加自己的种类：打开 `http://127.0.0.1:8000/admin.html` → 下载 CSV 模板 → 填好上传即可
+（也可直接传 JSON）。字段与命令行用法见 [docs/珊瑚图鉴数据库.md](docs/珊瑚图鉴数据库.md)。
 
 `/analyze` 返回结构：
 

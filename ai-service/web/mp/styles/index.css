@@ -1,5 +1,18 @@
 /* ============ 首页 ============ */
 
+/* 语言切换按钮（右上角）：点一下在中文 / English 之间切 */
+.lang-btn {
+  flex: none;
+  margin-left: calc(16 * var(--rpx));
+  padding: calc(8 * var(--rpx)) calc(22 * var(--rpx));
+  border-radius: calc(999 * var(--rpx));
+  background: rgba(30, 136, 229, 0.10);
+  color: var(--primary);
+  font-size: calc(24 * var(--rpx));
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* 海洋Hero场景 */
 .home-hero {
   position: relative;
@@ -140,12 +153,12 @@
 }
 .stat-item { text-align: center; }
 .stat-num {
-  font-size: calc(44 * var(--rpx));
+  font-size: calc(40 * var(--rpx));          /* 小一号：44 → 40 */
   font-weight: 700;
   color: var(--primary);
 }
 .stat-label {
-  font-size: calc(22 * var(--rpx));
+  font-size: calc(20 * var(--rpx));          /* 小一号：22 → 20 */
   color: var(--text3);
   margin-top: calc(4 * var(--rpx));
 }
@@ -180,6 +193,68 @@
   color: var(--text3);
   margin-top: calc(6 * var(--rpx));
   line-height: 1.5;
+}
+
+/* 气候与珊瑚卡（气候韧性） */
+.climate-home-card {
+  margin: calc(24 * var(--rpx));
+  padding: calc(28 * var(--rpx)) calc(32 * var(--rpx));
+}
+.climate-home-head {
+  display: flex;
+  align-items: center;
+  gap: calc(20 * var(--rpx));
+}
+.climate-home-icon {
+  width: calc(88 * var(--rpx));
+  height: calc(88 * var(--rpx));
+  border-radius: calc(24 * var(--rpx));
+  background: rgba(255, 112, 67, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(44 * var(--rpx));
+  flex-shrink: 0;
+}
+.climate-home-headtext { flex: 1; min-width: 0; }
+.climate-home-title { font-size: calc(28 * var(--rpx)); font-weight: 600; }
+.climate-home-sub {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(4 * var(--rpx));
+}
+.climate-home-tag {
+  flex-shrink: 0;
+  padding: calc(6 * var(--rpx)) calc(16 * var(--rpx));
+  border-radius: calc(20 * var(--rpx));
+  background: rgba(255, 112, 67, 0.12);
+  color: var(--coral);
+  font-size: calc(20 * var(--rpx));
+}
+.climate-home-metrics {
+  display: flex;
+  justify-content: space-between;
+  margin-top: calc(24 * var(--rpx));
+  padding: calc(20 * var(--rpx)) 0;
+  border-top: calc(1 * var(--rpx)) solid var(--border);
+  border-bottom: calc(1 * var(--rpx)) solid var(--border);
+}
+.climate-metric { flex: 1; text-align: center; }
+.climate-metric-val {
+  font-size: calc(34 * var(--rpx));
+  font-weight: 700;
+  color: var(--coral);
+}
+.climate-metric-label {
+  font-size: calc(20 * var(--rpx));
+  color: var(--text3);
+  margin-top: calc(4 * var(--rpx));
+}
+.climate-home-desc {
+  font-size: calc(22 * var(--rpx));
+  color: var(--text2);
+  margin-top: calc(20 * var(--rpx));
+  line-height: 1.6;
 }
 
 /* 快捷功能 */
@@ -303,63 +378,13 @@
   font-weight: 500;
 }
 
-/* 核心团队 */
-.team-section { padding: 0 calc(24 * var(--rpx)); }
-.team-intro {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: calc(24 * var(--rpx)) calc(28 * var(--rpx));
-  font-size: calc(24 * var(--rpx));
-  color: var(--text2);
-  line-height: 1.7;
-  box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
-}
-.team-scroll {
-  white-space: nowrap;
-  margin-top: calc(20 * var(--rpx));
-  width: 100%;
-}
-.team-member {
-  display: inline-block;
-  width: calc(240 * var(--rpx));
-  margin-right: calc(20 * var(--rpx));
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: calc(28 * var(--rpx)) calc(20 * var(--rpx));
-  text-align: center;
-  box-shadow: 0 calc(4 * var(--rpx)) calc(32 * var(--rpx)) rgba(30, 136, 229, 0.07);
-  vertical-align: top;
-}
-.team-avatar {
-  width: calc(120 * var(--rpx));
-  height: calc(120 * var(--rpx));
-  border-radius: 50%;
-  background: var(--border);
-}
-.team-name {
-  font-size: calc(28 * var(--rpx));
-  font-weight: 700;
-  margin-top: calc(16 * var(--rpx));
-}
-.team-role {
-  font-size: calc(22 * var(--rpx));
-  color: var(--primary);
-  margin-top: calc(4 * var(--rpx));
-}
-.team-desc {
-  font-size: calc(20 * var(--rpx));
-  color: var(--text3);
-  margin-top: calc(10 * var(--rpx));
-  line-height: 1.5;
-  white-space: normal;
-}
-
 /* 团队视频 */
 .team-video-section {
   margin: 0 calc(24 * var(--rpx));
   overflow: hidden;
 }
 .video-wrapper { position: relative; height: calc(360 * var(--rpx)); }
+.video-player { width: 100%; height: calc(360 * var(--rpx)); display: block; background: #000; }
 .video-cover { width: 100%; height: 100%; }
 .play-icon {
   position: absolute;

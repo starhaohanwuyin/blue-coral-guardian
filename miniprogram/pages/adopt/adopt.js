@@ -205,7 +205,7 @@ Page({
       }).catch(() => {})
     }
     return {
-      title: '我在蓝珊认养了一株珊瑚，一起来守护南海吧！',
+      title: '我在蓝珊认养了一株珊瑚，一起来守护海洋吧！',
       path: '/pages/index/index'
     }
   },

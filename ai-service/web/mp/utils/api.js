@@ -356,8 +356,203 @@ api.getKnowledgeDetail = function (id) {
 }
 
 api.getAllSpecies = function () {
-  if (config.USE_MOCK) return mock.delay({ hot: mock.species, all: mock.allSpecies })
-  return req.get(URL.allSpecies)
+  // 兼容旧调用：热门（精选）+ 第一页全部
+  return api.getHotSpecies().then((hot) =>
+    api.getCoralCatalog({ limit: 60 }).then((page) => ({
+      hot,
+      all: page.items,
+      total: page.total,
+      fromDb: page.fromDb
+    })))
+}
+
+/* ================= 珊瑚图鉴（SQLite 数据库） =================
+ * 数据源：ai-service/scripts/coral_catalog.py（corals.db），后台页面 /admin.html
+ * 页面读 GET /corals（搜索 + 属筛选 + 分页）、GET /corals/stats
+ * 连不上服务时自动退回 utils/mock.js 的静态数组（24 条），页面不会空。
+ */
+
+let DB_BASE = ''          // 图鉴服务地址（拿到后把相对图片路径补成绝对地址）
+
+function absImageUrl(u) {
+  if (!u) return ''
+  if (/^(https?:)?\/\//.test(u) || String(u).indexOf('data:') === 0) return u
+  return (DB_BASE || '') + u
+}
+
+/** 把数据库条目转成页面用的字段（含配图解析 + 详情页四大板块字段） */
+function mapSpecies(it) {
+  return {
+    id: it.id,
+    name: it.name,
+    latin: it.latin || '',
+    desc: it.desc || '',
+    dist: it.dist || '',
+    /* 配图优先级：条目自带照片(imgUrl) > 原来的实物图(imgKey 映射到 mock.IMG) > 空（页面显示占位块）
+       ⚠️ 这里不再回落到「生成的示意图」——图鉴配图只用实物图。 */
+    img: it.imgUrl ? absImageUrl(it.imgUrl)
+      : ((it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
+    imageUrl: it.imgUrl ? absImageUrl(it.imgUrl)
+      : ((it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
+    imageNote: it.imageNote || '',
+    genus: it.genus || '',
+    genusCn: it.genusCn || '',
+    family: it.family || '',
+    level: it.level || 'species',
+    levelCn: it.level === 'genus' ? '属级条目' : '物种条目',
+    group: it.group || '',
+    bleachingRisk: it.bleachingRisk || '',
+    reefBuilding: !!it.reefBuilding,
+    aiGenus: !!it.aiGenus,
+    featured: !!it.featured,
+    tags: it.tags || [],
+    seq: it.seq || 0,          // 种子/上传顺序（页面按它排序，保持原来的展示顺序）
+    // ---- 详情页四大板块 ----
+    alias: it.alias || '',
+    taxonomy: it.taxonomy || '',
+    protection: it.protection || '',
+    protectionNote: it.protectionNote || '',
+    colonyForm: it.colonyForm || '',
+    sizeCm: it.sizeCm || '',
+    colorDesc: it.colorDesc || '',
+    idFeature: it.idFeature || '',
+    depthM: it.depthM || '',
+    tempSal: it.tempSal || '',
+    growthRate: it.growthRate || '',
+    symbiosis: it.symbiosis || '',
+    companions: it.companions || '',
+    threats: it.threats || '',
+    form: it.form || '',
+    formCn: it.formCn || ''
+  }
+}
+
+/** 本地兜底：把 mock 静态数组伪装成同口径的图鉴条目 */
+function mockCatalog(q, genus) {
+  const kw = String(q || '').trim().toLowerCase()
+  let list = (mock.allSpecies || []).map((s, i) => mapSpecies({
+    id: 'mock-' + i, name: s.name, latin: s.latin, desc: s.desc, dist: s.dist,
+    imgKey: '', genus: String(s.latin || '').split(' ')[0], genusCn: '',
+    level: 'species', group: '造礁石珊瑚', bleachingRisk: '', tags: []
+  })).map((s, i) => Object.assign(s, {
+    // 本地图保持原样（mock 条目自带 img）
+    img: (mock.allSpecies[i] || {}).img || ''
+  }))
+  if (kw) {
+    list = list.filter((s) => (s.name + s.latin + s.desc).toLowerCase().indexOf(kw) >= 0)
+  }
+  if (genus) list = list.filter((s) => s.genus === genus)
+  return list
+}
+
+function catalogRequest(path, qs) {
+  return api.resolveApiBase().then((base) => {
+    if (!base) return Promise.reject(new Error('未发现图鉴服务'))
+    DB_BASE = base
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: base + path + (qs || ''),
+        method: 'GET',
+        timeout: 8000,
+        success(res) {
+          let d = res.data
+          if (typeof d === 'string') { try { d = JSON.parse(d) } catch (e) { d = null } }
+          if (res.statusCode === 200 && d && (d.items || d.total !== undefined)) resolve(d)
+          else reject(new Error('图鉴接口返回 ' + res.statusCode))
+        },
+        fail() { reject(new Error('图鉴服务不可用')) }
+      })
+    })
+  })
+}
+
+/** 图鉴统计（总数/属数/科数/属清单） */
+api.getCoralStats = function () {
+  if (!config.USE_CORAL_DB) return Promise.resolve(mockCoralStats())
+  return catalogRequest('/corals/stats').catch(() => {
+    if (!config.FALLBACK_TO_MOCK) throw new Error('图鉴服务不可用，请先启动 serve_fusion.py')
+    return mockCoralStats()
+  })
+}
+
+function mockCoralStats() {
+  const list = mockCatalog('', '')
+  const genera = {}
+  list.forEach((s) => { genera[s.genus] = (genera[s.genus] || 0) + 1 })
+  return {
+    total: list.length,
+    genera: Object.keys(genera).length,
+    families: 0,
+    featured: Math.min(12, list.length),
+    aiGenera: 0,
+    fromDb: false,
+    generaList: Object.keys(genera).map((g) => ({ genus: g, genusCn: '', count: genera[g] }))
+  }
+}
+
+/** 图鉴列表：{q, genus, level, featured, limit, offset} → {items, total, fromDb} */
+api.getCoralCatalog = function (opts) {
+  const o = opts || {}
+  const limit = o.limit || 50
+  const offset = o.offset || 0
+  if (!config.USE_CORAL_DB) {
+    const list = mockCatalog(o.q, o.genus)
+    return Promise.resolve({
+      items: list.slice(offset, offset + limit), total: list.length, fromDb: false
+    })
+  }
+  let qs = '/corals?limit=' + limit + '&offset=' + offset
+  if (o.q) qs += '&q=' + encodeURIComponent(o.q)
+  if (o.genus) qs += '&genus=' + encodeURIComponent(o.genus)
+  if (o.level) qs += '&level=' + encodeURIComponent(o.level)
+  if (o.featured) qs += '&featured=true'
+  return catalogRequest(qs).then((d) => ({
+    items: (d.items || []).map(mapSpecies).sort(bySeq),
+    total: d.total || 0, fromDb: true
+  })).catch((e) => {
+    if (!config.FALLBACK_TO_MOCK) throw e
+    const list = mockCatalog(o.q, o.genus)
+    return { items: list.slice(offset, offset + limit), total: list.length, fromDb: false }
+  })
+}
+
+/** 按 seq 排序（种子/上传顺序）；没有 seq 的排到最后，再按名称兜底 */
+function bySeq(a, b) {
+  // ⚠️ 不能写 (a.seq || 9999)：seq=0 会被当成假值排到最后
+  const x = (a && a.seq != null) ? Number(a.seq) : 9999
+  const y = (b && b.seq != null) ? Number(b.seq) : 9999
+  if (x !== y) return x - y
+  return String(a && a.name || '').localeCompare(String(b && b.name || ''))
+}
+
+/** 精选（科普页横滑 / 首页展示） */
+api.getHotSpecies = function () {
+  return api.getCoralCatalog({ featured: true, limit: 20 }).then((d) => {
+    if (d.items.length) return d.items
+    return api.getCoralCatalog({ limit: 12 }).then((p) => p.items)
+  })
+}
+
+/** 单条详情（详情页用）：GET /corals/{id}；连不上服务时退回本地演示数据 */
+api.getCoralDetail = function (id) {
+  if (!id) return Promise.resolve(null)
+  if (!config.USE_CORAL_DB) return Promise.resolve(mockDetail(id))
+  return catalogRequest('/corals/' + encodeURIComponent(id)).then((d) => {
+    if (!d || !d.item) throw new Error('没有这个种类')
+    return mapSpecies(d.item)
+  }).catch((e) => {
+    if (!config.FALLBACK_TO_MOCK) throw e
+    return mockDetail(id)
+  })
+}
+
+function mockDetail(id) {
+  const hit = mockCatalog('', '').filter((s) => s.id === id)[0]
+  if (!hit) return null
+  hit.imageNote = '离线演示数据（未连接图鉴服务，字段不完整）'
+  hit.idFeature = hit.desc
+  hit.protectionNote = '连接服务后可查看完整档案（protect/形态/习性/威胁）'
+  return hit
 }
 
 /* ================= AI 礁区评估（覆盖率 + 珊瑚属） ================= */

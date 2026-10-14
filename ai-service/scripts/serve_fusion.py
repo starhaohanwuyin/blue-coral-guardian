@@ -48,7 +48,7 @@ BLEACH_DIRS = ["bleaching_all", "bleaching_ip", "bleaching"]
 try:
     from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Request
     from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.responses import JSONResponse, FileResponse
+    from fastapi.responses import JSONResponse, FileResponse, Response
     import uvicorn
 except ImportError:
     raise SystemExit("缺少依赖：python -m pip install fastapi uvicorn python-multipart")
@@ -62,6 +62,15 @@ from check_capture_quality import metrics as quality_metrics, verdict as quality
 from climate_context import context_for as climate_context  # noqa: E402
 from climate_site_profile import profile_for as climate_profile_for  # noqa: E402
 from restoration_priority import assess as assess_restoration  # noqa: E402
+
+# 珊瑚图鉴数据库（SQLite）：图鉴数据的唯一真源，支持上传/编辑/导出，见 scripts/coral_catalog.py
+try:
+    import coral_catalog as CORAL_DB
+    CORAL_DB.init()                       # 空库时自动灌种子（348 条：83 属 + 265 种）
+    print(f"[图鉴] 珊瑚图鉴数据库就绪：{CORAL_DB.stats()['total']} 条")
+except Exception as _ce:                  # 图鉴挂了不影响识别主流程
+    CORAL_DB = None
+    print(f"[图鉴] 珊瑚图鉴数据库不可用：{type(_ce).__name__}: {_ce}")
 
 # 拍摄条件阈值（若已标定则读取标定结果）
 QUALITY_TH = DEFAULT_THRESHOLDS
@@ -124,7 +133,8 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"], allow_headers=["*"])
 
 # 重接口（会真正跑模型）：建议公开部署时加 Token
-HEAVY_PATHS = {"/analyze", "/analyze_base64", "/count", "/priority"}
+HEAVY_PATHS = {"/analyze", "/analyze_base64", "/count", "/priority",
+               "/corals", "/corals/import", "/corals/seed"}
 API_TOKEN = os.environ.get("CORAL_API_TOKEN", "").strip()
 RATE_LIMIT = int(os.environ.get("CORAL_RATE_LIMIT", "120"))   # 每 IP 每分钟
 _rate_hits = {}          # ip -> [时间戳]
@@ -132,10 +142,15 @@ _rate_hits = {}          # ip -> [时间戳]
 
 @app.middleware("http")
 async def _access_guard(request, call_next):
-    """访问防护：Token 校验 + 每 IP 限流（只作用于重接口）。"""
+    """访问防护：Token 校验 + 每 IP 限流（重接口 + 图鉴读写）。"""
     path = request.url.path
-    if path in HEAVY_PATHS:
-        if API_TOKEN:
+    is_catalog = path.startswith("/corals")
+    guarded = (path in HEAVY_PATHS) or is_catalog
+    if guarded:
+        # 图鉴的读接口给页面用，不强制 Token；写接口（上传/改/删）在配了 Token 时必须带
+        need_token = (path in HEAVY_PATHS) or (
+            is_catalog and request.method.upper() in ("POST", "PUT", "DELETE", "PATCH"))
+        if API_TOKEN and need_token:
             tok = request.headers.get("x-api-token") or request.query_params.get("token")
             if tok != API_TOKEN:
                 return JSONResponse(
@@ -455,7 +470,9 @@ def health():
             # P3 新增：个体计数模型状态（原有字段语义与取值均未改动）
             "coralCounter": "loaded" if COUNTER else "not_trained",
             # P16 新增：第二白化模型（共识弃权用）；既有字段不受影响
-            "bleachAlt": (BLEACH_ALT["name"] if BLEACH_ALT else "not_loaded")}
+            "bleachAlt": (BLEACH_ALT["name"] if BLEACH_ALT else "not_loaded"),
+            # 珊瑚图鉴数据库（SQLite）：收录条目数；不可用时为 -1
+            "coralCatalog": (CORAL_DB.stats()["total"] if CORAL_DB else -1)}
 
 
 @app.get("/sample")
@@ -610,9 +627,16 @@ async def analyze(request: Request, file: UploadFile = File(...),
 
 
 @app.post("/analyze_base64")
-async def analyze_base64(payload: dict):
+async def analyze_base64(request: Request, payload: dict):
+    """base64 传图的 /analyze 等价入口（JSON body）。
+
+    body 字段与 /analyze 同口径，全部可选：
+      {"image_base64": "...", "enhance_first": false,
+       "lat": 4.4, "lon": 118.8, "year": 2024, "count": true}
+    不给 lat/lon 时与 /analyze 一致：climate/deployment/restoration 为 null。
+    """
     b64 = payload.get("image_base64") or ""
-    if "," in b64[:100]:
+    if "," in b64[:100]:                      # 容忍 data:image/jpeg;base64, 前缀
         b64 = b64.split(",", 1)[1]
     try:
         img = Image.open(io.BytesIO(base64.b64decode(b64)))
@@ -622,10 +646,45 @@ async def analyze_base64(payload: dict):
     img.convert("RGB").save(buf, format="JPEG", quality=92)
     buf.seek(0)
 
-    class _F:
+    class _F:                                 # 最小 UploadFile 替身（analyze 只用 await read()）
+        filename = "base64.jpg"
+
         async def read(self):
             return buf.getvalue()
-    return await analyze(_F(), payload.get("enhance_first", False))
+
+    def _opt_float(v):
+        if v is None or v == "":
+            return None
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            raise HTTPException(400, f"lat/lon 必须是数字，收到 {v!r}")
+
+    def _opt_int(v):
+        if v is None or v == "":
+            return None
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            raise HTTPException(400, f"year 必须是整数，收到 {v!r}")
+
+    # enhance_first 优先取 body 字段，其次退回查询参数（与 /analyze?enhance_first= 一致）
+    ef = payload.get("enhance_first")
+    if ef is None:
+        ef = request.query_params.get("enhance_first", "").strip().lower() in ("1", "true", "yes")
+    cnt = payload.get("count", True)
+
+    # ⚠️ 必须关键字传参：analyze 的形参顺序是
+    #    (request, file, enhance_first, lat, lon, year, count)，
+    #    位置传参会把 enhance_first 塞进 file 槽 → `file.read()` 抛
+    #    AttributeError: 'bool' object has no attribute 'read' → 网页拿 500。
+    return await analyze(request,
+                         file=_F(),
+                         enhance_first=bool(ef),
+                         lat=_opt_float(payload.get("lat")),
+                         lon=_opt_float(payload.get("lon")),
+                         year=_opt_int(payload.get("year")),
+                         count=(True if cnt is None else bool(cnt)))
 
 
 # ---------------------------------------------------------------- 个体计数（P3）
@@ -713,6 +772,98 @@ def priority(payload: dict):
         lat=lat, lon=lon, year=year,
     )
     return JSONResponse(r)
+
+
+# ---------------------------------------------------------------- 珊瑚图鉴数据库
+# 页面读：GET /corals（搜索/属筛选/分页）· GET /corals/stats
+# 后台写：POST /corals · POST /corals/import（上传 JSON/CSV/TSV）
+#         PUT /corals/{id} · DELETE /corals/{id} · POST /corals/seed（种子补录）
+# 后台页面：/admin.html 。配了 CORAL_API_TOKEN 时，写接口需要带 Token。
+def _catalog_or_503():
+    if CORAL_DB is None:
+        raise HTTPException(503, "珊瑚图鉴数据库不可用（scripts/coral_catalog.py 初始化失败）")
+    return CORAL_DB
+
+
+@app.get("/corals")
+def corals_list(q: str = "", genus: str = "", group: str = "", level: str = "",
+                featured: bool = None, limit: int = 50, offset: int = 0,
+                order: str = "seq"):
+    """图鉴列表（分页 + 关键词搜索）。例：/corals?q=鹿角&limit=20"""
+    total, items = _catalog_or_503().list_items(
+        q=q, genus=genus, group=group, level=level, featured=featured,
+        limit=limit, offset=offset, order=order)
+    return JSONResponse({"ok": True, "total": total, "count": len(items),
+                         "offset": offset, "limit": limit, "items": items})
+
+
+@app.get("/corals/stats")
+def corals_stats():
+    """图鉴统计（总数/属数/科数/分组/属清单）—— 页面「已收录 N 种」用它。"""
+    return JSONResponse({"ok": True, **_catalog_or_503().stats()})
+
+
+@app.get("/corals/export")
+def corals_export():
+    """导出全部条目为 JSON（改完可直接 POST /corals/import 传回来）。"""
+    return JSONResponse({"schema": 1, "items": _catalog_or_503().export_items()})
+
+
+@app.post("/corals/import")
+async def corals_import(file: UploadFile = File(...), overwrite: bool = True):
+    """批量上传：JSON 数组 / {"items": [...]} / CSV / TSV。
+
+    表头中英文都认，例如：中文名,拉丁名,属,科,分布,描述,白化敏感度,造礁,精选
+    """
+    blob = await file.read()
+    if not blob:
+        raise HTTPException(400, "空文件")
+    try:
+        r = _catalog_or_503().import_upload(file.filename or "upload.json", blob,
+                                           overwrite=overwrite)
+    except Exception as e:
+        raise HTTPException(400, f"解析失败：{type(e).__name__}: {e}")
+    return JSONResponse({"ok": True, **r})
+
+
+@app.post("/corals/seed")
+def corals_seed(overwrite: bool = False):
+    """把仓库里的种子数据补进库（默认只补缺失项，不覆盖你自己改过的条目）。"""
+    return JSONResponse({"ok": True,
+                         **_catalog_or_503().seed_import(overwrite=overwrite)})
+
+
+@app.post("/corals")
+def corals_add(payload: dict):
+    """新增/覆盖一条。字段名中英文都认（中文名/拉丁名/属/分布/描述/白化敏感度/造礁/精选…）。"""
+    try:
+        item, created = _catalog_or_503().add_item(payload or {})
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+    return JSONResponse({"ok": True, "created": created, "item": item})
+
+
+@app.get("/corals/{item_id}")
+def corals_get(item_id: str):
+    item = _catalog_or_503().get_item(item_id)
+    if not item:
+        raise HTTPException(404, f"没有这个条目：{item_id}")
+    return JSONResponse({"ok": True, "item": item})
+
+
+@app.put("/corals/{item_id}")
+def corals_update(item_id: str, payload: dict):
+    item = _catalog_or_503().update_item(item_id, payload or {})
+    if not item:
+        raise HTTPException(404, f"没有这个条目：{item_id}")
+    return JSONResponse({"ok": True, "item": item})
+
+
+@app.delete("/corals/{item_id}")
+def corals_delete(item_id: str):
+    if not _catalog_or_503().delete_item(item_id):
+        raise HTTPException(404, f"没有这个条目：{item_id}")
+    return JSONResponse({"ok": True, "deleted": item_id})
 
 
 # ---------------------------------------------------------------- 网页版（H5）

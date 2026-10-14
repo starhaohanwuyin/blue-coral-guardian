@@ -1,5 +1,18 @@
 /* ============ 首页 ============ */
 
+/* 语言切换按钮（右上角）：点一下在中文 / English 之间切 */
+.lang-btn {
+  flex: none;
+  margin-left: 16rpx;
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: rgba(30, 136, 229, 0.10);
+  color: var(--primary);
+  font-size: 24rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* 海洋Hero场景 */
 .home-hero {
   position: relative;
@@ -140,12 +153,12 @@
 }
 .stat-item { text-align: center; }
 .stat-num {
-  font-size: 44rpx;
+  font-size: 40rpx;          /* 小一号：44 → 40 */
   font-weight: 700;
   color: var(--primary);
 }
 .stat-label {
-  font-size: 22rpx;
+  font-size: 20rpx;          /* 小一号：22 → 20 */
   color: var(--text3);
   margin-top: 4rpx;
 }
@@ -180,6 +193,68 @@
   color: var(--text3);
   margin-top: 6rpx;
   line-height: 1.5;
+}
+
+/* 气候与珊瑚卡（气候韧性） */
+.climate-home-card {
+  margin: 24rpx;
+  padding: 28rpx 32rpx;
+}
+.climate-home-head {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+.climate-home-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 112, 67, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex-shrink: 0;
+}
+.climate-home-headtext { flex: 1; min-width: 0; }
+.climate-home-title { font-size: 28rpx; font-weight: 600; }
+.climate-home-sub {
+  font-size: 22rpx;
+  color: var(--text3);
+  margin-top: 4rpx;
+}
+.climate-home-tag {
+  flex-shrink: 0;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 112, 67, 0.12);
+  color: var(--coral);
+  font-size: 20rpx;
+}
+.climate-home-metrics {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  padding: 20rpx 0;
+  border-top: 1rpx solid var(--border);
+  border-bottom: 1rpx solid var(--border);
+}
+.climate-metric { flex: 1; text-align: center; }
+.climate-metric-val {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--coral);
+}
+.climate-metric-label {
+  font-size: 20rpx;
+  color: var(--text3);
+  margin-top: 4rpx;
+}
+.climate-home-desc {
+  font-size: 22rpx;
+  color: var(--text2);
+  margin-top: 20rpx;
+  line-height: 1.6;
 }
 
 /* 快捷功能 */
@@ -303,63 +378,13 @@
   font-weight: 500;
 }
 
-/* 核心团队 */
-.team-section { padding: 0 24rpx; }
-.team-intro {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24rpx 28rpx;
-  font-size: 24rpx;
-  color: var(--text2);
-  line-height: 1.7;
-  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
-}
-.team-scroll {
-  white-space: nowrap;
-  margin-top: 20rpx;
-  width: 100%;
-}
-.team-member {
-  display: inline-block;
-  width: 240rpx;
-  margin-right: 20rpx;
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 28rpx 20rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 32rpx rgba(30, 136, 229, 0.07);
-  vertical-align: top;
-}
-.team-avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  background: var(--border);
-}
-.team-name {
-  font-size: 28rpx;
-  font-weight: 700;
-  margin-top: 16rpx;
-}
-.team-role {
-  font-size: 22rpx;
-  color: var(--primary);
-  margin-top: 4rpx;
-}
-.team-desc {
-  font-size: 20rpx;
-  color: var(--text3);
-  margin-top: 10rpx;
-  line-height: 1.5;
-  white-space: normal;
-}
-
 /* 团队视频 */
 .team-video-section {
   margin: 0 24rpx;
   overflow: hidden;
 }
 .video-wrapper { position: relative; height: 360rpx; }
+.video-player { width: 100%; height: 360rpx; display: block; background: #000; }
 .video-cover { width: 100%; height: 100%; }
 .play-icon {
   position: absolute;

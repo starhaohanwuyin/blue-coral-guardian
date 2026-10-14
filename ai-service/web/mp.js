@@ -378,6 +378,22 @@
       if (k === 'disabled') { if (truthy(v)) attrs.push('disabled'); continue; }
       if (k.startsWith('data-')) { attrs.push(`${k}="${esc(v)}"`); continue; }
       if (k === 'src') { attrs.push(`src="${esc(v)}"`); continue; }
+      // <video> / <audio>：小程序的 poster / controls / playsinline 等要原样透出，
+      // 否则网页版拿不到封面和播放控件（object-fit 在 HTML 里得走 CSS）
+      if (tag === 'video' || tag === 'audio') {
+        if (k === 'object-fit') { if (v) styleVal += ';object-fit:' + v; continue; }
+        if (k === 'show-center-play-btn' || k === 'enable-progress-gesture' ||
+            k === 'show-fullscreen-btn' || k === 'show-play-btn') { continue; }
+        if (k === 'controls' || k === 'autoplay' || k === 'loop' || k === 'muted' ||
+            k === 'playsinline' || k === 'show-mute-btn') {
+          attrs.push(k);                       // 布尔属性
+          continue;
+        }
+        if (k === 'poster' || k === 'preload' || k === 'duration' || k === 'initial-time') {
+          attrs.push(`${k === 'initial-time' ? 'data-initial-time' : k}="${esc(v)}"`);
+          continue;
+        }
+      }
       if (k === 'value' && tag === 'input') { attrs.push(`value="${esc(v)}"`); continue; }
       if (k === 'value' && tag === 'textarea') { continue; }
       if (k === 'placeholder' || k === 'maxlength' || k === 'type' || k === 'name' ||
@@ -660,13 +676,22 @@
     if (!bar) return;                        // 外壳缺 tabBar 容器时不抛错
     const list = (state.manifest.tabBar.list || []);
     const tabs = TABS();
+    // 中英切换：语言由页面写进 storage（key: ls_lang，值形如 "en"；
+    // wx.setStorageSync 会加上 LS_PREFIX 前缀并 JSON 序列化，这里要按同样规则读）
+    let lang = 'zh';
+    try {
+      const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
+      if (raw != null) lang = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
+    } catch (e) {}
+    const TAB_EN = { '首页': 'Home', '认养': 'Adopt', '科普': 'Learn', 'AI识别': 'AI scan', '我的': 'Me' };
     bar.innerHTML = list.map((it, i) => {
       const nm = it.pagePath.split('/')[1];
       const icon = ({ home: 'home', adopt: 'adopt', knowledge: 'book', ai: 'ai', profile: 'user' })[nm] || 'home';
       const on = nm === activeName;
+      const label = lang === 'en' ? (TAB_EN[it.text] || it.text) : it.text;
       return `<div class="tab-item ${on ? 'active' : ''}" data-tab="${nm}">
                 <div class="tab-icon icon-${icon} ${on ? 'active' : ''}"></div>
-                <span class="tab-label">${esc(it.text)}</span>
+                <span class="tab-label">${esc(label)}</span>
               </div>`;
     }).join('');
     bar.querySelectorAll('[data-tab]').forEach((el) => {
@@ -771,7 +796,7 @@
     if (bootEl) bootEl.style.display = 'none';
   }
 
-  window.MP_RUNTIME = { router, wx, boot, state, getApp, require, SRC, CACHE, pages };
+  window.MP_RUNTIME = { router, wx, boot, state, getApp, require, SRC, CACHE, pages, updateTabBar };
   /* 错误汇总到隐藏元素：headless 验证脚本靠它发现页面里的 JS 报错 */
   function logErr(msg) {
     let d = document.getElementById('mp-errlog');

@@ -11,15 +11,19 @@
       </view>
       <view class="art-divider"></view>
 
-      <!-- 摘要 -->
-      <view class="art-summary">「{{a.title}}」—— 来自蓝珊科技的最新动态。蓝珊科技致力于南海珊瑚礁生态保护与修复，通过"良种培育 + 智能监测 + 生态恢复 + 公众参与"四位一体模式，守护南海珊瑚礁生态系统。</view>
+      <!-- 正文：有 paragraphs 就渲染全文，否则退回一句摘要 -->
+      <block wx:if="{{a.paragraphs}}">
+        <view class="art-paragraph" wx:for="{{a.paragraphs}}" wx:for-item="p" wx:key="*this">{{p}}</view>
+      </block>
+      <view wx:else class="art-summary">「{{a.title}}」—— 来自蓝珊科技的最新动态。蓝珊科技致力于海洋珊瑚礁生态保护与修复，通过"良种培育 + 智能监测 + 生态恢复 + 公众参与"四位一体模式，守护海洋珊瑚礁生态系统。</view>
 
-      <!-- 原文链接 -->
+      <!-- 延伸阅读链接 -->
       <view wx:if="{{a.url}}" class="art-link card">
-        <view class="art-link-title">🔗 微信公众号原文</view>
+        <view class="art-link-title">🔗 {{a.urlName || '原文链接'}}</view>
         <view class="art-link-url">{{a.url}}</view>
-        <view class="art-link-btn" hover-class="btn-hover" bindtap="onCopyLink">复制原文链接</view>
-        <view class="art-link-tip">小程序内无法直接打开外链，可复制链接到微信或浏览器阅读全文</view>
+        <view class="art-link-btn" hover-class="btn-hover" bindtap="onOpenLink">打开原文链接</view>
+        <view class="art-link-btn ghost" hover-class="btn-hover" bindtap="onCopyLink">复制链接</view>
+        <view class="art-link-tip">{{linkTip}}</view>
       </view>
 
       <view wx:else class="art-nolink">完整内容请关注蓝珊官方公众号「蓝珊科技」获取</view>

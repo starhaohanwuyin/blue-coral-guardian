@@ -96,6 +96,23 @@ imgs = list((ROOT / "web" / "mp" / "assets" / "img").glob("*"))
 line("ok" if len(tpl) == 22 else "warn", "22 页模板", f"{len(tpl)} 个")
 line("ok" if imgs else "warn", "本地配图（离线可用）", f"{len(imgs)} 张")
 
+# 珊瑚图鉴数据库（科普页「珊瑚种类」的数据源，可在 /admin.html 自行上传维护）
+try:
+    import sqlite3
+    _db = ROOT / "data" / "corals" / "corals.db"
+    if _db.exists():
+        _con = sqlite3.connect(str(_db))
+        _n = _con.execute("SELECT COUNT(*) FROM corals").fetchone()[0]
+        _con.close()
+        line("ok", "珊瑚图鉴数据库", f"{_n} 条 · 后台 /admin.html 可上传")
+    elif (ROOT / "data" / "corals" / "coral_species.json").exists():
+        line("warn", "珊瑚图鉴数据库尚未建库", "→ 启动一次服务即自动灌种子（348 条）")
+    else:
+        line("warn", "珊瑚图鉴种子数据缺失",
+             "→ python tools/gen_coral_catalog.py")
+except Exception as _e:
+    line("warn", "珊瑚图鉴数据库读取失败", str(_e)[:48])
+
 # ⑤ 端口与服务
 print("\n【5/5】服务状态")
 
@@ -118,6 +135,8 @@ h = health()
 if h:
     line("ok", "AI 服务在线", f"设备={h.get('device')} 共识模型={h.get('bleachAlt')}")
     line("ok" if h.get("segCalibrated") else "warn", "分割模型已校准", str(h.get("segCalibrated")))
+    line("ok" if (h.get("coralCatalog") or 0) > 0 else "warn", "珊瑚图鉴接口在线",
+         f"{h.get('coralCatalog')} 条")
 elif port_busy():
     line("warn", "端口 8000 被占用但不是本服务", "换个端口：--port 8001")
 else:

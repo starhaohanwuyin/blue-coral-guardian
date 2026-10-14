@@ -24,7 +24,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '蓝珊 · 南海修复区实时海景',
+      title: '蓝珊 · 海洋修复区实时海景',
       path: '/pages/index/index'
     }
   }

@@ -32,7 +32,7 @@ Page({
   onShareAppMessage() {
     const d = this.data.d || {}
     return {
-      title: '我的珊瑚 ' + (d.name || '') + ' 正在南海成长中',
+      title: '我的珊瑚 ' + (d.name || '') + ' 正在海洋成长中',
       path: '/pages/index/index'
     }
   }

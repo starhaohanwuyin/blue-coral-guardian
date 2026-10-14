@@ -33,7 +33,7 @@ Page({
         title: '更多',
         items: [
           { icon: '💬', bg: 'linear-gradient(135deg,rgba(156,39,176,0.12),rgba(186,104,200,0.08))', label: '联系客服', desc: '在线咨询 · 工作日 9:00-18:00', contact: true },
-          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '蓝珊科技 · 守护南海珊瑚', url: '/pages/about/about' }
+          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '蓝珊科技 · 守护海洋珊瑚', url: '/pages/about/about' }
         ]
       }
     ]
@@ -142,7 +142,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '蓝珊 · 认养一株珊瑚，守护南海',
+      title: '蓝珊 · 认养一株珊瑚，守护海洋',
       path: '/pages/index/index'
     }
   }

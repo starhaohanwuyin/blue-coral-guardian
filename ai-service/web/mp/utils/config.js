@@ -67,6 +67,13 @@ module.exports = {
   // false = 直接使用本地演示数据
   USE_REAL_AI: true,
 
+  /* 珊瑚图鉴数据库（科普页「珊瑚种类」的数据源）
+   * true  = 从评估服务的 /corals 读 SQLite 图鉴库（可上传/自行维护，见 /admin.html）
+   * false = 用 utils/mock.js 里的静态数组（24 条，离线兜底）
+   * 连不上服务时会自动退回 mock（受 FALLBACK_TO_MOCK 控制），页面不会空。
+   */
+  USE_CORAL_DB: true,
+
   /* 真实服务不可用时是否自动降级到演示数据
    * true  = 连不上服务时显示演示结果（带「演示数据」标记），页面不会卡在报错
    * false = 连不上就直接报错，并提示如何启动服务

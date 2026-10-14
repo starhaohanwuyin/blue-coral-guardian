@@ -45,7 +45,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '我在蓝珊认养了珊瑚，一起来守护南海珊瑚礁 🪸',
+      title: '我在蓝珊认养了珊瑚，一起来守护海洋珊瑚礁 🪸',
       path: '/pages/index/index'
     }
   }

@@ -1,0 +1,91 @@
+/* ============ 珊瑚种类详情页 ============ */
+.cs-hero {
+  position: relative;
+  height: calc(460 * var(--rpx));
+  overflow: hidden;
+}
+.cs-hero-img { width: 100%; height: 100%; display: block; }
+.cs-hero-ph {
+  background: linear-gradient(160deg, #0d47a1, #1e88e5 55%, #26a69a);
+}
+.cs-hero-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(300 * var(--rpx));
+  background: linear-gradient(180deg, rgba(6, 34, 60, 0), rgba(6, 34, 60, 0.82));
+}
+.cs-hero-text {
+  position: absolute;
+  left: calc(32 * var(--rpx));
+  right: calc(32 * var(--rpx));
+  bottom: calc(26 * var(--rpx));
+  color: #fff;
+}
+.cs-name { font-size: calc(44 * var(--rpx)); font-weight: 700; }
+.cs-latin { font-size: calc(24 * var(--rpx)); font-style: italic; opacity: 0.9; margin-top: calc(6 * var(--rpx)); }
+.cs-badges { display: flex; flex-wrap: wrap; gap: calc(12 * var(--rpx)); margin-top: calc(14 * var(--rpx)); }
+.cs-badge {
+  padding: calc(4 * var(--rpx)) calc(16 * var(--rpx));
+  border-radius: calc(999 * var(--rpx));
+  background: rgba(255, 255, 255, 0.22);
+  font-size: calc(20 * var(--rpx));
+}
+.cs-badge.hot { background: var(--coral); }
+.cs-badge.ai { background: rgba(30, 136, 229, 0.92); }
+.cs-note {
+  padding: calc(16 * var(--rpx)) calc(32 * var(--rpx)) 0;
+  font-size: calc(20 * var(--rpx));
+  color: var(--text3);
+  line-height: 1.6;
+}
+.cs-section {
+  margin: calc(24 * var(--rpx)) calc(32 * var(--rpx));
+  padding: calc(28 * var(--rpx)) calc(30 * var(--rpx)) calc(12 * var(--rpx));
+}
+.cs-section-title {
+  font-size: calc(30 * var(--rpx));
+  font-weight: 700;
+  margin-bottom: calc(18 * var(--rpx));
+}
+.cs-row {
+  display: flex;
+  gap: calc(20 * var(--rpx));
+  padding: calc(14 * var(--rpx)) 0;
+  border-top: calc(1 * var(--rpx)) solid var(--border);
+}
+.cs-k {
+  width: calc(210 * var(--rpx));
+  flex-shrink: 0;
+  font-size: calc(24 * var(--rpx));
+  color: var(--text3);
+}
+.cs-v {
+  flex: 1;
+  font-size: calc(25 * var(--rpx));
+  color: var(--text);
+  line-height: 1.7;
+  word-break: break-all;
+}
+.cs-actions { padding: calc(12 * var(--rpx)) calc(32 * var(--rpx)) calc(60 * var(--rpx)); }
+.cs-btn {
+  padding: calc(24 * var(--rpx));
+  border-radius: calc(28 * var(--rpx));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: calc(28 * var(--rpx));
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 calc(8 * var(--rpx)) calc(40 * var(--rpx)) rgba(30, 136, 229, 0.28);
+}
+.cs-btn.ghost {
+  margin-top: calc(18 * var(--rpx));
+  background: transparent;
+  border: calc(2 * var(--rpx)) solid var(--border);
+  color: var(--primary);
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.coral-page img{max-width:100%;vertical-align:middle;}

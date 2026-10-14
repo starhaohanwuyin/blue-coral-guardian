@@ -33,6 +33,40 @@
   margin-bottom: calc(24 * var(--rpx));
 }
 .kd-actions { padding: calc(32 * var(--rpx)); }
+.kd-link {
+  margin-top: calc(32 * var(--rpx));
+  padding: calc(28 * var(--rpx));
+  background: var(--bg);
+  border-radius: calc(24 * var(--rpx));
+}
+.kd-link-title {
+  font-size: calc(26 * var(--rpx));
+  font-weight: 600;
+}
+.kd-link-url {
+  font-size: calc(22 * var(--rpx));
+  color: var(--primary);
+  margin-top: calc(12 * var(--rpx));
+  word-break: break-all;
+  line-height: 1.6;
+}
+.kd-link-btn {
+  margin-top: calc(24 * var(--rpx));
+  padding: calc(18 * var(--rpx));
+  border-radius: calc(22 * var(--rpx));
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: calc(26 * var(--rpx));
+  font-weight: 600;
+  text-align: center;
+}
+.kd-link-btn.ghost {
+  margin-top: calc(16 * var(--rpx));
+  background: transparent;
+  border: calc(2 * var(--rpx)) solid var(--border);
+  color: var(--primary);
+  font-weight: 500;
+}
 .kd-share-btn {
   padding: calc(24 * var(--rpx));
   border-radius: calc(28 * var(--rpx));

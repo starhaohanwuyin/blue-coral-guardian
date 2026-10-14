@@ -14,6 +14,29 @@ function copyText(text, tip) {
   })
 }
 
+/**
+ * 网页版（H5）里能直接打开外链；小程序不允许打开外部网页，只能复制。
+ * 判定依据是 web/mp.js 运行时挂在 window 上的 MP_RUNTIME（小程序里没有 window）。
+ */
+function canOpenExternal() {
+  return typeof window !== 'undefined' && !!window.MP_RUNTIME &&
+    typeof window.open === 'function'
+}
+
+/**
+ * 打开一个外链：网页版新开标签页；小程序退回复制到剪贴板并提示。
+ * @param url 链接
+ * @param tip 小程序里复制成功后的提示文案
+ */
+function openLink(url, tip) {
+  if (!url) return
+  if (canOpenExternal()) {
+    window.open(url, '_blank')
+    return
+  }
+  copyText(url, tip || '链接已复制，可粘贴到微信或浏览器打开')
+}
+
 function formatPrice(n) {
   return '¥' + (Number(n) || 0).toLocaleString()
 }
@@ -104,6 +127,8 @@ function ensureLogin() {
 module.exports = {
   toast,
   copyText,
+  canOpenExternal,
+  openLink,
   formatPrice,
   drawRing,
   saveImageToAlbum,

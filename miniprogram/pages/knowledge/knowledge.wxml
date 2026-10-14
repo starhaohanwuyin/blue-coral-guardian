@@ -3,8 +3,8 @@
   <!-- 自定义导航头 -->
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">
-      <view class="logo">📚 珊瑚科普</view>
-      <view class="sub">探索珊瑚的奇妙世界</view>
+      <view class="logo">{{t.brand}}</view>
+      <view class="sub">{{t.sub}}</view>
     </view>
   </view>
 
@@ -13,14 +13,14 @@
     <view class="kh-fish kh-fish-1">🐠</view>
     <view class="kh-fish kh-fish-2 reverse">🐟</view>
     <view class="kh-bubble"></view>
-    <view class="kh-title">探索珊瑚的奇妙世界</view>
-    <view class="kh-sub">认识南海珊瑚 · 了解生态修复</view>
+    <view class="kh-title">{{t.sub}}</view>
+    <view class="kh-sub">{{t.heroSub}}</view>
   </view>
 
   <!-- 珊瑚种类横滑 -->
-  <view class="section-title">珊瑚种类 <text class="more" bindtap="goAllSpecies">查看全部</text></view>
+  <view class="section-title">{{t.speciesTitle}} <text class="more" bindtap="goAllSpecies">{{t.viewAll}}</text></view>
   <scroll-view class="coral-species-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-    <view class="coral-species-card" wx:for="{{species}}" wx:key="name" hover-class="card-hover" bindtap="goAllSpecies">
+    <view class="coral-species-card" wx:for="{{species}}" wx:key="name" hover-class="card-hover" bindtap="goSpecies" data-id="{{item.id}}">
       <view class="coral-species-imgwrap">
         <image class="coral-species-img" src="{{item.img}}" mode="aspectFill" lazy-load />
       </view>
@@ -56,5 +56,5 @@
       </view>
     </view>
   </view>
-  <view wx:if="{{!filteredItems.length}}" class="empty-tip">该分类暂无内容</view>
+  <view wx:if="{{!filteredItems.length}}" class="empty-tip">{{t.empty}}</view>
 </view>

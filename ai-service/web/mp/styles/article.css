@@ -32,6 +32,12 @@
   color: var(--text2);
   line-height: 1.9;
 }
+.art-paragraph {
+  font-size: calc(28 * var(--rpx));
+  color: var(--text);
+  line-height: 1.9;
+  margin-bottom: calc(24 * var(--rpx));
+}
 .art-nolink {
   font-size: calc(24 * var(--rpx));
   color: var(--text3);
@@ -65,6 +71,13 @@
   font-size: calc(26 * var(--rpx));
   font-weight: 600;
   text-align: center;
+}
+.art-link-btn.ghost {
+  margin-top: calc(16 * var(--rpx));
+  background: transparent;
+  border: calc(2 * var(--rpx)) solid var(--border);
+  color: var(--primary);
+  font-weight: 500;
 }
 .art-link-tip {
   font-size: calc(20 * var(--rpx));

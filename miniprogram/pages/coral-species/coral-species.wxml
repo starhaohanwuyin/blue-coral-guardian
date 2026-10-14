@@ -1,0 +1,34 @@
+<!-- 珊瑚种类详情页：数据来自珊瑚图鉴数据库（GET /corals/{id}），四大板块 -->
+<view class="page-body" wx:if="{{item}}">
+  <view class="cs-hero">
+    <image wx:if="{{item.img && !imgFail}}" class="cs-hero-img" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onHeroError" />
+    <view wx:else class="cs-hero-img cs-hero-ph"></view>
+    <view class="cs-hero-mask"></view>
+    <view class="cs-hero-text">
+      <view class="cs-name">{{item.name}}</view>
+      <view class="cs-latin">{{item.latin}}</view>
+      <view class="cs-badges">
+        <text class="cs-badge">{{item.levelCn}}</text>
+        <text class="cs-badge">{{item.group}}</text>
+        <text wx:if="{{item.featured}}" class="cs-badge hot">{{t.featured}}</text>
+        <text wx:if="{{item.aiGenus}}" class="cs-badge ai">{{t.aiGenus}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="cs-note">{{item.imageNote}}</view>
+
+  <view class="cs-section card" wx:for="{{sections}}" wx:key="title">
+    <view class="cs-section-title">{{item.icon}} {{item.title}}</view>
+    <view class="cs-row" wx:for="{{item.rows}}" wx:for-item="r" wx:key="k">
+      <text class="cs-k">{{r.k}}</text>
+      <text class="cs-v">{{r.v}}</text>
+    </view>
+  </view>
+
+  <view class="cs-actions">
+    <view class="cs-btn" hover-class="btn-hover" bindtap="goAll">{{t.back}}</view>
+    <view class="cs-btn ghost" hover-class="btn-hover" bindtap="goQuiz">{{t.quiz}}</view>
+  </view>
+</view>
+<view wx:else class="loading-dots">{{t.loading}}</view>
