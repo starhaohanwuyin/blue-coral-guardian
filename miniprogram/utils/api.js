@@ -124,7 +124,8 @@ api.wxBind = function (data) {
 
 api.logout = function () {
   if (config.USE_MOCK) {
-    mock.clearMockUser()
+    // 退出即清空本机 demo 数据（积分 / 虚拟珊瑚 / 任务 / 订单 / 评论）
+    mock.clearDemoData()
     return Promise.resolve()
   }
   return req.post(URL.authLogout, {}).catch(() => {})

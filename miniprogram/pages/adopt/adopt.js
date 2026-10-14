@@ -187,6 +187,13 @@ Page(pageI18n.wrap({
       case 'welfare':
         this.setData({ welfareModal: true })
         break
+      case 'share':
+        // 网页版没有微信分享面板：点「去完成」直接算完成（小程序端仍可走分享面板）
+        api.claimTask('share').then((res) => {
+          util.toast('分享成功！积分 +' + (res && res.reward ? res.reward : 20))
+          this.refreshVirtual()
+        }).catch(() => {})                 // 已经完成过就不再提示，避免重复弹窗
+        break
     }
   },
 

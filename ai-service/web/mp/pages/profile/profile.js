@@ -95,14 +95,17 @@ Page(pageI18n.wrap({
   onLogout() {
     wx.showModal({
       title: '退出登录',
-      content: '退出后将无法同步您的认养与积分数据',
+      content: '退出后本机 demo 数据（积分、虚拟珊瑚、任务记录）会一并清空，确定退出？',
       confirmColor: '#FF7043',
       success: (res) => {
         if (!res.confirm) return
         api.logout().then(() => {
           app.logout()
-          this.setData({ user: null })
-          util.toast('已退出登录')
+          // 数据也一起清掉：否则退出后页面还挂着旧积分/认养记录，看着像"没退干净"
+          this.setData({ user: null, comments: [], commentText: '' })
+          this.refreshUser()
+          this.loadComments()
+          util.toast('已退出登录，数据已清空')
         })
       }
     })

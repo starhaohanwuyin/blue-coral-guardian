@@ -81,7 +81,7 @@
         <text class="va-task-reward">+{{item.points}}{{t.p1f5u8y0}}</text>
         <view wx:if="{{item.done}}" class="va-task-btn done">{{t.p19j4h}}</view>
         <block wx:else>
-          <button wx:if="{{item.action === 'share'}}" class="va-task-btn claim share-btn" open-type="share">{{t.p3agut2}}</button>
+          <button wx:if="{{item.action === 'share'}}" class="va-task-btn claim share-btn" open-type="share" bindtap="onTaskTap" data-id="{{item.id}}" data-action="share">{{t.p3agut2}}</button>
           <view wx:else class="va-task-btn claim" bindtap="onTaskTap" data-id="{{item.id}}" data-action="{{item.action}}">{{item.btnText}}</view>
         </block>
       </view>

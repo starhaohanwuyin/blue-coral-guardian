@@ -1011,6 +1011,15 @@ function clearMockUser() {
   wx.removeStorageSync(MKEY + 'user')
 }
 
+/** 退出登录时把 demo 里的本机数据一起清空（积分/商城/珊瑚/任务/订单/评论），
+ *  否则退出后页面还挂着旧积分与认养记录，看起来像"没退干净"。 */
+function clearDemoData() {
+  clearMockUser()
+  ;['points', 'shop', 'corals', 'culture', 'tasks_done', 'orders', 'comments'].forEach((k) => {
+    wx.removeStorageSync(MKEY + k)
+  })
+}
+
 // 虚拟养成状态
 function getVirtualState() {
   let points = mGet('points', null)
@@ -1340,6 +1349,7 @@ module.exports = {
   getMockUser,
   setMockUser,
   clearMockUser,
+  clearDemoData,
   getVirtualState,
   saveVirtualState,
   getComments,

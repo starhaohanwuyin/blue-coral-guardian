@@ -20,7 +20,14 @@ Page(pageI18n.wrap({
   },
 
   onApply() {
-    util.toast('已收到报名意向，工作人员将与您联系')
+    // Demo：不留报名表单，直接给联系电话
+    wx.showModal({
+      title: '报名下期夏令营',
+      content: '请拨打号码 18936361581 与工作人员进行联系',
+      showCancel: false,
+      confirmText: '知道了',
+      confirmColor: '#1E88E5'
+    })
   },
 
   onShareAppMessage() {
