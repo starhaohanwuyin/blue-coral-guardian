@@ -133,8 +133,11 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"], allow_headers=["*"])
 
 # 重接口（会真正跑模型）：建议公开部署时加 Token
+# ⚠️ 不要把 "/corals" 放进来：它在 HEAVY_PATHS 里会让 `path in HEAVY_PATHS` 对 **GET /corals**
+#    也成立 → 配了 Token 后图鉴列表接口直接 401，前端不带 Token 就整个图鉴打不开。
+#    图鉴的写接口（POST/PUT/DELETE）已由下面的 is_catalog + method 判断覆盖。
 HEAVY_PATHS = {"/analyze", "/analyze_base64", "/count", "/priority",
-               "/corals", "/corals/import", "/corals/seed"}
+               "/corals/import", "/corals/seed"}
 API_TOKEN = os.environ.get("CORAL_API_TOKEN", "").strip()
 RATE_LIMIT = int(os.environ.get("CORAL_RATE_LIMIT", "120"))   # 每 IP 每分钟
 _rate_hits = {}          # ip -> [时间戳]

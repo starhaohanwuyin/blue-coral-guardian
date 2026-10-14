@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<main id="page-host"></main><pre id="out">…</pre><script src="/mp.js"></script>
+<script>
+ const log=[];const say=s=>{log.push(String(s));document.getElementById('out').textContent=log.join('\n');};
+ setTimeout(async function(){
+   try{
+     const R=window.MP_RUNTIME; const api=R.require('/mp/utils/api.js');
+     const cfg=R.require('/mp/utils/config.js');
+     say('origin='+location.origin);
+     say('候选表='+JSON.stringify(cfg.CORAL_API_CANDIDATES));
+     const base=await api.resolveApiBase();
+     say('解析到的服务地址='+base);
+     say(base==='http://127.0.0.1:8000' ? '✅ 自动落到真实 API（跨域场景可用）' : '⚠️ 落到 '+base);
+     // 真调一次 AI 接口
+     const blob=await fetch(base+'/sample?index=0&set=semporna').then(r=>r.blob());
+     const tmp=URL.createObjectURL(blob);
+     const res=await api.recognize(tmp,{lat:4.4,lon:118.8},2024);
+     say('isDemo='+res.isDemo+'  覆盖率='+(res.cover&&res.cover.alivePct));
+   }catch(e){say('ERROR: '+e.message);}
+   say('DONE');
+ },1200);
+</script></body></html>
