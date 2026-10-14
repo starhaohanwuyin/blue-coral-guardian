@@ -5,7 +5,8 @@
     <view class="custom-header-row">
       <view class="logo">🪸 {{t.brand}}</view>
       <view class="sub">{{t.slogan}}</view>
-      <view class="lang-btn" hover-class="btn-hover" bindtap="toggleLang">{{langBtn}}</view>
+      <!-- 全中文模式：不显示中英切换按钮（要恢复就把下一行取消注释，并清空 utils/i18n.js 的 FORCE_LANG） -->
+      <!-- <view class="lang-btn" hover-class="btn-hover" bindtap="toggleLang">{{langBtn}}</view> -->
     </view>
   </view>
 

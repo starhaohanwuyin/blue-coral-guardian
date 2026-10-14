@@ -613,14 +613,13 @@ wx.getCurrentPages = function () { return state.stack.map((f) => f.inst); };
     const meta = (state.manifest.pages || []).find((p) => p.name === name);
     // 标题也跟随语言：manifest 里带了构建期生成的英文标题（titleEn）
     let pageTitle = (meta && meta.title) || '蓝珊 · 珊瑚卫士';
-    if (meta && meta.titleEn) {
-      let lg = 'zh';
-      try {
-        const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
-        if (raw != null) lg = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
-      } catch (e) {}
-      if (lg === 'en') pageTitle = meta.titleEn;
-    }
+    // 全中文模式：标题固定用中文（要恢复中英切换，把下面 3 行取消注释即可）
+    // let lg = 'zh';
+    // try {
+    //   const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
+    //   if (raw != null) lg = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
+    // } catch (e) {}
+    // if (lg === 'en' && meta && meta.titleEn) pageTitle = meta.titleEn;
     emit('title', pageTitle);
     safe(inst, 'onLoad', q);
     paint(inst);
@@ -735,13 +734,14 @@ wx.getCurrentPages = function () { return state.stack.map((f) => f.inst); };
     if (!bar) return;                        // 外壳缺 tabBar 容器时不抛错
     const list = (state.manifest.tabBar.list || []);
     const tabs = TABS();
-    // 中英切换：语言由页面写进 storage（key: ls_lang，值形如 "en"；
-    // wx.setStorageSync 会加上 LS_PREFIX 前缀并 JSON 序列化，这里要按同样规则读）
-    let lang = 'zh';
-    try {
-      const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
-      if (raw != null) lang = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
-    } catch (e) {}
+    // 全中文模式：tabBar 文案固定中文（要恢复中英切换，把下面 6 行取消注释，
+    // 并让 utils/i18n.js 的 FORCE_LANG 为空）
+    const lang = 'zh';
+    // let lang = 'zh';
+    // try {
+    //   const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
+    //   if (raw != null) lang = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
+    // } catch (e) {}
     const TAB_EN = { '首页': 'Home', '认养': 'Adopt', '科普': 'Learn', 'AI识别': 'AI scan', '我的': 'Me' };
     bar.innerHTML = list.map((it, i) => {
       const nm = it.pagePath.split('/')[1];

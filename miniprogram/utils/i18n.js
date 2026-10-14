@@ -8,6 +8,10 @@
 const PH = require('./i18n-phrases.js')      // 中文 → 英文（整串精确匹配，构建器生成）
 const LANG_KEY = 'ls_lang'
 
+/* 全中文模式：锁定显示语言（''=按用户选择；'zh'=永远是中文）。
+ * 英文词条都还在（DICT / 短语表），以后要恢复中英切换把这行清空即可。 */
+const FORCE_LANG = 'zh'
+
 const DICT = {
   /* 顶部与首页各区块标题 */
   'index.brand': { zh: '蓝珊', en: 'LanShan' },
@@ -115,6 +119,7 @@ const DICT = {
 }
 
 function getLang() {
+  if (FORCE_LANG) return FORCE_LANG          // 全中文模式：忽略本地存储的语言
   try {
     return wx.getStorageSync(LANG_KEY) === 'en' ? 'en' : 'zh'
   } catch (e) {
@@ -125,7 +130,7 @@ function getLang() {
 function setLang(lang) {
   const l = lang === 'en' ? 'en' : 'zh'
   try { wx.setStorageSync(LANG_KEY, l) } catch (e) {}
-  return l
+  return FORCE_LANG || l
 }
 
 function isEn() { return getLang() === 'en' }
