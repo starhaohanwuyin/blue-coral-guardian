@@ -50,8 +50,8 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: i18n.pick('海洋珊瑚图鉴 · 20+ 品种一次看全',
-                       'Ocean coral field guide · 20+ taxa'),
+      title: i18n.pick('海洋珊瑚图鉴 · 多种品种一次看全',
+                       'Ocean coral field guide · multiple taxa'),
       path: '/pages/all-species/all-species'
     }
   }
