@@ -20,6 +20,7 @@ const IMG = {
   basePrint: '/assets/img/base_3dprint.jpg',
   field: '/assets/img/field.jpg',            // 野外修复作业实拍
   coralNo2: '/assets/img/coral_no2.jpg',     // 珊瑚2号实拍
+  monsoon: '/assets/img/monsoon.jpg',        // 季风云系卫星图（NOAA，公有领域）
   wxRestore: '/mp/assets/img/tweet_restore.jpg',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
   wxEdu: '/mp/assets/img/tweet_edu.jpg',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
   wxSurvey: '/mp/assets/img/tweet_survey.jpg',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
@@ -47,7 +48,8 @@ const IMG = {
  * ⚠️ 别填 mp.weixin.qq.com/s/example1 这类占位地址——微信会打开「参数错误」页。
  */
 const WX_LINKS = {
-  // 1: '',
+  // 填了就走微信公众号原文（打开后 urlName 自动显示「微信公众号原文」）
+  1: 'https://mp.weixin.qq.com/s/_G936MeyYCEz5UTEjLvQjw',
   // 2: '',
 }
 
@@ -123,8 +125,8 @@ const homeData = {
      ⚠️ 换成自己公众号的文章地址时，只改这两处即可；正文放 paragraphs（可选）。 */
   articles: [
     { id: 1, title: '海洋珊瑚礁修复取得阶段性成果：覆盖率从30%提升至50%', date: '2026-07-15', tag: '项目进展',
-      img: IMG.wxRestore, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian',
-      urlName: '项目开源仓库 · 修复成效与数据',
+      img: IMG.camp, url: 'https://mp.weixin.qq.com/s/_G936MeyYCEz5UTEjLvQjw',
+      urlName: '微信公众号原文',
       paragraphs: [
         '深圳大鹏湾修复区活珊瑚覆盖率从修复前的 30.84% 提升到 50.12%，达到项目设定的 50% 阶段目标。',
         '【关键变化】',
@@ -337,7 +339,7 @@ const homeData = {
         '• 触发白化的门槛是「比夏季最高月均温高 1℃ 并持续数周」，所以看累积量比只看单日峰值更有意义',
         '• 5km 格点只回答「哪片海」，回答不了「哪个礁」——礁级判断仍要靠水下识别'
       ] },
-    { id: 5, title: '仙本那的季风窗口：热压力什么时候回落', date: '2026-06-30', tag: '修复决策', img: IMG.field,
+    { id: 5, title: '仙本那的季风窗口：热压力什么时候回落', date: '2026-06-30', tag: '修复决策', img: IMG.monsoon,
       paragraphs: [
         '仙本那属热带季风气候，11–2 月东北季风期的海况与热压力通常相对缓和，是投放种苗的优先窗口。',
         '把 NOAA 逐日 DHW 档案与投放计划对齐后，本项目的做法是：优先在热压力回落窗口投放，避开 DHW 爬升期。',

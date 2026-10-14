@@ -317,3 +317,13 @@ Kate Osborne, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/93
 | Goniopora pandoraensis | Goniopora pandoraensis | species_goniopora-pandoraensis.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101740 |
 | Goniopora burgosi | Goniopora burgosi | species_goniopora-burgosi.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101729 |
 | Goniopora pendulus | Goniopora pendulus | species_goniopora-pendulus.jpg | cc-by-nc | (c) Tomas Cedhagen, some rights reserved (CC BY-NC), uploaded by Tomas Cedhagen | https://www.inaturalist.org/taxa/101742 |
+
+## 图片来源与致谢（页内配图，2026-10）
+
+| 用途 | 文件 | 许可 | 来源 |
+|---|---|---|---|
+| 首页技术卡「贝壳基免烧结3D打印导流式底托」、科普「3D打印珊瑚底托」 | assets/img/base_3dprint.jpg | 团队自有素材 | 本地素材（D:\图片\底托.png） |
+| 夏令营页头图、科普「珊瑚夏令营」、资讯「夏令营第43期」、首页第一条推文配图 | assets/img/camp_summer.jpg | 团队自有素材 | 本地素材（D:\图片\珊瑚夏令营.png） |
+| 科普「珊瑚礁修复实践」、资讯「仙本那核心礁区珊瑚监测」 | assets/img/field.jpg | 团队自有素材 | 本地素材（D:\图片\野外.png） |
+| 资讯「珊瑚2号杂交品系进入海区规模培育测试」 | assets/img/coral_no2.jpg | 团队自有素材 | 本地素材（D:\图片\珊瑚2号.png） |
+| 资讯「仙本那的季风窗口：热压力什么时候回落」 | assets/img/monsoon.jpg | Public domain (NOAA) | https://commons.wikimedia.org/wiki/File:Himawari-8_Sees_Rain_Clouds_Over_Indonesia_as_Monsoon_Season_Comes_to_a_Close_(NESDIS_2020-03-25).png |
