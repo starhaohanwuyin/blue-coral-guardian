@@ -153,12 +153,12 @@
 }
 .stat-item { text-align: center; }
 .stat-num {
-  font-size: calc(40 * var(--rpx));          /* 小一号：44 → 40 */
+  font-size: calc(36 * var(--rpx));          /* 再收两号：44 → 40 → 36（英文数字更长，避免抢版面） */
   font-weight: 700;
   color: var(--primary);
 }
 .stat-label {
-  font-size: calc(20 * var(--rpx));          /* 小一号：22 → 20 */
+  font-size: calc(18 * var(--rpx));          /* 跟着收两号：22 → 20 → 18 */
   color: var(--text3);
   margin-top: calc(4 * var(--rpx));
 }

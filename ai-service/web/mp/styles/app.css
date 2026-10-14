@@ -114,7 +114,7 @@
   padding: calc(20 * var(--rpx)) calc(40 * var(--rpx));
 }
 .custom-header-row .logo {
-  font-size: calc(40 * var(--rpx));
+  font-size: calc(36 * var(--rpx));          /* 英文下品牌名更长，收两号：40 → 36 */
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
