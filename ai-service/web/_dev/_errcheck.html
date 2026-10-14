@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>errcheck</title>
+<style>html,body{margin:0}iframe{width:100%;height:100vh;border:0}</style></head><body>
+<iframe id="fr" src="/"></iframe><pre id="out" style="display:none">…</pre>
+<script>
+ const q=new URLSearchParams(location.search); const page=q.get('page');
+ const fr=document.getElementById('fr');
+ setTimeout(function(){
+   fr.contentWindow.location.hash='#/'+page+(q.get('id')?('?id='+q.get('id')):'');
+   setTimeout(function(){
+     const d=fr.contentDocument;
+     const log=d.getElementById('mp-errlog');
+     const host=d.getElementById('page-host');
+     const txt=(host?host.textContent:'').replace(/\s+/g,'');
+     document.getElementById('out').textContent =
+       'PAGE='+page+'\nTEXT_LEN='+txt.length+'\nTEXT='+txt.slice(0,200)+
+       '\nERRLOG='+(log?log.textContent.slice(0,600):'(无 #mp-errlog)');
+   }, 3000);
+ }, 1500);
+</script></body></html>

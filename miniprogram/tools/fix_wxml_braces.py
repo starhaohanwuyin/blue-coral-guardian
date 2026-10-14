@@ -32,13 +32,26 @@ PAT_C = re.compile(r"\{\{([A-Za-z_][^{}\n]*)\}(?!\})")
 KINDS = [(PAT_A, "单花括号（两侧都缺）"), (PAT_B, "缺一个开括号"), (PAT_C, "缺一个闭括号")]
 
 
+def strip_comments(txt):
+    """把 <!-- ... --> 注释内容替换成等长空白（保留换行与偏移量）。
+
+    为什么必须跳过注释：注释里写接口样例（如 `GET /corals/{id}`）会被当成"单花括号"
+    误报，闸门因此长期飘红，真问题反而被淹没。
+    """
+    def repl(m):
+        body = m.group(0)
+        return "".join("\n" if c == "\n" else " " for c in body)
+    return re.sub(r"<!--.*?-->", repl, txt, flags=re.S)
+
+
 def scan(path):
     """返回 [(行号, 片段, 类型)]，按行号排序去重。"""
     txt = path.read_text(encoding="utf-8")
+    scan_txt = strip_comments(txt)
     hits = []
     for pat, kind in KINDS:
-        for m in pat.finditer(txt):
-            line = txt.count("\n", 0, m.start()) + 1
+        for m in pat.finditer(scan_txt):
+            line = scan_txt.count("\n", 0, m.start()) + 1
             hits.append((line, m.group(0), kind))
     # 同一处可能被多个模式命中，按 (行号, 片段) 去重
     uniq = sorted(set(hits))

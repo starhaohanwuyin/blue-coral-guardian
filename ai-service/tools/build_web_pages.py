@@ -12,10 +12,10 @@ import argparse
 ⚠️ 转换是"结构无损"的（标签/属性/表达式原样保留），**不做语义改写**：
    表达式在浏览器里用 new Function 求值，所以 WXML 里的 JS 写法要能在浏览器里跑。
 """
+import hashlib
 import json
 import pathlib
 import re
-import time
 
 import ast as _ast  # noqa: F401  (仅为提示：本文件不依赖 ast)
 sys_path = pathlib.Path(__file__).resolve()
@@ -237,9 +237,30 @@ def stamp_index_cache_buster(out_dir: pathlib.Path) -> str:
         return ""
     if not pattern.search(text):
         return ""
-    stamp = format(int(time.time()), "x")[-6:]
+    stamp = build_stamp(out_dir)
     index.write_text(pattern.sub(lambda m: m.group(1) + stamp, text), encoding="utf-8")
     return stamp
+
+
+def build_stamp(out_dir: pathlib.Path) -> str:
+    """按**产物内容**算版本号（而不是时间戳）。
+
+    原来用 int(time.time())：每次构建都会改 index.html，仓库里天天出现"只改了版本号"的
+    无意义 diff，也看不出真正的内容变化。改成内容哈希后：
+      · 源码没变 → 重建零差异（CI/复跑可校验）
+      · 源码一变 → 版本号必变 → 浏览器普通刷新即拿到新代码（缓存穿透照旧有效）
+    覆盖范围：mp.js（运行时）＋ web/mp 下全部模板/样式/脚本/清单。
+    """
+    h = hashlib.sha1()
+    files = [out_dir.parent / "mp.js"]
+    files += sorted(p for p in out_dir.rglob("*") if p.is_file())
+    for p in files:
+        if not p.exists():
+            continue
+        h.update(p.relative_to(out_dir.parent).as_posix().encode())
+        h.update(p.read_bytes())
+    return h.hexdigest()[:6]
+
 
 
 def apply_image_map(out_dir: pathlib.Path) -> int:

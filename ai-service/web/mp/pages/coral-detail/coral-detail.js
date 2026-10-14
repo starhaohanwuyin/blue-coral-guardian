@@ -14,7 +14,10 @@ Page(pageI18n.wrap({
 
   onLoad(options) {
     const id = options.id || 1
-    api.getCoralDetail(id).then((d) => {
+    // ⚠️ 用 getAdoptCoralDetail（认养详情），不要用 getCoralDetail —— 后者是「珊瑚种类详情」
+    //    查图鉴库 /corals/{id}，传认养编号会返回 null，页面会一直停在「加载中…」。
+    api.getAdoptCoralDetail(id).then((d) => {
+      if (!d) throw new Error('没有找到这株珊瑚')
       this.setData({
         d,
         deg: Math.round((d.growth / 100) * 360)

@@ -165,7 +165,12 @@ api.getMyCorals = function () {
   return req.get(URL.myCorals)
 }
 
-api.getCoralDetail = function (id) {
+/* 「我的认养珊瑚」详情（含成长值/刻度环）。
+ * ⚠️ 必须和「珊瑚种类详情」区分开：物种详情也叫 getCoralDetail（见下方，查图鉴库 /corals/{id}）。
+ *    本文件里曾出现**两个 api.getCoralDetail 定义**，后定义的会覆盖前一个
+ *    → 认养详情页取不到数据、一直停在「加载中…」（网页版与小程序都会中招）。
+ *    故这里改名为 getAdoptCoralDetail，调用方 pages/coral-detail。 */
+api.getAdoptCoralDetail = function (id) {
   if (config.USE_MOCK) {
     const d = Object.assign({}, mock.coralDetail)
     d.id = id

@@ -275,6 +275,27 @@
     setKeepScreenOn(o) { o.success && o.success({}); },
     setScreenBrightness(o) { o.success && o.success({}); },
   };
+
+  /* 统一补默认参数。
+     微信允许 `wx.navigateBack()` / `wx.showToast()` 这类**不传参**调用，而我们的实现里
+     大多直接读 `o.success`，不传就抛 TypeError —— 实测 coral-species 页调 wx.navigateBack()
+     时报 "Cannot read properties of undefined (reading 'success')"，整页绑死。
+     这里把所有「收对象参数」的 API 统一包装成 `o = {}`。 */
+  const CALLBACK_APIS = [
+    'navigateTo', 'redirectTo', 'switchTab', 'reLaunch', 'navigateBack',
+    'showToast', 'showLoading', 'showModal', 'setNavigationBarTitle', 'pageScrollTo',
+    'setClipboardData', 'openSetting', 'getSetting', 'requirePrivacyAuthorize', 'authorize',
+    'login', 'checkSession', 'getUserProfile', 'getUserInfo', 'requestPayment',
+    'request', 'downloadFile', 'uploadFile', 'chooseMedia', 'chooseImage', 'previewImage',
+    'saveImageToPhotosAlbum', 'getLocation', 'openLocation', 'setKeepScreenOn',
+    'setScreenBrightness', 'showShareMenu', 'hideShareMenu', 'showActionSheet',
+  ];
+  CALLBACK_APIS.forEach((k) => {
+    const fn = wx[k];
+    if (typeof fn !== 'function') return;
+    wx[k] = function (o, ...rest) { return fn.call(wx, o || {}, ...rest); };
+  });
+
   window.wx = wx;
 
   function canvasCtxStub() {

@@ -93,7 +93,13 @@ for rel in ["web/index.html", "web/lite.html", "web/mp.js", "web/mp/manifest.jso
     line("ok" if (ROOT / rel).exists() else "bad", rel)
 tpl = list((ROOT / "web" / "mp" / "templates").glob("*.json"))
 imgs = list((ROOT / "web" / "mp" / "assets" / "img").glob("*"))
-line("ok" if len(tpl) == 22 else "warn", "22 页模板", f"{len(tpl)} 个")
+# 页数**动态读取** app.json：以前写死 22，小程序后来加了页面就会假报警
+try:
+    _pages = json.loads((ROOT.parent / "miniprogram" / "app.json").read_text(encoding="utf-8"))["pages"]
+except Exception:                                              # noqa: BLE001
+    _pages = []
+_want = len(_pages) or 22
+line("ok" if len(tpl) == _want else "warn", f"{_want} 页模板", f"{len(tpl)} 个")
 line("ok" if imgs else "warn", "本地配图（离线可用）", f"{len(imgs)} 张")
 
 # 珊瑚图鉴数据库（科普页「珊瑚种类」的数据源，可在 /admin.html 自行上传维护）

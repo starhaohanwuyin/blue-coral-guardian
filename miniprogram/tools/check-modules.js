@@ -55,7 +55,10 @@ for (const file of files) {
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/(^|[^:])\/\/[^\n]*/g, '$1')
   for (const m of MODULES) {
-    const used = new RegExp('\\b' + m + '\\s*\\.')
+    // ⚠️ 排除"路径字面量"里的假命中：`require('./mock.js')` 里也有 `mock.`，
+    //    但它前面是 `/`，不是变量使用（闸门曾因此在 utils/i18n.js 误报"未声明 mock"）。
+    //    故要求 `mock.` 前面的字符不是 / ' " ` 或标识符字符。
+    const used = new RegExp("(?<![/'\"`\\w.])" + m + "\\s*\\.")
     const declared = new RegExp('(const|let|var)\\s+' + m + '\\s*=')
     if (used.test(code) && !declared.test(code)) {
       const line = code.split('\n').findIndex((l) => used.test(l)) + 1
