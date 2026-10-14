@@ -91,6 +91,21 @@ Page(pageI18n.wrap({
     }
   },
 
+  /* 联系客服：弹窗给电话，可直接拨打（小程序跳系统拨号，网页版跳 tel: 链接） */
+  onContact() {
+    wx.showModal({
+      title: '联系客服',
+      content: '请拨打 18936361581',
+      confirmText: '拨打',
+      cancelText: '知道了',
+      confirmColor: '#1E88E5',
+      success: (res) => {
+        if (!res.confirm) return
+        wx.makePhoneCall({ phoneNumber: '18936361581' })
+      }
+    })
+  },
+
   /* 退出登录（与官网同一账号体系，token 同步清除） */
   onLogout() {
     wx.showModal({

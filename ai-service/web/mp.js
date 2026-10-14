@@ -256,6 +256,13 @@
     },
     chooseLocation(o) { o.fail && o.fail({ errMsg: '网页版不支持选择位置' }); },
     openLocation(o) { window.open('https://uri.amap.com/marker?position=' + o.longitude + ',' + o.latitude, '_blank'); },
+    /* 拨打电话：网页版跳 tel:（手机浏览器会拉起拨号），桌面浏览器无拨号应用时至少不报错 */
+    makePhoneCall(o) {
+      const n = (o && o.phoneNumber) || '';
+      if (!n) return o.fail && o.fail({ errMsg: '缺少 phoneNumber' });
+      try { window.location.href = 'tel:' + n; } catch (e) {}
+      o.success && o.success({});
+    },
     /* 画布/文件（认养证书等功能用） */
     canvasToTempFilePath(o) {
       // 优先用调用方传进来的 canvas 节点（cert 页就是这么用的），否则退回页面上第一个 canvas
@@ -301,6 +308,7 @@
     'login', 'checkSession', 'getUserProfile', 'getUserInfo', 'requestPayment',
     'request', 'downloadFile', 'uploadFile', 'chooseMedia', 'chooseImage', 'previewImage',
     'saveImageToPhotosAlbum', 'getLocation', 'openLocation', 'setKeepScreenOn',
+    'makePhoneCall',
     'setScreenBrightness', 'showShareMenu', 'hideShareMenu', 'showActionSheet',
   ];
   CALLBACK_APIS.forEach((k) => {
