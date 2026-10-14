@@ -87,3 +87,14 @@
   font-weight: 500;
   box-shadow: none;
 }
+
+/* 资料来源说明（属级通性 / 中文名来源 / 配图许可） */
+.cs-source-note {
+  margin: 20rpx 24rpx 0;
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  background: rgba(30, 136, 229, 0.05);
+  color: var(--text3);
+  font-size: 20rpx;
+  line-height: 1.7;
+}

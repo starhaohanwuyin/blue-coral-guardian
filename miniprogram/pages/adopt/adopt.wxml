@@ -147,7 +147,7 @@
           </view>
           <view class="entity-card-price">
             <view class="entity-price">¥{{item.price}}<text class="entity-price-unit">{{item.priceUnit}}</text></view>
-            <view class="entity-buy-btn" hover-class="btn-hover" bindtap="onBuy" data-id="{{item.id}}">{{item.button}}</view>
+            <view class="entity-buy-btn {{submitted[item.id] ? 'done' : ''}}" hover-class="btn-hover" bindtap="onBuy" data-id="{{item.id}}">{{submitted[item.id] ? '已提交意向' : item.button}}</view>
           </view>
         </view>
       </view>

@@ -5,6 +5,7 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 const mock = require('../../utils/mock.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 const pageI18n = require('../../utils/page-i18n.js')
@@ -95,15 +96,16 @@ Page(pageI18n.wrap({
 
   /* 联系客服：弹窗给电话，可直接拨打（小程序跳系统拨号，网页版跳 tel: 链接） */
   onContact() {
+    const phone = config.SERVICE_PHONE
     wx.showModal({
       title: '联系客服',
-      content: '请拨打 18936361581',
+      content: '请拨打 ' + phone,
       confirmText: '拨打',
       cancelText: '知道了',
       confirmColor: '#1E88E5',
       success: (res) => {
         if (!res.confirm) return
-        wx.makePhoneCall({ phoneNumber: '18936361581' })
+        wx.makePhoneCall({ phoneNumber: phone })
       }
     })
   },

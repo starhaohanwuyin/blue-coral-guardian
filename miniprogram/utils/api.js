@@ -910,8 +910,9 @@ api.getCert = function (type, id) {
         { label: '珊瑚品种', value: c.species },
         { label: '珊瑚编号', value: c.code },
         { label: '认养日期', value: (home && home.date) || '' },
-        { label: 'GPS坐标', value: "N22°33' E114°37'" },
-        { label: '修复海域', value: '深圳大鹏湾' }
+        // 坐标与海域跟着这一株走（写在 myCorals 数据里，不再写死在证书逻辑里）
+        { label: 'GPS坐标', value: c.gps || '' },
+        { label: '修复海域', value: c.site || '' }
       ].filter((f) => f.value)
     }
     return mock.delay(cert)

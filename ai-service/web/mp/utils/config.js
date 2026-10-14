@@ -144,5 +144,9 @@ module.exports = {
   VERSION: '2.2.5',
 
   // 客服邮箱
-  SERVICE_EMAIL: 'service@bluecoral.cn'
+  SERVICE_EMAIL: 'service@bluecoral.cn',
+
+  /* 客服电话（demo 里所有"联系客服/报名/下单咨询"统一走这里）
+   * ⚠️ 正式版应改为后端下发，不要写死在客户端（公开仓库会被爬虫收集） */
+  SERVICE_PHONE: '18936361581'
 }

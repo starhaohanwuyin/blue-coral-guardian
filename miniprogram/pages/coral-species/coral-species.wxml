@@ -26,6 +26,12 @@
     </view>
   </view>
 
+  <!-- 资料来源说明：把"哪些是实测、哪些是通性模板、中文名怎么来的"讲清楚（评审关注点） -->
+  <view class="cs-source-note">
+    ※ 形态、习性、威胁等字段为**属级通性**整理，种级差异以现场观察与权威名录为准；
+    中文名为规范译名（种加词意译＋属名），配图来自 Wikimedia Commons / iNaturalist（见项目 NOTICE.md）。
+  </view>
+
   <view class="cs-actions">
     <view class="cs-btn" hover-class="btn-hover" bindtap="goAll">{{t.back}}</view>
     <view class="cs-btn ghost" hover-class="btn-hover" bindtap="goQuiz">{{t.quiz}}</view>

@@ -6,6 +6,7 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 const mock = require('../../utils/mock.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 /* 任务按钮文案映射 */
@@ -35,6 +36,7 @@ Page(pageI18n.wrap({
     feedingAnim: false,
 
     /* 实体认养 */
+    submitted: {},          // 已提交意向的套餐（按钮变成「已提交意向」）
     products: [],
     myCorals: [],
     carbon: { value: 0, unit: 'g CO₂' },
@@ -248,10 +250,16 @@ Page(pageI18n.wrap({
       confirmColor: '#1E88E5',
       success: (res) => {
         if (!res.confirm) return
-        /* Demo：不接支付，确认下单后引导打电话联系工作人员 */
+        /* Demo：不接支付。这里仍写一条订单（闭环，可在数据里查到），
+           同时把按钮置为「已提交意向」，并引导打电话联系工作人员 */
+        api.createOrder(product).catch(() => {})
+        // 用整对象覆盖，避免依赖 setData 的路径语法（两端行为更一致）
+        const submitted = Object.assign({}, this.data.submitted)
+        submitted[product.id] = true
+        this.setData({ submitted })
         wx.showModal({
           title: '联系工作人员',
-          content: '请拨打 18936361581 联系工作人员',
+          content: '请拨打 ' + config.SERVICE_PHONE + ' 联系工作人员',
           showCancel: false,
           confirmText: '知道了',
           confirmColor: '#1E88E5'

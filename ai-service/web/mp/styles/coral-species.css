@@ -88,4 +88,15 @@
   box-shadow: none;
 }
 
+/* 资料来源说明（属级通性 / 中文名来源 / 配图许可） */
+.cs-source-note {
+  margin: calc(20 * var(--rpx)) calc(24 * var(--rpx)) 0;
+  padding: calc(20 * var(--rpx)) calc(24 * var(--rpx));
+  border-radius: calc(20 * var(--rpx));
+  background: rgba(30, 136, 229, 0.05);
+  color: var(--text3);
+  font-size: calc(20 * var(--rpx));
+  line-height: 1.7;
+}
+
 .coral-page img{max-width:100%;vertical-align:middle;}

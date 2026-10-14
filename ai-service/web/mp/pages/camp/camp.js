@@ -3,6 +3,7 @@
  */
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
+const config = require('../../utils/config.js')
 
 const pageI18n = require('../../utils/page-i18n.js')
 
@@ -23,7 +24,7 @@ Page(pageI18n.wrap({
     // Demo：不留报名表单，直接给联系电话
     wx.showModal({
       title: '报名下期夏令营',
-      content: '请拨打号码 18936361581 与工作人员进行联系',
+      content: '请拨打号码 ' + config.SERVICE_PHONE + ' 与工作人员进行联系',
       showCancel: false,
       confirmText: '知道了',
       confirmColor: '#1E88E5'

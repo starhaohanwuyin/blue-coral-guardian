@@ -685,9 +685,13 @@ const entityProducts = [
 ]
 
 const myCorals = [
-  { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', code: 'LS20260315', growth: 65, carbon: 82.3, img: IMG.spAcroporaValida },
-  { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', code: 'LS20260422', growth: 42, carbon: 58.7, img: IMG.spAcroporaHumilis },
-  { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', code: 'LS20260510', growth: 28, carbon: 45.5, img: IMG.spTurbinaria }
+  /* site / gps 写在数据里：认养证书按这一株取值，避免"三株共用一张写死的证书信息" */
+  { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', code: 'LS20260315', growth: 65, carbon: 82.3, img: IMG.spAcroporaValida,
+    site: '深圳大鹏湾 · 珊瑚修复区 A3', gps: "N22°33' E114°37'" },
+  { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', code: 'LS20260422', growth: 42, carbon: 58.7, img: IMG.spAcroporaHumilis,
+    site: '深圳大鹏湾 · 珊瑚修复区 A3', gps: "N22°33' E114°38'" },
+  { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', code: 'LS20260510', growth: 28, carbon: 45.5, img: IMG.spTurbinaria,
+    site: '深圳大鹏湾 · 珊瑚修复区 B1', gps: "N22°32' E114°37'" }
 ]
 
 const coralDetail = {
@@ -740,7 +744,7 @@ const tasks = [
   { id: 'learn', icon: '📚', iconBg: 'rgba(0,188,212,0.12)', name: '科普学习', desc: '阅读1篇科普文章', points: 15, action: 'learn' },
   { id: 'donate', icon: '💚', iconBg: 'rgba(76,175,80,0.12)', name: '公益捐赠', desc: '参与珊瑚保护公益', points: 50, action: 'donate' },
   { id: 'quiz', icon: '🧠', iconBg: 'rgba(171,71,188,0.12)', name: '知识问答', desc: '完成珊瑚知识答题', points: 15, action: 'quiz' },
-  { id: 'steps', icon: '👟', iconBg: 'rgba(255,112,67,0.12)', name: '步数达标', desc: '今日步行满5000步', points: 15, action: 'steps' },
+  { id: 'steps', icon: '👟', iconBg: 'rgba(255,112,67,0.12)', name: '步数达标', desc: '今日步行满5000步（演示环境不读运动数据，点击即视为完成）', points: 15, action: 'steps' },
   { id: 'welfare', icon: '🏖️', iconBg: 'rgba(0,150,136,0.12)', name: '珊瑚公益活动', desc: '参与净滩行动/珊瑚种植等', points: 30, action: 'welfare' }
 ]
 
