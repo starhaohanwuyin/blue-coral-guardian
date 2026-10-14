@@ -676,7 +676,7 @@ const entityProducts = [
     id: 'dive', icon: '🤿', title: '潜水种植体验', subtitle: '亲自下水 · 海底种珊瑚 · 深度体验',
     desc: '购买珊瑚+潜水套餐，在专业教练带领下亲自下水，体验海底种植珊瑚的乐趣。包含潜水装备、专业指导、水下摄影及认养证书。',
     features: ['PADI认证教练', '全套潜水装备', '水下摄影跟拍', '珊瑚+潜水套餐'],
-    price: 1280, priceUnit: '/人起', button: '预约体验'
+    price: 2160, priceUnit: '/人起', button: '预约体验'
   }
 ]
 
