@@ -44,6 +44,21 @@ function translatePayload(payload) {
   return translateValue(payload)
 }
 
+/** 当前页面的词条前缀：pages/index/index → index。
+ *  拿不到路由时返回空串（等于只用整本拍平表，行为与修复前一致，不会报错）。 */
+function pagePrefixOf(inst) {
+  let route = (inst && (inst.route || inst.__route)) || ''
+  if (!route && typeof getCurrentPages === 'function') {
+    try {
+      const stack = getCurrentPages() || []
+      const last = stack[stack.length - 1]
+      route = (last && (last.route || last.__route)) || ''
+    } catch (e) { route = '' }
+  }
+  const seg = String(route).split('/').filter(Boolean)
+  return seg.length ? seg[seg.length - 1] : ''
+}
+
 function wrap(cfg) {
   const page = cfg || {}
   const rawOnLoad = page.onLoad
@@ -53,7 +68,14 @@ function wrap(cfg) {
 
   const applyLang = function () {
     const changed = this.data.lang !== undefined && this.data.lang !== i18n.getLang()
-    const next = { t: i18n.all(), lang: i18n.getLang() }
+    // ⚠️ t 必须**按页面作用域**：整本拍平表里 `index.brand` 与 `knowledge.brand` 都叫 `brand`，
+    //    后遍历到的会覆盖前面的 → 首页曾显示科普页的品牌名「📚 珊瑚科普」。
+    //    这里用「本页前缀的词条」覆盖全局拍平表，各页各取自己的值。
+    const prefix = pagePrefixOf(this)
+    const next = {
+      t: Object.assign({}, i18n.all(), i18n.pageFlat ? i18n.pageFlat(prefix) : {}),
+      lang: i18n.getLang(),
+    }
     // 语言变了 → 用原始数据重算，避免"翻了两遍"
     if (changed && this.__rawData) {
       const raw = Object.assign({}, this.__rawData)

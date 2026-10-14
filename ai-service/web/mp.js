@@ -513,6 +513,14 @@
     const inst = Object.create(def);
     inst.__name = name;
     inst.__query = query || {};
+    // ⚠️ 微信里 `this.route` 是页面路径（如 pages/index/index），page-i18n 靠它：
+    //    ① 取「页面作用域词条」——否则 index.brand 与 knowledge.brand 拍平后互相覆盖，
+    //       首页会显示科普页的品牌名「📚 珊瑚科普」（实测踩过）；
+    //    ② 切语言时设置导航栏标题。之前没设 route，这两个功能都是静默失效的。
+    try {
+      const meta = ((state.manifest && state.manifest.pages) || []).find((p) => p.name === name);
+      inst.route = (meta && meta.route) || name;
+    } catch (e) { inst.route = name; }
     inst.data = deepClone(def.data) || {};
     inst.__pending = false;
     inst.setData = function (patch, cb) {
@@ -536,6 +544,10 @@
 
   /* ------------------------------------------------------------- 7. 路由 */
   const state = { stack: [], manifest: null, booted: false };
+
+// 微信 API：getCurrentPages() → 页面实例数组（栈底在前，栈顶在最后）。
+// 页面代码（如 page-i18n 取页面作用域词条）会用它兜底拿 route，缺了就会静默走错分支。
+wx.getCurrentPages = function () { return state.stack.map((f) => f.inst); };
   // 需要 id 的详情页 → 深链/刷新时的默认值（与 mock 数据的第一条对应）
   const DETAIL_PAGES = { 'coral-detail': '1', article: '1', 'knowledge-detail': '1', growth: '1' };
   const TABS = () => (state.manifest.tabBar.list || []).map((i) => i.pagePath.split('/')[1]);

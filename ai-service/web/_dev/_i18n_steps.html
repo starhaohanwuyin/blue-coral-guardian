@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<iframe id="fr" src="/" style="width:480px;height:900px"></iframe><pre id="out">…</pre>
+<script>
+ const log=[];const say=s=>{log.push(String(s));document.getElementById('out').textContent=log.join('\n');};
+ const fr=document.getElementById('fr');
+ function snap(tag){
+   const w=fr.contentWindow, d=fr.contentDocument;
+   const R=w.MP_RUNTIME;
+   const top=R.state.stack[R.state.stack.length-1];
+   const logos=Array.from(d.querySelectorAll('.custom-header .logo')).map(function(e){return (e.textContent||'').trim();});
+   say(tag+' | 栈='+R.state.stack.map(function(f){return f.name+':'+(f.inst&&f.inst.route);}).join(' , ')+
+       ' | t.brand='+JSON.stringify(top&&top.inst&&top.inst.data&&top.inst.data.t&&top.inst.data.t.brand)+
+       ' | DOM logo='+JSON.stringify(logos));
+ }
+ const steps=[
+   ['初始(/)', null],
+   ['hash=#/index', '#/index'],
+   ['hash=#/knowledge', '#/knowledge'],
+   ['hash=#/index(again)', '#/index'],
+ ];
+ let i=0;
+ function next(){
+   if(i>=steps.length){say('DONE');return;}
+   const [tag,h]=steps[i++];
+   if(h) fr.contentWindow.location.hash=h;
+   setTimeout(function(){ snap(tag); next(); }, 2600);
+ }
+ setTimeout(next, 1600);
+</script></body></html>

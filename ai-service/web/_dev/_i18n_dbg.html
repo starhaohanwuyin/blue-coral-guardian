@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<main id="page-host"></main><pre id="out">…</pre><script src="/mp.js"></script>
+<script>
+ const log=[];const say=s=>{log.push(String(s));document.getElementById('out').textContent=log.join('\n');};
+ setTimeout(function(){
+   try{
+     const R=window.MP_RUNTIME;
+     const i18n=R.require('/mp/utils/i18n.js');
+     say('i18n.pageFlat 类型: '+typeof i18n.pageFlat);
+     say('pageFlat("index").brand = '+JSON.stringify(i18n.pageFlat? i18n.pageFlat('index').brand : null));
+     say('pageFlat("knowledge").brand = '+JSON.stringify(i18n.pageFlat? i18n.pageFlat('knowledge').brand : null));
+     say('all().brand = '+JSON.stringify(i18n.all().brand));
+     const stack=R.state.stack;
+     say('页面栈长度: '+stack.length);
+     stack.forEach(function(s,idx){
+       say('  ['+idx+'] route='+JSON.stringify(s.route)+' inst.route='+JSON.stringify(s.inst&&s.inst.route)+
+           ' __route='+JSON.stringify(s.inst&&s.inst.__route)+' keys='+Object.keys(s).slice(0,8).join(','));
+     });
+     say('getCurrentPages() 可用: '+(typeof getCurrentPages==='function'));
+     if (typeof getCurrentPages==='function') {
+       const cp=getCurrentPages();
+       say('  getCurrentPages 长度='+(cp?cp.length:'null'));
+       if (cp&&cp.length) say('  最后一项 keys='+Object.keys(cp[cp.length-1]).slice(0,10).join(',')+
+                              ' route='+JSON.stringify(cp[cp.length-1].route));
+     }
+     const inst=stack.length?stack[stack.length-1].inst:null;
+     if (inst) {
+       say('当前页 data.t.brand = '+JSON.stringify(inst.data && inst.data.t && inst.data.t.brand));
+       say('当前页 data.lang = '+JSON.stringify(inst.data && inst.data.lang));
+     }
+   }catch(e){say('ERROR '+e.message+'\n'+e.stack.slice(0,300));}
+   say('DONE');
+ }, 2500);
+</script></body></html>

@@ -180,6 +180,21 @@ function autoDict() {
   return o
 }
 
+/** 某个页面作用域的词条：取 DICT 里以 `prefix.` 开头的键，去掉前缀。
+ *
+ * 为什么需要：all() 把 DICT 拍平成"尾段 key"，于是 `index.brand` 与 `knowledge.brand`
+ * 都变成 `brand`，**后遍历到的覆盖前面的** —— 首页顶部曾因此显示科普页的品牌名「📚 珊瑚科普」。
+ * 页面级 t 用本函数的结果覆盖 all()，就能各页各取自己的值。 */
+function pageFlat(prefix) {
+  if (!prefix) return {}
+  const out = {}
+  Object.keys(DICT).forEach((k) => {
+    const dot = k.indexOf('.')
+    if (dot > 0 && k.slice(0, dot) === prefix) out[k.slice(dot + 1)] = t(k)
+  })
+  return out
+}
+
 /** 整本词条（DICT 的尾段 key + 短语表词条）：页面 data.t 直接用它，不用维护 T_KEYS */
 function all() {
   const lang = getLang()
@@ -315,7 +330,7 @@ function coralDetailSections(it) {
 }
 
 module.exports = {
-  LANG_KEY, DICT, getLang, setLang, isEn, toggle, t, dict, pick, tr, all, phKey,
+  LANG_KEY, DICT, getLang, setLang, isEn, toggle, t, dict, pick, tr, all, pageFlat, phKey,
   mapSpecies, mapSpeciesList, mapKnowledgeItem, mapCategory,
   riskLabel, taxonomyEn, coralDetailSections,
   /** 网页版 tabBar 用：中文标签 → 英文 */

@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<main id="page-host"></main><pre id="out">…</pre><script src="/mp.js"></script>
+<script>
+ const log=[];const say=s=>{log.push(String(s));document.getElementById('out').textContent=log.join('\n');};
+ setTimeout(async function(){
+   try{
+     const txt = await fetch('/mp.js').then(r=>r.text());
+     say('mp.js 体积: '+txt.length);
+     say('含 inst.route 赋值: '+txt.includes('inst.route ='));
+     say('含 wx.getCurrentPages: '+txt.includes('wx.getCurrentPages'));
+     const R=window.MP_RUNTIME;
+     say('wx.getCurrentPages 类型: '+(typeof wx.getCurrentPages));
+     const stack=R.state.stack;
+     say('栈长='+stack.length);
+     stack.forEach(function(f,i){
+       say('  ['+i+'] name='+f.name+' inst.route='+JSON.stringify(f.inst&&f.inst.route)+
+           ' data.t.brand='+JSON.stringify(f.inst&&f.inst.data&&f.inst.data.t&&f.inst.data.t.brand));
+     });
+     if (typeof wx.getCurrentPages==='function') {
+       const cp=wx.getCurrentPages();
+       say('wx.getCurrentPages() 长度='+cp.length+' 末项 route='+JSON.stringify(cp[cp.length-1]&&cp[cp.length-1].route));
+     }
+   }catch(e){say('ERROR '+e.message);}
+   say('DONE');
+ }, 2500);
+</script></body></html>

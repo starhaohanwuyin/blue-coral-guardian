@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<iframe id="fr" src="/" style="width:480px;height:900px"></iframe><pre id="out">…</pre>
+<script>
+ setTimeout(function(){
+   const fr=document.getElementById('fr');
+   const d=fr.contentDocument;
+   const h=d.querySelector('.custom-header');
+   const row=d.querySelector('.custom-header-row');
+   const parts=[];
+   parts.push('--- .custom-header outerHTML ---');
+   parts.push(h?h.outerHTML.slice(0,900):'(无)');
+   parts.push('--- 子元素逐个 ---');
+   Array.from(row?row.children:[]).forEach(function(c,i){
+     const cs=fr.contentWindow.getComputedStyle(c);
+     const r=c.getBoundingClientRect();
+     parts.push(i+' class="'+c.className+'" text="'+(c.textContent||'').trim().slice(0,20)+
+                '" w='+Math.round(r.width)+' h='+Math.round(r.height)+
+                ' x='+Math.round(r.x)+' fs='+cs.fontSize+' flex='+cs.flex+' wrap='+cs.flexWrap);
+   });
+   const rr=row?row.getBoundingClientRect():{width:0,height:0};
+   parts.push('--- row 尺寸 --- w='+Math.round(rr.width)+' h='+Math.round(rr.height));
+   const cr=fr.contentWindow.getComputedStyle(row);
+   parts.push('row style: display='+cr.display+' wrap='+cr.flexWrap+' align='+cr.alignItems);
+   document.getElementById('out').textContent=parts.join('\n');
+ }, 2500);
+</script></body></html>
