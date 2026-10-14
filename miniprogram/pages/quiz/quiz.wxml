@@ -15,6 +15,7 @@
       <view class="quiz-options">
         <view
           wx:for="{{questions[index].options}}"
+          wx:for-index="i"
           wx:key="*this"
           class="quiz-option {{selected === i ? (i === questions[index].answer ? 'correct' : 'wrong') : ''}} {{answered && i === questions[index].answer ? 'correct' : ''}}"
           bindtap="onSelect"

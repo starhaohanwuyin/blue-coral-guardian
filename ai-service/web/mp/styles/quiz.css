@@ -75,7 +75,8 @@
 .quiz-option-mark.no { color: var(--coral); }
 .quiz-option.correct {
   border-color: var(--green);
-  background: rgba(76, 175, 80, 0.08);
+  border-width: calc(4 * var(--rpx));
+  background: rgba(76, 175, 80, 0.18);      /* 正确项：浅绿底色 */
 }
 .quiz-option.correct .quiz-option-letter {
   background: var(--green);
@@ -83,12 +84,13 @@
   color: #fff;
 }
 .quiz-option.wrong {
-  border-color: var(--coral);
-  background: rgba(255, 112, 67, 0.08);
+  border-color: #E53935;
+  border-width: calc(4 * var(--rpx));
+  background: rgba(229, 57, 53, 0.16);      /* 选错的那项：红底色 */
 }
 .quiz-option.wrong .quiz-option-letter {
-  background: var(--coral);
-  border-color: var(--coral);
+  background: #E53935;
+  border-color: #E53935;
   color: #fff;
 }
 
