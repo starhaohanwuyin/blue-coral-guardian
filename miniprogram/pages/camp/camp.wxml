@@ -17,7 +17,7 @@
   </view>
 
   <!-- 班型介绍 -->
-  <view class="camp-section-title">班型介绍</view>
+  <view class="camp-section-title">{{t.p1ejheep}}</view>
   <view class="camp-list">
     <view class="camp-card {{item.color}}" wx:for="{{data.camps}}" wx:key="name">
       <view class="camp-card-head">
@@ -33,6 +33,6 @@
     </view>
   </view>
 
-  <button class="camp-apply-btn" hover-class="btn-hover" bindtap="onApply">报名下期夏令营 →</button>
-  <view class="camp-tip">提交报名意向后，工作人员将与您联系确认</view>
+  <button class="camp-apply-btn" hover-class="btn-hover" bindtap="onApply">{{t.p1ntfbbz}}</button>
+  <view class="camp-tip">{{t.px9wv6t}}</view>
 </view>

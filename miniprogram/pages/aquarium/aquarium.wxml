@@ -28,8 +28,8 @@
     <view class="aqua-ai-head">
       <view class="aqua-ai-icon">🤖</view>
       <view>
-        <view class="aqua-ai-title">AI健康诊断</view>
-        <view class="aqua-ai-sub">基于YOLOv9+SAM3模型实时分析</view>
+        <view class="aqua-ai-title">{{t.pag40wa}}</view>
+        <view class="aqua-ai-sub">{{t.punqd6w}}</view>
       </view>
     </view>
     <view class="aqua-ai-row">
@@ -38,12 +38,12 @@
         <view class="aqua-ai-name">{{item.name}}</view>
       </view>
     </view>
-    <button class="aqua-ai-btn" hover-class="btn-hover" bindtap="goAiDetect">📷 上传新照片进行AI检测</button>
+    <button class="aqua-ai-btn" hover-class="btn-hover" bindtap="goAiDetect">{{t.p1s4xwsp}}</button>
   </view>
 
   <!-- 操作按钮 -->
   <view class="aqua-btn-row">
-    <button class="aqua-btn primary" hover-class="btn-hover" bindtap="goCamera">📹 查看实时相机</button>
-    <button class="aqua-btn secondary" hover-class="btn-hover" bindtap="onChangeBg">🎨 更换背景</button>
+    <button class="aqua-btn primary" hover-class="btn-hover" bindtap="goCamera">{{t.p1jl4l4f}}</button>
+    <button class="aqua-btn secondary" hover-class="btn-hover" bindtap="onChangeBg">{{t.p1njjd2c}}</button>
   </view>
 </view>

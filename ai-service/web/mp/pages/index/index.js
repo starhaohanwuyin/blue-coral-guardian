@@ -27,7 +27,9 @@ const T_KEYS = [
   'index.news', 'index.adoptedAt', 'index.growthPct'
 ]
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     statusBarHeight: 20,
     lang: 'zh',          // 当前语言（zh / en）
@@ -220,7 +222,7 @@ Page({
       path: '/pages/index/index'
     }
   }
-})
+}))
 
 /** 气候卡：英文时用 enData 的标题/副标题/标签/指标/说明，缺项自动回落中文 */
 function mapClimate(zh, enData, en) {

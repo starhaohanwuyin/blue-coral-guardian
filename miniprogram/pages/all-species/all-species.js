@@ -7,7 +7,9 @@ const i18n = require('../../utils/i18n.js')
 
 const T_KEYS = ['guide.intro', 'guide.hot', 'guide.all']
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     lang: 'zh',
     t: {},
@@ -55,4 +57,4 @@ Page({
       path: '/pages/all-species/all-species'
     }
   }
-})
+}))

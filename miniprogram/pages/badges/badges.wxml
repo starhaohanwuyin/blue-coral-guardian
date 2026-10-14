@@ -17,7 +17,7 @@
 
   <!-- 勋章等级体系 -->
   <view class="badge-level-card">
-    <view class="badge-level-title">🏆 勋章等级体系</view>
+    <view class="badge-level-title">{{t.p1oz5i18}}</view>
     <view class="badge-level-row" wx:for="{{levels}}" wx:key="name">
       <view class="badge-level-star {{item.color}}">{{item.stars}}</view>
       <view>

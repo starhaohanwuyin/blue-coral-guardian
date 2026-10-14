@@ -5,7 +5,9 @@
 const util = require('../../utils/util.js')
 const mock = require('../../utils/mock.js')
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     d: null
   },
@@ -28,4 +30,4 @@ Page({
       path: '/pages/index/index'
     }
   }
-})
+}))

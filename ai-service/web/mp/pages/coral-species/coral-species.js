@@ -10,7 +10,9 @@ const i18n = require('../../utils/i18n.js')
 
 const T_KEYS = ['detail.back', 'detail.quiz', 'detail.featured', 'detail.aiGenus', 'detail.loading']
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     item: null,
     sections: [],
@@ -75,4 +77,4 @@ Page({
       path: '/pages/coral-species/coral-species?id=' + (it.id || '')
     }
   }
-})
+}))

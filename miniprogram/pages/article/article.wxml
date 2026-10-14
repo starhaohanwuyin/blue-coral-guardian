@@ -21,13 +21,13 @@
       <view wx:if="{{a.url}}" class="art-link card">
         <view class="art-link-title">🔗 {{a.urlName || '原文链接'}}</view>
         <view class="art-link-url">{{a.url}}</view>
-        <view class="art-link-btn" hover-class="btn-hover" bindtap="onOpenLink">打开原文链接</view>
-        <view class="art-link-btn ghost" hover-class="btn-hover" bindtap="onCopyLink">复制链接</view>
+        <view class="art-link-btn" hover-class="btn-hover" bindtap="onOpenLink">{{t.pmkqva9}}</view>
+        <view class="art-link-btn ghost" hover-class="btn-hover" bindtap="onCopyLink">{{t.p2zaaqj}}</view>
         <view class="art-link-tip">{{linkTip}}</view>
       </view>
 
-      <view wx:else class="art-nolink">完整内容请关注蓝珊官方公众号「蓝珊科技」获取</view>
+      <view wx:else class="art-nolink">{{t.pfwtgbf}}</view>
     </view>
   </view>
-  <view wx:else class="loading-dots">加载中...</view>
+  <view wx:else class="loading-dots">{{t.pldc0z9}}</view>
 </view>

@@ -19,7 +19,9 @@ const TASK_BTN = {
   welfare: '去参加'
 }
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     statusBarHeight: 20,
     type: 0, // 0虚拟 1实体
@@ -283,4 +285,4 @@ Page({
   goCoralDetail(e) {
     wx.navigateTo({ url: '/pages/coral-detail/coral-detail?id=' + e.currentTarget.dataset.id })
   }
-})
+}))

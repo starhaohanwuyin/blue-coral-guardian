@@ -5,7 +5,7 @@
     <view class="cd-imgwrap">
       <image class="cd-img" src="{{d.img}}" mode="aspectFill" />
       <view class="cd-species-badge">{{d.species}}</view>
-      <view class="cd-live" wx:if="{{d.liveTag}}">🔴 AI监测中</view>
+      <view class="cd-live" wx:if="{{d.liveTag}}">{{t.p18m0pjd}}</view>
     </view>
 
     <!-- 信息卡 -->
@@ -17,7 +17,7 @@
         <view class="cd-ring" style="background: conic-gradient(var(--primary) 0deg {{deg}}deg, #E8EDF5 {{deg}}deg 360deg);">
           <view class="cd-ring-inner">
             <text class="cd-ring-num">{{d.growth}}%</text>
-            <text class="cd-ring-label">成长进度</text>
+            <text class="cd-ring-label">{{t.pouhwk5}}</text>
           </view>
         </view>
         <view class="cd-progress-info">
@@ -35,7 +35,7 @@
     </view>
 
     <!-- 生长记录 -->
-    <view class="cd-section-title">📅 生长记录</view>
+    <view class="cd-section-title">{{t.po95zfo}}</view>
     <view class="cd-timeline card">
       <view class="timeline" style="padding: 32rpx 32rpx 8rpx;">
         <view class="timeline-item" wx:for="{{d.timeline}}" wx:key="time">
@@ -47,9 +47,9 @@
 
     <!-- 操作 -->
     <view class="cd-actions">
-      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCamera">📹 实时查看</view>
-      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCert">📜 认养证书</view>
+      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCamera">{{t.p1rsy0v1}}</view>
+      <view class="cd-action-btn" hover-class="btn-hover" bindtap="goCert">{{t.p1eun40y}}</view>
     </view>
   </view>
-  <view wx:else class="loading-dots">加载中...</view>
+  <view wx:else class="loading-dots">{{t.pldc0z9}}</view>
 </view>

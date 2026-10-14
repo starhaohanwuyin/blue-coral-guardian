@@ -203,7 +203,9 @@ const DOCS = {
   }
 }
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     doc: {}
   },
@@ -214,4 +216,4 @@ Page({
     this.setData({ doc })
     wx.setNavigationBarTitle({ title: doc.title })
   }
-})
+}))

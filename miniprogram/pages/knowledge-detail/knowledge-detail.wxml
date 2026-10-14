@@ -12,13 +12,13 @@
       <view wx:if="{{item.link}}" class="kd-link">
         <view class="kd-link-title">🔗 延伸阅读 · {{item.linkName || '原文'}}</view>
         <view class="kd-link-url">{{item.link}}</view>
-        <view class="kd-link-btn" hover-class="btn-hover" bindtap="onOpenLink">打开链接</view>
-        <view class="kd-link-btn ghost" hover-class="btn-hover" bindtap="onCopyLink">复制链接</view>
+        <view class="kd-link-btn" hover-class="btn-hover" bindtap="onOpenLink">{{t.p1ss0lyv}}</view>
+        <view class="kd-link-btn ghost" hover-class="btn-hover" bindtap="onCopyLink">{{t.p2zaaqj}}</view>
       </view>
     </view>
     <view class="kd-actions">
-      <view class="kd-share-btn" hover-class="btn-hover" bindtap="goQuiz">🧠 参与知识问答，赢积分</view>
+      <view class="kd-share-btn" hover-class="btn-hover" bindtap="goQuiz">{{t.pb2h6ej}}</view>
     </view>
   </view>
-  <view wx:else class="loading-dots">加载中...</view>
+  <view wx:else class="loading-dots">{{t.pldc0z9}}</view>
 </view>

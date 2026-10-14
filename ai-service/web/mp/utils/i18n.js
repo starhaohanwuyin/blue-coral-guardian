@@ -5,6 +5,7 @@
  * · 首页右上角是切换按钮，点一下在中文 / English 之间切；
  * · 文案都放在下面这个 DICT 里（zh / en 成对），后续要给其它页面做英文，往这里加 key 即可。
  */
+const PH = require('./i18n-phrases.js')      // 中文 → 英文（整串精确匹配，构建器生成）
 const LANG_KEY = 'ls_lang'
 
 const DICT = {
@@ -148,6 +149,51 @@ function dict(keys) {
 /** 二选一：pick('中文', 'English') */
 function pick(zh, en) { return isEn() ? (en || zh) : zh }
 
+/** 单串翻译：英文时按短语表整串替换；查不到原样返回（所以 id / 数字 / 用户输入不会被误伤） */
+function tr(s) {
+  if (!isEn() || !s) return s
+  const v = PH[s]
+  return v === undefined ? s : v
+}
+
+/** 短语表的词条名：FNV-1a(UTF-16 码元) → base36，与 tools/i18n_build.py 的 key_for() 一致。
+ *  WXML 里写 {{t.p<hash>}} 取的就是它（哈希命名 → 短语表增删不会让已有引用错位）。 */
+function phKey(s) {
+  let h = 0x811c9dc5
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 0x01000193) >>> 0
+  }
+  return 'p' + h.toString(36)
+}
+
+let AUTO = {}
+let AUTO_LANG = ''
+function autoDict() {
+  const lang = getLang()
+  if (AUTO_LANG === lang) return AUTO
+  const o = {}
+  const en = lang === 'en'
+  Object.keys(PH).forEach((zh) => { o[phKey(zh)] = en ? PH[zh] : zh })
+  AUTO = o
+  AUTO_LANG = lang
+  return o
+}
+
+/** 整本词条（DICT 的尾段 key + 短语表词条）：页面 data.t 直接用它，不用维护 T_KEYS */
+function all() {
+  const lang = getLang()
+  if (ALL_LANG === lang && ALL_CACHE) return ALL_CACHE
+  const o = {}
+  Object.keys(DICT).forEach((k) => { o[k.replace(/^[^.]+\./, '')] = t(k) })
+  Object.assign(o, autoDict())
+  ALL_CACHE = o
+  ALL_LANG = lang
+  return o
+}
+let ALL_CACHE = null
+let ALL_LANG = ''
+
 /* ================= 内容映射：图鉴条目 / 科普文章 =================
  * 英文文案在 mock.js 的 EN 块里（按 固定取值 / 形态码 / 条目 id 对应，不做模糊匹配）；
  * 任何一条缺英文就自动回落成中文，不会出现空白。
@@ -269,7 +315,7 @@ function coralDetailSections(it) {
 }
 
 module.exports = {
-  LANG_KEY, DICT, getLang, setLang, isEn, toggle, t, dict, pick,
+  LANG_KEY, DICT, getLang, setLang, isEn, toggle, t, dict, pick, tr, all, phKey,
   mapSpecies, mapSpeciesList, mapKnowledgeItem, mapCategory,
   riskLabel, taxonomyEn, coralDetailSections,
   /** 网页版 tabBar 用：中文标签 → 英文 */

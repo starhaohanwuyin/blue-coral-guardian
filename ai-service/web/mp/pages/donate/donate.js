@@ -5,7 +5,9 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     amounts: [10, 50, 100],
     amount: 50,
@@ -65,4 +67,4 @@ Page({
       }
     })
   }
-})
+}))

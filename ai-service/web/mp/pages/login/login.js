@@ -13,7 +13,9 @@ const util = require('../../utils/util.js')
 const config = require('../../utils/config.js')
 const app = getApp()
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     mode: 'account', // account | wechat
     bindMode: false, // 微信未绑定，展示绑定表单
@@ -148,4 +150,4 @@ Page({
       }
     }, 800)
   }
-})
+}))

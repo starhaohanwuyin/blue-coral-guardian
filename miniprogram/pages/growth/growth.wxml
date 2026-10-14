@@ -20,7 +20,7 @@
   </view>
 
   <!-- 最近生长记录 -->
-  <view class="growth-section-title">最近生长记录</view>
+  <view class="growth-section-title">{{t.p1fzmga7}}</view>
   <view class="timeline">
     <view class="timeline-item" wx:for="{{data.timeline}}" wx:key="time">
       <view class="time">{{item.time}}</view>

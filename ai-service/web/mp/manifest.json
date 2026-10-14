@@ -155,8 +155,10 @@
   "utils": [
     "api.js",
     "config.js",
+    "i18n-phrases.js",
     "i18n.js",
     "mock.js",
+    "page-i18n.js",
     "request.js",
     "util.js"
   ]

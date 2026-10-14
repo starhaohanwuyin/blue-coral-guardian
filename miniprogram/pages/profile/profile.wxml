@@ -25,19 +25,19 @@
   <view class="profile-stats card">
     <view class="profile-stat">
       <view class="num">{{user ? user.stats.corals : 0}}</view>
-      <view class="lbl">认养珊瑚</view>
+      <view class="lbl">{{t.p1ejiaxw}}</view>
     </view>
     <view class="profile-stat">
       <view class="num">{{user ? user.stats.growth : 0}}</view>
-      <view class="lbl">成长值</view>
+      <view class="lbl">{{t.p180un5w}}</view>
     </view>
     <view class="profile-stat">
       <view class="num">{{user ? user.stats.badges : 0}}</view>
-      <view class="lbl">勋章</view>
+      <view class="lbl">{{t.pi0swgu}}</view>
     </view>
     <view class="profile-stat">
       <view class="num">{{user ? user.stats.learnHours : 0}}</view>
-      <view class="lbl">科普学时</view>
+      <view class="lbl">{{t.p83gexe}}</view>
     </view>
   </view>
 
@@ -69,14 +69,14 @@
   </block>
 
   <!-- 退出登录 -->
-  <view wx:if="{{user}}" class="logout-btn" hover-class="btn-hover" bindtap="onLogout">退出登录</view>
+  <view wx:if="{{user}}" class="logout-btn" hover-class="btn-hover" bindtap="onLogout">{{t.p12hokt7}}</view>
 
   <!-- 珊瑚社区 -->
-  <view class="section-title">珊瑚社区</view>
+  <view class="section-title">{{t.pdp8kxt}}</view>
   <view class="comments-section">
     <view class="comment-input-area">
-      <input class="comment-input" placeholder="分享你对珊瑚的感悟..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="addComment" />
-      <view class="comment-send" hover-class="btn-hover" bindtap="addComment">发送</view>
+      <input class="comment-input" placeholder="{{t.pxqvi6p}}" value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="addComment" />
+      <view class="comment-send" hover-class="btn-hover" bindtap="addComment">{{t.pj5vidj}}</view>
     </view>
     <view class="comment-item" wx:for="{{comments}}" wx:key="id">
       <view class="comment-avatar">{{item.avatar}}</view>

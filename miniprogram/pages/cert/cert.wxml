@@ -19,7 +19,7 @@
       </view>
       <view class="cert-seal">
         <view class="cert-seal-stamp">
-          <view class="cert-seal-text">蓝珊<text class="seal-br">认证</text></view>
+          <view class="cert-seal-text">{{t.pnorp5y}}<text class="seal-br">{{t.p1b2tgfq}}</text></view>
         </view>
         <view class="cert-org-name">{{cert.org}}</view>
         <view class="cert-date-line">{{cert.issueDate}}</view>
@@ -47,13 +47,13 @@
   <!-- 加载骨架 -->
   <view class="cert-loading" wx:if="{{!cert}}">
     <view class="cert-loading-icon">📜</view>
-    <view class="cert-loading-text">证书加载中...</view>
+    <view class="cert-loading-text">{{t.p1k3kjfi}}</view>
   </view>
 
   <!-- 操作区 -->
   <view class="cert-actions" wx:if="{{cert}}">
-    <button class="save-btn {{type}}" hover-class="btn-hover" bindtap="onSave">📥 保存证书图片</button>
-    <view class="cert-tip">保存后可分享至朋友圈，晒出您的守护荣誉</view>
+    <button class="save-btn {{type}}" hover-class="btn-hover" bindtap="onSave">{{t.pgor0rw}}</button>
+    <view class="cert-tip">{{t.pm7e2c3}}</view>
   </view>
 
   <!-- 导出用画布（屏幕外） -->

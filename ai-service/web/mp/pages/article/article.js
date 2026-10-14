@@ -5,7 +5,9 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     a: null,
     // 网页版可以直接跳转外链，小程序只能复制
@@ -46,4 +48,4 @@ Page({
       path: '/pages/index/index'
     }
   }
-})
+}))

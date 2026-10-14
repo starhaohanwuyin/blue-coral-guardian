@@ -10,7 +10,9 @@ const app = getApp()
 const T_KEYS = ['knowledge.brand', 'knowledge.sub', 'knowledge.heroSub',
   'knowledge.speciesTitle', 'knowledge.viewAll', 'knowledge.empty']
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     statusBarHeight: 20,
     lang: 'zh',
@@ -87,4 +89,4 @@ Page({
       path: '/pages/knowledge/knowledge'
     }
   }
-})
+}))

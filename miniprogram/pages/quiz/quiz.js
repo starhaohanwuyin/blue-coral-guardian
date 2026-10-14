@@ -7,7 +7,9 @@ const util = require('../../utils/util.js')
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     questions: [],
     index: 0,
@@ -63,4 +65,4 @@ Page({
   goKnowledge() {
     wx.switchTab({ url: '/pages/knowledge/knowledge' })
   }
-})
+}))

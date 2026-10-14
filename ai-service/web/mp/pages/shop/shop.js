@@ -5,7 +5,9 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     points: 0,
     shop: {},
@@ -58,4 +60,4 @@ Page({
       util.toast('兑换成功！' + (item.icon || '') + ' ' + (item.name || ''))
     }).catch((err) => util.toast(err.message))
   }
-})
+}))

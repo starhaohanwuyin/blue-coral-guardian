@@ -27,8 +27,8 @@
 
   <!-- 说明 -->
   <view class="cam-note card">
-    <view class="cam-note-title">ℹ️ 关于实时画面</view>
-    <view class="cam-note-text">画面来自海洋珊瑚修复区水下监测设备，由AI监测系统全天候值守。数据每5分钟刷新一次，珊瑚生长状态实时可查。</view>
-    <view class="cam-refresh" hover-class="btn-hover" bindtap="onRefresh">🔄 刷新画面</view>
+    <view class="cam-note-title">{{t.p1vkmgdj}}</view>
+    <view class="cam-note-text">{{t.p1b0c5wp}}</view>
+    <view class="cam-refresh" hover-class="btn-hover" bindtap="onRefresh">{{t.pylqw4e}}</view>
   </view>
 </view>

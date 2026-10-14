@@ -50,8 +50,8 @@
         {{score === questions.length ? '你对珊瑚的了解已经达到专家级别，太厉害了！' : (score >= 3 ? '你对珊瑚已经有了不错的了解，继续加油！' : '多看看科普文章，下次一定能拿满分！')}}
       </view>
       <view class="quiz-result-actions">
-        <view class="quiz-again-btn" hover-class="btn-hover" bindtap="onRestart">🔄 再答一次</view>
-        <view class="quiz-learn-btn" hover-class="btn-hover" bindtap="goKnowledge">📚 去学科普</view>
+        <view class="quiz-again-btn" hover-class="btn-hover" bindtap="onRestart">{{t.p12q7yey}}</view>
+        <view class="quiz-learn-btn" hover-class="btn-hover" bindtap="goKnowledge">{{t.p8f349w}}</view>
       </view>
     </view>
   </block>

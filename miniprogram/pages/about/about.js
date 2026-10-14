@@ -5,7 +5,9 @@
 const api = require('../../utils/api.js')
 const util = require('../../utils/util.js')
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     info: { intro: '', rows: [] },
     team: [],
@@ -36,4 +38,4 @@ Page({
       path: '/pages/index/index'
     }
   }
-})
+}))

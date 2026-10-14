@@ -32,7 +32,9 @@ const app = getApp()
 const HKEY = 'coral_history_v2'
 const HMAX = 20
 
-Page({
+const pageI18n = require('../../utils/page-i18n.js')
+
+Page(pageI18n.wrap({
   data: {
     statusBarHeight: 20,
     state: 'upload',       // upload | preview | loading | result | error
@@ -521,4 +523,4 @@ Page({
       : '蓝珊AI · 拍照评估礁区覆盖率与珊瑚属'
     return { title, path: '/pages/ai/ai' }
   }
-})
+}))

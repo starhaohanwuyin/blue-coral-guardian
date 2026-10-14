@@ -6,21 +6,21 @@
       <view class="shop-points-icon">⭐</view>
       <view>
         <view class="shop-points-num">{{points}}</view>
-        <view class="shop-points-label">当前积分</view>
+        <view class="shop-points-label">{{t.py0n5tc}}</view>
       </view>
     </view>
-    <view class="shop-points-tip">完成任务获得更多积分</view>
+    <view class="shop-points-tip">{{t.pkbnk6w}}</view>
   </view>
 
   <!-- 区域切换 -->
   <view class="shop-tabs">
-    <view class="shop-tab {{tab === 'feed' ? 'active' : ''}}" bindtap="switchTab" data-tab="feed">🧪 养料区</view>
-    <view class="shop-tab {{tab === 'culture' ? 'active' : ''}}" bindtap="switchTab" data-tab="culture">🎨 文创区</view>
+    <view class="shop-tab {{tab === 'feed' ? 'active' : ''}}" bindtap="switchTab" data-tab="feed">{{t.pv9k517}}</view>
+    <view class="shop-tab {{tab === 'culture' ? 'active' : ''}}" bindtap="switchTab" data-tab="culture">{{t.p1xnz385}}</view>
   </view>
 
   <!-- 养料区 -->
   <block wx:if="{{tab === 'feed'}}">
-    <view class="shop-tip card">养料用于喂养虚拟珊瑚，提升成长进度。成长到100%可获得一株实物珊瑚！</view>
+    <view class="shop-tip card">{{t.pzjowyc}}</view>
     <view class="shop-item card" wx:for="{{feeds}}" wx:key="key">
       <view class="shop-item-icon">{{item.icon}}</view>
       <view class="shop-item-info">
@@ -33,7 +33,7 @@
 
   <!-- 文创区 -->
   <block wx:if="{{tab === 'culture'}}">
-    <view class="shop-tip card">用积分兑换蓝珊周边文创，实体商品将由客服联系寄送。</view>
+    <view class="shop-tip card">{{t.p1sz7m1d}}</view>
     <view class="shop-item card" wx:for="{{cultureItems}}" wx:key="id">
       <view class="shop-item-icon">{{item.icon}}</view>
       <view class="shop-item-info">
