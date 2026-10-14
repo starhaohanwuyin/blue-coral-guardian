@@ -248,30 +248,13 @@ Page(pageI18n.wrap({
       confirmColor: '#1E88E5',
       success: (res) => {
         if (!res.confirm) return
-        wx.showLoading({ title: '下单中...', mask: true })
-        api.createOrder(product).then((data) => {
-          wx.hideLoading()
-          if (data && data.payParams) {
-            // 真实支付：后端返回 JSAPI 支付参数
-            wx.requestPayment({
-              timeStamp: data.payParams.timeStamp,
-              nonceStr: data.payParams.nonceStr,
-              package: data.payParams.package,
-              signType: data.payParams.signType || 'RSA',
-              paySign: data.payParams.paySign,
-              success: () => {
-                util.toast('🎉 支付成功，认养完成！')
-                this.loadAll()
-              },
-              fail: () => util.toast('支付已取消')
-            })
-          } else {
-            util.toast('🎉 认养成功！可在我的珊瑚中查看')
-            this.loadAll()
-          }
-        }).catch((err) => {
-          wx.hideLoading()
-          util.toast(err.message || '下单失败')
+        /* Demo：不接支付，确认下单后引导打电话联系工作人员 */
+        wx.showModal({
+          title: '联系工作人员',
+          content: '请拨打 18936361581 联系工作人员',
+          showCancel: false,
+          confirmText: '知道了',
+          confirmColor: '#1E88E5'
         })
       }
     })
