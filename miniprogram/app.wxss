@@ -222,6 +222,11 @@ page {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   max-height: 80vh;
+  /* 网页版是"手机框"（480px 居中）：弹层也要跟着框住，否则会在桌面浏览器里
+     横向铺满整个窗口、看着像"超出屏幕"。小程序端屏幕即框，不受影响。 */
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
   background: #fff;
   border-radius: 48rpx 48rpx 0 0;
   z-index: 101;

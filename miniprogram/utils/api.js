@@ -174,12 +174,16 @@ api.getAdoptCoralDetail = function (id) {
   if (config.USE_MOCK) {
     const d = Object.assign({}, mock.coralDetail)
     d.id = id
-    const c = mock.myCorals.filter((x) => x.id === id)[0]
+    // ⚠️ 页面传进来的是 data-id（DOM dataset 里是**字符串**），而 myCorals 的 id 是数字，
+    //    以前用 `x.id === id` 严格比较永远为 false → 点哪一株都只显示默认的「蓝珊-001号」。
+    const c = (mock.myCorals || []).filter((x) => String(x.id) === String(id))[0]
     if (c) {
       d.name = c.name
       d.species = c.species
       d.growth = c.growth
       d.img = c.img
+      d.code = c.code || d.code
+      d.carbon = c.carbon != null ? c.carbon : d.carbon
       d.remain = Math.round((100 - c.growth) * 5.4)
     }
     return mock.delay(d)
