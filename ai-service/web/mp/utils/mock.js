@@ -22,6 +22,21 @@ const IMG = {
   coralNo2: '/assets/img/coral_no2.jpg',     // 珊瑚2号实拍
   monsoon: '/assets/img/monsoon.jpg',        // 季风云系卫星图（NOAA，公有领域）
   semporna: '/assets/img/semporna.jpg',      // 仙本那礁区实拍
+  /* 物种各自相符的配图（同一物种多处复用同一张是对的，不同物种不再共用一张） */
+  spAcroporaValida: '/assets/img/sp_acropora_valida.jpg',        // 柔枝鹿角珊瑚 Acropora valida
+  spAcroporaHumilis: '/assets/img/sp_acropora_humilis.jpg',      // 短小鹿角珊瑚 Acropora humilis
+  spAcroporaHyacinthus: '/assets/img/sp_acropora_hyacinthus.jpg',// 桌珊瑚 Acropora hyacinthus
+  spDiploria: '/assets/img/sp_diploria.jpg',                     // 脑珊瑚 Diploria
+  spCtenactis: '/assets/img/sp_ctenactis.jpg',                   // 蘑菇珊瑚（石芝类）
+  spSinularia: '/assets/img/sp_sinularia.jpg',                   // 软珊瑚 Sinularia
+  spGorgonia: '/assets/img/sp_gorgonia.jpg',                     // 柳珊瑚 Gorgonia
+  spTubipora: '/assets/img/sp_tubipora.jpg',                     // 笙珊瑚 Tubipora musica
+  spEuphyllia: '/assets/img/sp_euphyllia.jpg',                   // 玫瑰珊瑚 Euphyllia
+  spPorites: '/assets/img/sp_porites.jpg',                       // 柱珊瑚 Porites
+  spPlerogyra: '/assets/img/sp_plerogyra.jpg',                   // 气泡珊瑚 Plerogyra sinuosa
+  spTurbinaria: '/assets/img/sp_turbinaria.jpg',                 // 陀螺珊瑚 Turbinaria
+  spMillepora: '/assets/img/sp_millepora.jpg',                   // 火珊瑚 Millepora
+  camp2: '/assets/img/camp2.jpg',                                // 夏令营第二张实拍
   wxRestore: '/mp/assets/img/tweet_restore.jpg',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
   wxEdu: '/mp/assets/img/tweet_edu.jpg',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
   wxSurvey: '/mp/assets/img/tweet_survey.jpg',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
@@ -79,18 +94,18 @@ const homeData = {
     desc: '海水比常年高 1℃ 并持续数周，就可能触发白化。本项目仙本那点位近 41 年中已有 3 年达到白化警戒，所以修复方案把「耐热选育」和「投放时间窗」放在一起考虑：既要种得活，也要挑对时候种。'
   },
   corals: [
-    { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', date: '2026.03.15', growth: 65, img: IMG.coral1 },
-    { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', date: '2026.04.22', growth: 42, img: IMG.coral2 },
-    { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', date: '2026.05.10', growth: 28, img: IMG.coral3 }
+    { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', date: '2026.03.15', growth: 65, img: IMG.spAcroporaValida },
+    { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', date: '2026.04.22', growth: 42, img: IMG.spAcroporaHumilis },
+    { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', date: '2026.05.10', growth: 28, img: IMG.spTurbinaria }
   ],
   tech: [
     {
-      img: IMG.tech1, label: '核心育种技术', title: '珊瑚2号有性杂交抗逆选育技术',
+      img: IMG.coralNo2, label: '核心育种技术', title: '珊瑚2号有性杂交抗逆选育技术',
       desc: '筛选耐高温、耐酸化的海洋本土珊瑚亲本，通过种间定向杂交培育高抗逆珊瑚子代，种间杂交受精率＞95%，实验室高温酸化环境下成活率达98%，可耐受+1℃高温、pH↓1.18酸化环境。',
       tags: ['有性杂交', '抗逆选育', '受精率＞95%']
     },
     {
-      img: IMG.tech2, label: '智能监测技术', title: '多模态AI水下智能识别监测系统',
+      img: IMG.wxTransect, label: '智能监测技术', title: '多模态AI水下智能识别监测系统',
       desc: '融合YOLOv9目标检测与SAM3图像分割模型，依托海洋珊瑚种质资源库，可自动识别20种以上海洋常见石珊瑚，识别准确率88%-96%，监测效率较人工提升30-50倍。',
       tags: ['YOLOv9', 'SAM3', 'AI识别', '实时监测']
     },
@@ -144,7 +159,7 @@ const homeData = {
         '同时我们也看到科普基地在珊瑚保护宣传上的不足：资金支持有限、专业从事海洋环境教育的人才欠缺、技术手段相对滞后——这也是我们后续要一起补上的部分。'
       ] },
     { id: 2, title: '珊瑚2号新品系发布：受精率＞95%，成活率98%', date: '2026-07-08', tag: '技术突破',
-      img: IMG.tech2, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/releases/tag/v1.0-models',
+      img: IMG.coralNo2, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/releases/tag/v1.0-models',
       urlName: '项目发布页 · 模型与权重',
       paragraphs: [
         '珊瑚2号（LT 品系，柔枝鹿角珊瑚 × 短小鹿角珊瑚）有性杂交子代完成选育并对外发布。',
@@ -156,7 +171,7 @@ const homeData = {
         '• 耐热子代是「气候韧性」在种源层面的落点：白化阈值更高，灾后恢复更快'
       ] },
     { id: 4, title: 'AI水下监测年报：累计识别珊瑚20万+株，效率提升50倍', date: '2026-06-05', tag: '技术报告',
-      img: IMG.wxSurvey, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/tree/main/ai-service',
+      img: IMG.wxTransect, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/tree/main/ai-service',
       urlName: '项目开源仓库 · AI 服务（监测技术）',
       paragraphs: [
         '多模态 AI 水下识别监测系统完成年度统计：累计识别珊瑚 20 万株以上，监测效率较人工提升 30–50 倍。',
@@ -320,14 +335,14 @@ const homeData = {
         '【观测指标】',
         '• 成活率与生长速率；白化发生时间与程度（对比本地亲本）；附着基上的固着稳定性'
       ] },
-    { id: 3, title: '青少年珊瑚夏令营第43期圆满结束', date: '2026-06-15', tag: '科普活动', img: IMG.camp,
+    { id: 3, title: '青少年珊瑚夏令营第43期圆满结束', date: '2026-06-15', tag: '科普活动', img: IMG.camp2,
       paragraphs: [
         '第 43 期青少年珊瑚夏令营结束，营员完成了珊瑚种植、水下观察与水质检测三门实践课。',
         '夏令营累计覆盖 8 个城市、参与学生 1473 人。',
         '【每期都会讲的一句话】',
         '• 「珊瑚白化不等于死亡」：理解机制，才知道为什么要减碳与修复同时做'
       ] },
-    { id: 4, title: '仙本那海水热压力速览：41 年档案与 2024 年峰值', date: '2026-07-05', tag: '气候韧性', img: IMG.tech4,
+    { id: 4, title: '仙本那海水热压力速览：41 年档案与 2024 年峰值', date: '2026-07-05', tag: '气候韧性', img: IMG.wxSst,
       paragraphs: [
         '仙本那点位（4.4°N, 118.8°E）的 NOAA CRW 5km 档案覆盖 1985–2025 共 41 年，逐年记录 HotSpot、DHW 与官方白化预警等级（BAA）。',
         '2024 年 DHW 峰值 5.42，全年有 58 天达到 DHW≥4，是该点位 41 年里最热的 3 年之一，官方等级为「白化警报一级」。',
@@ -360,7 +375,7 @@ const knowledgeCategories = [
 
 const knowledgeItems = [
   {
-    id: 0, category: 'species', title: '柔枝鹿角珊瑚', img: IMG.coral1,
+    id: 0, category: 'species', title: '柔枝鹿角珊瑚', img: IMG.spAcroporaValida,
     summary: '海洋最常见的造礁珊瑚之一，分支状生长，是珊瑚礁生态系统的基石物种',
     paragraphs: [
       '柔枝鹿角珊瑚（Acropora valida）是海洋最常见的造礁珊瑚之一，属于鹿角珊瑚科鹿角珊瑚属。',
@@ -373,7 +388,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 1, category: 'bleaching', title: '珊瑚白化现象', img: IMG.tech1,
+    id: 1, category: 'bleaching', title: '珊瑚白化现象', img: IMG.wxReefColor,
     summary: '全球超过80%的珊瑚礁已出现严重白化，了解白化的成因与危害',
     paragraphs: [
       '珊瑚白化是指珊瑚在环境压力下失去共生虫黄藻，导致颜色变白的现象。2025年发布的第二份《全球临界点报告》指出，全球超过80%的珊瑚礁已出现严重白化现象。',
@@ -386,7 +401,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 2, category: 'ecosystem', title: '珊瑚礁生态系统', img: IMG.tech2,
+    id: 2, category: 'ecosystem', title: '珊瑚礁生态系统', img: IMG.wxReef,
     summary: '珊瑚礁被称为"海洋中的热带雨林"，养育着25%的海洋物种',
     paragraphs: [
       '珊瑚礁被称为"海洋中的热带雨林"，虽然仅覆盖不到0.1%的海底面积，却养育着约25%的海洋物种。',
@@ -399,7 +414,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 3, category: 'tech', title: 'AI智能监测技术', img: IMG.tech4,
+    id: 3, category: 'tech', title: 'AI智能监测技术', img: IMG.wxSurvey,
     summary: 'YOLOv9+SAM3赋能水下珊瑚识别，监测效率提升30-50倍',
     paragraphs: [
       '蓝珊科技打造的多模态AI水下智能识别监测系统，是珊瑚管护技术的核心突破。',
@@ -447,7 +462,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 6, category: 'species', title: '短小鹿角珊瑚', img: IMG.coral2,
+    id: 6, category: 'species', title: '短小鹿角珊瑚', img: IMG.spAcroporaHumilis,
     summary: '蓝珊科技珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温',
     paragraphs: [
       '短小鹿角珊瑚（Acropora humilis）是蓝珊科技珊瑚2号有性杂交抗逆选育技术的重要亲本之一。',
@@ -475,7 +490,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 8, category: 'climate', title: '珊瑚的气候韧性从哪里来', img: IMG.tech4,
+    id: 8, category: 'climate', title: '珊瑚的气候韧性从哪里来', img: IMG.wxReefColor,
     link: 'https://reefresilience.org/', linkName: 'Reef Resilience Network（珊瑚气候韧性）',
     summary: '气候韧性不是「不白化」，而是白化后还能恢复——它由共生藻、遗传多样性与局部环境共同决定',
     paragraphs: [
@@ -514,7 +529,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 10, category: 'climate', title: '珊瑚礁也是气候防线', img: IMG.tech2,
+    id: 10, category: 'climate', title: '珊瑚礁也是气候防线', img: IMG.wxGbr,
     link: 'https://icriforum.org/about-coral-reefs/', linkName: 'ICRI · 珊瑚礁与气候',
     summary: '占不到 0.1% 海底面积的珊瑚礁，养育着 25% 的海洋物种，还能削掉 70%—90% 的浪能',
     paragraphs: [
@@ -534,7 +549,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 11, category: 'bleaching', title: '白化 ≠ 死亡：三级判断与恢复窗口', img: IMG.coral3,
+    id: 11, category: 'bleaching', title: '白化 ≠ 死亡：三级判断与恢复窗口', img: IMG.wxBleach2,
     link: 'https://zh.wikipedia.org/wiki/%E7%8F%8A%E7%91%9A%E7%99%BD%E5%8C%96',
     linkName: '维基百科 · 珊瑚白化（中文）',
     summary: '白化的珊瑚往往还活着——分清部分白化 / 全白化 / 死亡，才不会误判一片礁',
@@ -599,27 +614,27 @@ const knowledgeItems = [
 
 const species = [
   { name: '鹿角珊瑚', latin: 'Acropora spp.', desc: '分枝状造礁珊瑚，海洋最常见的珊瑚属，分支如鹿角般伸展', dist: 'Indo-Pacific、海洋', img: IMG.coral1 },
-  { name: '脑珊瑚', latin: 'Diploria spp.', desc: '球形或块状，表面沟回纹路如大脑，生长缓慢但寿命极长', dist: '全球热带海域', img: IMG.tech2 },
-  { name: '蘑菇珊瑚', latin: 'Fungia spp.', desc: '单体型珊瑚，形如蘑菇，可自由移动，是少数能移动珊瑚', dist: '印度-太平洋', img: IMG.coral3 },
-  { name: '软珊瑚', latin: 'Alcyonacea', desc: '无石灰质骨骼，柔软随水流摆动，色彩丰富形态优美', dist: '全球热带亚热带', img: IMG.coral2 },
-  { name: '柳珊瑚', latin: 'Gorgonia spp.', desc: '扇形分枝如柳条，常见于海流较强区域，是海洋生物栖息地', dist: '海洋、加勒比海', img: IMG.tech4 },
-  { name: '笙珊瑚', latin: 'Tubipora musica', desc: '管状骨骼并联如笙管，鲜红或绿色，极具观赏价值', dist: '印度-太平洋', img: IMG.tech5 }
+  { name: '脑珊瑚', latin: 'Diploria spp.', desc: '球形或块状，表面沟回纹路如大脑，生长缓慢但寿命极长', dist: '全球热带海域', img: IMG.spDiploria },
+  { name: '蘑菇珊瑚', latin: 'Fungia spp.', desc: '单体型珊瑚，形如蘑菇，可自由移动，是少数能移动珊瑚', dist: '印度-太平洋', img: IMG.spCtenactis },
+  { name: '软珊瑚', latin: 'Alcyonacea', desc: '无石灰质骨骼，柔软随水流摆动，色彩丰富形态优美', dist: '全球热带亚热带', img: IMG.spSinularia },
+  { name: '柳珊瑚', latin: 'Gorgonia spp.', desc: '扇形分枝如柳条，常见于海流较强区域，是海洋生物栖息地', dist: '海洋、加勒比海', img: IMG.spGorgonia },
+  { name: '笙珊瑚', latin: 'Tubipora musica', desc: '管状骨骼并联如笙管，鲜红或绿色，极具观赏价值', dist: '印度-太平洋', img: IMG.spTubipora }
 ]
 
 const allSpecies = species.concat([
-  { name: '火珊瑚', latin: 'Millepora spp.', desc: '触手含刺细胞，触碰如火烧，是造礁珊瑚中唯一的水螅珊瑚', dist: '全球热带海域', img: IMG.coral1 },
-  { name: '桌珊瑚', latin: 'Acropora hyacinthus', desc: '平板状展开如水中圆桌，是鹿角珊瑚属中形态最独特的品种', dist: '印度-太平洋', img: IMG.tech2 },
-  { name: '玫瑰珊瑚', latin: 'Euphyllia spp.', desc: '花瓣状触手排列如玫瑰，色彩艳丽，是水族馆最受欢迎的品种', dist: '印度-太平洋', img: IMG.coral3 },
-  { name: '柱珊瑚', latin: 'Porites spp.', desc: '圆柱形直立生长，生长极缓慢但寿命可达数百年，是礁石骨架主要构建者', dist: '全球热带海域', img: IMG.tech1 },
-  { name: '气泡珊瑚', latin: 'Plerogyra sinuosa', desc: '表面布满气泡状共生藻，白天膨胀如葡萄串，是珊瑚礁中最独特的景观', dist: '印度-太平洋', img: IMG.tech5 },
-  { name: '短小鹿角珊瑚', latin: 'Acropora humilis', desc: '蓝珊科技珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温', dist: '海洋', img: IMG.coral2 }
+  { name: '火珊瑚', latin: 'Millepora spp.', desc: '触手含刺细胞，触碰如火烧，是造礁珊瑚中唯一的水螅珊瑚', dist: '全球热带海域', img: IMG.spMillepora },
+  { name: '桌珊瑚', latin: 'Acropora hyacinthus', desc: '平板状展开如水中圆桌，是鹿角珊瑚属中形态最独特的品种', dist: '印度-太平洋', img: IMG.spAcroporaHyacinthus },
+  { name: '玫瑰珊瑚', latin: 'Euphyllia spp.', desc: '花瓣状触手排列如玫瑰，色彩艳丽，是水族馆最受欢迎的品种', dist: '印度-太平洋', img: IMG.spEuphyllia },
+  { name: '柱珊瑚', latin: 'Porites spp.', desc: '圆柱形直立生长，生长极缓慢但寿命可达数百年，是礁石骨架主要构建者', dist: '全球热带海域', img: IMG.spPorites },
+  { name: '气泡珊瑚', latin: 'Plerogyra sinuosa', desc: '表面布满气泡状共生藻，白天膨胀如葡萄串，是珊瑚礁中最独特的景观', dist: '印度-太平洋', img: IMG.spPlerogyra },
+  { name: '短小鹿角珊瑚', latin: 'Acropora humilis', desc: '蓝珊科技珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温', dist: '海洋', img: IMG.spAcroporaHumilis }
 ])
 
 /* ================= AI ================= */
 const aiHistory = [
-  { id: 1, title: '柔枝鹿角珊瑚 · 健康', time: '2026-07-15 14:30', confidence: 94.2, img: IMG.coral1 },
-  { id: 2, title: '块状牡丹珊瑚 · 轻度白化', time: '2026-07-14 09:15', confidence: 89.7, img: IMG.tech2 },
-  { id: 3, title: '短小鹿角珊瑚 · 健康', time: '2026-07-12 16:42', confidence: 91.5, img: IMG.coral2 }
+  { id: 1, title: '柔枝鹿角珊瑚 · 健康', time: '2026-07-15 14:30', confidence: 94.2, img: IMG.spAcroporaValida },
+  { id: 2, title: '块状牡丹珊瑚 · 轻度白化', time: '2026-07-14 09:15', confidence: 89.7, img: IMG.wxBleach },
+  { id: 3, title: '短小鹿角珊瑚 · 健康', time: '2026-07-12 16:42', confidence: 91.5, img: IMG.spAcroporaHumilis }
 ]
 
 const aiResultSpecies = {
@@ -678,13 +693,13 @@ const entityProducts = [
 ]
 
 const myCorals = [
-  { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', code: 'LS20260315', growth: 65, carbon: 82.3, img: IMG.coral1 },
-  { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', code: 'LS20260422', growth: 42, carbon: 58.7, img: IMG.coral2 },
-  { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', code: 'LS20260510', growth: 28, carbon: 45.5, img: IMG.coral3 }
+  { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', code: 'LS20260315', growth: 65, carbon: 82.3, img: IMG.spAcroporaValida },
+  { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', code: 'LS20260422', growth: 42, carbon: 58.7, img: IMG.spAcroporaHumilis },
+  { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', code: 'LS20260510', growth: 28, carbon: 45.5, img: IMG.spTurbinaria }
 ]
 
 const coralDetail = {
-  id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', growth: 65, img: IMG.coral1,
+  id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', growth: 65, img: IMG.spAcroporaValida,
   remain: 350, area: '深圳大鹏湾',
   timeline: [
     { time: '2026-07-10', desc: 'AI监测：珊瑚生长良好，覆盖面积增长12%' },
@@ -695,7 +710,7 @@ const coralDetail = {
 }
 
 const cameraData = {
-  img: IMG.tech4,
+  img: IMG.spAcroporaValida,
   live: true,
   metrics: [
     { icon: '🌡', label: '水温 26.8°C' },

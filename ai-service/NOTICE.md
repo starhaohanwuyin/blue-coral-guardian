@@ -328,3 +328,17 @@ Kate Osborne, some rights reserved (CC BY) | https://www.inaturalist.org/taxa/93
 | 资讯「珊瑚2号杂交品系进入海区规模培育测试」 | assets/img/coral_no2.jpg | 团队自有素材 | 本地素材（D:\图片\珊瑚2号.png） |
 | 资讯「仙本那的季风窗口：热压力什么时候回落」 | assets/img/monsoon.jpg | Public domain (NOAA) | https://commons.wikimedia.org/wiki/File:Himawari-8_Sees_Rain_Clouds_Over_Indonesia_as_Monsoon_Season_Comes_to_a_Close_(NESDIS_2020-03-25).png |
 | 资讯「仙本那核心礁区珊瑚监测最新动态」 | assets/img/semporna.jpg | 团队自有素材 | 本地素材（D:\图片\仙本那.png） |
+
+## 图片来源与致谢（物种配图去重，2026-10）
+
+同一物种在多处出现时共用同一张照片（正确做法）；不同物种不再共用一张。新增/换用的照片：
+
+| 用途（物种） | 文件 | 许可 | 来源 |
+|---|---|---|---|
+| 柔枝鹿角珊瑚 / 蓝珊-001号 | sp_acropora_valida.jpg | CC BY 3.0 | Wikimedia Commons（既有图鉴图，Acropora valida） |
+| 短小鹿角珊瑚 / 蓝珊-002号 | sp_acropora_humilis.jpg | CC BY-NC | iNaturalist（Acropora humilis，(c) Ulf Swenson） |
+| 桌珊瑚 | sp_acropora_hyacinthus.jpg | CC BY-SA | iNaturalist（Acropora hyacinthus，(c) MDC Seamarc Maldives） |
+| 笙珊瑚 | sp_tubipora.jpg | CC BY-NC | iNaturalist（Tubipora musica，(c) taxono-my） |
+| 气泡珊瑚 | sp_plerogyra.jpg | CC BY-NC | iNaturalist（Plerogyra sinuosa，(c) Luis P. B.） |
+| 脑珊瑚 / 蘑菇珊瑚 / 软珊瑚 / 柳珊瑚 / 玫瑰珊瑚 / 柱珊瑚 / 陀螺珊瑚 / 火珊瑚 | sp_diploria.jpg / sp_ctenactis.jpg / sp_sinularia.jpg / sp_gorgonia.jpg / sp_euphyllia.jpg / sp_porites.jpg / sp_turbinaria.jpg / sp_millepora.jpg | CC / CC0（见第一批、第三批表） | 取自本项目已本地化的图鉴照片 |
+| 资讯「青少年珊瑚夏令营第43期圆满结束」 | assets/img/camp2.jpg | 团队自有素材 | 本地素材（D:\图片\夏令营2.png） |
