@@ -82,17 +82,6 @@ const homeData = {
     unit: 'g CO₂',
     desc: '珊瑚礁每年可固定约225吨碳酸钙 ≈ 封存约100吨CO₂'
   },
-  climate: {
-    title: '气候与珊瑚',
-    sub: '把海水热压力纳入修复决策',
-    tag: '气候韧性',
-    metrics: [
-      { label: '2024年 DHW 峰值', value: '5.42' },
-      { label: '白化预警等级', value: '警报一级' },
-      { label: '热压力样本', value: '41 年' }
-    ],
-    desc: '海水比常年高 1℃ 并持续数周，就可能触发白化。本项目仙本那点位近 41 年中已有 3 年达到白化警戒，所以修复方案把「耐热选育」和「投放时间窗」放在一起考虑：既要种得活，也要挑对时候种。'
-  },
   corals: [
     { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', date: '2026.03.15', growth: 65, img: IMG.spAcroporaValida },
     { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', date: '2026.04.22', growth: 42, img: IMG.spAcroporaHumilis },
@@ -982,15 +971,6 @@ const EN = {
   // 每个标签拆成两行（\n）：英文比中文长，单行会把数字挤变形
   stats: ['Corals\nadopted', 'Reef cover\nrestored', 'Recognisable\ngenera', 'Years of\nclimate data'],
   carbon: 'Reefs fix about 225 t of calcium carbonate a year — roughly 100 t of CO₂ locked away.',
-  climate: {
-    title: 'Climate & corals',
-    sub: 'Heat stress factored into restoration decisions',
-    tag: 'Resilience',
-    metrics: ['2024 DHW peak', 'Bleaching alert level', 'Heat-stress record'],
-    desc: 'Corals bleach when the water stays about 1 °C above the summer maximum for weeks. ' +
-      'At our Semporna site, 3 of the past 41 years reached bleaching alert level — so we pair ' +
-      'heat-tolerant breeding with a low-risk deployment window.'
-  },
   /* 顺序与 homeData.corals 一致 */
   corals: [
     { name: 'LanShan-001', species: 'Acropora valida' },

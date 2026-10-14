@@ -41,7 +41,6 @@ Page(pageI18n.wrap({
     carbon: {},
     corals: [],
     tech: [],
-    climate: {},
     videoCaption: '',
     videoCover: '',
     videoUrl: '',
@@ -140,7 +139,6 @@ Page(pageI18n.wrap({
         return { img: x.img, label: y.label || x.label, title: y.title || x.title,
                  desc: y.desc || x.desc, tags: y.tags || x.tags }
       }),
-      climate: mapClimate(d.climate, e.climate, en),
       videoCaption: en ? (e.videoCaption || d.videoCaption) : d.videoCaption,
       videoCover: d.videoCover || (d.tech && d.tech[2] && d.tech[2].img) || '',
       videoUrl: d.videoUrl || '',
@@ -224,22 +222,3 @@ Page(pageI18n.wrap({
   }
 }))
 
-/** 气候卡：英文时用 enData 的标题/副标题/标签/指标/说明，缺项自动回落中文 */
-function mapClimate(zh, enData, en) {
-  const c = zh || {}
-  const e = enData || {}
-  if (!en) {
-    return Object.assign({}, c, {
-      metrics: (c.metrics || []).map((m) => ({ value: m.value, label: m.label }))
-    })
-  }
-  return {
-    title: e.title || c.title,
-    sub: e.sub || c.sub,
-    tag: e.tag || c.tag,
-    desc: e.desc || c.desc,
-    metrics: (c.metrics || []).map((m, i) => ({
-      value: m.value, label: (e.metrics || [])[i] || m.label
-    }))
-  }
-}

@@ -70,25 +70,6 @@
     </view>
   </view>
 
-  <!-- ===== 气候与珊瑚（气候韧性） ===== -->
-  <view class="climate-home-card card" wx:if="{{climate.title}}">
-    <view class="climate-home-head">
-      <view class="climate-home-icon">🌡️</view>
-      <view class="climate-home-headtext">
-        <view class="climate-home-title">{{climate.title}}</view>
-        <view class="climate-home-sub">{{climate.sub}}</view>
-      </view>
-      <view class="climate-home-tag">{{climate.tag}}</view>
-    </view>
-    <view class="climate-home-metrics">
-      <view class="climate-metric" wx:for="{{climate.metrics}}" wx:key="label">
-        <view class="climate-metric-val">{{item.value}}</view>
-        <view class="climate-metric-label">{{item.label}}</view>
-      </view>
-    </view>
-    <view class="climate-home-desc">{{climate.desc}}</view>
-  </view>
-
   <!-- ===== 快捷功能 ===== -->
   <view class="section-title">{{t.quick}}</view>
   <view class="quick-actions">
