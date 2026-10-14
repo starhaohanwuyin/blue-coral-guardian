@@ -21,6 +21,7 @@ const IMG = {
   field: '/assets/img/field.jpg',            // 野外修复作业实拍
   coralNo2: '/assets/img/coral_no2.jpg',     // 珊瑚2号实拍
   monsoon: '/assets/img/monsoon.jpg',        // 季风云系卫星图（NOAA，公有领域）
+  semporna: '/assets/img/semporna.jpg',      // 仙本那礁区实拍
   wxRestore: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/FKNMS_-_coral_nursery_%2827367671414%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
   wxEdu: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Biscayne_National_Park_V-snorkel_entry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
   wxSurvey: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
@@ -124,17 +125,23 @@ const homeData = {
   /* 推文 & 资讯：每条都带「能打开的链接」（url + 来源名 urlName）。
      ⚠️ 换成自己公众号的文章地址时，只改这两处即可；正文放 paragraphs（可选）。 */
   articles: [
-    { id: 1, title: '海洋珊瑚礁修复取得阶段性成果：覆盖率从30%提升至50%', date: '2026-07-15', tag: '项目进展',
+    { id: 1, title: '百千万工程丨探索徐闻珊瑚礁自然保护区科普基地，让童心向"洋"而生', date: '2023-07-13', tag: '科普活动',
       img: IMG.camp, url: 'https://mp.weixin.qq.com/s/_G936MeyYCEz5UTEjLvQjw',
       urlName: '微信公众号原文',
       paragraphs: [
-        '深圳大鹏湾修复区活珊瑚覆盖率从修复前的 30.84% 提升到 50.12%，达到项目设定的 50% 阶段目标。',
-        '【关键变化】',
-        '• 修复区鱼类物种数由 23 种增加到 57 种，礁区食物网逐步恢复',
-        '• 台风「山竹」期间，修复区后方沙滩侵蚀量减少约 62%，礁体起到了天然防波堤的作用',
-        '• 野外种苗成活率稳定在 80% 以上',
-        '【下一步】',
-        '• 扩大修复面积，并把 NOAA 海水热压力数据纳入投放决策，挑热压力更低的时间窗作业'
+        '守护蔚蓝，向"洋"而生 —— 第三站：参观徐闻珊瑚礁自然保护区科普基地',
+        '2023 年暑期，广东海洋大学珊瑚卫士团队联合湛江徐闻地方小学开展珊瑚保护夏令营活动。7 月 11 日，15 名珊瑚卫士成员带领徐闻放坡小学 20 余名学生走进"广东徐闻珊瑚礁国家级自然保护区"，参观了珊瑚养殖箱、海龟养殖基地、珊瑚科教馆等科普教育基地。',
+        '【珊瑚夏令营简介】',
+        '活动以促进珊瑚保护知识与生活体验深度融合为目的，用互动性强、内容丰富的形式寓教于乐：既让学生深入认识保护珊瑚的重要性，也发掘青少年探索科学的潜能，增强当地学生守护珊瑚的责任感。',
+        '【珊瑚生态缸参观】',
+        '珊瑚属腔肠动物门，是海生无脊椎动物，具有石灰质、角质或革质的内外骨骼，被称为"海洋热带雨林"，具有保护海岸、维护生物多样性等多项功能。',
+        '馆内珊瑚活体琳琅满目、姿态万千、五彩斑斓：有的形似树枝，有的像贴在礁石上的一团菜花，多彩海鱼在珊瑚丛中游来游去。馆内还设有海龟观赏池，孩子们纷纷拿起生菜喂海龟。',
+        '【珊瑚科教馆参观】',
+        '珊瑚馆是以珊瑚礁为主题的科研、科普基地，为徐闻珊瑚礁的保护和管理提供技术支持，致力于珊瑚礁保育与大众科普公益。',
+        '馆内陈列多种类型的珊瑚标本，让同学们直观了解各种珊瑚的特征形态、生活习性、生存现状与分布海域；还通过 VR 技术模拟海底环境，带来沉浸式体验。',
+        '【活动总结与反思】',
+        '这次夏令营让孩子们从课堂走向自然，在别样有趣的学习方式中探索海洋、保护海洋，守护蔚蓝。',
+        '同时我们也看到科普基地在珊瑚保护宣传上的不足：资金支持有限、专业从事海洋环境教育的人才欠缺、技术手段相对滞后——这也是我们后续要一起补上的部分。'
       ] },
     { id: 2, title: '珊瑚2号新品系发布：受精率＞95%，成活率98%', date: '2026-07-08', tag: '技术突破',
       img: IMG.tech2, url: 'https://github.com/starhaohanwuyin/blue-coral-guardian/releases/tag/v1.0-models',
@@ -308,7 +315,7 @@ const homeData = {
       ] }
   ],
   news: [
-    { id: 1, title: '仙本那核心礁区珊瑚监测最新动态', date: '2026-07-10', tag: '生态监测', img: IMG.field,
+    { id: 1, title: '仙本那核心礁区珊瑚监测最新动态', date: '2026-07-10', tag: '生态监测', img: IMG.semporna,
       paragraphs: [
         '仙本那核心礁区（4.4°N, 118.8°E）最新一轮 AI 水下识别显示：活珊瑚覆盖率 39.71%，与 Reef Check Malaysia 2024 实地调查的区域平均（39.56%）仅差 0.15 个百分点。',
         '同期 NOAA 5km 热压力档案显示：2024 年 DHW 峰值 5.42，官方白化预警等级为「警报一级」，属于近 41 年里 3 个达到白化警戒的年份之一。',
@@ -1014,7 +1021,7 @@ const EN = {
   videoUrl: '/video/team.mp4',
   /* 推文：key = 文章 id（对应 homeData.articles[].id） */
   articles: {
-    1: ['Reef restoration milestone: live coral cover up from 30% to 50%', 'Project'],
+    1: ['Xuwen coral reef reserve science base: growing up ocean-minded', 'Outreach'],
     2: ['Coral No.2 released: fertilisation >95%, survival 98%', 'Technology'],
     3: ['2026 summer coral camps: 43 sessions across 8 cities', 'Recruiting'],
     4: ['AI survey annual report: 200,000+ corals identified, 50× faster', 'Report'],
