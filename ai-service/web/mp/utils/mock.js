@@ -71,10 +71,13 @@ const WX_LINKS = {
 
 const homeData = {
   stats: [
-    { num: '12,847', label: '累计认养(株)' },
-    { num: '50.12%', label: '修复区覆盖率' },
-    { num: '34', label: '可识别珊瑚属' },
-    { num: '41', label: '气候样本(年)' }
+    /* 数字口径（每个数字都要能说清出处，详见 docs/数据口径与来源.md）：
+     * 累计认养 = 演示样例数据（无后台真实统计，页面下方有脚注说明）；
+     * 其余三项来自项目实测 / NOAA CRW 档案 */
+    { num: '12,847', label: '累计认养(株)', demo: true },
+    { num: '50.12%', label: '大鹏湾修复区覆盖率' },
+    { num: '34', label: '模型可识别珊瑚属' },
+    { num: '41', label: '热压力档案(年)' }
   ],
   energy: { cur: 650, max: 1000 },
   carbon: {

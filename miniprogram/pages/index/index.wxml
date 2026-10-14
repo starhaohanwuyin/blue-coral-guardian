@@ -60,6 +60,8 @@
       <view class="stat-label">{{item.label}}</view>
     </view>
   </view>
+  <!-- 数据口径脚注：把"哪些是样例、哪些来自实测"说清楚（见 docs/数据口径与来源.md） -->
+  <view class="stats-note">※ 累计认养为演示样例数据；覆盖率、可识别属数与热压力档案来自项目实测与 NOAA CRW 档案</view>
 
   <!-- ===== 碳汇贡献卡 ===== -->
   <view class="carbon-home-card card">

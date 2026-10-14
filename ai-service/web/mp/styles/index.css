@@ -164,6 +164,13 @@
   white-space: pre-line;     /* 让英文标签里的 \n 真正换行（英文拆两行，避免挤在一起） */
   line-height: 1.25;
 }
+/* 统计条下方的数据口径脚注 */
+.stats-note {
+  margin: calc(12 * var(--rpx)) calc(28 * var(--rpx)) 0;
+  font-size: calc(20 * var(--rpx));
+  line-height: 1.5;
+  color: var(--text3);
+}
 
 /* 碳汇贡献卡 */
 .carbon-home-card {
