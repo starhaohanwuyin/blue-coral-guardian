@@ -1,4 +1,4 @@
-<view class="growth-page">
+<view class="growth-page lang-{{lang}}">
 
   <!-- 生长曲线柱状图 -->
   <view class="growth-chart-card card">

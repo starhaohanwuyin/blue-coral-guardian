@@ -1,4 +1,4 @@
-<view class="about-page">
+<view class="about-page lang-{{lang}}">
 
   <!-- 品牌头 -->
   <view class="about-hero">
@@ -32,8 +32,8 @@
 
   <!-- 底部信息 -->
   <view class="about-footer">
-    <view class="about-footer-row" bindtap="onCopyEmail">联系邮箱：{{email}}</view>
-    <view class="about-footer-row">蓝珊小程序 v{{version}}</view>
+    <view class="about-footer-row" bindtap="onCopyEmail">{{t.ptoc121}}{{email}}</view>
+    <view class="about-footer-row">{{t.p16sjc6b}}{{version}}</view>
     <view class="about-footer-row">{{t.pxz502s}}</view>
   </view>
 </view>

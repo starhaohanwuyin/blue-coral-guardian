@@ -1,5 +1,5 @@
 <!-- 科普页：种类横滑 + 分类筛选 + 文章网格 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 自定义导航头 -->
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">

@@ -1,5 +1,5 @@
 <!-- 珊瑚详情页：环形进度 + 生长记录时间线 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <view wx:if="{{d}}">
     <!-- 头图 -->
     <view class="cd-imgwrap">
@@ -21,10 +21,10 @@
           </view>
         </view>
         <view class="cd-progress-info">
-          <view class="cd-info-title">成长进度 {{d.growth}}%</view>
-          <view class="cd-info-row">预计还需 {{d.remain}} 成长值即可成熟</view>
-          <view class="cd-info-row">修复区：{{d.area}}</view>
-          <view class="cd-info-row">品种：{{d.species}}</view>
+          <view class="cd-info-title">{{t.pouhwk5}} {{d.growth}}%</view>
+          <view class="cd-info-row">{{t.pm2lqe6}} {{d.remain}} {{t.p1jzmt6n}}</view>
+          <view class="cd-info-row">{{t.p1olzbow}}{{d.area}}</view>
+          <view class="cd-info-row">{{t.pnxe90r}}{{d.species}}</view>
         </view>
       </view>
 

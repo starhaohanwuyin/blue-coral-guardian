@@ -1,5 +1,5 @@
 <!-- 珊瑚种类详情页：数据来自珊瑚图鉴数据库（GET /corals/{id}），四大板块 -->
-<view class="page-body" wx:if="{{item}}">
+<view class="page-body lang-{{lang}}" wx:if="{{item}}">
   <view class="cs-hero">
     <image wx:if="{{item.img && !imgFail}}" class="cs-hero-img" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onHeroError" />
     <view wx:else class="cs-hero-img cs-hero-ph"></view>

@@ -1,4 +1,4 @@
-<view class="camp-page">
+<view class="camp-page lang-{{lang}}">
   <image class="camp-img" src="{{data.img}}" mode="aspectFill" />
 
   <!-- 数据统计 -->

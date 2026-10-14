@@ -264,3 +264,68 @@ page {
 /* ============ 空状态 / 加载 ============ */
 .loading-dots { text-align: center; padding: 40rpx; color: var(--text3); font-size: 26rpx; }
 .empty-tip { text-align: center; padding: 60rpx; color: var(--text3); font-size: 26rpx; }
+
+/* ============ 英文排版适配（.lang-en） ============
+ * 英文普遍比中文长 2–4 倍，中文版里「刚好放得下」的定宽/单行元素会挤、换行或溢出。
+ * 页面根元素带 lang-{{lang}}（由 tools/i18n_build.py 自动注入），这里统一兜底：
+ * 允许折行、收紧行高、给按钮多留横向空间、数字用等宽字形。
+ * 用 .lang-en 前缀（两个类）提高优先级，确保能压过页面级单类选择器。 */
+.lang-en { letter-spacing: 0; word-break: break-word; }
+
+/* 1) 标题 / 标签 / 说明：不再硬撑一行，允许折行 */
+.lang-en .section-title,
+.lang-en .about-card-title,
+.lang-en .about-name,
+.lang-en .about-slogan,
+.lang-en .growth-section-title,
+.lang-en .carbon-info-title,
+.lang-en .va-progress-title,
+.lang-en .ai-tech-title,
+.lang-en .upload-title,
+.lang-en .bind-title,
+.lang-en .res-head-title,
+.lang-en .res-head-badge,
+.lang-en .top3-title,
+.lang-en .qa-title,
+.lang-en .pb-k,
+.lang-en .cr-k,
+.lang-en .site-label,
+.lang-en .dn-section-label,
+.lang-en .shop-points-label,
+.lang-en .shop-points-tip,
+.lang-en .res-sub,
+.lang-en .login-brand,
+.lang-en .lbl,
+.lang-en .cd-ring-label {
+  white-space: normal;
+  line-height: 1.28;
+  word-break: break-word;
+}
+
+/* 2) 键值行：标签最多占一半，剩下的留给值，避免英文标签把值挤成两行 */
+.lang-en .cr-k,
+.lang-en .pb-k,
+.lang-en .lbl { flex: 0 1 auto; max-width: 52%; }
+
+/* 3) 按钮 / 选项卡：英文更长，允许折行并多留横向空间（高度不动，避免整体跳动） */
+.lang-en .login-btn,
+.lang-en .login-tab,
+.lang-en .bind-cancel,
+.lang-en .cd-action-btn,
+.lang-en .va-cert-btn,
+.lang-en .profile-top-btn,
+.lang-en .adopt-type-tab,
+.lang-en .site-chip,
+.lang-en .btn {
+  white-space: normal;
+  line-height: 1.26;
+  padding-left: calc(14 * var(--rpx));
+  padding-right: calc(14 * var(--rpx));
+}
+
+/* 4) 数字/统计：等宽字形，英文下更齐 */
+.lang-en .stat-num,
+.lang-en .stat-label,
+.lang-en .prob-val,
+.lang-en .prob-name,
+.lang-en .site-chip.year { font-variant-numeric: tabular-nums; }

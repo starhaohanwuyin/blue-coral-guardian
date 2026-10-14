@@ -1,5 +1,5 @@
 <!-- 认养页：虚拟养成 + 实体认养 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 自定义导航头 -->
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">
@@ -78,7 +78,7 @@
           <view class="task-name">{{item.name}}</view>
           <view class="task-desc">{{item.desc}}</view>
         </view>
-        <text class="va-task-reward">+{{item.points}}积分</text>
+        <text class="va-task-reward">+{{item.points}}{{t.p1f5u8y0}}</text>
         <view wx:if="{{item.done}}" class="va-task-btn done">{{t.p19j4h}}</view>
         <block wx:else>
           <button wx:if="{{item.action === 'share'}}" class="va-task-btn claim share-btn" open-type="share">{{t.p3agut2}}</button>
@@ -102,7 +102,7 @@
           </view>
           <text class="virtual-coral-progress-pct">{{item.growth}}%</text>
         </view>
-        <view class="virtual-coral-points">⭐ 累计积分：{{item.points}}</view>
+        <view class="virtual-coral-points">{{t.p18lrdwm}}{{item.points}}</view>
       </view>
     </view>
 
@@ -164,7 +164,7 @@
         </view>
         <view class="carbon-info">
           <view class="carbon-info-title">{{t.p97u4dw}}</view>
-          <view class="carbon-info-desc">你认养的珊瑚已累计碳汇 {{carbon.value}} g CO₂。珊瑚礁每年可固定约225吨碳酸钙，相当于封存约100吨CO₂。</view>
+          <view class="carbon-info-desc">{{t.pz26e86}} {{carbon.value}} {{t.pu2ktjv}}</view>
         </view>
       </view>
     </view>
@@ -183,12 +183,12 @@
         <image class="adopt-list-img" src="{{item.img}}" mode="aspectFill" lazy-load />
         <view class="adopt-list-info">
           <view class="adopt-list-name">{{item.name}}</view>
-          <view class="adopt-list-sub">{{item.species}} · 编号{{item.code}}</view>
+          <view class="adopt-list-sub">{{item.species}} {{t.p8uy5bl}}{{item.code}}</view>
           <view class="progress-wrap">
             <view class="progress-bar"><view class="progress-fill" style="width: {{item.growth}}%;"></view></view>
             <text class="progress-pct">{{item.growth}}%</text>
           </view>
-          <view class="carbon-val">🌿 碳汇贡献：{{item.carbon}} g CO₂</view>
+          <view class="carbon-val">{{t.pthuzc1}}{{item.carbon}} g CO₂</view>
         </view>
       </view>
     </view>
@@ -209,10 +209,10 @@
           <view class="feed-icon">{{item.icon}}</view>
           <view class="feed-info">
             <view class="feed-name">{{item.name}} <text class="feed-stock" wx:if="{{shop[item.key] > 0}}">×{{shop[item.key]}}</text></view>
-            <view class="feed-desc">{{item.desc}} · 成长+{{item.growth}}%</view>
+            <view class="feed-desc">{{item.desc}} {{t.p1l2w074}}{{item.growth}}%</view>
           </view>
           <view wx:if="{{shop[item.key] > 0}}" class="feed-btn use" hover-class="btn-hover" bindtap="onUseFeed" data-key="{{item.key}}">{{t.p30649e}}</view>
-          <view wx:else class="feed-btn buy" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}积分</view>
+          <view wx:else class="feed-btn buy" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}{{t.p1f5u8y0}}</view>
         </view>
         <view class="feed-more" bindtap="goShop">{{t.peg6h1v}}</view>
       </view>

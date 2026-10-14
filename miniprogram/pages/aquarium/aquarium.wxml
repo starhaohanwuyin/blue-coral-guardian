@@ -1,4 +1,4 @@
-<view class="aqua-page">
+<view class="aqua-page lang-{{lang}}">
 
   <!-- 水族箱动画场景 -->
   <view class="aqua-scene">

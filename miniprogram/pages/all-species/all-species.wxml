@@ -1,5 +1,5 @@
 <!-- 全部珊瑚种类页 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <view class="as-intro card">
     <view class="as-intro-icon">🪸</view>
     <view class="as-intro-text">{{t.intro}}</view>

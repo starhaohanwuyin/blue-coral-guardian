@@ -3,117 +3,140 @@
     {
       "route": "pages/index/index",
       "name": "index",
-      "title": ""
+      "title": "",
+      "titleEn": ""
     },
     {
       "route": "pages/adopt/adopt",
       "name": "adopt",
-      "title": ""
+      "title": "",
+      "titleEn": ""
     },
     {
       "route": "pages/knowledge/knowledge",
       "name": "knowledge",
-      "title": ""
+      "title": "",
+      "titleEn": ""
     },
     {
       "route": "pages/ai/ai",
       "name": "ai",
-      "title": ""
+      "title": "",
+      "titleEn": ""
     },
     {
       "route": "pages/profile/profile",
       "name": "profile",
-      "title": ""
+      "title": "",
+      "titleEn": ""
     },
     {
       "route": "pages/login/login",
       "name": "login",
-      "title": "登录"
+      "title": "登录",
+      "titleEn": "Sign in"
     },
     {
       "route": "pages/knowledge-detail/knowledge-detail",
       "name": "knowledge-detail",
-      "title": "科普详情"
+      "title": "科普详情",
+      "titleEn": "Article"
     },
     {
       "route": "pages/all-species/all-species",
       "name": "all-species",
-      "title": "全部珊瑚种类"
+      "title": "全部珊瑚种类",
+      "titleEn": "All coral species"
     },
     {
       "route": "pages/coral-species/coral-species",
       "name": "coral-species",
-      "title": "珊瑚种类详情"
+      "title": "珊瑚种类详情",
+      "titleEn": "Species profile"
     },
     {
       "route": "pages/coral-detail/coral-detail",
       "name": "coral-detail",
-      "title": "珊瑚详情"
+      "title": "珊瑚详情",
+      "titleEn": "Coral details"
     },
     {
       "route": "pages/camera/camera",
       "name": "camera",
-      "title": "实时海景"
+      "title": "实时海景",
+      "titleEn": "Live reef view"
     },
     {
       "route": "pages/article/article",
       "name": "article",
-      "title": "资讯详情"
+      "title": "资讯详情",
+      "titleEn": "News"
     },
     {
       "route": "pages/shop/shop",
       "name": "shop",
-      "title": "积分商城"
+      "title": "积分商城",
+      "titleEn": "积分商城"
     },
     {
       "route": "pages/quiz/quiz",
       "name": "quiz",
-      "title": "珊瑚知识问答"
+      "title": "珊瑚知识问答",
+      "titleEn": "Coral quiz"
     },
     {
       "route": "pages/donate/donate",
       "name": "donate",
-      "title": "公益捐赠"
+      "title": "公益捐赠",
+      "titleEn": "Donate"
     },
     {
       "route": "pages/cert/cert",
       "name": "cert",
-      "title": "认养证书"
+      "title": "认养证书",
+      "titleEn": "Adoption certificate"
     },
     {
       "route": "pages/camp/camp",
       "name": "camp",
-      "title": "珊瑚夏令营"
+      "title": "珊瑚夏令营",
+      "titleEn": "Coral summer camp"
     },
     {
       "route": "pages/aquarium/aquarium",
       "name": "aquarium",
-      "title": "珊瑚水族箱"
+      "title": "珊瑚水族箱",
+      "titleEn": "Coral aquarium"
     },
     {
       "route": "pages/badges/badges",
       "name": "badges",
-      "title": "我的勋章"
+      "title": "我的勋章",
+      "titleEn": "我的勋章"
     },
     {
       "route": "pages/growth/growth",
       "name": "growth",
-      "title": "珊瑚成长档案"
+      "title": "珊瑚成长档案",
+      "titleEn": "珊瑚成长档案"
     },
     {
       "route": "pages/my-adopt/my-adopt",
       "name": "my-adopt",
-      "title": "我的认养"
+      "title": "我的认养",
+      "titleEn": "My adoptions"
     },
     {
       "route": "pages/about/about",
       "name": "about",
-      "title": "关于我们"
+      "title": "关于我们",
+      "titleEn": "About us"
     },
     {
       "route": "pages/agreement/agreement",
       "name": "agreement",
-      "title": "用户协议"
+      "title": "用户协议",
+      "titleEn": "Terms of Service"
     }
   ],
   "tabBar": {
@@ -156,6 +179,7 @@
     "api.js",
     "config.js",
     "i18n-phrases.js",
+    "i18n-titles.js",
     "i18n.js",
     "mock.js",
     "page-i18n.js",

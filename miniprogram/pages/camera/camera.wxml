@@ -1,5 +1,5 @@
 <!-- 实时海景页：水下摄像头画面 + 环境指标 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 画面区 -->
   <view class="cam-view">
     <image class="cam-img" src="{{d.img}}" mode="aspectFill" />

@@ -1,5 +1,5 @@
 <!-- 公益捐赠页 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 头部 -->
   <view class="dn-hero">
     <view class="dn-hero-icon">💚</view>
@@ -41,7 +41,7 @@
       <view class="dn-desc-line">{{t.p1carcfr}}</view>
     </view>
 
-    <view class="dn-confirm-btn" hover-class="btn-hover" bindtap="onDonate">✅ 确认捐赠 ¥{{amount || customAmount || 0}}</view>
+    <view class="dn-confirm-btn" hover-class="btn-hover" bindtap="onDonate">{{t.p1w69gg1}}{{amount || customAmount || 0}}</view>
     <view class="dn-agreement">{{t.puzkvu5}}</view>
   </view>
 </view>

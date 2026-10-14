@@ -1,5 +1,5 @@
 <!-- 登录页：账号密码（与官网同一账号）+ 微信一键登录绑定 -->
-<view class="login-page">
+<view class="login-page lang-{{lang}}">
   <!-- 品牌区 -->
   <view class="login-hero">
     <view class="login-bubble lb-1"></view>
@@ -24,11 +24,11 @@
     <block wx:if="{{mode === 'account' && !bindMode}}">
       <view class="form-item">
         <view class="form-icon">👤</view>
-        <input class="form-input" placeholder="官网账号 / 用户名" value="{{username}}" bindinput="onInput" data-field="username" />
+        <input class="form-input" placeholder="{{t.p1ud8z90}}" value="{{username}}" bindinput="onInput" data-field="username" />
       </view>
       <view class="form-item">
         <view class="form-icon">🔒</view>
-        <input class="form-input" placeholder="密码" password value="{{password}}" bindinput="onInput" data-field="password" />
+        <input class="form-input" placeholder="{{t.p1aph6eg}}" password value="{{password}}" bindinput="onInput" data-field="password" />
       </view>
       <view class="login-btn" hover-class="btn-hover" bindtap="onAccountLogin">{{t.pwsofpa}}</view>
       <view class="login-tip">{{t.p1krt8wl}}</view>
@@ -50,11 +50,11 @@
       <view class="bind-desc">{{t.pq0h8ri}}</view>
       <view class="form-item">
         <view class="form-icon">👤</view>
-        <input class="form-input" placeholder="官网账号 / 用户名" value="{{username}}" bindinput="onInput" data-field="username" />
+        <input class="form-input" placeholder="{{t.p1ud8z90}}" value="{{username}}" bindinput="onInput" data-field="username" />
       </view>
       <view class="form-item">
         <view class="form-icon">🔒</view>
-        <input class="form-input" placeholder="密码" password value="{{password}}" bindinput="onInput" data-field="password" />
+        <input class="form-input" placeholder="{{t.p1aph6eg}}" password value="{{password}}" bindinput="onInput" data-field="password" />
       </view>
       <view class="login-btn" hover-class="btn-hover" bindtap="onBindSubmit">{{t.pnou1b4}}</view>
       <view class="bind-cancel" bindtap="cancelBind">{{t.p13hri1n}}</view>

@@ -1,5 +1,5 @@
 <!-- 我的页：用户信息 + 菜单 + 社区评论 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- Profile 头部 -->
   <view class="profile-header">
     <view class="profile-bubbles">

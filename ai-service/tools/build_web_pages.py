@@ -22,6 +22,12 @@ sys_path = pathlib.Path(__file__).resolve()
 BC = sys_path.parent.parent.parent / "miniprogram"       # 小程序源码（合并后的目录名）
 OUT = sys_path.parent.parent / "web" / "mp"              # coral_ml/web/mp
 
+# 中英对照表（唯一真源在 miniprogram/tools/i18n_phrases.json）：用于生成页面的英文导航标题
+try:
+    PHRASES = json.loads((BC / "tools" / "i18n_phrases.json").read_text(encoding="utf-8"))
+except Exception:                                          # noqa: BLE001
+    PHRASES = {}
+
 TAG_MAP = {
     "view": "div", "text": "span", "image": "img", "scroll-view": "div",
     "swiper": "div", "swiper-item": "div", "navigator": "a", "block": "block",
@@ -182,7 +188,10 @@ def main():
         pdir = OUT / "pages" / name
         pdir.mkdir(parents=True, exist_ok=True)
         (pdir / f"{name}.js").write_text(js.read_text(encoding="utf-8"), encoding="utf-8")
-        manifest["pages"].append({"route": full, "name": name, "title": title})
+        # titleEn：导航栏标题的英文（运行时的标题也跟着语言切）。
+        # 译文来自 miniprogram/tools/i18n_phrases.json（中英对照的唯一真源）。
+        manifest["pages"].append({"route": full, "name": name, "title": title,
+                                  "titleEn": PHRASES.get(title, title)})
         print(f"  ✅ {name:<18} 模板节点 {len(json.dumps(tree))//100} 百字节  {title}")
 
     # 共享模块 + 全局样式

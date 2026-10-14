@@ -1,4 +1,4 @@
-<view class="cert-page {{type}}">
+<view class="cert-page {{type}} lang-{{lang}}">
 
   <!-- 实体认养证书（金色 premium 版式） -->
   <view class="cert-card entity" wx:if="{{cert && type === 'entity'}}">

@@ -1,5 +1,5 @@
 <!-- 珊瑚识别页：上传 → 识别 → 种类 + 白化程度 双结果 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 自定义导航头 -->
   <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
     <view class="custom-header-row">
@@ -47,7 +47,7 @@
         </picker>
       </view>
     </view>
-    <view class="site-hint">NOAA CRW 5km 仅覆盖仙本那及周边（4.03–5.03°N, 118.03–119.53°E），网格外无数据 · v{{version}}</view>
+    <view class="site-hint">{{t.p1bmjurg}}{{version}}</view>
   </view>
 
   <!-- ① 上传 -->
@@ -99,7 +99,7 @@
       <view class="qa-title">{{t.p11lwwd7}}</view>
       <view class="qa-desc">{{t.p10w295t}}</view>
       <!-- 显示具体失败原因（含服务地址与排查提示），便于自行定位问题 -->
-      <view wx:if="{{view.demoReason}}" class="qa-desc">原因：{{view.demoReason}}</view>
+      <view wx:if="{{view.demoReason}}" class="qa-desc">{{t.p6rdxf4}}{{view.demoReason}}</view>
       <view class="qa-meta">{{t.p1ygtbj}}</view>
     </view>
 
@@ -108,7 +108,7 @@
       <view class="qa-title">{{t.p155ixu2}}</view>
       <view class="qa-desc">{{view.quality.message}}</view>
       <view class="qa-meta" wx:if="{{view.quality.contrast !== null}}">
-        实测对比度 {{view.quality.contrast}}（可用阈值 ≥{{view.quality.goodContrast}}）· 下方覆盖率仅供参考
+        {{t.p1llq70f}} {{view.quality.contrast}}{{t.pldb0kz}}{{view.quality.goodContrast}}{{t.p10y969b}}
       </view>
     </view>
     <view wx:elif="{{view.qualityWarn && !view.isDemo}}" class="quality-alert warn">
@@ -121,7 +121,7 @@
       <view class="res-head">
         <text class="res-head-icon">📊</text>
         <text class="res-head-title">{{t.p11ub9ii}}</text>
-        <text class="res-head-badge">珊瑚 {{view.coralTotal}}%</text>
+        <text class="res-head-badge">{{t.p1ykqbet}} {{view.coralTotal}}%</text>
       </view>
 
       <view class="prob-list">
@@ -135,8 +135,8 @@
       </view>
 
       <view class="cover-summary">
-        <text>珊瑚总覆盖 {{view.coralTotal}}%</text>
-        <text wx:if="{{view.bleachingShare > 0}}"> · 占珊瑚的白化比例 {{view.bleachingShare}}%</text>
+        <text>{{t.polyox2}} {{view.coralTotal}}%</text>
+        <text wx:if="{{view.bleachingShare > 0}}"> {{t.pfims1w}} {{view.bleachingShare}}%</text>
       </view>
 
       <view wx:if="{{view.bleachAlert}}" class="review-tip" style="margin: 16rpx 0 0;">
@@ -163,20 +163,19 @@
         </view>
       </view>
       <view wx:if="{{view.bleachView.review}}" class="review-tip" style="margin-top: 16rpx;">
-        🔍 两个模型判定不一致（主模型「{{view.bleachView.labelCn}}」/ 第二模型「{{view.bleachView.altLabelCn}}」），建议人工复核
+        {{t.pdlnhe7}}{{view.bleachView.labelCn}}{{t.p1c46cr1}}{{view.bleachView.altLabelCn}}{{t.p1m0wojl}}
       </view>
       <view wx:elif="{{view.bleachView.note}}" class="note-tip" style="margin-top: 16rpx;">
-        ℹ️ 第二模型持不同意见（判「{{view.bleachView.altLabelCn}}」），主模型置信度较高（{{view.bleachView.pct}}%），结果仅供参考
+        {{t.p1mt3819}}{{view.bleachView.altLabelCn}}{{t.paa9pfg}}{{view.bleachView.pct}}{{t.pvl5s61}}
       </view>
       <view wx:elif="{{view.bleachView.hasConsensus && view.bleachView.agree}}" class="agree-tip" style="margin-top: 16rpx;">
-        ✓ 双模型判定一致（{{view.bleachView.labelCn}} {{view.bleachView.pct}}%），结论可直接采信
+        {{t.pe9hwis}}{{view.bleachView.labelCn}} {{view.bleachView.pct}}{{t.plwwk6i}}
       </view>
       <view wx:if="{{!view.bleachView.reliable}}" class="review-tip" style="margin-top: 16rpx;">
         {{t.p15oz1ry}}
       </view>
       <view class="bleach-tip">
-        说明：白化状态由**分类模型**（{{view.bleachView.model}}）判定；
-        上方「白化珊瑚%」是像素覆盖率，两者口径不同，前者更可靠
+        {{t.p1e6nzf5}}{{view.bleachView.model}}{{t.p1wbu3zq}}
       </view>
     </view>
 
@@ -220,23 +219,23 @@
 
     <!-- 使用边界 -->
     <view class="disclaimer">{{result.disclaimer}}</view>
-    <view class="disclaimer-sub">推理耗时 {{view.inferenceMs}} ms · 数据来源可追溯 · 建议拍摄深度 ≤10m</view>
+    <view class="disclaimer-sub">{{t.p1bn20hq}} {{view.inferenceMs}} {{t.p1j5har}}</view>
 
     <view class="result-action-btn" hover-class="btn-hover" bindtap="resetUpload">{{t.p18wbtf6}}</view>
 <!-- ============ 环境数据：海表热压力（NOAA CRW）============ -->
 <view class="res-card card" wx:if="{{view.climate}}">
   <view class="res-title">
     <text>{{t.p1y7eu3s}}</text>
-    <text class="res-sub">{{view.climate.siteName}} · {{view.climate.year}} 年年度等级（非实时）</text>
+    <text class="res-sub">{{view.climate.siteName}} · {{view.climate.year}} {{t.ph63o1i}}</text>
   </view>
   <view class="climate-head climate-{{view.climate.level}}">
     <view class="climate-grade">{{view.climate.baaLabel}}</view>
-    <view class="climate-dhw">DHW 峰值 {{view.climate.dhwMax}}</view>
+    <view class="climate-dhw">{{t.pg6tu62}} {{view.climate.dhwMax}}</view>
   </view>
   <view class="climate-rows">
     <view class="climate-row">
       <text class="cr-k">{{t.pfjtmef}}</text>
-      <text class="cr-v">DHW≥4 共 {{view.climate.daysGe4}} 天 · DHW≥8 共 {{view.climate.daysGe8}} 天</text>
+      <text class="cr-v">{{t.p13g8kyg}} {{view.climate.daysGe4}} {{t.p1xh609m}} {{view.climate.daysGe8}} {{t.pcae2ro}}</text>
     </view>
     <view class="climate-row" wx:if="{{view.climate.peakDate}}">
       <text class="cr-k">{{t.p14tvyht}}</text>
@@ -249,7 +248,7 @@
     <!-- 41 年历史（来自同一次响应的 deployment），避免把单年等级误读为常态 -->
     <view class="climate-row" wx:if="{{view.climate.hasHistory}}">
       <text class="cr-k">{{t.p1h7h0ea}}</text>
-      <text class="cr-v">近 {{view.climate.historyYears}} 年 {{view.climate.historyText}}{{view.climate.severeText ? '；' + view.climate.severeText : ''}}</text>
+      <text class="cr-v">{{t.pn2yd8c}} {{view.climate.historyYears}} {{t.p1uy3d7n}} {{view.climate.historyText}}{{view.climate.severeText ? '；' + view.climate.severeText : ''}}</text>
     </view>
     <view class="climate-row" wx:if="{{view.climate.avoidText}}">
       <text class="cr-k">{{t.pe2kypi}}</text>
@@ -313,11 +312,11 @@
                binderror="onHistoryImgError" data-id="{{item.id}}" />
         <view wx:else class="history-thumb history-thumb-empty">—</view>
         <view class="history-info">
-          <view class="history-title">珊瑚覆盖 {{item.coralTotalPct ? item.coralTotalPct : 0}}%</view>
+          <view class="history-title">{{t.p1ri9ibh}} {{item.coralTotalPct ? item.coralTotalPct : 0}}%</view>
           <view class="history-sub">{{item.time}}{{item.topGenus ? ' · ' + item.topGenus : ''}}</view>
           <view class="history-tags">
-            <text class="htag alive">活 {{item.alivePct ? item.alivePct : 0}}%</text>
-            <text class="htag bleached">白化 {{item.bleachedPct ? item.bleachedPct : 0}}%</text>
+            <text class="htag alive">{{t.phcw7ve}} {{item.alivePct ? item.alivePct : 0}}%</text>
+            <text class="htag bleached">{{t.p1xmeom2}} {{item.bleachedPct ? item.bleachedPct : 0}}%</text>
           </view>
         </view>
       </view>

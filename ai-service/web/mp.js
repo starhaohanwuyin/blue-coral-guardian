@@ -578,7 +578,17 @@
     const inst = makeInstance(def, name, q);
     state.stack.push({ name, inst });
     const meta = (state.manifest.pages || []).find((p) => p.name === name);
-    emit('title', (meta && meta.title) || '蓝珊 · 珊瑚卫士');
+    // 标题也跟随语言：manifest 里带了构建期生成的英文标题（titleEn）
+    let pageTitle = (meta && meta.title) || '蓝珊 · 珊瑚卫士';
+    if (meta && meta.titleEn) {
+      let lg = 'zh';
+      try {
+        const raw = localStorage.getItem(LS_PREFIX + 'ls_lang');
+        if (raw != null) lg = String(JSON.parse(raw)).replace(/"/g, '') || 'zh';
+      } catch (e) {}
+      if (lg === 'en') pageTitle = meta.titleEn;
+    }
+    emit('title', pageTitle);
     safe(inst, 'onLoad', q);
     paint(inst);
     setTimeout(() => safe(inst, 'onReady'), 0);

@@ -18,6 +18,8 @@
  * 说明：只做"整串精确匹配"，匹配不到就原样保留（所以不会误伤 id、数字、用户输入）。
  */
 const i18n = require('./i18n.js')
+let TITLES = {}
+try { TITLES = require('./i18n-titles.js') } catch (e) { TITLES = {} }
 
 const CJK = /[\u4e00-\u9fff]/
 
@@ -60,6 +62,14 @@ function wrap(cfg) {
       Object.assign(next, translatePayload(raw))
     }
     this.setData(next)
+    // 导航栏标题也要跟着切（页面 json 里写死的是中文）
+    try {
+      const route = this.route || this.__route || ''
+      const zh = TITLES[route] || TITLES['/' + route]
+      if (zh && typeof wx !== 'undefined' && wx.setNavigationBarTitle) {
+        wx.setNavigationBarTitle({ title: i18n.tr(zh) })
+      }
+    } catch (e) { /* 标题设置失败不影响页面 */ }
   }
 
   page.onLoad = function (query) {

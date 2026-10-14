@@ -25,8 +25,11 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent          # miniprogram/
 PHRASES = pathlib.Path(__file__).resolve().parent / "i18n_phrases.json"
 I18N = ROOT / "utils" / "i18n.js"
 PH_JS = ROOT / "utils" / "i18n-phrases.js"
+TITLES_JS = ROOT / "utils" / "i18n-titles.js"
 CJK = re.compile("[\u4e00-\u9fff]")
 TEXT_NODE = re.compile(r">([^<>{}]+)<")
+MIXED_NODE = re.compile(r">([^<>]*?\{\{.*?\}\}[^<>]*?)<", re.S)
+MUSTACHE_SPLIT = re.compile(r"(\{\{.*?\}\})", re.S)
 ATTR_VAL = re.compile(r'(placeholder|title|aria-label)="([^"{}]*)"')
 COMMENT = re.compile("<" + "!--.*?--" + ">", re.S)
 
@@ -79,6 +82,52 @@ def build_phrases_js(phrases):
     return "\n".join(lines)
 
 
+def build_titles_js():
+    """页面路径 → 中文导航栏标题（运行时据此设置英文标题）。自动生成。"""
+    app = json.loads((ROOT / "app.json").read_text(encoding="utf-8"))
+    rows = []
+    for p in app.get("pages", []):
+        d = ROOT / pathlib.Path(p).parent
+        jf = d / (p.split("/")[-1] + ".json")
+        if not jf.exists():
+            continue
+        try:
+            title = json.loads(jf.read_text(encoding="utf-8")).get("navigationBarTitleText", "")
+        except Exception:                                      # noqa: BLE001
+            title = ""
+        if title:
+            rows.append((p, title))
+    lines = ["/**", " * 页面路径 → 中文导航栏标题（自动生成，勿手改）。",
+             " * 运行时用 i18n.tr() 译成英文后 wx.setNavigationBarTitle()。",
+             " */", "module.exports = {"]
+    for route, title in rows:
+        lines.append("  %s: %s," % (json.dumps("/" + route, ensure_ascii=False),
+                                    json.dumps(title, ensure_ascii=False)))
+    lines += ["}", ""]
+    TITLES_JS.write_text("\n".join(lines), encoding="utf-8")
+    return len(rows)
+
+
+ROOT_CLS = re.compile(r'<view([^>]*?)class="([^"]*)"')
+
+
+def inject_lang_class(files):
+    """给每个页面的根元素挂上 lang-{{lang}}（英文排版适配用），幂等。"""
+    done = []
+    for f in files:
+        text = f.read_text(encoding="utf-8")
+        if "lang-{{lang}}" in text:
+            continue
+        m = ROOT_CLS.search(text)
+        if not m:
+            continue
+        cls = m.group(2)
+        new = text[:m.start()] + '<view' + m.group(1) + 'class="' + cls + ' lang-{{lang}}"' + text[m.end():]
+        f.write_text(new, encoding="utf-8")
+        done.append(str(f.relative_to(ROOT)))
+    return done
+
+
 def build_mapping(phrases):
     return {zh: key_for(zh) for zh in phrases}
 
@@ -113,7 +162,30 @@ def rewrite_wxml(files, mapping, check_only=False, collect_unmatched=None):
                 return m.group(0)
             return name + '="{{t.' + k + '}}"'
 
+        def rep_mixed(m):
+            """含 {{}} 插值的句子：把夹在插值之间的中文片段各自换成词条。
+            例：第 {{i}} / {{n}} 题 → {{t.xxx}}{{i}} / {{n}}{{t.yyy}}"""
+            inner = m.group(1)
+            if "{{" not in inner or not CJK.search(inner):
+                return m.group(0)
+            parts = MUSTACHE_SPLIT.split(inner)
+            hit = False
+            for i, seg in enumerate(parts):
+                if seg.startswith("{{"):
+                    continue
+                s = seg.strip()
+                if not s:
+                    continue
+                k = mapping.get(s) or mapping.get(re.sub(r"\s+", " ", s))
+                if k:
+                    parts[i] = seg.replace(s, "{{t." + k + "}}")
+                    hit = True
+                elif collect_unmatched is not None and CJK.search(s):
+                    collect_unmatched.append((str(f.relative_to(ROOT)) + " [片段]", s))
+            return ">" + "".join(parts) + "<" if hit else m.group(0)
+
         new = ATTR_VAL.sub(rep_attr, TEXT_NODE.sub(rep_text, text))
+        new = MIXED_NODE.sub(rep_mixed, new)
         if not check_only and new != text:
             f.write_text(new, encoding="utf-8")
             changed.append(str(f.relative_to(ROOT)))
@@ -130,10 +202,15 @@ def main():
     mapping = build_mapping(phrases)
     if not a.check:
         PH_JS.write_text(build_phrases_js(phrases), encoding="utf-8")
+        build_titles_js()
     unmatched = []
     files = page_files()
     changed = rewrite_wxml(files, mapping, check_only=a.check,
                            collect_unmatched=unmatched if a.unmatched else None)
+    if not a.check:
+        injected = inject_lang_class(files)
+        if injected:
+            print("已给根元素加 lang-{{lang}}: " + ", ".join(injected))
     print("短语表 %d 条 · WXML %d 个文件%s" % (
         len(phrases), len(files), "（--check 未写文件）" if a.check else ""))
     if changed:

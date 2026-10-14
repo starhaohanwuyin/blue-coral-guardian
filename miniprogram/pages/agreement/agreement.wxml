@@ -1,8 +1,8 @@
 <!-- 协议页：用户协议 / 隐私政策 -->
-<view class="doc-page">
+<view class="doc-page lang-{{lang}}">
   <view class="doc-header">
     <view class="doc-title">{{doc.title}}</view>
-    <view class="doc-update">更新日期：{{doc.updateDate}}</view>
+    <view class="doc-update">{{t.p1ivchup}}{{doc.updateDate}}</view>
   </view>
 
   <view class="doc-body">

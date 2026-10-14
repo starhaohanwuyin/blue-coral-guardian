@@ -1,5 +1,5 @@
 <!-- 积分商城页：养料区 + 文创区 -->
-<view class="page-body">
+<view class="page-body lang-{{lang}}">
   <!-- 积分头卡 -->
   <view class="shop-points-card">
     <view class="shop-points-left">
@@ -24,10 +24,10 @@
     <view class="shop-item card" wx:for="{{feeds}}" wx:key="key">
       <view class="shop-item-icon">{{item.icon}}</view>
       <view class="shop-item-info">
-        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{shop[item.key] > 0}}">库存 ×{{shop[item.key]}}</text></view>
-        <view class="shop-item-desc">{{item.desc}} · 成长+{{item.growth}}%</view>
+        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{shop[item.key] > 0}}">{{t.p1op5xdz}}{{shop[item.key]}}</text></view>
+        <view class="shop-item-desc">{{item.desc}} {{t.p1l2w074}}{{item.growth}}%</view>
       </view>
-      <view class="shop-buy-btn feed" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}积分</view>
+      <view class="shop-buy-btn feed" hover-class="btn-hover" bindtap="onBuyFeed" data-key="{{item.key}}">{{item.price}}{{t.p1f5u8y0}}</view>
     </view>
   </block>
 
@@ -37,10 +37,10 @@
     <view class="shop-item card" wx:for="{{cultureItems}}" wx:key="id">
       <view class="shop-item-icon">{{item.icon}}</view>
       <view class="shop-item-info">
-        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{culture[item.id] > 0}}">已兑 ×{{culture[item.id]}}</text></view>
+        <view class="shop-item-name">{{item.name}} <text class="shop-item-stock" wx:if="{{culture[item.id] > 0}}">{{t.p19ela7d}}{{culture[item.id]}}</text></view>
         <view class="shop-item-desc">{{item.desc}}</view>
       </view>
-      <view class="shop-buy-btn culture" hover-class="btn-hover" bindtap="onExchange" data-id="{{item.id}}">{{item.price}}积分</view>
+      <view class="shop-buy-btn culture" hover-class="btn-hover" bindtap="onExchange" data-id="{{item.id}}">{{item.price}}{{t.p1f5u8y0}}</view>
     </view>
   </block>
 </view>
