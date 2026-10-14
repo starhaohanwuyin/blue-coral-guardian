@@ -111,12 +111,21 @@ page {
   padding: 20rpx 40rpx;
 }
 .custom-header-row .logo {
-  font-size: 36rpx;          /* 英文下品牌名更长，收两号：40 → 36 */
+  font-size: 38rpx;          /* 品牌名再放一号：36 → 38 */
   font-weight: 700;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+/* 品牌名下方一行英文名（Reef-Blue） */
+.custom-header-row .logo-wrap { display: flex; flex-direction: column; }
+.custom-header-row .logo-sub {
+  font-size: 20rpx;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  margin-top: 2rpx;
+  line-height: 1.1;
 }
 .custom-header-row .sub { font-size: 24rpx; color: var(--text3); }
 
