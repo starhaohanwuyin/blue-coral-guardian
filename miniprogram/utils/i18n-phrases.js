@@ -59,7 +59,7 @@ module.exports = {
   "g CO₂。珊瑚礁每年可固定约225吨碳酸钙，相当于封存约100吨CO₂。": "g CO₂. Reefs fix about 225 tonnes of calcium carbonate a year, storing roughly 100 tonnes of CO₂.",
   "ms · 数据来源可追溯 · 建议拍摄深度 ≤10m": "ms · traceable data · shoot at ≤10 m depth",
   "pH值": "pH",
-  "¥1,280/人": "¥1,280/person",
+  "¥2,160/人": "¥2,160/person",
   "¥3,680/人": "¥3,680/person",
   "¥6,980/人": "¥6,980/person",
   "· 占珊瑚的白化比例": "· share of corals bleached",

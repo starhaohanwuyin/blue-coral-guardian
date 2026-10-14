@@ -14,7 +14,10 @@ const IMG = {
   tech3: '/mp/assets/img/4fe413d0e11d5f12.jpg',
   tech4: '/mp/assets/img/e044b577c27bc08e.jpg',
   tech5: '/mp/assets/img/79c24e8335d5c9c6.jpg',
-  camp: '/mp/assets/img/81dccd1c1e4ad40c.jpg',
+  /* 夏令营与 3D 打印底托：换成实拍图（同时放在小程序包内 assets/img/ 与网页 web/assets/img/，
+     引用 /assets/img/xxx.jpg 两端都能解析） */
+  camp: '/assets/img/camp_summer.jpg',
+  basePrint: '/assets/img/base_3dprint.jpg',
   wxRestore: '/mp/assets/img/tweet_restore.jpg',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
   wxEdu: '/mp/assets/img/tweet_edu.jpg',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
   wxSurvey: '/mp/assets/img/tweet_survey.jpg',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
@@ -87,7 +90,7 @@ const homeData = {
       tags: ['YOLOv9', 'SAM3', 'AI识别', '实时监测']
     },
     {
-      img: IMG.tech3, label: '修复装备技术', title: '贝壳基免烧结3D打印导流式底托',
+      img: IMG.basePrint, label: '修复装备技术', title: '贝壳基免烧结3D打印导流式底托',
       desc: '以海洋固废贝壳粉为原料，采用免烧结精细化3D打印工艺制备，可定制仿生纹理结构与双层导流孔道，有效提升珊瑚虫附着成功率与幼苗生长速率。',
       tags: ['3D打印', '贝壳基材料', '绿色低碳']
     }
@@ -315,7 +318,7 @@ const homeData = {
         '【观测指标】',
         '• 成活率与生长速率；白化发生时间与程度（对比本地亲本）；附着基上的固着稳定性'
       ] },
-    { id: 3, title: '青少年珊瑚夏令营第43期圆满结束', date: '2026-06-15', tag: '科普活动', img: IMG.tech3,
+    { id: 3, title: '青少年珊瑚夏令营第43期圆满结束', date: '2026-06-15', tag: '科普活动', img: IMG.camp,
       paragraphs: [
         '第 43 期青少年珊瑚夏令营结束，营员完成了珊瑚种植、水下观察与水质检测三门实践课。',
         '夏令营累计覆盖 8 个城市、参与学生 1473 人。',
@@ -438,7 +441,7 @@ const knowledgeItems = [
     ]
   },
   {
-    id: 7, category: 'tech', title: '3D打印珊瑚底托', img: IMG.coral3,
+    id: 7, category: 'tech', title: '3D打印珊瑚底托', img: IMG.basePrint,
     summary: '贝壳基免烧结3D打印工艺，仿生纹理结构提升附着成功率',
     paragraphs: [
       '贝壳基免烧结3D打印导流式底托是蓝珊科技自主研发的核心修复装备之一。',
@@ -743,7 +746,7 @@ const campData = {
   cities: ['深圳', '湛江', '茂名', '惠州', '珠海', '江门', '钦州', '三亚'],
   camps: [
     {
-      icon: '🌱', name: '成长营', price: '¥1,280/人', color: 'primary',
+      icon: '🌱', name: '成长营', price: '¥2,160/人', color: 'primary',
       target: '面向12-18岁中学生 · 3天2夜',
       content: '系统课程 + 出海科考模拟 + 探访育苗车间 + 浮潜观测 + 海底种植直播',
       note: '结营颁发"青年珊瑚大使"证书',
