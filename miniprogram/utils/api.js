@@ -459,7 +459,11 @@ function catalogRequest(path, qs) {
         success(res) {
           let d = res.data
           if (typeof d === 'string') { try { d = JSON.parse(d) } catch (e) { d = null } }
-          if (res.statusCode === 200 && d && (d.items || d.total !== undefined)) resolve(d)
+          // 三种返回形状都要认：列表 {items,total} / 统计 {total,...} / 单条 {item}
+          // （以前少了 d.item → 详情页请求被判成失败，条件不满足时降到 mock 里也找不到该 id，
+          //   结果就是「点进种类卡片看不到详情、直接被退回上一页」）
+          if (res.statusCode === 200 && d &&
+              (d.items || d.item || d.total !== undefined)) resolve(d)
           else reject(new Error('图鉴接口返回 ' + res.statusCode))
         },
         fail() { reject(new Error('图鉴服务不可用')) }
