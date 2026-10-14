@@ -237,8 +237,13 @@
     chooseImage(o) { pickImage(o.count || 1).then((paths) => o.success && o.success({ tempFilePaths: paths })).catch(() => o.fail && o.fail({ errMsg: 'cancel' })); },
     previewImage(o) { modal({ title: '图片预览', content: o.current || (o.urls || [])[0] || '', showCancel: false }); },
     saveImageToPhotosAlbum(o) {
+      // 浏览器里没有"相册"：直接下载到本地（data URL / blob 都能触发下载）
       const a = document.createElement('a');
-      a.href = o.filePath; a.download = 'coral.jpg'; a.click();
+      a.href = o.filePath;
+      a.download = o.fileName || '蓝珊认养证书.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
       o.success && o.success({});
     },
     /* 位置 */
@@ -253,9 +258,17 @@
     openLocation(o) { window.open('https://uri.amap.com/marker?position=' + o.longitude + ',' + o.latitude, '_blank'); },
     /* 画布/文件（认养证书等功能用） */
     canvasToTempFilePath(o) {
-      const cv = document.querySelector('canvas');
+      // 优先用调用方传进来的 canvas 节点（cert 页就是这么用的），否则退回页面上第一个 canvas
+      const cv = o.canvas || document.querySelector('canvas');
       if (!cv) return o.fail && o.fail({ errMsg: '找不到 canvas' });
-      o.success && o.success({ tempFilePath: cv.toDataURL('image/png') });
+      let url = '';
+      try {
+        url = cv.toDataURL('image/png');
+      } catch (e) {
+        // 画布被跨域图片污染时 toDataURL 会抛错 —— 兜底用 JPEG
+        try { url = cv.toDataURL('image/jpeg', 0.92); } catch (e2) { return o.fail && o.fail({ errMsg: '导出图片失败' }); }
+      }
+      o.success && o.success({ tempFilePath: url });
     },
     createCanvasContext() { return canvasCtxStub(); },
     createSelectorQuery() { return selectorQuery(); },
@@ -302,16 +315,35 @@
     const noop = () => {};
     return new Proxy({}, { get: (t, k) => (k in t ? t[k] : noop) });
   }
+  // 小程序的 canvas 节点有 createImage()，DOM canvas 没有 → 补上（cert 页画证书要用）
+  try {
+    if (typeof HTMLCanvasElement !== 'undefined' && !HTMLCanvasElement.prototype.createImage) {
+      HTMLCanvasElement.prototype.createImage = function () { return new Image(); };
+    }
+  } catch (e) {}
   function selectorQuery() {
+    let sel = '';
     return {
-      select() { return this; }, selectAll() { return this; }, selectViewport() { return this; },
+      select(s) { sel = s || ''; return this; }, selectAll(s) { sel = s || ''; return this; },
+      selectViewport() { sel = ''; return this; },
       boundingClientRect(cb) { this._cb = cb; return this; },
       scrollOffset(cb) { this._cb = cb; return this; },
       fields(o, cb) { this._cb = cb; return this; },
       exec(cb) {
-        const el = document.querySelector('.coral-page');
+        // ⚠️ 以前这里固定返回 .coral-page 的矩形、且**不带 node**，于是
+        //    cert 页的 fields({node:true}) 永远拿不到 canvas → 「保存证书」必然失败。
+        //    现在按选择器取真实元素，并把元素本身作为 node 返回。
+        const el = (sel && document.querySelector(sel)) || document.querySelector('.coral-page');
         const r = el ? el.getBoundingClientRect() : { top: 0, left: 0, width: 0, height: 0, bottom: 0, right: 0 };
-        const res = [{ top: r.top, left: r.left, width: r.width, height: r.height, bottom: r.bottom, right: r.right, scrollTop: window.scrollY, dataset: {} }];
+        const dataset = {};
+        if (el && el.dataset) Object.keys(el.dataset).forEach((k) => { dataset[k] = el.dataset[k]; });
+        const res = [{
+          node: el || null,
+          id: (el && el.id) || '',
+          top: r.top, left: r.left, width: r.width || (el && el.width) || 0,
+          height: r.height || (el && el.height) || 0, bottom: r.bottom, right: r.right,
+          scrollTop: window.scrollY, dataset,
+        }];
         if (this._cb) this._cb(res[0]);
         cb && cb(res);
       },

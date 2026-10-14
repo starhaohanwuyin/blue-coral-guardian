@@ -83,10 +83,11 @@ function drawRing(canvas, ctx, percent, opts) {
 /**
  * 保存图片到相册（含权限引导）
  */
-function saveImageToAlbum(filePath) {
+function saveImageToAlbum(filePath, fileName) {
   return new Promise((resolve, reject) => {
     wx.saveImageToPhotosAlbum({
       filePath,
+      fileName,                      // 浏览器端直接下载时用它命名文件（小程序端忽略）
       success: resolve,
       fail(err) {
         if (err && (err.errMsg || '').indexOf('auth') !== -1) {

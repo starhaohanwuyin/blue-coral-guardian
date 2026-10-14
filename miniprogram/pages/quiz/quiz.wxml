@@ -28,6 +28,9 @@
       <view wx:if="{{answered}}" class="quiz-feedback {{isCorrect ? 'good' : 'bad'}}">
         {{isCorrect ? '🎉 回答正确！' : '❌ 答错了，正确答案是 ' + correctLetter + '：' + questions[index].options[questions[index].answer]}}
       </view>
+      <view wx:if="{{answered && questions[index].explain}}" class="quiz-explain">
+        💡 {{questions[index].explain}}
+      </view>
 
       <view
         wx:if="{{answered}}"

@@ -42,8 +42,10 @@ Page(pageI18n.wrap({
         destWidth: canvas.width,
         destHeight: canvas.height,
         success: (res) => {
-          util.saveImageToAlbum(res.tempFilePath).then(() => {
-            util.toast('证书已保存到相册 🎉')
+          const isWeb = typeof window !== 'undefined' && !!window.MP_RUNTIME
+          const fileName = (this.data.type === 'virtual' ? '虚拟认养证书' : '珊瑚认养证书') + '.png'
+          util.saveImageToAlbum(res.tempFilePath, fileName).then(() => {
+            util.toast(isWeb ? '证书已开始下载 🎉' : '证书已保存到相册 🎉')
           }).catch(() => {
             util.toast('保存已取消')
           }).then(() => {
