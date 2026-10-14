@@ -18,13 +18,14 @@ Page(pageI18n.wrap({
 
   onLoad(options) {
     const type = options && options.type === 'virtual' ? 'virtual' : 'entity'
+    this._id = (options && options.id) || ''
     this.setData({ type })
     wx.setNavigationBarTitle({ title: type === 'virtual' ? '虚拟认养证书' : '珊瑚认养证书' })
     wx.setNavigationBarColor({
       frontColor: '#ffffff',
       backgroundColor: type === 'virtual' ? '#062E33' : '#101A2E'
     })
-    api.getCert(type).then((cert) => {
+    api.getCert(type, this._id).then((cert) => {
       this.setData({ cert })
     }).catch(() => {
       util.toast('证书加载失败，请重试')

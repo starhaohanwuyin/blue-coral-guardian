@@ -7,7 +7,8 @@
 .cd-species-badge {
   position: absolute;
   left: 24rpx;
-  bottom: 24rpx;
+  top: 24rpx;            /* 品种名挪到图片左上角，避免被下方内容/渐变遮挡 */
+  z-index: 2;
   padding: 10rpx 24rpx;
   background: rgba(30, 136, 229, 0.9);
   color: #fff;

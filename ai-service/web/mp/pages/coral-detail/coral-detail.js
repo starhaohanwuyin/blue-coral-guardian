@@ -31,7 +31,9 @@ Page(pageI18n.wrap({
   },
 
   goCert() {
-    wx.navigateTo({ url: '/pages/cert/cert?type=entity' })
+    // 带上当前这株的 id：证书里的品种/编号/日期/照片都按它取，保证一一对应
+    const id = this.data.d && this.data.d.id
+    wx.navigateTo({ url: '/pages/cert/cert?type=entity' + (id ? '&id=' + id : '') })
   },
 
   onShareAppMessage() {

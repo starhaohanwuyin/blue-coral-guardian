@@ -883,7 +883,7 @@ api.createDonation = function (amount) {
 
 /* ================= 证书 ================= */
 
-api.getCert = function (type) {
+api.getCert = function (type, id) {
   if (config.USE_MOCK) {
     if (type === 'virtual') {
       const cert = Object.assign({}, mock.certVirtual)
@@ -894,9 +894,27 @@ api.getCert = function (type) {
       cert.fields.push({ label: '累计积分', value: '⭐ ' + state.points })
       return mock.delay(cert)
     }
-    return mock.delay(mock.certEntity)
+    /* 实体证书：按 id 取「这一株」的信息（品种 / 编号 / 日期 / 照片），
+       否则会出现「点 002 号证书里却写着柔枝鹿角珊瑚」这种对不上的情况 */
+    const cert = JSON.parse(JSON.stringify(mock.certEntity))
+    const list = mock.myCorals || []
+    const c = list.filter((x) => String(x.id) === String(id))[0] || list[0]
+    if (c) {
+      const home = ((mock.homeData && mock.homeData.corals) || [])
+        .filter((x) => x.name === c.name)[0]
+      cert.img = c.img
+      cert.fields = [
+        { label: '认养者', value: (cert.fields[0] && cert.fields[0].value) || '蓝珊守护者' },
+        { label: '珊瑚品种', value: c.species },
+        { label: '珊瑚编号', value: c.code },
+        { label: '认养日期', value: (home && home.date) || '' },
+        { label: 'GPS坐标', value: "N22°33' E114°37'" },
+        { label: '修复海域', value: '深圳大鹏湾' }
+      ].filter((f) => f.value)
+    }
+    return mock.delay(cert)
   }
-  return req.get(URL.cert, { type })
+  return req.get(URL.cert, { type, id })
 }
 
 /* ================= 其他模块 ================= */
