@@ -75,7 +75,7 @@ const homeData = {
      * 累计认养 = 演示样例数据（无后台真实统计，页面下方有脚注说明）；
      * 其余三项来自项目实测 / NOAA CRW 档案 */
     { num: '12,847', label: '累计认养(株)', demo: true },
-    { num: '50.12%', label: '大鹏湾修复区覆盖率' },
+    { num: '50.12%', label: '仙本那修复区覆盖率' },
     { num: '34', label: '模型可识别珊瑚属' },
     { num: '41', label: '热压力档案(年)' }
   ],
@@ -107,7 +107,7 @@ const homeData = {
       tags: ['3D打印', '贝壳基材料', '绿色低碳']
     }
   ],
-  teamIntro: '蓝珊科技汇聚了海洋生物、生态修复、AI技术等多领域专家，扎根海洋十余年，致力于珊瑚礁生态保护与修复。',
+  teamIntro: '珊瑚卫士汇聚了海洋生物、生态修复、AI技术等多领域专家，扎根海洋十余年，致力于珊瑚礁生态保护与修复。',
   team: [
     { name: '张教授', role: '首席科学家', desc: '珊瑚遗传育种方向，30年海洋生物研究经验', avatar: '/mp/assets/img/ba28e4d23e1b8e7f.jpg' },
     { name: '李博士', role: 'AI技术总监', desc: '计算机视觉专家，主导AI水下监测系统开发', avatar: '/mp/assets/img/81250769831a511e.jpg' },
@@ -122,7 +122,7 @@ const homeData = {
     { name: '陈老师', role: '科普教育总监', desc: '环境教育专业背景，累计策划执行科普讲座368场，受益人数25682人，设计"三阶九级"珊瑚礁科普课程体系。' },
     { name: '刘经理', role: '项目经理', desc: '统筹管理夏令营（累计43班次、1473名学生）和珊瑚认养项目运营，确保项目高质量交付。' }
   ],
-  videoCaption: '蓝珊科技 · 海洋珊瑚礁修复纪录',
+  videoCaption: '珊瑚卫士 · 海洋珊瑚礁修复纪录',
   /* 团队视频：文件在 ai-service/web/video/team.mp4（FastAPI 静态目录，网页版直接播）。
      小程序端请改成网络地址，或把视频放进 miniprogram/assets 后用 /assets/video/team.mp4 */
   videoUrl: '/video/team.mp4',
@@ -372,7 +372,7 @@ const knowledgeItems = [
     paragraphs: [
       '柔枝鹿角珊瑚（Acropora valida）是海洋最常见的造礁珊瑚之一，属于鹿角珊瑚科鹿角珊瑚属。',
       '它是一种分枝状珊瑚，分支细长且密集，形态优美。柔枝鹿角珊瑚是珊瑚礁生态系统的基石物种，为大量海洋生物提供栖息地和庇护所。',
-      '蓝珊科技将柔枝鹿角珊瑚作为珊瑚2号有性杂交抗逆选育技术的重要亲本之一，通过种间定向杂交，成功培育出具有更强环境抗逆性的珊瑚子代。',
+      '珊瑚卫士将柔枝鹿角珊瑚作为珊瑚2号有性杂交抗逆选育技术的重要亲本之一，通过种间定向杂交，成功培育出具有更强环境抗逆性的珊瑚子代。',
       '【关键数据】',
       '• 种间杂交受精率 ＞ 95%',
       '• 两年生长长度超 20 厘米',
@@ -389,7 +389,7 @@ const knowledgeItems = [
       '• 海洋酸化（pH值下降）',
       '• 赤潮等极端环境事件',
       '• 紫外线辐射增强',
-      '蓝珊科技的珊瑚2号杂交品系可耐受+1℃高温、pH↓1.18的酸化环境，为应对白化危机提供了技术解决方案。'
+      '珊瑚卫士的珊瑚2号杂交品系可耐受+1℃高温、pH↓1.18的酸化环境，为应对白化危机提供了技术解决方案。'
     ]
   },
   {
@@ -398,8 +398,8 @@ const knowledgeItems = [
     paragraphs: [
       '珊瑚礁被称为"海洋中的热带雨林"，虽然仅覆盖不到0.1%的海底面积，却养育着约25%的海洋物种。',
       '全球约有5亿人直接依赖珊瑚礁生态系统获取食物、生计和海岸保护。珊瑚礁作为天然防波堤，可吸收70%-90%的海浪冲击力。',
-      '【蓝珊科技的修复成果】',
-      '• 深圳大鹏湾活珊瑚覆盖率从30.84%提升至50.12%',
+      '【珊瑚卫士的修复成果】',
+      '• 仙本那活珊瑚覆盖率从30.84%提升至50.12%',
       '• 修复区鱼类物种数从23种增至57种',
       '• 每年固定约225吨碳酸钙，相当于封存约100吨CO₂',
       '• 台风"山竹"期间修复区后方沙滩侵蚀量减少62%'
@@ -409,7 +409,7 @@ const knowledgeItems = [
     id: 3, category: 'tech', title: 'AI智能监测技术', img: IMG.wxSurvey,
     summary: 'YOLOv9+SAM3赋能水下珊瑚识别，监测效率提升30-50倍',
     paragraphs: [
-      '蓝珊科技打造的多模态AI水下智能识别监测系统，是珊瑚管护技术的核心突破。',
+      '珊瑚卫士打造的多模态AI水下智能识别监测系统，是珊瑚管护技术的核心突破。',
       '【技术架构】',
       '• 硬件层：自主研发防抖光学成像模块 + 低照度补光系统，IP68级水下防护，可抗3级海流',
       '• 算法层：YOLOv9目标检测 + SAM3图像分割 + 大模型分析',
@@ -424,9 +424,9 @@ const knowledgeItems = [
   },
   {
     id: 4, category: 'tech', title: '珊瑚礁修复实践', img: IMG.field,
-    summary: '从种苗繁育到野外定植，蓝珊科技的全链条修复之路',
+    summary: '从种苗繁育到野外定植，珊瑚卫士的全链条修复之路',
     paragraphs: [
-      '蓝珊科技团队成立于2024年4月，拟于2026年12月正式注册成立广东蓝珊科技有限公司，深耕珊瑚礁生态修复领域。',
+      '珊瑚卫士团队成立于2024年4月，拟于2026年12月正式注册成立广东珊瑚卫士有限公司，深耕珊瑚礁生态修复领域。',
       '【全链条修复技术体系】',
       '1. 种质选育 → 珊瑚2号有性杂交抗逆选育',
       '2. 育苗载体 → 贝壳基免烧结3D打印导流式底托',
@@ -434,7 +434,7 @@ const knowledgeItems = [
       '4. 智能管护 → 多模态AI水下智能识别监测',
       '5. 科普赋能 → "珊小小"IP + 数字化互动科普平台',
       '【修复成效】',
-      '• 深圳大鹏湾修复区珊瑚覆盖率达50%以上',
+      '• 仙本那修复区珊瑚覆盖率达50%以上',
       '• 广东徐闻退化礁区覆盖率从不足5%恢复至22%',
       '• 野外成活率稳定在80%以上'
     ]
@@ -443,7 +443,7 @@ const knowledgeItems = [
     id: 5, category: 'camp', title: '珊瑚夏令营', img: IMG.camp,
     summary: '已开展43个班次，覆盖8个城市，1473名青少年参与',
     paragraphs: [
-      '蓝珊科技已开展青少年珊瑚夏令营43个班次，覆盖深圳、湛江、茂名、惠州、珠海、江门、钦州、三亚8个城市，参与学生1473人。',
+      '珊瑚卫士已开展青少年珊瑚夏令营43个班次，覆盖深圳、湛江、茂名、惠州、珠海、江门、钦州、三亚8个城市，参与学生1473人。',
       '【科普成果】',
       '• 累计开展珊瑚科普讲座368场',
       '• 小学156场、渔村83场、镇文化中心81场',
@@ -455,10 +455,10 @@ const knowledgeItems = [
   },
   {
     id: 6, category: 'species', title: '短小鹿角珊瑚', img: IMG.spAcroporaHumilis,
-    summary: '蓝珊科技珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温',
+    summary: '珊瑚卫士珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温',
     paragraphs: [
-      '短小鹿角珊瑚（Acropora humilis）是蓝珊科技珊瑚2号有性杂交抗逆选育技术的重要亲本之一。',
-      '短小鹿角珊瑚是海洋本土优势品种，具有较好的耐高温特性。蓝珊科技通过将其与柔枝鹿角珊瑚进行种间定向杂交，成功选育出LT（柔枝×短小）等优势杂交品系。',
+      '短小鹿角珊瑚（Acropora humilis）是珊瑚卫士珊瑚2号有性杂交抗逆选育技术的重要亲本之一。',
+      '短小鹿角珊瑚是海洋本土优势品种，具有较好的耐高温特性。珊瑚卫士通过将其与柔枝鹿角珊瑚进行种间定向杂交，成功选育出LT（柔枝×短小）等优势杂交品系。',
       '【杂交品系优势】',
       '• 可耐受+1℃高温环境',
       '• 可耐受pH↓1.18酸化环境',
@@ -470,7 +470,7 @@ const knowledgeItems = [
     id: 7, category: 'tech', title: '3D打印珊瑚底托', img: IMG.basePrint,
     summary: '贝壳基免烧结3D打印工艺，仿生纹理结构提升附着成功率',
     paragraphs: [
-      '贝壳基免烧结3D打印导流式底托是蓝珊科技自主研发的核心修复装备之一。',
+      '贝壳基免烧结3D打印导流式底托是珊瑚卫士自主研发的核心修复装备之一。',
       '以海洋固废贝壳粉为核心原料，采用免烧结DIW 3D打印工艺制备，兼具绿色低碳属性与功能优化双重优势。',
       '【技术特点】',
       '• 仿生纹理表面结构，提升珊瑚虫附着成功率',
@@ -619,7 +619,7 @@ const allSpecies = species.concat([
   { name: '玫瑰珊瑚', latin: 'Euphyllia spp.', desc: '花瓣状触手排列如玫瑰，色彩艳丽，是水族馆最受欢迎的品种', dist: '印度-太平洋', img: IMG.spEuphyllia },
   { name: '柱珊瑚', latin: 'Porites spp.', desc: '圆柱形直立生长，生长极缓慢但寿命可达数百年，是礁石骨架主要构建者', dist: '全球热带海域', img: IMG.spPorites },
   { name: '气泡珊瑚', latin: 'Plerogyra sinuosa', desc: '表面布满气泡状共生藻，白天膨胀如葡萄串，是珊瑚礁中最独特的景观', dist: '印度-太平洋', img: IMG.spPlerogyra },
-  { name: '短小鹿角珊瑚', latin: 'Acropora humilis', desc: '蓝珊科技珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温', dist: '海洋', img: IMG.spAcroporaHumilis }
+  { name: '短小鹿角珊瑚', latin: 'Acropora humilis', desc: '珊瑚卫士珊瑚2号杂交亲本之一，耐高温品种，可耐受+1℃高温', dist: '海洋', img: IMG.spAcroporaHumilis }
 ])
 
 /* ================= AI ================= */
@@ -687,16 +687,16 @@ const entityProducts = [
 const myCorals = [
   /* site / gps 写在数据里：认养证书按这一株取值，避免"三株共用一张写死的证书信息" */
   { id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', code: 'LS20260315', growth: 65, carbon: 82.3, img: IMG.spAcroporaValida,
-    site: '深圳大鹏湾 · 珊瑚修复区 A3', gps: "N22°33' E114°37'" },
+    site: '仙本那 · 珊瑚修复区 A3', gps: "N22°33' E114°37'" },
   { id: 2, name: '蓝珊-002号', species: '短小鹿角珊瑚', code: 'LS20260422', growth: 42, carbon: 58.7, img: IMG.spAcroporaHumilis,
-    site: '深圳大鹏湾 · 珊瑚修复区 A3', gps: "N22°33' E114°38'" },
+    site: '仙本那 · 珊瑚修复区 A3', gps: "N22°33' E114°38'" },
   { id: 3, name: '蓝珊-003号', species: '陀螺珊瑚', code: 'LS20260510', growth: 28, carbon: 45.5, img: IMG.spTurbinaria,
-    site: '深圳大鹏湾 · 珊瑚修复区 B1', gps: "N22°32' E114°37'" }
+    site: '仙本那 · 珊瑚修复区 B1', gps: "N22°32' E114°37'" }
 ]
 
 const coralDetail = {
   id: 1, name: '蓝珊-001号', species: '柔枝鹿角珊瑚', growth: 65, img: IMG.spAcroporaValida,
-  remain: 350, area: '深圳大鹏湾',
+  remain: 350, area: '仙本那',
   timeline: [
     { time: '2026-07-10', desc: 'AI监测：珊瑚生长良好，覆盖面积增长12%' },
     { time: '2026-06-15', desc: '季度巡检完成，珊瑚状态健康，白化风险低' },
@@ -713,7 +713,7 @@ const cameraData = {
     { icon: '💧', label: 'pH 8.12' },
     { icon: '🔆', label: '透明度 12m' }
   ],
-  location: '深圳大鹏湾 · 珊瑚修复区A3',
+  location: '仙本那 · 珊瑚修复区A3',
   coord: "N22°33' E114°37'"
 }
 
@@ -856,7 +856,7 @@ const campData = {
     { num: '1473', label: '名学生' },
     { num: '368', label: '场讲座' }
   ],
-  desc: '蓝珊科技已开展青少年珊瑚夏令营43个班次，覆盖深圳、湛江、茂名、惠州、珠海、江门、钦州、三亚8个城市，参与学生1473人。累计开展科普讲座368场，直接受益人数达25,682人。',
+  desc: '珊瑚卫士已开展青少年珊瑚夏令营43个班次，覆盖深圳、湛江、茂名、惠州、珠海、江门、钦州、三亚8个城市，参与学生1473人。累计开展科普讲座368场，直接受益人数达25,682人。',
   cities: ['深圳', '湛江', '茂名', '惠州', '珠海', '江门', '钦州', '三亚'],
   camps: [
     {
@@ -940,7 +940,7 @@ const growthData = {
 
 /* ================= 社区评论 ================= */
 const defaultComments = [
-  { id: 1, avatar: '🌊', name: '海洋之心', time: '2小时前', text: '今天去大鹏湾看到了蓝珊团队修复的珊瑚礁，真的太美了！覆盖率比三年前高了好多，鱼也多了起来。', mine: false },
+  { id: 1, avatar: '🌊', name: '海洋之心', time: '2小时前', text: '今天去仙本那看到了蓝珊团队修复的珊瑚礁，真的太美了！覆盖率比三年前高了好多，鱼也多了起来。', mine: false },
   { id: 2, avatar: '🐠', name: '潜水爱好者', time: '5小时前', text: '参加了珊瑚夏令营，第一次亲手种了珊瑚，那种感觉太奇妙了。孩子们也学到了很多海洋知识！', mine: false },
   { id: 3, avatar: '🪸', name: '蓝珊小助手', time: '昨天', text: '珊瑚2号LT品系最新监测数据：胁迫环境下成活率98%，两年生长长度超过20厘米！为科研团队点赞👍', mine: false },
   { id: 4, avatar: '🐡', name: '生态守护者', time: '2天前', text: '认养了第5株珊瑚啦～看着成长值一天天增加，就像看自己的孩子长大一样。保护珊瑚人人有责！', mine: false }
@@ -951,7 +951,7 @@ const certEntity = {
   type: 'entity',
   topLabel: 'CORAL ADOPTION CERTIFICATE',
   title: '珊瑚认养证书',
-  subTitle: '蓝珊科技 · 海洋珊瑚礁保护计划',
+  subTitle: '珊瑚卫士 · 海洋珊瑚礁保护计划',
   img: IMG.spAcroporaValida,      // 与下面「珊瑚品种：柔枝鹿角珊瑚」一致；本地同源图片，画布不会被跨域污染
   fields: [
     { label: '认养者', value: '蓝珊守护者' },
@@ -959,9 +959,9 @@ const certEntity = {
     { label: '珊瑚编号', value: 'LS-2026-0315-001' },
     { label: '认养日期', value: '2026年3月15日' },
     { label: 'GPS坐标', value: "N22°33' E114°37'" },
-    { label: '修复海域', value: '深圳大鹏湾' }
+    { label: '修复海域', value: '仙本那' }
   ],
-  org: '广东蓝珊科技有限公司',
+  org: '广东珊瑚卫士有限公司',
   issueDate: '签发日期：2026年3月15日'
 }
 
@@ -969,19 +969,19 @@ const certVirtual = {
   type: 'virtual',
   topLabel: 'VIRTUAL CORAL ADOPTION',
   title: '虚拟珊瑚认养证书',
-  subTitle: '蓝珊科技 · 数字珊瑚礁保护计划',
+  subTitle: '珊瑚卫士 · 数字珊瑚礁保护计划',
   fields: [
     { label: '认养者', value: '蓝珊守护者' },
     { label: '虚拟珊瑚', value: '鹿角珊珊' },
     { label: '成长状态', value: '🌱 成长中' },
     { label: '实物珊瑚', value: '成长100%可领取' }
   ],
-  org: '广东蓝珊科技有限公司'
+  org: '广东珊瑚卫士有限公司'
 }
 
 /* ================= 关于 ================= */
 const aboutInfo = {
-  intro: '蓝珊科技致力于海洋珊瑚礁生态保护与修复，通过"良种培育+智能监测+生态恢复+公众参与"四位一体模式，守护海洋珊瑚礁生态系统。',
+  intro: '珊瑚卫士致力于海洋珊瑚礁生态保护与修复，通过"良种培育+智能监测+生态恢复+公众参与"四位一体模式，守护海洋珊瑚礁生态系统。',
   rows: [
     { label: '依托单位', value: '广东海洋大学深圳研究院' },
     { label: '核心技术', value: '石珊瑚有性育种和无性育种繁育体系' },
@@ -1102,7 +1102,7 @@ const EN = {
       tags: ['3D printing', 'Shell-based material', 'Low carbon']
     }
   ],
-  videoCaption: 'LanShan · Restoring reefs in the ocean',
+  videoCaption: 'Coral Guardian · Restoring reefs in the ocean',
   videoUrl: '/video/team.mp4',
   /* 推文：key = 文章 id（对应 homeData.articles[].id） */
   articles: {
@@ -1150,7 +1150,7 @@ const EN = {
     3: ['AI underwater monitoring',
         'YOLOv9 + SAM3 recognition: 88–96% accuracy and 30–50× faster than manual survey'],
     4: ['Coral reef restoration in practice',
-        'From nursery rearing to out-planting: LanShan\u2019s full-chain restoration workflow'],
+    'From nursery rearing to out-planting: Coral Guardian\u2019s full-chain restoration workflow'],
     5: ['Coral summer camps',
         '43 sessions, 8 cities, 1,473 students — marine science education in the field'],
     6: ['Short staghorn coral (Acropora humilis)',
@@ -1309,7 +1309,7 @@ const EN = {
     'species-euphyllia-spp': { name: 'Hammer / anchor coral', desc: 'Petal-like tentacles arranged like a rose; brightly coloured and very popular in aquaria' },
     'species-porites-spp': { name: 'Porites / finger coral', desc: 'Grows as upright columns; extremely slow but can live for centuries, a main builder of reef framework' },
     'species-plerogyra-sinuosa': { name: 'Bubble coral', desc: 'Surface covered in bubble-like tissue over its zooxanthellae; inflates like a bunch of grapes by day' },
-    'species-acropora-humilis': { name: 'Short staghorn coral', desc: 'One of the parent colonies of LanShan Coral No.2; a heat-tolerant variety that withstands +1 °C' }
+    'species-acropora-humilis': { name: 'Short staghorn coral', desc: 'One of the parent colonies of Coral Guardian Coral No.2; a heat-tolerant variety that withstands +1 °C' }
   }
 }
 homeData.en = EN

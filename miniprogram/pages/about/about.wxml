@@ -3,7 +3,7 @@
   <!-- 品牌头 -->
   <view class="about-hero">
     <view class="about-logo">🪸</view>
-    <view class="about-name">{{t.p1nags7j}}</view>
+    <view class="about-name">{{t.pjvoy6r}}</view>
     <view class="about-slogan">{{t.ppp0fur}}</view>
   </view>
 
@@ -34,6 +34,6 @@
   <view class="about-footer">
     <view class="about-footer-row" bindtap="onCopyEmail">{{t.ptoc121}}{{email}}</view>
     <view class="about-footer-row">{{t.p16sjc6b}}{{version}}</view>
-    <view class="about-footer-row">{{t.pxz502s}}</view>
+    <view class="about-footer-row">{{t.p2zexnw}}</view>
   </view>
 </view>

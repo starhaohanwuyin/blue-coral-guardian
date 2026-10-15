@@ -34,7 +34,7 @@ Page(pageI18n.wrap({
 
   onShareAppMessage() {
     return {
-      title: '蓝珊科技 · 守护海洋珊瑚 🪸',
+      title: '珊瑚卫士 · 守护海洋珊瑚 🪸',
       path: '/pages/index/index'
     }
   }

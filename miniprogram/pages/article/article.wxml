@@ -15,7 +15,7 @@
       <block wx:if="{{a.paragraphs}}">
         <view class="art-paragraph" wx:for="{{a.paragraphs}}" wx:for-item="p" wx:key="*this">{{p}}</view>
       </block>
-      <view wx:else class="art-summary">{{t.p2jd4kr}}{{a.title}}{{t.p1ehfg46}}</view>
+      <view wx:else class="art-summary">{{t.p2jd4kr}}{{a.title}}{{t.p1s0j2g6}}</view>
 
       <!-- 延伸阅读链接 -->
       <view wx:if="{{a.url}}" class="art-link card">
@@ -26,7 +26,7 @@
         <view class="art-link-tip">{{linkTip}}</view>
       </view>
 
-      <view wx:else class="art-nolink">{{t.pfwtgbf}}</view>
+      <view wx:else class="art-nolink">{{t.pi6ps8n}}</view>
     </view>
   </view>
   <view wx:else class="loading-dots">{{t.pldc0z9}}</view>

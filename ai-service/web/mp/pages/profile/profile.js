@@ -37,7 +37,7 @@ Page(pageI18n.wrap({
         title: '更多',
         items: [
           { icon: '💬', bg: 'linear-gradient(135deg,rgba(156,39,176,0.12),rgba(186,104,200,0.08))', label: '联系客服', desc: '在线咨询 · 工作日 9:00-18:00', contact: true },
-          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '蓝珊科技 · 守护海洋珊瑚', url: '/pages/about/about' },
+          { icon: 'ℹ️', bg: 'linear-gradient(135deg,rgba(96,125,139,0.12),rgba(120,144,156,0.08))', label: '关于我们', desc: '珊瑚卫士 · 守护海洋珊瑚', url: '/pages/about/about' },
           { icon: '🧹', bg: 'linear-gradient(135deg,rgba(255,112,67,0.12),rgba(255,138,101,0.08))', label: '清除演示数据', desc: '清空本机积分 / 虚拟珊瑚 / 任务 / 评论记录', clear: true }
         ]
       }
