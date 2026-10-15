@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<iframe id="fr" src="/" style="width:100%;height:100vh;border:0"></iframe><pre id="out" style="display:none">…</pre>
+<script>
+ const q=new URLSearchParams(location.search);
+ const page=q.get('page'); const drive=q.get('drive')||'';
+ const fr=document.getElementById('fr');
+ const wait=ms=>new Promise(r=>setTimeout(r,ms));
+ setTimeout(async function(){
+   try{
+     const w=fr.contentWindow;
+     w.location.hash='#/'+page+(q.get('id')?('?id='+q.get('id')):'');
+     await wait(3000);
+     const R=w.MP_RUNTIME;
+     const inst=R.state.stack[R.state.stack.length-1].inst;
+     if (drive) { await (new Function('inst','w','return (async()=>{'+drive+'})()'))(inst,w); }
+     await wait(1500);
+     document.getElementById('out').textContent='OK '+(inst&&inst.route)+' data='+JSON.stringify(Object.keys(inst.data||{}).slice(0,14));
+   }catch(e){ document.getElementById('out').textContent='ERR '+e.message; }
+   document.title='READY';
+ }, 1200);
+</script></body></html>

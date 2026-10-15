@@ -21,6 +21,12 @@
 </sub></p>
 
 <p align="center">
+  <img src="docs/images/demo_quiz.png" width="240" alt="珊瑚知识问答：随机抽题、答后即时判定并给出解析">
+  <img src="docs/images/demo_cert.png" width="240" alt="认养证书：Canvas 绘制，可在浏览器里直接下载到本地">
+</p>
+<p align="center"><sub>珊瑚知识问答（29 题题库随机抽题，答后即时对错 + 解析）· 认养证书（实体/虚拟两种，浏览器里可直接下载到本地）</sub></p>
+
+<p align="center">
   <img src="docs/images/demo_admin.png" width="560" alt="珊瑚图鉴数据后台：225 条目 / 44 属 / 批量导入与单条维护">
 </p>
 <p align="center"><sub>珊瑚图鉴数据后台（<code>/admin.html</code>）：225 条目 / 44 属 / 19 科，支持 CSV 批量导入与单条维护，科普页数据可自行更新</sub></p>
