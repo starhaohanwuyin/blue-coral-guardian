@@ -139,28 +139,54 @@ app.add_middleware(CORSMiddleware,
 HEAVY_PATHS = {"/analyze", "/analyze_base64", "/count", "/priority",
                "/corals/import", "/corals/seed"}
 API_TOKEN = os.environ.get("CORAL_API_TOKEN", "").strip()
-RATE_LIMIT = int(os.environ.get("CORAL_RATE_LIMIT", "120"))   # 每 IP 每分钟
+RATE_LIMIT = int(os.environ.get("CORAL_RATE_LIMIT", "60"))    # 每 IP 每分钟（默认收紧到 60）
 _rate_hits = {}          # ip -> [时间戳]
+
+# 会真正改数据的接口（未配 Token 时**只允许本机**调用，见 _access_guard）
+MUTATING_PATHS = {"/corals/import", "/corals/seed"}
+
+
+def _is_loopback(host):
+    """127.0.0.1 / ::1 / localhost 视为本机。"""
+    h = (host or "").strip()
+    return h in ("127.0.0.1", "::1", "localhost", "::ffff:127.0.0.1")
 
 
 @app.middleware("http")
 async def _access_guard(request, call_next):
-    """访问防护：Token 校验 + 每 IP 限流（重接口 + 图鉴读写）。"""
+    """访问防护：Token 校验 + 每 IP 限流 + 写接口的本机限制。
+
+    默认安全策略（不设任何环境变量时）：
+    · 读接口（/health、/corals、/sample、网页资源）随便用 —— 演示不受影响；
+    · 写接口（/corals/import、/corals/seed）**只允许本机**，防止同网段的其他人
+      重置/改写图鉴库。要远程写，就设 CORAL_API_TOKEN 并带上 Token。
+    · /analyze 等推理接口保持可用（手机演示要用），但限流默认 60 次/分钟/IP。
+    """
     path = request.url.path
+    method = request.method.upper()
+    client = (request.client.host if request.client else "?") or "?"
     is_catalog = path.startswith("/corals")
     guarded = (path in HEAVY_PATHS) or is_catalog
     if guarded:
         # 图鉴的读接口给页面用，不强制 Token；写接口（上传/改/删）在配了 Token 时必须带
         need_token = (path in HEAVY_PATHS) or (
-            is_catalog and request.method.upper() in ("POST", "PUT", "DELETE", "PATCH"))
+            is_catalog and method in ("POST", "PUT", "DELETE", "PATCH"))
         if API_TOKEN and need_token:
             tok = request.headers.get("x-api-token") or request.query_params.get("token")
             if tok != API_TOKEN:
                 return JSONResponse(
                     {"success": False, "detail": "需要 API Token：请求头 X-API-Token 或参数 ?token="},
                     status_code=401)
+        # 未配置 Token 时：写接口只放行本机，避免同网段他人改写数据
+        if not API_TOKEN and method in ("POST", "PUT", "DELETE", "PATCH") and \
+                (path in MUTATING_PATHS or is_catalog) and not _is_loopback(client):
+            return JSONResponse(
+                {"success": False,
+                 "detail": "未配置 CORAL_API_TOKEN 时，写接口仅允许本机调用（防止同网段他人改写数据）。"
+                           "如需远程维护图鉴库：设置 CORAL_API_TOKEN 后带 X-API-Token 调用。"},
+                status_code=403)
         if RATE_LIMIT > 0:
-            ip = (request.client.host if request.client else "?") or "?"
+            ip = client
             now = time.time()
             hist = [t for t in _rate_hits.get(ip, []) if now - t < 60]
             if len(hist) >= RATE_LIMIT:
@@ -897,4 +923,26 @@ if __name__ == "__main__":
     args = ap.parse_args()
     print(f"设备: {DEVICE}")
     load_models(prefer_degradinv=args.use_degradinv)
+
+    # ---- 安全提示：把暴露面说清楚（默认安全策略见 _access_guard）----
+    exposed = args.host not in ("127.0.0.1", "localhost", "::1")
+    if exposed:
+        lines = [
+            "",
+            "=" * 72,
+            f"⚠️  正在监听 {args.host}:{args.port} —— **同网段的其它设备都能访问**。",
+            "    当前默认防护：",
+            "      · 读接口（/health、/corals、网页）随便用；",
+            "      · 写接口（/corals/import、/corals/seed）**只允许本机**；",
+            f"      · 推理接口（/analyze）可用，但限流 {RATE_LIMIT} 次/分钟/IP。",
+            "    若在不可信网络（校园网 / 公共 Wi-Fi / VPN 网段），建议二选一：",
+            "      A. 只给本机用：--host 127.0.0.1（然后按 docs/网页版部署指南.md 用隧道/反代对外）",
+            "      B. 加 Token：set CORAL_API_TOKEN=<随机串> 再启动（客户端带 X-API-Token 或 ?token=）",
+            "    端口自查：netstat -ano | findstr :%d" % args.port,
+            "=" * 72,
+        ]
+        print("\n".join(lines))
+    else:
+        print(f"已按安全模式监听 {args.host}:{args.port}（仅本机可访问）")
+
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
