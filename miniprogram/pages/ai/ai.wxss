@@ -636,6 +636,19 @@
   color: #90a4ae;
   flex-shrink: 0;
 }
+/* 标题竖排变体：副标题（点位 · 年份口径）独占一行。
+   ⚠️ 副标题是 flex-shrink:0，横排时它不让位，反而把标题压成三行
+   （实测 375px 宽下「环境数据 · 海表热压力」被拆成「环境数据 / · 海表热 / 压力」）。
+   改为竖排后：第一行标题、第二行副标题，标题保持一行。 */
+.res-title-stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.res-title-stack .res-sub {
+  flex-shrink: 1;
+  white-space: normal;
+  line-height: 1.4;
+}
 
 /* ===== 点位选择条（环境背景随点位变化）===== */
 .site-bar {

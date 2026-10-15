@@ -224,7 +224,8 @@
     <view class="result-action-btn" hover-class="btn-hover" bindtap="resetUpload">{{t.p18wbtf6}}</view>
 <!-- ============ 环境数据：海表热压力（NOAA CRW）============ -->
 <view class="res-card card" wx:if="{{view.climate}}">
-  <view class="res-title">
+  <!-- 标题竖排：点位 · 年份口径（副标题）很长，横排会把「环境数据 · 海表热压力」挤成三行 -->
+  <view class="res-title res-title-stack">
     <text>{{t.p1y7eu3s}}</text>
     <text class="res-sub">{{view.climate.siteName}} · {{view.climate.year}} {{t.ph63o1i}}</text>
   </view>
