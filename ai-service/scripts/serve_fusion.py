@@ -161,7 +161,14 @@ async def _access_guard(request, call_next):
     · 写接口（/corals/import、/corals/seed）**只允许本机**，防止同网段的其他人
       重置/改写图鉴库。要远程写，就设 CORAL_API_TOKEN 并带上 Token。
     · /analyze 等推理接口保持可用（手机演示要用），但限流默认 60 次/分钟/IP。
+
+    ⚠️ OPTIONS 预检必须放行：浏览器对带自定义头（X-API-Token）的**跨域**请求会先发
+    OPTIONS，而预检请求**不带自定义头** —— 若在这里按"无 Token"拒绝，浏览器就会直接把
+    真实请求拦掉（表现为 TypeError: Failed to fetch）。跨域 + Token 的部署形态踩过这个坑。
     """
+    # 预检放行，交给 CORSMiddleware 处理（预检本身不产生任何副作用）
+    if request.method.upper() == "OPTIONS":
+        return await call_next(request)
     path = request.url.path
     method = request.method.upper()
     client = (request.client.host if request.client else "?") or "?"

@@ -31,6 +31,22 @@ module.exports = {
    * 现在改为**运行时探测**：同源（网页版）→ 127.0.0.1（开发者工具）→ 局域网候选（真机）。
    * 换网络/换电脑后不用改代码：真机若都探测失败，可在小程序里覆盖（见 API_BASE_KEY）。
    */
+
+  /* 与评估服务共享的访问令牌（服务端设了 CORAL_API_TOKEN 时才需要）
+   *
+   * 什么时候要填：服务部署在**不可信网络**（校园网 / 公共 Wi-Fi / VPN 网段 / 公网）时，
+   * 服务端会要求写接口（图鉴维护）与推理接口带 Token；把同一个串填到这里，或运行时：
+   *     wx.setStorageSync('coral_api_token', '你的串')
+   * 优先级：storage > 本常量。留空 = 不带 Token，与"服务端未设 Token"的默认行为一致。
+   */
+  CORAL_API_TOKEN: (function pickApiToken() {
+    try {
+      var t = (typeof wx !== 'undefined' && wx.getStorageSync) ? wx.getStorageSync('coral_api_token') : ''
+      if (t) return String(t)
+    } catch (e) {}
+    return ''
+  })(),
+
   CORAL_API_CANDIDATES: (function buildCandidates() {
     var list = []
     // ① 用户手动覆盖（存 storage，优先级最高）

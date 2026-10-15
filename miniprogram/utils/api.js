@@ -468,6 +468,7 @@ function catalogRequest(path, qs) {
         url: base + path + (qs || ''),
         method: 'GET',
         timeout: 8000,
+        header: apiTokenHeader(),
         success(res) {
           let d = res.data
           if (typeof d === 'string') { try { d = JSON.parse(d) } catch (e) { d = null } }
@@ -584,6 +585,16 @@ function mockDetail(id) {
 let API_BASE = ''
 let API_PROBE = null
 
+/* 与服务端共享的访问令牌：服务端设了 CORAL_API_TOKEN 的部署，写接口与推理接口需要带上。
+ * 取值优先级：config.CORAL_API_TOKEN > storage('coral_api_token')；都没有就不带（默认部署行为）。*/
+function apiTokenHeader() {
+  try {
+    const t = (config.CORAL_API_TOKEN || '') ||
+      ((typeof wx !== 'undefined' && wx.getStorageSync) ? wx.getStorageSync('coral_api_token') : '')
+    return t ? { 'X-API-Token': String(t) } : {}
+  } catch (e) { return {} }
+}
+
 function probeHealth(base, timeout) {
   return new Promise((resolve) => {
     wx.request({
@@ -661,7 +672,7 @@ function realAnalyze(filePath, site, year) {
         name: 'file',
         formData: fd,
         timeout: config.AI_TIMEOUT || 30000,
-        header: {},
+        header: apiTokenHeader(),
         success(res) {
           pendingUploadTask = null
           if (res.statusCode !== 200) {

@@ -14,6 +14,17 @@ const GRID = { latMin: 4.025, latMax: 5.025, lonMin: 118.025, lonMax: 119.525 };
 const ALL_YEARS = Array.from({ length: 2025 - 1985 + 1 }, (_, i) => 2025 - i);
 
 const API = location.origin;      // 与服务同源（部署到别的域名时也一致）
+
+/* 访问令牌：服务端设了 CORAL_API_TOKEN 时，用 ?token=xxx 打开本页，或先
+   localStorage.setItem('coral_token','xxx')。留空则不带（默认部署行为）。 */
+const CORAL_TOKEN = (function () {
+  try {
+    const q = new URLSearchParams(location.search).get('token');
+    if (q) { localStorage.setItem('coral_token', q); return q; }
+    return localStorage.getItem('coral_token') || '';
+  } catch (e) { return ''; }
+})();
+const AUTH_HEADERS = CORAL_TOKEN ? { 'X-API-Token': CORAL_TOKEN } : {};
 const $ = (id) => document.getElementById(id);
 
 const state = {
@@ -198,7 +209,8 @@ async function analyze() {
   fd.append('lon', String(state.lon));
   fd.append('year', String(state.year));
   try {
-    const r = await fetch(API + '/analyze', { method: 'POST', body: fd });
+    const r = await fetch(API + '/analyze',
+        { method: 'POST', body: fd, headers: Object.assign({}, AUTH_HEADERS) });
     if (!r.ok) throw new Error('服务返回 HTTP ' + r.status);
     const res = await r.json();
     if (res.success === false) throw new Error(res.error || '评估失败');

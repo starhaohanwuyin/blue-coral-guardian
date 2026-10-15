@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<main id="page-host"></main><pre id="out">…</pre>
+<script>localStorage.setItem('coralweb:coral_api_base', JSON.stringify('http://127.0.0.1:8037'));localStorage.removeItem('coralweb:coral_api_token');
+ const LOG=[]; const _f=window.fetch;
+ window.fetch=function(u,o){ LOG.push('FETCH '+String(u).slice(0,60)+' h='+JSON.stringify((o&&o.headers)||{}));
+   return _f.apply(this,arguments).then(function(r){ LOG.push('  → '+r.status); return r; }); };
+</script>
+<script src="/mp.js"></script>
+<script>
+ const log=[];const say=s=>{log.push(String(s));document.getElementById('out').textContent=log.join('\n');};
+ setTimeout(async function(){
+   try{
+     const R=window.MP_RUNTIME; const api=R.require('/mp/utils/api.js');
+     const cfg=R.require('/mp/utils/config.js');
+     say('候选首项='+cfg.CORAL_API_CANDIDATES[0]);
+     say('token='+JSON.stringify(cfg.CORAL_API_TOKEN));
+     const base=await api.resolveApiBase();
+     say('服务='+base);
+     const blob=await fetch(base+'/sample?index=0&set=semporna').then(r=>r.blob());
+     const res=await api.recognize(URL.createObjectURL(blob), {lat:4.4,lon:118.8}, 2024);
+     say('isDemo='+res.isDemo+'  覆盖率='+(res.cover&&res.cover.alivePct));
+     say('demoReason='+String(res.demoReason||'').slice(0,90));
+     LOG.forEach(function(l){say(l);});
+     say(res.isDemo ? 'DEMO_FALLBACK' : 'REAL_RESULT');
+   }catch(e){say('ERROR '+e.message);}
+   say('DONE');
+ }, 1200);
+</script></body></html>

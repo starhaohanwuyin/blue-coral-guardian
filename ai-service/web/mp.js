@@ -219,7 +219,10 @@
       if (o.filePath) {
         fetch(o.filePath).then((r) => r.blob()).then((b) => {
           fd.append(o.name || 'file', b, 'upload.jpg');
-          return fetch(o.url, { method: 'POST', body: fd });
+          // ⚠️ 必须转发 o.header（微信会把调用方传的 header 带上去）：漏了这一步，
+          //    客户端设置的 X-API-Token 会被丢掉 —— 服务端一旦设了 CORAL_API_TOKEN，
+          //    识别请求必然 401，页面就静默降级成"演示数据"（实测踩过）。
+          return fetch(o.url, { method: 'POST', body: fd, headers: o.header || {} });
         }).then(async (r) => {
           // ⚠️ 微信的 wx.uploadFile 里 res.data 是**字符串**（不是对象）：
           //    小程序侧普遍写 JSON.parse(res.data)。这里必须同样返回文本，
