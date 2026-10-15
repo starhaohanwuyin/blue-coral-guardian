@@ -38,9 +38,15 @@ TEXT_EXT = {".py", ".js", ".json", ".md", ".txt", ".html", ".css", ".wxml", ".wx
 RESULTS = []          # (层, 名称, 是否通过, 说明)
 
 
-def chk(layer, name, cond, extra=""):
-    RESULTS.append((layer, name, bool(cond), extra))
-    mark = "✅" if cond else "❌"
+SERVICE_UP = None          # 由 audit_runtime() 设置；None=未知
+SKIP_HINT = "服务未启动 —— 先双击 启动演示.bat（或 cd ai-service/scripts && python serve_fusion.py）"
+
+
+def chk(layer, name, cond, extra="", skip=False):
+    """skip=True 表示"因前置条件不满足而跳过"，不计入失败。"""
+    status = None if skip else bool(cond)
+    RESULTS.append((layer, name, status, extra))
+    mark = "⏭️ " if skip else ("✅" if cond else "❌")
     print(f"  {mark} {name}" + (f"  {extra}" if extra else ""), flush=True)
     return bool(cond)
 
@@ -147,6 +153,7 @@ def audit_static():
 # ---------------------------------------------------------------- B 运行时
 def audit_runtime():
     print("\n【B】运行时与接口", flush=True)
+    global SERVICE_UP
     st, body, _ = http("/health")
     ok = st == 200
     if ok:
@@ -156,9 +163,11 @@ def audit_runtime():
             h = {}
     else:
         h = {}
-    chk("B", "服务在线（/health）", ok and h.get("status") == "ok",
-        f"device={h.get('device')} 类别={h.get('categories')} 双模型={bool(h.get('bleachAlt'))}" if ok else f"HTTP {st}")
-    if not ok:
+    SERVICE_UP = ok and h.get("status") == "ok"
+    chk("B", "服务在线（/health）", SERVICE_UP,
+        f"device={h.get('device')} 类别={h.get('categories')} 双模型={bool(h.get('bleachAlt'))}"
+        if SERVICE_UP else SKIP_HINT, skip=not SERVICE_UP)
+    if not SERVICE_UP:
         return
 
     # 路由枚举
@@ -208,6 +217,10 @@ def audit_pages(do_pages=True):
     tmpl = list((WEB / "mp" / "templates").glob("*.json"))
     chk("C", "产物页数与 app.json 一致", len(tmpl) == len(pages), f"{len(tmpl)} / {len(pages)}")
     if not do_pages:
+        return
+    if SERVICE_UP is False:
+        chk("C", "页面渲染（需服务在线）", False, SKIP_HINT, skip=True)
+        chk("C", "无图片占位/裂图", False, SKIP_HINT, skip=True)
         return
     exe = next((e for e in EXE_CANDIDATES if pathlib.Path(e).exists()), None)
     if not exe:
@@ -280,17 +293,24 @@ def audit_security():
         chk("D", "图片 EXIF 检查", False, "Pillow 不可用")
 
     # D3 写接口默认仅本机 + OPTIONS 预检放行
-    st, _, _ = http("/corals/seed", data=b"{}", method="POST",
-                    headers={"Content-Type": "application/json"})
-    chk("D", "本机可写（图鉴维护）", st in (200, 422), f"HTTP {st}")
-    st, _, h = http("/health", headers={"Origin": "https://evil.example.com"})
-    chk("D", "外部域名跨域不放行", not h.get("Access-Control-Allow-Origin"),
-        f"ACAO={h.get('Access-Control-Allow-Origin')}")
-    st, _, h = http("/analyze", data=b"", method="OPTIONS",
-                    headers={"Origin": "http://127.0.0.1:8099",
-                             "Access-Control-Request-Method": "POST",
-                             "Access-Control-Request-Headers": "x-api-token"})
-    chk("D", "跨域预检不被拦截（Token 部署前提）", st in (200, 204), f"OPTIONS /analyze → HTTP {st}")
+    if SERVICE_UP is False:
+        chk("D", "本机可写（图鉴维护）", False, SKIP_HINT, skip=True)
+    else:
+        st, _, _ = http("/corals/seed", data=b"{}", method="POST",
+                        headers={"Content-Type": "application/json"})
+        chk("D", "本机可写（图鉴维护）", st in (200, 422), f"HTTP {st}")
+    if SERVICE_UP is False:
+        chk("D", "外部域名跨域不放行", False, SKIP_HINT, skip=True)
+        chk("D", "跨域预检不被拦截（Token 部署前提）", False, SKIP_HINT, skip=True)
+    else:
+        _, _, h = http("/health", headers={"Origin": "https://evil.example.com"})
+        chk("D", "外部域名跨域不放行", not h.get("Access-Control-Allow-Origin"),
+            f"ACAO={h.get('Access-Control-Allow-Origin')}")
+        st, _, _ = http("/analyze", data=b"", method="OPTIONS",
+                        headers={"Origin": "http://127.0.0.1:8099",
+                                 "Access-Control-Request-Method": "POST",
+                                 "Access-Control-Request-Headers": "x-api-token"})
+        chk("D", "跨域预检不被拦截（Token 部署前提）", st in (200, 204), f"OPTIONS /analyze → HTTP {st}")
 
     # D4 客户端 Token 闭环（静态检查：客户端确实会带 Token）
     apijs = (MP / "utils" / "api.js").read_text(encoding="utf-8")
@@ -338,18 +358,22 @@ def main():
     print("\n" + "=" * 74)
     layers = {}
     for layer, name, ok, extra in RESULTS:
-        a, b = layers.get(layer, (0, 0))
-        layers[layer] = (a + (1 if ok else 0), b + (0 if ok else 1))
+        a, b, s = layers.get(layer, (0, 0, 0))
+        layers[layer] = (a + (1 if ok else 0), b + (0 if ok is False else 0),
+                         s + (1 if ok is None else 0))
     for layer in sorted(layers):
-        a, b = layers[layer]
-        print(f"  {layer}：✅ {a} / ❌ {b}")
+        a, b, s = layers[layer]
+        print(f"  {layer}：✅ {a} / ❌ {b}" + (f" / ⏭️ {s}（跳过）" if s else ""))
     total_a = sum(v[0] for v in layers.values())
     total_b = sum(v[1] for v in layers.values())
-    print(f"  合计：✅ {total_a} / ❌ {total_b}")
+    total_s = sum(v[2] for v in layers.values())
+    print(f"  合计：✅ {total_a} / ❌ {total_b}" + (f" / ⏭️ {total_s}（跳过）" if total_s else ""))
+    if total_s:
+        print(f"  ⏭️ 跳过原因：{SKIP_HINT}")
     if total_b:
         print("\n  失败项：")
         for layer, name, ok, extra in RESULTS:
-            if not ok:
+            if ok is False:
                 print(f"    ❌ [{layer}] {name}  {extra}")
     print("=" * 74)
     return 1 if total_b else 0

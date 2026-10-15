@@ -71,6 +71,24 @@
 
 ---
 
+### 算法层图表（全部可复核，不重训即可复现）
+
+> 生成方式：`python ai-service/tools/make_algo_figures.py`
+> （读取 `ai-service/reports/*.json` 的既有评测结果作图，每张图右下角标注数据来源文件）
+
+| 图 | 说明 |
+|---|---|
+| <img src="docs/images/algo/algo_arch.png" width="760"> | **算法流水线**：一张照片 → 分割 / 属识别 / 白化共识 / 个体计数 → 输出 → 与 41 年 NOAA 热压力耦合 → 可解释研判 + 中英报告 |
+| <img src="docs/images/algo/algo_degradation.png" width="620"> | **使用边界**：5 级降质 × 180 张实拍；8m 时活珊瑚仅 **−2.2pt**（总覆盖 −3.1pt），**15m 起完全失效**（预测为 0）|
+| <img src="docs/images/algo/algo_calibration.png" width="700"> | **可靠性（校准）曲线**：属模型 ECE **0.029**、白化模型 ECE 0.011 —— 置信度可信，才敢让高置信样本自动通过 |
+| <img src="docs/images/algo/algo_rejection.png" width="580"> | **拒识-自动化权衡**：全自动 86.4% → 把不确定的转人工后，自动部分升到 96%+（这就是"分歧提示人工复核"的依据）|
+| <img src="docs/images/algo/algo_cross_domain.png" width="620"> | **跨海域对比**（图注标明指标口径）：太平洋岛屿 白化类 F1 **0.838**（二分类）/ Koh Tao 宏 F1 0.555 / Arafura 宏 F1 0.398 |
+| <img src="docs/images/algo/algo_confusion.png" width="760"> | **错误归因**：最常混淆的属对 + 每类错误率（如 Cycloseris 80%）—— 直接解释了为什么需要人工复核环节 |
+
+另有一批**原始实验图**（降质 5 级实拍、水下增强前后、分割输出、YOLOv9 个体计数）在
+`ai-service/reports/`：`degrade_demo_L0_clean.jpg` … `L4_harsh.jpg`、`enhance_demo.jpg`、
+`seg_demo.png`、`seg_real.png`、`yolo_coral_count_demo.png`。
+
 ## 三、安全与隐私（已实测）
 
 | 项 | 现状（均已实测）|
