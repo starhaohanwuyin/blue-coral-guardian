@@ -5,11 +5,19 @@
     <view class="as-intro-text">{{t.intro}}</view>
   </view>
 
+  <!-- 图鉴服务未连接时明确提示，避免用户误以为“照片全丢了” -->
+  <view wx:if="{{!fromDb}}" class="as-offline card">
+    <view class="as-offline-title">当前为离线演示图鉴 · {{all.length}} 种</view>
+    <view class="as-offline-desc">启动本地服务后可查看完整 {{fullTotal}} 种图鉴并加载实拍照片。电脑上双击项目根目录的「启动演示.bat」，等 8000 端口就绪后再点重试。</view>
+    <view class="as-offline-btn" hover-class="btn-hover" bindtap="onRetry">{{loading ? '连接中…' : '重新连接'}}</view>
+  </view>
+
   <view class="as-section-title">{{t.hot}}</view>
   <view class="as-grid">
-    <view class="as-card card" wx:for="{{hot}}" wx:key="name" hover-class="card-hover" bindtap="onSpecies" data-id="{{item.id}}">
+    <view class="as-card card" wx:for="{{hot}}" wx:key="id" hover-class="card-hover" bindtap="onSpecies" data-id="{{item.id}}">
       <view class="as-imgwrap">
-        <image class="as-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="as-img-ph">🪸</view>
+        <image wx:if="{{item.img}}" class="as-img" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onImgError" data-id="{{item.id}}" />
         <view class="as-hot-badge">HOT</view>
       </view>
       <view class="as-body">
@@ -23,8 +31,11 @@
 
   <view class="as-section-title">{{t.all}} · {{all.length}}</view>
   <view class="as-list">
-    <view class="as-row card" wx:for="{{all}}" wx:key="name" hover-class="card-hover" bindtap="onSpecies" data-id="{{item.id}}">
-      <image class="as-row-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+    <view class="as-row card" wx:for="{{all}}" wx:key="id" hover-class="card-hover" bindtap="onSpecies" data-id="{{item.id}}">
+      <view class="as-row-imgwrap">
+        <view class="as-img-ph">🪸</view>
+        <image wx:if="{{item.img}}" class="as-row-img" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onImgError" data-id="{{item.id}}" />
+      </view>
       <view class="as-row-body">
         <view class="as-row-name">{{item.name}} <text class="as-row-latin">{{item.latin}}</text></view>
         <view class="as-row-desc">{{item.desc}}</view>

@@ -20,9 +20,10 @@
   <!-- 珊瑚种类横滑 -->
   <view class="section-title">{{t.speciesTitle}} <text class="more" bindtap="goAllSpecies">{{t.viewAll}}</text></view>
   <scroll-view class="coral-species-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-    <view class="coral-species-card" wx:for="{{species}}" wx:key="name" hover-class="card-hover" bindtap="goSpecies" data-id="{{item.id}}">
+    <view class="coral-species-card" wx:for="{{species}}" wx:key="id" hover-class="card-hover" bindtap="goSpecies" data-id="{{item.id}}">
       <view class="coral-species-imgwrap">
-        <image class="coral-species-img" src="{{item.img}}" mode="aspectFill" lazy-load />
+        <view class="coral-species-img-ph">🪸</view>
+        <image wx:if="{{item.img}}" class="coral-species-img" src="{{item.img}}" mode="aspectFill" lazy-load binderror="onSpeciesImgError" data-id="{{item.id}}" />
       </view>
       <view class="coral-species-body">
         <view class="coral-species-name">{{item.name}}</view>

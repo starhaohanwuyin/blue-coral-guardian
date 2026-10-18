@@ -325,8 +325,73 @@
 /* ================= 导出画布（屏幕外） ================= */
 .cert-canvas {
   position: fixed;
-  left: -9999px;
+  left: 0;
   top: 0;
-  width: 375px;
-  height: 500px;
+  /* 保持画布在渲染树内（完全移出屏幕时，部分基础库会导不出内容） */
+  opacity: 0.01;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ================= 桌面端证书预览 / 另存 ================= */
+.cert-preview-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  background: rgba(4, 16, 28, 0.88);
+}
+.cert-preview-panel {
+  width: 100%;
+  max-height: 92vh;
+  padding: 28rpx;
+  border-radius: 28rpx;
+  background: #fff;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+.cert-preview-title {
+  margin-bottom: 20rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1A2138;
+}
+.cert-preview-img {
+  display: block;
+  width: 100%;
+  border-radius: 16rpx;
+  background: #f4f7fb;
+}
+.cert-preview-tip {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: #6B788C;
+}
+.cert-preview-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+.cert-preview-btn {
+  flex: 1;
+  padding: 18rpx 0;
+  text-align: center;
+  border-radius: 18rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1E88E5;
+  background: rgba(30, 136, 229, 0.1);
+}
+.cert-preview-btn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, #1E88E5, #00BCD4);
 }

@@ -68,6 +68,13 @@ Page(pageI18n.wrap({
     this.render()
   },
 
+  onSpeciesImgError(e) {
+    const id = e.currentTarget.dataset.id
+    const next = (this.data.species || []).map((x) => String(x.id) === String(id)
+      ? Object.assign({}, x, { img: '' }) : x)
+    this.setData({ species: next })
+  },
+
   goAllSpecies() {
     wx.navigateTo({ url: '/pages/all-species/all-species' })
   },

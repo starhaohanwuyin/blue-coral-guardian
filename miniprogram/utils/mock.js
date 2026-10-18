@@ -6,14 +6,17 @@
  */
 
 const IMG = {
-  coral1: 'https://s.coze.cn/image/fAxnZEmbNRA/',
-  coral2: 'https://s.coze.cn/image/hYssppc_-Qg/',
-  coral3: 'https://s.coze.cn/image/DuIWc5CXDwg/',
-  tech1: 'https://s.coze.cn/image/nQxFroDmA3o/',
-  tech2: 'https://s.coze.cn/image/qnp7mQdS-TI/',
-  tech3: 'https://s.coze.cn/image/Ozu5AlLQeaM/',
-  tech4: 'https://s.coze.cn/image/sk2faUzel3o/',
-  tech5: 'https://s.coze.cn/image/Iv_WEll27NE/',
+  /* 这组图原先指向 coze 外链。网页版早已本地化，小程序端若继续用外链，
+   * 开发者工具里容易空白（外链失效 / 真机未配置 download 域名）。
+   * 这里全部换成包内实拍图，保证离线预览也不会出现“照片消失”。 */
+  coral1: '/assets/img/sp_acropora_valida.jpg',
+  coral2: '/assets/img/sp_sinularia.jpg',
+  coral3: '/assets/img/sp_acropora_hyacinthus.jpg',
+  tech1: '/assets/img/field.jpg',
+  tech2: '/assets/img/coral_no2.jpg',
+  tech3: '/assets/img/sp_acropora_humilis.jpg',
+  tech4: '/assets/img/semporna.jpg',
+  tech5: '/assets/img/monsoon.jpg',
   /* 夏令营与 3D 打印底托：换成实拍图（同时放在小程序包内 assets/img/ 与网页 web/assets/img/，
      引用 /assets/img/xxx.jpg 两端都能解析） */
   camp: '/assets/img/camp_summer.jpg',
@@ -37,19 +40,21 @@ const IMG = {
   spTurbinaria: '/assets/img/sp_turbinaria.jpg',                 // 陀螺珊瑚 Turbinaria
   spMillepora: '/assets/img/sp_millepora.jpg',                   // 火珊瑚 Millepora
   camp2: '/assets/img/camp2.jpg',                                // 夏令营第二张实拍
-  wxRestore: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/FKNMS_-_coral_nursery_%2827367671414%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:FKNMS_-_coral_nursery_%2827367671414%29.jpg  [Public domain]
-  wxEdu: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Biscayne_National_Park_V-snorkel_entry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Biscayne_National_Park_V-snorkel_entry.jpg  [Public domain]
-  wxSurvey: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:NOAA_diver_Structure-from-Motion_%28SfM%29_survey_Swains_Island_2023.png  [Public domain]
-  wxReef: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Baker_Island_reef_Anthias_2023.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Baker_Island_reef_Anthias_2023.png  [Public domain]
-  wxSst: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Satellite_sensor_derived_sea_surface_temperature_anomalies_%282268-609%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Satellite_sensor_derived_sea_surface_temperature_anomalies_%282268-609%29.jpg  [Public domain]
-  wxBleach: 'https://upload.wikimedia.org/wikipedia/commons/5/54/Bleached_Staghorn_Coral.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Bleached_Staghorn_Coral.jpg  [CC BY-SA 2.0]
-  wxBleach2: 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Coral_bleaching.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Coral_bleaching.png  [Public domain]
-  wxTransect: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Divers_install_monitoring_instruments_on_coral_reef.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Divers_install_monitoring_instruments_on_coral_reef.jpg  [Public domain]
-  wxReefColor: 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Colorful_Coral_Bleaching.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Colorful_Coral_Bleaching.jpg  [CC BY-SA 4.0]
-  wxOcean: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Aegean_Sea_%28MODIS_2018-07-17%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Aegean_Sea_%28MODIS_2018-07-17%29.jpg  [Public domain]
-  wxCoast: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Maldives_island_beach_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Maldives_island_beach_1.jpg  [Public domain]
-  wxGbr: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Aerial_View_of_Great_Barrier_Reef%2C_Queensland_%28Ank_Kumar%29_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:Aerial_View_of_Great_Barrier_Reef%2C_Queensland_%28Ank_Kumar%29_02.jpg  [CC BY-SA 4.0]
-  wxBuoy: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/D%C3%A9ploiement_de_bou%C3%A9es_PIRATA_et_d%27un_profileur_Argo_APEX_%28Ifremer_00651-76357%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original',   // File:D%C3%A9ploiement_de_bou%C3%A9es_PIRATA_et_d%27un_profileur_Argo_APEX_%28Ifremer_00651-76357%29.jpg  [CC BY 4.0]
+  /* 资讯/科普配图：已压缩成 460px 宽的小图放进 miniprogram/assets/img，
+   * 与网页版的本地化策略一致；不再依赖 Wikimedia / Unsplash 外链。 */
+  wxRestore: '/assets/img/tweet_restore.jpg',       // FKNMS coral nursery [Public domain]
+  wxEdu: '/assets/img/tweet_edu.jpg',               // Biscayne National Park [Public domain]
+  wxSurvey: '/assets/img/tweet_survey.jpg',         // NOAA SfM survey [Public domain]
+  wxReef: '/assets/img/tweet_reef2.jpg',            // Baker Island reef [Public domain]
+  wxSst: '/assets/img/tweet_sst.jpg',               // NOAA SST anomalies [Public domain]
+  wxBleach: '/assets/img/tweet_bleach1.jpg',        // Bleached Staghorn Coral [CC BY-SA 2.0]
+  wxBleach2: '/assets/img/tweet_bleach4.jpg',       // Coral bleaching [Public domain]
+  wxTransect: '/assets/img/tweet_transect.jpg',     // Divers install instruments [Public domain]
+  wxReefColor: '/assets/img/tweet_bleach3.jpg',     // Colorful Coral Bleaching [CC BY-SA 4.0]
+  wxOcean: '/assets/img/tweet_ocean.jpg',           // Aegean Sea MODIS [Public domain]
+  wxCoast: '/assets/img/tweet_coast.jpg',           // Maldives beach [Public domain]
+  wxGbr: '/assets/img/tweet_gbr.jpg',               // Great Barrier Reef [CC BY-SA 4.0]
+  wxBuoy: '/assets/img/tweet_buoy.jpg',             // PIRATA buoys [CC BY 4.0]
 }
 
 /* ================= 首页 ================= */

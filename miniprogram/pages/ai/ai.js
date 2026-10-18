@@ -492,20 +492,43 @@ Page(pageI18n.wrap({
   /* 服务状态自检：评估失败时帮用户定位问题 */
   checkService() {
     util.toast('正在检查评估服务...')
-    wx.request({
-      url: require('../../utils/config.js').CORAL_API + '/health',
-      timeout: 8000,
+    api.resolveApiBase().then((base) => {
+      if (!base) {
+        this.offerApiSetup('未发现可用的评估服务地址。')
+        return
+      }
+      wx.request({
+        url: base + '/health',
+        timeout: 8000,
+        success: (r) => {
+          if (r.statusCode === 200 && r.data && r.data.status === 'ok') {
+            const d = r.data
+            const seg = d.segmentation === 'loaded' ? '分割已加载' : '分割缺失'
+            const sp = d.species === 'loaded' ? '属分类已加载' : '属分类未训练'
+            util.toast('服务正常 · ' + seg + ' · ' + sp, 'success')
+          } else {
+            this.offerApiSetup('服务返回异常（HTTP ' + (r.statusCode || '?') + '）。')
+          }
+        },
+        fail: () => this.offerApiSetup('无法连接 ' + base + '。')
+      })
+    }).catch(() => this.offerApiSetup('评估服务探测失败。'))
+  },
+
+  offerApiSetup(reason) {
+    wx.showModal({
+      title: '评估服务未连接',
+      content: reason + '\n可以填写电脑局域网地址或公网 HTTPS 地址；'
+        + '正式体验版建议在 config.js 配置 PUBLIC_API_BASE。',
+      confirmText: '设置地址',
+      cancelText: '稍后再试',
       success: (r) => {
-        if (r.statusCode === 200 && r.data && r.data.status === 'ok') {
-          const d = r.data
-          const seg = d.segmentation === 'loaded' ? '分割已加载' : '分割缺失'
-          const sp = d.species === 'loaded' ? '属分类已加载' : '属分类未训练'
-          util.toast('服务正常 · ' + seg + ' · ' + sp, 'success')
-        } else {
-          util.toast('服务返回异常，请检查 serve_fusion.py')
+        if (r.confirm) {
+          util.configureApiBase((ok) => {
+            if (ok && ok.ok) this.onRetry()
+          })
         }
-      },
-      fail: () => util.toast('服务未启动：请运行 python serve_fusion.py')
+      }
     })
   },
 

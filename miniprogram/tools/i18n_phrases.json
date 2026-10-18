@@ -76,7 +76,7 @@
   "建议避开": "Suggested avoidance",
   "开始识别": "Start scan",
   "恢复潜力": "Recovery potential",
-  "提示：评估服务需先启动 —— cd coral_ml/scripts，然后 python serve_fusion.py": "Tip: start the evaluation service first — cd coral_ml/scripts, then python serve_fusion.py",
+  "提示：评估服务需先启动 —— 手机真机请填写可访问的服务地址；正式版需公网 HTTPS 后端": "Tip: on a phone, enter a reachable service address; release builds need a public HTTPS backend",
   "支持 JPG / PNG · 建议拍摄深度 ≤10m 或使用补光灯": "JPG / PNG supported · shoot at ≤10 m depth or use a fill light",
   "未连接到评估服务，以下为内置演示结果，不代表真实分析。": "Not connected to the evaluation service — the results below are built-in demo data, not a real analysis.",
   "本研判为规则型决策支持参考，非经验证的预测模型，不替代专业评估": "This assessment is rule-based decision support, not a validated predictive model, and does not replace a professional survey",

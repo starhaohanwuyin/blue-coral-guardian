@@ -129,6 +129,10 @@ python serve_fusion.py --host 0.0.0.0 --port 8000
 只想用识别功能可开 **http://127.0.0.1:8000/lite.html**。
 手机（同一 Wi-Fi）访问 `http://<电脑局域网IP>:8000/`。
 
+> **微信小程序真机 / 上线**：手机不能访问电脑的 `127.0.0.1`，
+> 需要公网 HTTPS 服务，并在公众平台登记域名。完整清单见
+> [`miniprogram/docs/真机与上线部署.md`](miniprogram/docs/真机与上线部署.md)。
+
 **Windows 一键版**：双击根目录的 `启动演示.bat`（自动检查权重 → 启动服务 → 打开浏览器）。
 
 **演示前自检**：`python ai-service/tools/selfcheck.py`（24 项：环境/权重/数据/网页资源/服务状态）

@@ -117,22 +117,29 @@
   <!-- ===== 团队视频 ===== -->
   <view class="section-title">{{t.video}}</view>
   <view class="team-video-section card">
-    <!-- 网页版直接内嵌播放器；小程序端暂用封面 + 提示（本地视频需放进包内或用网络地址） -->
+    <!-- 先用与网页版同一张封面；点击后再渲染原生 <video>，避免黑色初始画面盖住封面 -->
     <video
-      wx:if="{{canPlayVideo}}"
+      wx:if="{{videoStarted && videoUrl && !videoError}}"
       class="video-player"
       src="{{videoUrl}}"
-      poster="{{videoCover}}"
+      poster="{{videoPoster || videoCover}}"
+      autoplay="{{true}}"
       controls="{{true}}"
       preload="metadata"
       playsinline="{{true}}"
+      object-fit="contain"
+      show-fullscreen-btn="{{true}}"
+      show-play-btn="{{true}}"
+      enable-progress-gesture="{{true}}"
+      binderror="onVideoError"
+      bindloadedmetadata="onVideoReady"
     ></video>
     <view wx:else class="video-wrapper" hover-class="card-hover" bindtap="onVideoTap">
-      <image class="video-cover" src="{{videoCover}}" mode="aspectFill" lazy-load />
+      <image class="video-cover" src="{{videoCover}}" mode="aspectFill" />
       <view class="play-icon">
         <view class="play-triangle"></view>
       </view>
-      <view class="video-hint">{{t.videoHint}}</view>
+      <view class="video-hint">{{videoError ? '视频暂不可用 · 点击查看解决方法' : t.videoHint}}</view>
     </view>
     <view class="video-caption">{{videoCaption}}</view>
   </view>

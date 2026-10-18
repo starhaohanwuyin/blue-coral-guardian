@@ -76,7 +76,10 @@ Page(pageI18n.wrap({
   },
 
   onSetting() {
-    util.toast('设置功能开发中')
+    util.configureApiBase(() => {
+      // 地址变化后刷新一次用户资料，顺便确认基础接口仍可用
+      this.refreshUser()
+    })
   },
 
   onMessage() {

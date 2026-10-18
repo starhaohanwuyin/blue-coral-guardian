@@ -1,0 +1,18 @@
+services:
+  coral-api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      # 只让本机 Nginx 访问；不要直接暴露到公网
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ../weights:/app/weights:ro
+      - ../data:/app/data
+      - ../reports:/app/reports:ro
+    environment:
+      CORAL_API_TOKEN: "${CORAL_API_TOKEN:-}"
+      CORAL_RATE_LIMIT: "60"
+      # 如果还要用网页版，把网页来源写进来，例如：
+      # CORAL_CORS_ORIGINS: "https://www.example.com"
+    restart: unless-stopped

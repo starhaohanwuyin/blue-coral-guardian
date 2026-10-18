@@ -64,7 +64,7 @@
   "lazyCodeLoading": "requiredComponents",
   "permission": {
     "scope.userLocation": {
-      "desc": "用于按你所在海域查询海表热压力与投放建议（当前仅仙本那及周边有数据）"
+      "desc": "查询海表热压力与投放建议（当前仅仙本那及周边有数据）"
     }
   },
   "requiredPrivateInfos": [

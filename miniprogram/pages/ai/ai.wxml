@@ -84,7 +84,7 @@
       <view class="btn-upload-new" hover-class="btn-hover" bindtap="checkService">{{t.p12ugoi0}}</view>
       <view class="btn-start" hover-class="btn-hover" bindtap="onRetry">{{t.plswd2v}}</view>
     </view>
-    <view class="err-hint">{{t.p3e8y8c}}</view>
+    <view class="err-hint">手机真机请确认已填写可访问的服务地址（我的 → 右上角 ⚙）；正式体验版需部署公网 HTTPS 后端。</view>
   </view>
 
   <!-- ⑤ 结果 -->
@@ -94,13 +94,10 @@
       <view wx:else class="img-fallback">{{t.p1lprgk1}}</view>
     </view>
 
-    <!-- 演示数据标记（服务不可用时的降级，不冒充真实结果） -->
+    <!-- 演示数据标记：服务不可用时自动进入结果页，不弹连接失败 -->
     <view wx:if="{{view.isDemo}}" class="quality-alert warn">
-      <view class="qa-title">{{t.p11lwwd7}}</view>
-      <view class="qa-desc">{{t.p10w295t}}</view>
-      <!-- 显示具体失败原因（含服务地址与排查提示），便于自行定位问题 -->
-      <view wx:if="{{view.demoReason}}" class="qa-desc">{{t.p6rdxf4}}{{view.demoReason}}</view>
-      <view class="qa-meta">{{t.p1ygtbj}}</view>
+      <view class="qa-title">演示数据</view>
+      <view class="qa-desc">当前展示内置示例结果，用于功能体验；重新连接评估服务后会显示真实识别。</view>
     </view>
 
     <!-- 拍摄条件自检：超出适用边界时置顶警示 -->

@@ -1,7 +1,7 @@
 {
   "description": "蓝珊 - 珊瑚认养与科普平台（微信小程序端，与官网共用同一套后端API）",
   "compileType": "miniprogram",
-  "appid": "wx66d836958c72f0da",
+  "appid": "wxb634ee2250ec5b97",
   "projectname": "blueshelf-miniprogram",
   "libVersion": "3.17.2",
   "setting": {
@@ -39,11 +39,30 @@
   },
   "packOptions": {
     "ignore": [
-      { "type": "folder", "value": ".git" },
-      { "type": "folder", "value": "docs" },
-      { "type": "file", "value": "README.md" },
-      { "type": "file", "value": ".gitignore" },
-      { "type": "file", "value": ".gitattributes" }
+      {
+        "value": ".git",
+        "type": "folder"
+      },
+      {
+        "value": "docs",
+        "type": "folder"
+      },
+      {
+        "value": "tools",
+        "type": "folder"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": ".gitignore",
+        "type": "file"
+      },
+      {
+        "value": ".gitattributes",
+        "type": "file"
+      }
     ],
     "include": []
   },

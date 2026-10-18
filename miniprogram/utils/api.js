@@ -389,11 +389,34 @@ let DB_BASE = ''          // 图鉴服务地址（拿到后把相对图片路径
 function absImageUrl(u) {
   if (!u) return ''
   if (/^(https?:)?\/\//.test(u) || String(u).indexOf('data:') === 0) return u
-  return (DB_BASE || '') + u
+  // /mp/assets/... 的实拍图由评估服务静态托管。开发者工具第一次进图鉴时
+  // DB_BASE 可能还没探测完；这里用配置里的首个候选兜底，避免把网络图误当成本地包内图。
+  const base = DB_BASE || config.CORAL_API || ''
+  return base + u
+}
+
+/* 图鉴前 12 条“精选”在旧数据里只有 imgKey，没有 imgUrl。
+ * 网页版已把 imgKey 换成本地实拍图；小程序端不能继续依赖 coze 外链
+ * （真机未配置 download 合法域名、外链失效时都会变成空白图）。
+ * 这里按条目 id 给出**语义正确**的小程序包内配图，离线也能显示。 */
+const SPECIES_IMG_FALLBACK = {
+  'species-acropora-spp': '/assets/img/sp_acropora_valida.jpg',
+  'species-diploria-spp': '/assets/img/sp_diploria.jpg',
+  'species-fungia-spp': '/assets/img/sp_ctenactis.jpg',
+  'species-alcyonacea': '/assets/img/sp_sinularia.jpg',
+  'species-gorgonia-spp': '/assets/img/sp_gorgonia.jpg',
+  'species-tubipora-musica': '/assets/img/sp_tubipora.jpg',
+  'species-millepora-spp': '/assets/img/sp_millepora.jpg',
+  'species-acropora-hyacinthus': '/assets/img/sp_acropora_hyacinthus.jpg',
+  'species-euphyllia-spp': '/assets/img/sp_euphyllia.jpg',
+  'species-porites-spp': '/assets/img/sp_porites.jpg',
+  'species-plerogyra-sinuosa': '/assets/img/sp_plerogyra.jpg',
+  'species-acropora-humilis': '/assets/img/sp_acropora_humilis.jpg'
 }
 
 /** 把数据库条目转成页面用的字段（含配图解析 + 详情页四大板块字段） */
 function mapSpecies(it) {
+  const localFallback = SPECIES_IMG_FALLBACK[it.id] || ''
   return {
     id: it.id,
     name: it.name,
@@ -403,9 +426,9 @@ function mapSpecies(it) {
     /* 配图优先级：条目自带照片(imgUrl) > 原来的实物图(imgKey 映射到 mock.IMG) > 空（页面显示占位块）
        ⚠️ 这里不再回落到「生成的示意图」——图鉴配图只用实物图。 */
     img: it.imgUrl ? absImageUrl(it.imgUrl)
-      : ((it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
+      : (localFallback || (it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
     imageUrl: it.imgUrl ? absImageUrl(it.imgUrl)
-      : ((it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
+      : (localFallback || (it.imgKey && mock.IMG && mock.IMG[it.imgKey]) || ''),
     imageNote: it.imageNote || '',
     genus: it.genus || '',
     genusCn: it.genusCn || '',
@@ -597,20 +620,24 @@ function apiTokenHeader() {
 
 function probeHealth(base, timeout) {
   return new Promise((resolve) => {
-    wx.request({
-      url: base + '/health',
-      method: 'GET',
-      timeout: timeout || 2500,
-      success(res) {
-        let ok = false
-        try {
-          const d = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
-          ok = !!(d && d.status === 'ok')
-        } catch (e) {}
-        resolve(ok ? base : '')
-      },
-      fail() { resolve('') },
-    })
+    try {
+      wx.request({
+        url: base + '/health',
+        method: 'GET',
+        timeout: timeout || 2500,
+        success(res) {
+          let ok = false
+          try {
+            const d = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+            ok = !!(d && d.status === 'ok')
+          } catch (e) {}
+          resolve(ok ? base : '')
+        },
+        fail() { resolve('') },
+      })
+    } catch (e) {
+      resolve('')
+    }
   })
 }
 
@@ -620,24 +647,81 @@ api.resolveApiBase = function () {
   const cands = (config.CORAL_API_CANDIDATES && config.CORAL_API_CANDIDATES.slice()) ||
                 [config.CORAL_API]
   API_PROBE = new Promise((resolve) => {
-    let i = 0
-    const next = () => {
-      if (i >= cands.length) { resolve(''); return }
-      const base = cands[i++]
-      probeHealth(base).then((good) => {
-        if (good) {
-          API_BASE = good
-          try { wx.setStorageSync('coral_api_base', good) } catch (e) {}
-          console.log('[coral] 评估服务: ' + good)
-          resolve(good)
-        } else {
-          next()
-        }
-      })
-    }
-    next()
+    // 并行探测，避免旧写法在真机上依次等 5 个候选、最多卡十几秒。
+    // 命中多个时仍按候选表顺序取优先级最高的那个。
+    Promise.all(cands.map((base, i) => probeHealth(base, /^https:/i.test(base) ? 5000 : 1500).then((good) => ({
+      base: good, order: i
+    })))).then((hits) => {
+      const good = hits.filter((x) => x.base).sort((a, b) => a.order - b.order)[0]
+      if (!good) { resolve(''); return }
+      API_BASE = good.base
+      try { wx.setStorageSync('coral_api_base', good.base) } catch (e) {}
+      console.log('[coral] 评估服务: ' + good.base)
+      resolve(good.base)
+    })
   }).then((r) => { API_PROBE = null; return r })
   return API_PROBE
+}
+
+/** 规范化用户输入的服务地址（去空格/末尾斜杠） */
+api.normalizeApiBase = function (url) {
+  return String(url || '').trim().replace(/\/+$/, '')
+}
+
+/**
+ * 手动指定评估服务地址（真机调试/临时隧道用）。
+ * 正式发布时应在 config.js 填 PUBLIC_API_BASE，而不是让用户手动设置。
+ */
+api.setApiBase = function (url) {
+  const base = api.normalizeApiBase(url)
+  if (!/^https?:\/\//i.test(base)) {
+    return { ok: false, message: '地址需以 http:// 或 https:// 开头' }
+  }
+  try { wx.setStorageSync('coral_api_base', base) } catch (e) {}
+  const cands = (config.DEFAULT_API_CANDIDATES || config.CORAL_API_CANDIDATES || [])
+    .filter((x) => x !== base)
+  cands.unshift(base)
+  config.CORAL_API_CANDIDATES = cands
+  config.CORAL_API = base
+  API_BASE = ''
+  API_PROBE = null
+  DB_BASE = ''
+  return { ok: true, url: base }
+}
+
+/** 清除手动地址，恢复 config.js 的自动候选顺序 */
+api.clearApiBase = function () {
+  try {
+    wx.removeStorageSync('coral_api_base')
+  } catch (e) {}
+  const cands = (config.DEFAULT_API_CANDIDATES || config.CORAL_API_CANDIDATES || []).slice()
+  config.CORAL_API_CANDIDATES = cands
+  config.CORAL_API = cands[0] || 'http://127.0.0.1:8000'
+  API_BASE = ''
+  API_PROBE = null
+  DB_BASE = ''
+}
+
+api.getApiBase = function () {
+  return API_BASE || config.CORAL_API || ''
+}
+
+/**
+ * 把服务端相对媒体路径（/video/team.mp4、/mp/assets/img/...）解析成
+ * 小程序 <video>/<image> 能直接访问的绝对地址。
+ * 绝对 URL 原样返回；服务不可用时返回空串或首选候选，由页面显示降级提示。
+ */
+api.resolveMediaUrl = function (path) {
+  if (!path) return Promise.resolve('')
+  if (/^(https?:)?\/\//.test(path) || String(path).indexOf('data:') === 0) {
+    return Promise.resolve(path)
+  }
+  return api.resolveApiBase().then((base) => {
+    if (base) return base + path
+    // 开发者工具里首选候选就是 127.0.0.1:8000；先给出地址，
+    // 若服务没启动，<video> 的 error 会触发页面降级，不会一直空白等待。
+    return config.CORAL_API ? config.CORAL_API + path : ''
+  })
 }
 
 /**
@@ -658,9 +742,8 @@ function realAnalyze(filePath, site, year) {
   const cands = (config.CORAL_API_CANDIDATES || [config.CORAL_API])
   return api.resolveApiBase().then((base) => {
     if (!base) {
-      throw new Error('无法连接评估服务：已尝试 ' + cands.join('、')
-        + '，均无响应。/health 都不通说明服务没启动，或地址不对。'
-        + '请先启动：cd ai-service/scripts && python serve_fusion.py --host 0.0.0.0 --port 8000')
+      console.error('[coral] 评估服务不可达，候选地址：', cands)
+      throw new Error('无法连接评估服务器，请检查手机网络后重试。')
     }
     return new Promise((resolve, reject) => {
       // ⚠️ 记录上传任务：`wx.uploadFile` 的 timeout 在部分基础库/开发者工具版本**不生效**，
@@ -694,11 +777,11 @@ function realAnalyze(filePath, site, year) {
           const msg = (err && err.errMsg) || ''
           // 连接失败说明缓存的地址可能已失效（换了网络）→ 清掉，下次重新探测
           API_BASE = ''
-          try { wx.removeStorageSync('coral_api_base') } catch (e) {}
-          reject(new Error('无法连接评估服务（' + base + '，' + msg + '）。'
-            + '已尝试：' + cands.join('、')
-            + '。请确认服务已启动：cd ai-service/scripts && python serve_fusion.py --host 0.0.0.0 --port 8000'
-            + '；开发者工具需勾选「不校验合法域名」'))
+          // 不要删除 storage 里的手动/公网地址：一次网络抖动不应让用户配置丢失。
+          // 下次 resolveApiBase 会把候选地址重新并行探测。
+          console.error('[coral] uploadFile fail', base, msg, '候选：', cands)
+          reject(new Error('无法连接评估服务器，请检查网络后重试。'
+            + '（服务地址：' + base + '）'))
         }
       })
     })
@@ -793,8 +876,8 @@ function mockCoralResult() {
  * @returns {Promise<{cover, topClasses, coralRegion, captureQuality, disclaimer}>}
  *
  * 降级策略：USE_REAL_AI 为 true 但服务连不上时，
- * 若 FALLBACK_TO_MOCK 为 true，则返回演示数据并标记 `isDemo`，
- * 便于无服务环境下演示（页面会显示「演示数据」标记，不会冒充真实结果）。
+ * 仅当 AI_FALLBACK_TO_DEMO 为 true 时才返回演示数据并标记 `isDemo`。
+ * 正式体验版默认 false：连不上就明确报错，避免把演示结果当成真实识别。
  */
 api.recognize = function (filePath, site, year) {
   if (config.USE_REAL_AI) {
@@ -806,15 +889,12 @@ api.recognize = function (filePath, site, year) {
           try { pendingUploadTask.abort() } catch (e) {}
           pendingUploadTask = null
         }
-        reject(new Error('识别请求超时未返回（' + (API_BASE || config.CORAL_API) + '）。排查顺序：'
-          + '①服务是否在跑（浏览器打开 http://127.0.0.1:8000/health）；'
-          + '②开发者工具「详情→本地设置」勾选「不校验合法域名」；'
-          + '③真机调试：手机与电脑连同一 Wi-Fi，地址候选见 utils/config.js 的 CANDIDATES'
-          + '（也可用 wx.setStorageSync("coral_api_base", "http://电脑IP:8000") 手动指定）'))
+        reject(new Error('评估请求超时，请检查手机网络后重试。'
+          + '（服务地址：' + (API_BASE || config.CORAL_API) + '）'))
       }, config.AI_HARD_TIMEOUT || 45000)
     })
     return Promise.race([realAnalyze(filePath, site, year), hard]).catch((e) => {
-      if (!config.FALLBACK_TO_MOCK) throw e
+      if (!config.AI_FALLBACK_TO_DEMO) throw e
       return mock.delay(mockCoralResult(), 700).then((r) => {
         r.isDemo = true
         r.demoReason = (e && e.message) || '评估服务不可用'

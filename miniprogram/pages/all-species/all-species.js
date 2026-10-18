@@ -14,15 +14,29 @@ Page(pageI18n.wrap({
     lang: 'zh',
     t: {},
     hot: [],
-    all: []
+    all: [],
+    fromDb: true,
+    total: 0,
+    fullTotal: 225,
+    loading: false
   },
 
   onLoad() {
     this.applyLang()
+    this.load()
+  },
+
+  load() {
+    if (this.data.loading) return
+    this.setData({ loading: true })
     api.getAllSpecies().then((d) => {
       this._raw = d
+      this.setData({ fromDb: !!d.fromDb, total: d.total || (d.all || []).length })
       this.render()
-    }).catch((e) => util.toast(e.message || i18n.pick('加载失败', 'Failed to load')))
+    }).catch((e) => {
+      this.setData({ fromDb: false })
+      util.toast(e.message || i18n.pick('加载失败', 'Failed to load'))
+    }).then(() => this.setData({ loading: false }))
   },
 
   onShow() {
@@ -41,6 +55,18 @@ Page(pageI18n.wrap({
       hot: i18n.mapSpeciesList(d.hot || []),
       all: i18n.mapSpeciesList(d.all || [])
     })
+  },
+
+  onRetry() {
+    this.load()
+  },
+
+  /* 网络实拍图加载失败时收掉 <image>，露出底下的珊瑚占位块，避免整张破图 */
+  onImgError(e) {
+    const id = e.currentTarget.dataset.id
+    const clear = (arr) => (arr || []).map((x) => String(x.id) === String(id)
+      ? Object.assign({}, x, { img: '' }) : x)
+    this.setData({ hot: clear(this.data.hot), all: clear(this.data.all) })
   },
 
   /* 点条目 → 珊瑚种类详情页 */

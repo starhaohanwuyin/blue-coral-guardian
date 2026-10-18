@@ -42,9 +42,11 @@ Page(pageI18n.wrap({
     corals: [],
     tech: [],
     videoCaption: '',
-    videoCover: '',
+    videoCover: '/assets/video/team-cover.jpg',
+    videoPoster: '',
     videoUrl: '',
-    canPlayVideo: false,      // 网页版可内嵌播放；小程序端显示封面 + 提示
+    videoError: false,
+    videoStarted: false,
     articles: [],
     news: [],
     actions: ACTIONS
@@ -52,8 +54,6 @@ Page(pageI18n.wrap({
 
   onLoad() {
     this.setData({ statusBarHeight: (app.globalData && app.globalData.statusBarHeight) || 20 })
-    // 只有网页版（web/mp.js 运行时挂了 window.MP_RUNTIME）才能内嵌播放本地视频
-    this.setData({ canPlayVideo: typeof window !== 'undefined' && !!window.MP_RUNTIME })
     this.applyLang()
     this.load()
   },
@@ -141,7 +141,6 @@ Page(pageI18n.wrap({
       }),
       videoCaption: en ? (e.videoCaption || d.videoCaption) : d.videoCaption,
       videoCover: d.videoCover || (d.tech && d.tech[2] && d.tech[2].img) || '',
-      videoUrl: d.videoUrl || '',
       articles: (d.articles || []).map((a) => {
         const x = en ? ((e.articles || {})[a.id] || []) : []
         return Object.assign({}, a, { title: x[0] || a.title, tag: x[1] || a.tag })
@@ -151,6 +150,54 @@ Page(pageI18n.wrap({
         return Object.assign({}, a, { title: x[0] || a.title, tag: x[1] || a.tag })
       })
     })
+    this.resolveVideo(d.videoUrl, d.videoCover)
+  },
+
+  /* 团队视频：网页版由同源静态目录提供，小程序端改走服务绝对地址。
+   * 12MB 原片不适合塞进 2MB 主包，因此不再依赖包内 /assets/video/team.mp4。 */
+  resolveVideo(path, coverPath) {
+    this._videoFallbackTried = false
+    if (!path) {
+      this.setData({ videoUrl: '', videoError: true })
+      return
+    }
+    const cover = coverPath || this.data.videoCover || ''
+    Promise.all([
+      api.resolveMediaUrl(path),
+      cover ? api.resolveMediaUrl(cover) : Promise.resolve('')
+    ]).then((pair) => {
+      const url = pair[0] || ''
+      const poster = pair[1] || ''
+      this.setData({ videoUrl: url, videoPoster: poster, videoError: !url })
+    }).catch(() => {
+      this.setData({ videoUrl: '', videoError: true })
+    })
+  },
+
+  onVideoError() {
+    // 少数开发者工具/基础库对 http 流媒体的处理不稳定：
+    // 先尝试把视频下载成临时文件再交给 <video> 播放，仍失败才显示降级提示。
+    if (this._videoFallbackTried || !this.data.videoUrl) {
+      this.setData({ videoError: true })
+      return
+    }
+    this._videoFallbackTried = true
+    util.toast('视频直连失败，正在改用本地缓存播放…')
+    wx.downloadFile({
+      url: this.data.videoUrl,
+      success: (res) => {
+        if (res.statusCode === 200 && res.tempFilePath) {
+          this.setData({ videoUrl: res.tempFilePath, videoError: false })
+        } else {
+          this.setData({ videoError: true })
+        }
+      },
+      fail: () => this.setData({ videoError: true })
+    })
+  },
+
+  onVideoReady() {
+    if (this.data.videoError) this.setData({ videoError: false })
   },
 
   /* 快捷功能分发 */
@@ -210,7 +257,29 @@ Page(pageI18n.wrap({
   },
 
   onVideoTap() {
-    util.toast(i18n.t('index.videoMpOnly'))
+    // 先显示与网页版一致的封面；用户点击后再切到原生视频并自动播放。
+    // 这样不会被 <video> 的黑色初始画面盖住，也不依赖 poster 对包内图片的兼容性。
+    if (this.data.videoUrl && !this.data.videoError) {
+      this.setData({ videoStarted: true })
+      return
+    }
+    if (!this.data.videoError) {
+      util.toast('视频正在加载，请稍候')
+      return
+    }
+    wx.showModal({
+      title: '视频服务暂不可用',
+      content: '团队视频和 AI 识别共用同一个后端服务。真机上 127.0.0.1 指向手机自己，'
+        + '不能访问电脑上的服务。\n\n调试可填电脑局域网地址；正式体验需使用公网 HTTPS 域名。',
+      confirmText: '设置地址',
+      cancelText: '稍后再试',
+      success: (res) => {
+        if (!res.confirm) return
+        util.configureApiBase((r) => {
+          if (r && r.ok) this.resolveVideo(this._raw && this._raw.videoUrl)
+        })
+      }
+    })
   },
 
   onShareAppMessage() {

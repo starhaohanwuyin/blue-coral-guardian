@@ -1,13 +1,65 @@
 /**
  * 全局配置
  * ------------------------------------------------------------------
- * 接入真实后端时只需改两处：
- *   1. BASE_URL  → 官网后端的 API 域名（须 HTTPS + 已备案，并加入小程序
- *                  后台「request 合法域名」，文件上传需加入「uploadFile 合法域名」）
- *   2. USE_MOCK  → false
- * 然后按 utils/api.js 顶部说明对齐接口路径即可，页面代码无需改动。
+ * 关键配置：
+ *   1. PUBLIC_API_BASE → 公网 HTTPS 评估服务（真机/发布必填）
+ *   2. BASE_URL / USE_MOCK → 官网业务后端（当前演示数据仍走 mock）
+ * 公网域名须加入小程序后台 request / uploadFile / downloadFile 合法域名。
  * ------------------------------------------------------------------
  */
+/* ============ 公网评估服务地址（上线必填） ============
+ * 当前：'https://coralguard.cn/api'（必须 HTTPS，且已在小程序后台
+ * request/uploadFile/downloadFile 合法域名中登记）。
+ *
+ * 留空 = 只在本机/局域网调试。真机上 127.0.0.1 指向手机自己，
+ * 手机不可能通过它访问你电脑上的服务，所以 AI 和团队视频都会失败。
+ */
+const PUBLIC_API_BASE = 'https://coralguard.cn/api'
+
+/* 评估服务地址候选表。先算好再导出，避免在对象字面量里引用尚未赋值的
+ * module.exports（旧写法会让 CORAL_API 永远退回 127.0.0.1，忽略 storage 覆盖）。 */
+const DEFAULT_API_CANDIDATES = (function buildDefaults() {
+  var list = []
+  // ① 正式包的公网 HTTPS 服务（上线只改 PUBLIC_API_BASE）
+  if (PUBLIC_API_BASE) list.push(PUBLIC_API_BASE.replace(/\/+$/, ''))
+  // ② 网页版：与页面同源（服务同时托管网页与接口，永远正确）
+  try {
+    if (typeof location !== 'undefined' && location.origin &&
+        location.origin.indexOf('http') === 0) {
+      list.push(location.origin)
+    }
+  } catch (e) {}
+  // ③ 开发者工具 / 本机浏览器
+  list.push('http://127.0.0.1:8000')
+  // ④ 真机：电脑局域网 IP 候选（换网络后把新 IP 加到这里，或在小程序里覆盖）
+  //    ⚠️ 校园网/热点下的 IP 会变（本机已从 10.0.124.43 → 10.48.96.44 → 10.0.167.199 变过三次），
+  //       所以这里保留多个候选，运行时并行探测，按优先级取第一个 /health 通的地址。
+  //       真机若都探测失败：wx.setStorageSync('coral_api_base', 'http://新IP:8000') 覆盖即可。
+  list.push('http://10.103.182.218:8000') // 2026-10-18 本机 WLAN IP（真机同 Wi-Fi 调试）
+  list.push('http://10.0.167.199:8000')  // 2026-10-15 本机 WLAN IP
+  list.push('http://10.48.96.44:8000')   // 2026-10-14 本机 WLAN IP
+  list.push('http://10.0.124.43:8000')   // 2026-10-13 本机 WLAN IP
+  list.push('http://10.0.250.15:8000')   // 旧 IP（保留兼容）
+  // 去重
+  var out = []
+  for (var i = 0; i < list.length; i++) if (list[i] && out.indexOf(list[i]) < 0) out.push(list[i])
+  return out
+})()
+
+const CORAL_API_CANDIDATES = (function buildCandidates() {
+  var list = []
+  // 用户手动覆盖（存 storage，优先级最高）
+  try {
+    var saved = wx.getStorageSync && wx.getStorageSync('coral_api_base')
+    if (saved) list.push(String(saved).replace(/\/+$/, ''))
+  } catch (e) {}
+  for (var i = 0; i < DEFAULT_API_CANDIDATES.length; i++) {
+    var b = DEFAULT_API_CANDIDATES[i]
+    if (b && list.indexOf(b) < 0) list.push(b)
+  }
+  return list
+})()
+
 module.exports = {
   // TODO: 替换为官网现有后端 API 地址（同一域名同一端口，网页端/小程序端共用）
   BASE_URL: 'http://127.0.0.1:3000',
@@ -47,42 +99,15 @@ module.exports = {
     return ''
   })(),
 
-  CORAL_API_CANDIDATES: (function buildCandidates() {
-    var list = []
-    // ① 用户手动覆盖（存 storage，优先级最高）
-    try {
-      var saved = wx.getStorageSync && wx.getStorageSync('coral_api_base')
-      if (saved) list.push(String(saved).replace(/\/+$/, ''))
-    } catch (e) {}
-    // ② 网页版：与页面同源（服务同时托管网页与接口，永远正确）
-    try {
-      if (typeof location !== 'undefined' && location.origin &&
-          location.origin.indexOf('http') === 0) {
-        list.push(location.origin)
-      }
-    } catch (e) {}
-    // ③ 开发者工具 / 本机浏览器
-    list.push('http://127.0.0.1:8000')
-    // ④ 真机：电脑局域网 IP 候选（换网络后把新 IP 加到这里，或在小程序里覆盖）
-    //    ⚠️ 校园网/热点下的 IP 会变（本机已从 10.0.124.43 → 10.48.96.44 → 10.0.167.199 变过三次），
-    //       所以这里保留多个候选，运行时逐个探测，第一个 /health 通的即为服务地址。
-    //       真机若都探测失败：wx.setStorageSync('coral_api_base', 'http://新IP:8000') 覆盖即可。
-    list.push('http://10.0.167.199:8000')  // 2026-10-15 本机 WLAN IP
-    list.push('http://10.48.96.44:8000')   // 2026-10-14 本机 WLAN IP
-    list.push('http://10.0.124.43:8000')   // 2026-10-13 本机 WLAN IP
-    list.push('http://10.0.250.15:8000')   // 旧 IP（保留兼容）
-    // 去重
-    var out = []
-    for (var i = 0; i < list.length; i++) if (list[i] && out.indexOf(list[i]) < 0) out.push(list[i])
-    return out
-  })(),
+  CORAL_API_CANDIDATES: CORAL_API_CANDIDATES,
+  DEFAULT_API_CANDIDATES: DEFAULT_API_CANDIDATES,
+
+  /* 上线时填写公网 HTTPS 地址；留空则只用本机/局域网调试 */
+  PUBLIC_API_BASE: PUBLIC_API_BASE,
 
   /* 兼容旧代码：给出"最可能正确"的那个（网页版=同源 / 开发者工具=127.0.0.1）。
    * 真正的调用请走 utils/api.js 的 resolveApiBase()（会按候选表探测并缓存）。 */
-  CORAL_API: (function pickCoralApi() {
-    var c = module.exports.CORAL_API_CANDIDATES || []
-    return c[0] || 'http://127.0.0.1:8000'
-  })(),
+  CORAL_API: CORAL_API_CANDIDATES[0] || 'http://127.0.0.1:8000',
 
   // true  = 调用真实评估服务（需要 serve_fusion.py 在运行）
   // false = 直接使用本地演示数据
@@ -101,6 +126,12 @@ module.exports = {
    * 建议：开发者本地用 true（方便演示），正式联调用 false（暴露问题）
    */
   FALLBACK_TO_MOCK: true,
+
+  /* 识别服务连不上时是否自动返回“内置演示结果”。
+   * 当前按比赛演示需求设为 true：连不上也直接进入结果页，
+   * 但页面会保留「演示数据」标识，不冒充真实识别。
+   * 正式上线如要求真实结果，可改为 false（会显示连接失败）。 */
+  AI_FALLBACK_TO_DEMO: true,
 
   /* 默认评估点位（用于查询环境数据 + 修复优先级研判）
    * NOAA CRW 5km 数据覆盖范围：4.0–5.0°N, 118.0–119.5°E（仙本那及周边）
@@ -155,7 +186,7 @@ module.exports = {
 
   /* 硬超时兜底（毫秒）：wx.uploadFile 的 timeout 在部分基础库/工具版本**不生效**，
    * 请求被域名校验拦下或网络黑洞时既不 success 也不 fail → 页面会永远停在「正在分析…」。
-   * 到点强制给页面一个结果（超时错误；FALLBACK_TO_MOCK 为 true 时降级为演示数据并标注原因）。 */
+   * 到点强制给页面一个结果（超时错误；仅当 AI_FALLBACK_TO_DEMO 为 true 时才降级演示）。 */
   AI_HARD_TIMEOUT: 45000,
 
   // 本地存储键（token 与官网登录接口共用同一套账号体系）

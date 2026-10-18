@@ -12,6 +12,35 @@
   color: var(--text2);
   font-weight: 500;
 }
+
+/* 离线演示提示 */
+.as-offline {
+  margin: 0 32rpx 8rpx;
+  padding: 26rpx 28rpx;
+  border: 2rpx solid rgba(30, 136, 229, 0.18);
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.08), rgba(0, 188, 212, 0.08));
+}
+.as-offline-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.as-offline-desc {
+  margin-top: 12rpx;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: var(--text2);
+}
+.as-offline-btn {
+  display: inline-block;
+  margin-top: 18rpx;
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  background: var(--primary);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+}
 .as-section-title {
   padding: 24rpx 40rpx 20rpx;
   font-size: 32rpx;
@@ -29,8 +58,26 @@
   width: calc((100% - 20rpx) / 2);
   overflow: hidden;
 }
-.as-imgwrap { position: relative; height: 220rpx; }
-.as-img { width: 100%; height: 100%; }
+.as-imgwrap { position: relative; height: 220rpx; overflow: hidden; }
+.as-img-ph {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  color: rgba(30, 136, 229, 0.28);
+  background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(0, 188, 212, 0.16));
+}
+.as-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
 .as-hot-badge {
   position: absolute;
   right: 16rpx;
@@ -70,11 +117,20 @@
   padding: 20rpx;
   margin-bottom: 20rpx;
 }
+.as-row-imgwrap {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  flex-shrink: 0;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
 .as-row-img {
+  position: relative;
+  z-index: 1;
   width: 150rpx;
   height: 150rpx;
   border-radius: 20rpx;
-  flex-shrink: 0;
   background: var(--border);
 }
 .as-row-body { flex: 1; min-width: 0; }

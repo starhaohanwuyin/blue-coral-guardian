@@ -54,8 +54,33 @@
   <view class="cert-actions" wx:if="{{cert}}">
     <button class="save-btn {{type}}" hover-class="btn-hover" bindtap="onSave">{{t.pgor0rw}}</button>
     <view class="cert-tip">{{t.pm7e2c3}}</view>
+    <view class="cert-tip">手机端保存到系统相册；电脑端生成后会弹出预览，可右键图片选择「图片另存为」。</view>
   </view>
 
-  <!-- 导出用画布（屏幕外） -->
-  <canvas type="2d" id="certCanvas" class="cert-canvas"></canvas>
+  <!-- 导出用画布（极低透明度保留在渲染树内，避免离屏画布导不出内容） -->
+  <canvas
+    type="2d"
+    id="certCanvas"
+    class="cert-canvas"
+    style="width: {{canvasCssW}}px; height: {{canvasCssH}}px;"
+  ></canvas>
+
+  <!-- 桌面端保存兜底：直接展示生成的图片，右键 / 长按即可另存 -->
+  <view wx:if="{{preview}}" class="cert-preview-mask" catchtap="closePreview">
+    <view class="cert-preview-panel" catchtap="noop">
+      <view class="cert-preview-title">证书已生成</view>
+      <image
+        class="cert-preview-img"
+        src="{{preview}}"
+        mode="widthFix"
+        show-menu-by-longpress="{{true}}"
+        binderror="onPreviewError"
+      />
+      <view class="cert-preview-tip">在电脑上右键图片选择「图片另存为」；手机上长按图片保存。也可以复制文件路径后在开发者工具的文件面板中导出。</view>
+      <view class="cert-preview-actions">
+        <view class="cert-preview-btn" hover-class="btn-hover" catchtap="copyPreviewPath">复制文件路径</view>
+        <view class="cert-preview-btn primary" hover-class="btn-hover" catchtap="closePreview">关闭</view>
+      </view>
+    </view>
+  </view>
 </view>

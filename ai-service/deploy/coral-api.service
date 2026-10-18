@@ -1,0 +1,17 @@
+[Unit]
+Description=Coral Guardian FastAPI backend
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/blue-coral-guardian/ai-service/scripts
+Environment=CORAL_RATE_LIMIT=60
+# 如需 Token，取消下一行并填入服务端与小程序 config.js 相同的值：
+# Environment=CORAL_API_TOKEN=replace-with-a-long-random-token
+ExecStart=/opt/blue-coral-guardian/ai-service/.venv/bin/python serve_fusion.py --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
